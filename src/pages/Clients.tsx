@@ -2,9 +2,60 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import vincula from "@/assets/clients/vincula.png";
+import techimport from "@/assets/clients/techimport.png";
+import traumec from "@/assets/clients/traumec.png";
+import ultradent from "@/assets/clients/ultradent.png";
+import toride from "@/assets/clients/toride.png";
+import react from "@/assets/clients/react.png";
+import razek from "@/assets/clients/razek.png";
+import russer from "@/assets/clients/russer.png";
+import ossea from "@/assets/clients/ossea.jpg";
+import orthometric from "@/assets/clients/orthometric.png";
+import cpmh from "@/assets/clients/cpmh.png";
+import evolve from "@/assets/clients/evolve.png";
+import fgm from "@/assets/clients/fgm.png";
+import iol from "@/assets/clients/iol.png";
+import implanfix from "@/assets/clients/implanfix.png";
+import impol from "@/assets/clients/impol.png";
+import hcs from "@/assets/clients/hcs.png";
+import gmi from "@/assets/clients/gmi.png";
+import plenum from "@/assets/clients/plenum.png";
+import medens from "@/assets/clients/medens.png";
+import neoortho from "@/assets/clients/neoortho.jpg";
+import oblDental from "@/assets/clients/obl-dental.jpg";
+import orthometric2 from "@/assets/clients/orthometric-2.png";
 
 export default function Clients() {
   const { t } = useLanguage();
+  const logosAnimation = useScrollAnimation();
+
+  const clientLogos = [
+    { src: vincula, alt: "Vincula - Medical device manufacturer client" },
+    { src: techimport, alt: "TechImport - Medical technology client" },
+    { src: traumec, alt: "Traumec Health Technology - Medical equipment client" },
+    { src: ultradent, alt: "Ultradent Products - Dental device manufacturer" },
+    { src: toride, alt: "Toride - Medical manufacturing client" },
+    { src: react, alt: "React - Creation in health medical technology" },
+    { src: razek, alt: "Razek - Medical device solutions client" },
+    { src: russer, alt: "Russer - Medical equipment manufacturer" },
+    { src: ossea, alt: "Óssea Medical Technology - Orthopedic implant manufacturer" },
+    { src: orthometric, alt: "Orthometric - Orthopedic solutions provider" },
+    { src: cpmh, alt: "CPMH - Medical device solutions" },
+    { src: evolve, alt: "Evolve - Medical technology innovation" },
+    { src: fgm, alt: "FGM Dental Group - Dental device manufacturer" },
+    { src: iol, alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer" },
+    { src: implanfix, alt: "Implanfix - Surgical materials provider" },
+    { src: impol, alt: "Impol - Medical instruments manufacturer" },
+    { src: hcs, alt: "HCS - Healthcare solutions provider" },
+    { src: gmi, alt: "GMI - Global medical innovation" },
+    { src: plenum, alt: "Plenum - Medical device technology" },
+    { src: medens, alt: "Medens - Medical device manufacturer" },
+    { src: neoortho, alt: "Neoortho - Orthopedic solutions" },
+    { src: oblDental, alt: "OBL Dental - Dental device manufacturer" },
+    { src: orthometric2, alt: "Orthometric - Medical orthopedic systems" },
+  ];
 
   const clientTypes = [
     {
@@ -49,6 +100,43 @@ export default function Clients() {
           <p className="text-lg sm:text-xl max-w-3xl leading-relaxed opacity-95">
             {t("clients.intro")}
           </p>
+        </div>
+      </section>
+
+      {/* Client Logos Section */}
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div 
+            ref={logosAnimation.elementRef}
+            className={`text-center mb-12 sm:mb-16 scroll-reveal ${logosAnimation.isVisible ? 'visible' : ''}`}
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+              Trusted Partners
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
+              Partnering with innovative companies to deliver precision medical components worldwide
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
+            {clientLogos.map((logo, index) => (
+              <div
+                key={index}
+                className={`flex items-center justify-center p-4 bg-card rounded-lg border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 grayscale hover:grayscale-0 ${
+                  logosAnimation.isVisible ? 'animate-fade-in' : 'opacity-0'
+                }`}
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <img 
+                  src={logo.src} 
+                  alt={logo.alt} 
+                  className="max-h-12 w-auto object-contain" 
+                  loading="lazy" 
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

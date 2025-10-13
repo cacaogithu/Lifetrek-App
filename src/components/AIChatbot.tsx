@@ -36,7 +36,7 @@ export const AIChatbot = () => {
       const isMobile = window.innerWidth < 768;
       
       if (isMobile) {
-        setShowButton(scrollDepth >= 50);
+        setShowButton(scrollDepth >= 75);
       } else {
         setShowButton(true);
       }

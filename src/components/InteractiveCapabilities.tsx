@@ -81,11 +81,7 @@ export const InteractiveCapabilities = () => {
                 onMouseEnter={() => setActiveId(capability.id)}
                 onMouseLeave={() => setActiveId(null)}
               >
-                <div className={`w-14 h-14 rounded-full ${capability.bg} flex items-center justify-center mb-4 transition-transform duration-300 ${isActive ? 'scale-110' : ''}`}>
-                  <capability.icon className={`h-7 w-7 ${capability.color}`} />
-                </div>
-                
-                <div className={`text-4xl font-bold mb-2 ${capability.color} transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
+                <div className={`text-4xl font-bold mb-4 ${capability.color} transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
                   {capability.stat}
                 </div>
                 
