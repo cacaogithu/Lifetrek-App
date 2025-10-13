@@ -18,7 +18,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are an expert AI assistant for Usinatech, a precision medical device contract manufacturer based in Brazil. You have comprehensive knowledge about:
+    const systemPrompt = `You are an expert AI assistant for Lifetrek, a precision medical device contract manufacturer based in Brazil. You have comprehensive knowledge about:
 
 COMPANY OVERVIEW:
 - 30+ years of experience in precision Swiss CNC machining
@@ -59,7 +59,7 @@ QUALITY & CERTIFICATIONS:
 - First Article Inspection (FAI) reports
 - Material certificates and test reports
 
-Always provide helpful, accurate information about Usinatech's capabilities. If asked about pricing or specific quotes, recommend scheduling a free assessment. Be professional, knowledgeable, and emphasize quality, precision, and regulatory compliance.`;
+Always provide helpful, accurate information about Lifetrek's capabilities. If asked about pricing or specific quotes, recommend scheduling a free assessment. Be professional, knowledgeable, and emphasize quality, precision, and regulatory compliance.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

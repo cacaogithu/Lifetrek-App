@@ -59,10 +59,10 @@ export default function Assessment() {
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="font-bold mb-6 animate-fade-in">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
               Free Manufacturing Assessment
             </h1>
-            <p className="text-xl md:text-2xl mb-8 opacity-95">
+            <p className="text-2xl md:text-3xl mb-8 opacity-95">
               Get expert guidance on your medical device manufacturing project
             </p>
           </div>
@@ -76,8 +76,8 @@ export default function Assessment() {
           {step === 3 ? (
             <div className="max-w-2xl mx-auto text-center glass-card-strong p-12 rounded-2xl">
               <CheckCircle2 className="h-20 w-20 text-accent mx-auto mb-6" />
-              <h2 className="text-3xl font-bold mb-4">Assessment Scheduled!</h2>
-              <p className="text-lg text-muted-foreground mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">Assessment Scheduled!</h2>
+              <p className="text-xl md:text-2xl text-muted-foreground mb-6">
                 We've received your request and will send you a confirmation email shortly.
               </p>
               {date && formData.timeSlot && (
@@ -121,7 +121,7 @@ export default function Assessment() {
               <form onSubmit={handleSubmit} className="glass-card-strong p-8 sm:p-12 rounded-2xl space-y-6">
                 {step === 1 ? (
                   <>
-                    <h2 className="text-2xl font-bold mb-6">Tell us about your project</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6">Tell us about your project</h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
@@ -234,7 +234,7 @@ export default function Assessment() {
                   </>
                 ) : (
                   <>
-                    <h2 className="text-2xl font-bold mb-6">Schedule your consultation</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6">Schedule your consultation</h2>
                     
                     <div className="space-y-6">
                       <div className="space-y-2">

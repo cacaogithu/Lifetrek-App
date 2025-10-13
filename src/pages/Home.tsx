@@ -104,12 +104,12 @@ export default function Home() {
   return <div className="min-h-screen">
       {/* Hero Section with Slideshow and Parallax */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-        {heroImages.map((image, index) => (
-          <div 
-            key={index} 
-            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
-            style={{ transform: `translateY(${parallaxOffset}px)` }}
-          >
+        <div style={{ transform: `translateY(${parallaxOffset}px)` }}>
+          {heroImages.map((image, index) => (
+            <div 
+              key={index} 
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
+            >
             <img 
               src={image} 
               alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
@@ -118,11 +118,12 @@ export default function Home() {
               width="1920" 
               height="600" 
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
-            {/* Beautiful Blue Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
-          </div>
-        ))}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
+              {/* Beautiful Blue Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
+            </div>
+          ))}
+        </div>
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10">

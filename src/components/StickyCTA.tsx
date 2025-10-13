@@ -22,25 +22,11 @@ export const StickyCTA = () => {
   }, []);
 
   const getCtaContent = () => {
-    if (scrollProgress < 30) {
-      return {
-        icon: CheckCircle2,
-        text: "See Our Capabilities",
-        link: "/capabilities"
-      };
-    } else if (scrollProgress < 70) {
-      return {
-        icon: Calendar,
-        text: "Schedule Free Assessment",
-        link: "/assessment"
-      };
-    } else {
-      return {
-        icon: ArrowRight,
-        text: "Get Started Today",
-        link: "/contact"
-      };
-    }
+    return {
+      icon: Calendar,
+      text: "Schedule Free Assessment",
+      link: "/assessment"
+    };
   };
 
   const cta = getCtaContent();

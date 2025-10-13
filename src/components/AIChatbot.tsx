@@ -16,7 +16,7 @@ export const AIChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I'm here to help answer questions about Usinatech's precision manufacturing capabilities, equipment, certifications, and processes. How can I assist you today?",
+      content: "Hello! I'm here to help answer questions about Lifetrek's precision manufacturing capabilities, equipment, certifications, and processes. How can I assist you today?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -102,7 +102,7 @@ export const AIChatbot = () => {
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
-          className="fixed bottom-6 right-6 h-14 w-14 md:h-14 md:w-14 sm:h-12 sm:w-12 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-gradient-to-r from-primary via-accent to-accent-orange"
+          className="fixed bottom-6 right-6 h-14 w-14 md:h-14 md:w-14 sm:h-12 sm:w-12 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-primary"
         >
           <MessageCircle className="h-6 w-6 md:h-6 md:w-6 sm:h-5 sm:w-5" />
         </Button>
@@ -112,10 +112,10 @@ export const AIChatbot = () => {
       {isOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col z-50 animate-scale-in">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary via-accent to-accent-orange text-primary-foreground rounded-t-2xl">
+          <div className="flex items-center justify-between p-4 border-b border-border bg-primary text-primary-foreground rounded-t-2xl">
             <div className="flex items-center gap-2">
               <MessageCircle className="h-5 w-5" />
-              <h3 className="font-bold">Usinatech Assistant</h3>
+              <h3 className="font-bold">Lifetrek Assistant</h3>
             </div>
             <Button
               variant="ghost"
@@ -140,7 +140,7 @@ export const AIChatbot = () => {
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                       message.role === "user"
-                        ? "bg-gradient-to-r from-primary to-accent text-primary-foreground"
+                        ? "bg-primary text-primary-foreground"
                         : "bg-secondary text-secondary-foreground"
                     }`}
                   >
@@ -175,7 +175,7 @@ export const AIChatbot = () => {
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
                 size="icon"
-                className="bg-gradient-to-r from-primary to-accent"
+                className="bg-primary"
               >
                 <Send className="h-4 w-4" />
               </Button>
