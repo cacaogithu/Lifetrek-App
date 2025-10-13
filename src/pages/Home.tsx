@@ -25,6 +25,7 @@ import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
 import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useParallax, useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
 import { StatCard } from "@/components/StatCard";
 import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
 import { TestimonialsCarousel } from "@/components/TestimonialsCarousel";
