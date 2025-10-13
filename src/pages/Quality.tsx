@@ -105,7 +105,7 @@ export default function Quality() {
                   height="128"
                 />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold">{t("quality.iso")}</h3>
+              <h3 className="text-lg sm:text-xl font-bold">ISO 13485:2016</h3>
               <p className="text-sm text-muted-foreground mt-2">
                 Medical Device Quality Management
               </p>
@@ -122,7 +122,7 @@ export default function Quality() {
                   height="128"
                 />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold">{t("quality.anvisa")}</h3>
+              <h3 className="text-lg sm:text-xl font-bold">ANVISA Certified</h3>
               <p className="text-sm text-muted-foreground mt-2">
                 Brazilian Health Regulatory Agency
               </p>

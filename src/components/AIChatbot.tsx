@@ -21,6 +21,7 @@ export const AIChatbot = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,6 +29,28 @@ export const AIChatbot = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollDepth = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      const isMobile = window.innerWidth < 768;
+      
+      if (isMobile) {
+        setShowButton(scrollDepth >= 50);
+      } else {
+        setShowButton(true);
+      }
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -75,13 +98,13 @@ export const AIChatbot = () => {
   return (
     <>
       {/* Floating Button */}
-      {!isOpen && (
+      {!isOpen && showButton && (
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-gradient-to-r from-primary via-accent to-accent-orange"
+          className="fixed bottom-6 right-6 h-14 w-14 md:h-14 md:w-14 sm:h-12 sm:w-12 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-gradient-to-r from-primary via-accent to-accent-orange"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-6 w-6 md:h-6 md:w-6 sm:h-5 sm:w-5" />
         </Button>
       )}
 
