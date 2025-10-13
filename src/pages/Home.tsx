@@ -26,6 +26,9 @@ import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useParallax, useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { StatCard } from "@/components/StatCard";
+import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
+import { TestimonialsCarousel } from "@/components/TestimonialsCarousel";
+import { InteractiveCapabilities } from "@/components/InteractiveCapabilities";
 import vincula from "@/assets/clients/vincula.png";
 import techimport from "@/assets/clients/techimport.png";
 import traumec from "@/assets/clients/traumec.png";
@@ -394,6 +397,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Interactive Capabilities Section */}
+      <InteractiveCapabilities />
+
+      {/* Manufacturing Timeline */}
+      <ManufacturingTimeline />
+
+      {/* Testimonials Carousel */}
+      <TestimonialsCarousel />
 
       {/* Final CTA Section with 3D Globe */}
       <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary via-primary-hover to-accent text-primary-foreground overflow-hidden">
