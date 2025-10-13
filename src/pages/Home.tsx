@@ -22,6 +22,7 @@ import embutidora from "@/assets/metrology/embutidora.png";
 import { useState, useEffect } from "react";
 import { DNA3D } from "@/components/3d/DNA3D";
 import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
+import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 const heroImages = [reception, cleanroom, exterior, medicalScrew];
 export default function Home() {
@@ -145,6 +146,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Equipment Carousel Section */}
+      <EquipmentCarousel />
 
       {/* Products Preview Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-secondary/30 to-background">

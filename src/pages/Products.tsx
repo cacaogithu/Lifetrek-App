@@ -115,7 +115,7 @@ export default function Products() {
                 
                 <div className={index % 2 === 1 ? "lg:order-1" : ""}>
                   <div className="relative group">
-                    <div className={`absolute -inset-1 bg-gradient-to-br ${category.color} rounded-3xl blur-3xl opacity-10 group-hover:opacity-20 transition-opacity`} />
+                    <div className={`absolute -inset-1 bg-gradient-to-br ${category.color} rounded-3xl blur-3xl opacity-10 group-hover:opacity-15 transition-opacity`} />
                     <img
                       src={category.image}
                       alt={`${category.title} - ${category.benefit}`}
