@@ -18,6 +18,7 @@ import { RotatingImplant } from "@/components/3d/RotatingImplant";
 import { FloatingParts } from "@/components/3d/FloatingParts";
 import { DNA3D } from "@/components/3d/DNA3D";
 import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
+import { ScrollScrews } from "@/components/3d/ScrollScrews";
 
 const heroImages = [reception, cleanroom, exterior, medicalScrew];
 
@@ -174,8 +175,8 @@ export default function Home() {
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto"></div>
           </div>
 
-          <div className="mb-12 max-w-5xl mx-auto">
-            <FloatingParts />
+          <div className="mb-12 max-w-6xl mx-auto relative">
+            <ScrollScrews />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
