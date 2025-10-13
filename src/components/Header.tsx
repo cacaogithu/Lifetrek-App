@@ -18,6 +18,7 @@ export const Header = () => {
     { path: "/quality", label: t("nav.quality") },
     { path: "/infrastructure", label: t("nav.infrastructure") },
     { path: "/culture", label: t("nav.culture") },
+    { path: "/clients", label: t("nav.clients") },
     { path: "/contact", label: t("nav.contact") },
   ];
 

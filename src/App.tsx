@@ -13,6 +13,7 @@ import Products from "./pages/Products";
 import Quality from "./pages/Quality";
 import Infrastructure from "./pages/Infrastructure";
 import Culture from "./pages/Culture";
+import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
@@ -36,6 +37,7 @@ const App = () => (
                 <Route path="/quality" element={<Quality />} />
                 <Route path="/infrastructure" element={<Infrastructure />} />
                 <Route path="/culture" element={<Culture />} />
+                <Route path="/clients" element={<Clients />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
