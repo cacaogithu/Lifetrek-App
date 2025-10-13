@@ -34,6 +34,16 @@ import razek from "@/assets/clients/razek.png";
 import russer from "@/assets/clients/russer.png";
 import ossea from "@/assets/clients/ossea.jpg";
 import orthometric from "@/assets/clients/orthometric.png";
+import cpmh from "@/assets/clients/cpmh.png";
+import evolve from "@/assets/clients/evolve.png";
+import fgm from "@/assets/clients/fgm.png";
+import iol from "@/assets/clients/iol.png";
+import implanfix from "@/assets/clients/implanfix.png";
+import impol from "@/assets/clients/impol.png";
+import hcs from "@/assets/clients/hcs.png";
+import gmi from "@/assets/clients/gmi.png";
+import plenum from "@/assets/clients/plenum.png";
+import medens from "@/assets/clients/medens.png";
 const heroImages = [reception, cleanroom, exterior, medicalScrew];
 export default function Home() {
   const {
@@ -198,6 +208,36 @@ export default function Home() {
             </div>
             <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
               <img src={orthometric} alt="Orthometric - Orthopedic solutions provider" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={cpmh} alt="CPMH - Medical device solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={evolve} alt="Evolve - Medical technology innovation" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={fgm} alt="FGM Dental Group - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={iol} alt="IOL Implantes Ortopédicos - Orthopedic implant manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={implanfix} alt="Implanfix - Surgical materials provider" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={impol} alt="Impol Ortopedia e Traumatologia - Orthopedic solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={hcs} alt="HCS Health Care Solutions - Medical equipment provider" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={gmi} alt="Gabisa Medical International - Global medical solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={plenum} alt="Plenum Bioengenharia - Bioengineering solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={medens} alt="Medens - Medical device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
           </div>
         </div>
