@@ -5,17 +5,21 @@ import reception from "@/assets/facility/reception.jpg";
 import receptionHero from "@/assets/facility/reception-hero.png";
 import cleanroom from "@/assets/facility/cleanroom.jpg";
 import exterior from "@/assets/facility/exterior.jpg";
-import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
-import productDisplay from "@/assets/products/product-display.png";
-import productApplications from "@/assets/products/product-applications.png";
+import medicalScrew from "@/assets/products/medical-screw.png";
+import surgicalInstrumentsSet from "@/assets/products/surgical-instruments-set.png";
+import dentalParts from "@/assets/products/dental-parts.png";
 import isoLogo from "@/assets/certifications/iso.jpg";
 import anvisaLogo from "@/assets/certifications/anvisa.png";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
 import opticalCnc from "@/assets/metrology/optical-cnc.png";
 import olympusMicroscope from "@/assets/metrology/olympus-microscope.png";
 import { useState, useEffect } from "react";
+import { RotatingImplant } from "@/components/3d/RotatingImplant";
+import { FloatingParts } from "@/components/3d/FloatingParts";
+import { DNA3D } from "@/components/3d/DNA3D";
+import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
 
-const heroImages = [reception, cleanroom, exterior, surgicalInstruments];
+const heroImages = [reception, cleanroom, exterior, medicalScrew];
 
 export default function Home() {
   const { t } = useLanguage();
@@ -80,15 +84,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Reception Image Section */}
+      {/* Reception & 3D Animation Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <img
-              src={receptionHero}
-              alt="Lifetrek Medical Reception"
-              className="w-full rounded-lg shadow-2xl"
-            />
+          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+            <div>
+              <img
+                src={receptionHero}
+                alt="Lifetrek Medical Reception"
+                className="w-full rounded-lg shadow-2xl"
+              />
+            </div>
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Precision Medical Manufacturing
+              </h2>
+              <RotatingImplant />
+            </div>
           </div>
         </div>
       </section>
@@ -154,7 +166,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Products Preview Section */}
+      {/* Products Preview Section with 3D Animation */}
       <section className="py-20 bg-gradient-to-b from-secondary/30 to-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -162,11 +174,15 @@ export default function Home() {
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto"></div>
           </div>
 
+          <div className="mb-12 max-w-5xl mx-auto">
+            <FloatingParts />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
-                src={surgicalInstruments}
-                alt="Surgical Instruments"
+                src={medicalScrew}
+                alt="Medical Implants"
                 className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex items-end p-6">
@@ -176,7 +192,7 @@ export default function Home() {
 
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
-                src={productDisplay}
+                src={surgicalInstrumentsSet}
                 alt="Medical Products"
                 className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
               />
@@ -187,8 +203,8 @@ export default function Home() {
 
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
-                src={productApplications}
-                alt="Product Applications"
+                src={dentalParts}
+                alt="Dental Products"
                 className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex items-end p-6">
@@ -207,7 +223,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Quality Preview Section */}
+      {/* Quality Preview Section with 3D Animation */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -216,6 +232,10 @@ export default function Home() {
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("quality.intro")}
             </p>
+          </div>
+
+          <div className="mb-12 max-w-5xl mx-auto">
+            <DNA3D />
           </div>
 
           {/* Certifications */}
@@ -301,22 +321,29 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
+      {/* Final CTA Section with 3D Globe */}
       <section className="relative py-20 bg-gradient-to-br from-primary via-primary-hover to-accent text-primary-foreground overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-accent-orange rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
         </div>
-        <div className="relative container mx-auto px-4 text-center">
-          <div className="w-24 h-1 bg-gradient-to-r from-accent-orange via-primary-foreground to-accent mx-auto mb-6"></div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            {t("about.mission.text")}
-          </h2>
-          <Link to="/contact">
-            <Button size="lg" variant="secondary" className="shadow-xl">
-              {t("nav.contact")}
-            </Button>
-          </Link>
+        <div className="relative container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+            <div className="text-center lg:text-left">
+              <div className="w-24 h-1 bg-gradient-to-r from-accent-orange via-primary-foreground to-accent mb-6 mx-auto lg:mx-0"></div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                {t("about.mission.text")}
+              </h2>
+              <Link to="/contact">
+                <Button size="lg" variant="secondary" className="shadow-xl">
+                  {t("nav.contact")}
+                </Button>
+              </Link>
+            </div>
+            <div className="hidden lg:block">
+              <MedicalGlobe />
+            </div>
+          </div>
         </div>
       </section>
     </div>
