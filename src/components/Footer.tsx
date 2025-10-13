@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo.png";
 
@@ -18,32 +17,29 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">{t("nav.contact")}</h3>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <a href="mailto:contact@lifetrek-medical.com" className="hover:text-primary transition-colors">
+            <h3 className="font-bold mb-4 text-foreground">{t("nav.contact")}</h3>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <div>
+                <a href="mailto:contact@lifetrek-medical.com" className="hover:text-primary transition-colors block">
                   contact@lifetrek-medical.com
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <a href="tel:+551939367193" className="hover:text-primary transition-colors">
+              <div>
+                <a href="tel:+551939367193" className="hover:text-primary transition-colors block">
                   +55 19 3936-7193
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>{t("contact.location")}</span>
+              <div>
+                <span className="block">{t("contact.location")}</span>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">{t("quality.certifications")}</h3>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <div>{t("quality.iso")}</div>
-              <div>{t("quality.anvisa")}</div>
+            <h3 className="font-bold mb-4 text-foreground">{t("quality.certifications")}</h3>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <div className="block">{t("quality.iso")}</div>
+              <div className="block">{t("quality.anvisa")}</div>
             </div>
           </div>
         </div>

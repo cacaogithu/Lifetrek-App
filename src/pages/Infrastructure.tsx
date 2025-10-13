@@ -1,5 +1,4 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Building2, Cpu, Users, Sparkles } from "lucide-react";
 import cleanroom from "@/assets/facility/cleanroom.jpg";
 import reception from "@/assets/facility/reception.jpg";
 import citizenL20 from "@/assets/equipment/citizen.png";
@@ -84,26 +83,25 @@ export default function Infrastructure() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-32">
+        <div className="absolute inset-0 bg-[image:var(--gradient-subtle)] opacity-30" />
+        <div className="container mx-auto px-4 relative z-10">
+          <h1 className="font-bold animate-fade-in">
             {t("infrastructure.title")}
           </h1>
         </div>
       </section>
 
       {/* Cleanrooms */}
-      <section className="py-20">
+      <section className="py-32">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
             <div>
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">
-                <Sparkles className="h-8 w-8 text-accent" />
-              </div>
-              <h2 className="text-3xl font-bold mb-4">
+              <div className="h-1 w-16 bg-gradient-to-r from-accent to-accent/50 mb-8 rounded-full" />
+              <h2 className="text-3xl lg:text-4xl font-bold mb-6">
                 {t("infrastructure.cleanrooms.title")}
               </h2>
-              <p className="text-lg text-muted-foreground mb-6">
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                 {t("infrastructure.cleanrooms.text")}
               </p>
             </div>
@@ -111,28 +109,26 @@ export default function Infrastructure() {
               <img
                 src={cleanroom}
                 alt="ISO 7 Cleanroom"
-                className="rounded-lg shadow-2xl"
+                className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
               />
             </div>
           </div>
 
           {/* Equipment */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
               <img
                 src={reception}
                 alt="Facility Reception"
-                className="rounded-lg shadow-2xl"
+                className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
-                <Cpu className="h-8 w-8 text-primary" />
-              </div>
-              <h2 className="text-3xl font-bold mb-4">
+              <div className="h-1 w-16 bg-gradient-to-r from-primary to-primary/50 mb-8 rounded-full" />
+              <h2 className="text-3xl lg:text-4xl font-bold mb-6">
                 {t("infrastructure.equipment.title")}
               </h2>
-              <p className="text-lg text-muted-foreground mb-6">
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                 {t("infrastructure.equipment.text")}
               </p>
             </div>
@@ -141,29 +137,25 @@ export default function Infrastructure() {
       </section>
 
       {/* Key Highlights */}
-      <section className="py-20 bg-gradient-to-b from-background to-secondary/30">
+      <section className="py-32 bg-[image:var(--gradient-premium)]">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="text-center p-8 bg-card rounded-lg shadow-lg">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-                <Building2 className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="text-center p-10 lg:p-12 bg-card rounded-2xl shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-premium)] transition-all duration-500 hover:-translate-y-1 border border-border/50">
+              <div className="h-1 w-12 bg-gradient-to-r from-primary to-primary/50 mx-auto mb-6 rounded-full" />
+              <h3 className="text-2xl font-bold mb-4">
                 {t("infrastructure.technology")}
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-lg leading-relaxed">
                 Latest generation CNC equipment and advanced manufacturing systems
               </p>
             </div>
 
-            <div className="text-center p-8 bg-card rounded-lg shadow-lg">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-4">
-                <Users className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">
+            <div className="text-center p-10 lg:p-12 bg-card rounded-2xl shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-premium)] transition-all duration-500 hover:-translate-y-1 border border-border/50">
+              <div className="h-1 w-12 bg-gradient-to-r from-accent to-accent/50 mx-auto mb-6 rounded-full" />
+              <h3 className="text-2xl font-bold mb-4">
                 {t("infrastructure.team")}
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-lg leading-relaxed">
                 Expert professionals dedicated to excellence and precision
               </p>
             </div>
@@ -172,31 +164,31 @@ export default function Infrastructure() {
       </section>
 
       {/* CNC Machines */}
-      <section className="py-20 bg-background">
+      <section className="py-32 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4">
+          <h2 className="font-bold text-center mb-6">
             CNC Manufacturing Equipment
           </h2>
-          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+          <p className="text-center text-muted-foreground text-lg md:text-xl mb-20 max-w-3xl mx-auto leading-relaxed">
             State-of-the-art precision machining equipment for high-quality medical device manufacturing
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
             {cncMachines.map((machine, index) => (
               <div
                 key={index}
-                className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+                className="group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-premium)] transition-all duration-500 hover:-translate-y-2 border border-border/50"
               >
-                <div className="aspect-square bg-secondary/30 flex items-center justify-center p-4">
+                <div className="aspect-square bg-gradient-to-br from-secondary/50 to-secondary/20 flex items-center justify-center p-6">
                   <img
                     src={machine.image}
                     alt={machine.name}
-                    className="w-full h-full object-cover rounded"
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-base mb-1">{machine.name}</h3>
-                  <p className="text-xs text-muted-foreground">{machine.category}</p>
+                <div className="p-6">
+                  <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">{machine.name}</h3>
+                  <p className="text-sm text-muted-foreground">{machine.category}</p>
                 </div>
               </div>
             ))}

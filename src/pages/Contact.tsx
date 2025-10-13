@@ -3,7 +3,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import exterior from "@/assets/facility/exterior.jpg";
 
@@ -52,20 +51,21 @@ export default function Contact() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-32">
+        <div className="absolute inset-0 bg-[image:var(--gradient-subtle)] opacity-30" />
+        <div className="container mx-auto px-4 relative z-10">
+          <h1 className="font-bold animate-fade-in">
             {t("contact.title")}
           </h1>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-20">
+      <section className="py-32">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Form */}
-            <div>
+            <div className="bg-card p-10 lg:p-12 rounded-2xl shadow-[var(--shadow-elevated)] border border-border/50">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -126,60 +126,44 @@ export default function Contact() {
 
                 <Button type="submit" size="lg" className="w-full">
                   {t("contact.form.submit")}
-                  <Send className="ml-2 h-5 w-5" />
                 </Button>
               </form>
             </div>
 
             {/* Contact Info & Image */}
-            <div className="space-y-8">
+            <div className="space-y-10">
               <div>
                 <img
                   src={exterior}
                   alt="Lifetrek Medical Facility"
-                  className="rounded-lg shadow-2xl mb-8"
+                  className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
                 />
               </div>
 
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Mail className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{t("contact.info.email")}</h3>
-                    <a
-                      href="mailto:contact@lifetrek-medical.com"
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      contact@lifetrek-medical.com
-                    </a>
-                  </div>
+              <div className="space-y-8 bg-card p-10 rounded-2xl shadow-[var(--shadow-soft)] border border-border/50">
+                <div className="border-l-4 border-primary pl-6">
+                  <h3 className="font-bold text-lg mb-2">{t("contact.info.email")}</h3>
+                  <a
+                    href="mailto:contact@lifetrek-medical.com"
+                    className="text-muted-foreground text-lg hover:text-primary transition-colors"
+                  >
+                    contact@lifetrek-medical.com
+                  </a>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                    <Phone className="h-6 w-6 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{t("contact.info.phone")}</h3>
-                    <a
-                      href="tel:+551939367193"
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      +55 19 3936-7193
-                    </a>
-                  </div>
+                <div className="border-l-4 border-accent pl-6">
+                  <h3 className="font-bold text-lg mb-2">{t("contact.info.phone")}</h3>
+                  <a
+                    href="tel:+551939367193"
+                    className="text-muted-foreground text-lg hover:text-primary transition-colors"
+                  >
+                    +55 19 3936-7193
+                  </a>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-accent-orange/10 flex items-center justify-center">
-                    <MapPin className="h-6 w-6 text-accent-orange" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{t("contact.info.address")}</h3>
-                    <p className="text-muted-foreground">{t("contact.location")}</p>
-                  </div>
+                <div className="border-l-4 border-accent-orange pl-6">
+                  <h3 className="font-bold text-lg mb-2">{t("contact.info.address")}</h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed">{t("contact.location")}</p>
                 </div>
               </div>
             </div>
