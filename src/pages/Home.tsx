@@ -24,6 +24,16 @@ import { DNA3D } from "@/components/3d/DNA3D";
 import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
 import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import vincula from "@/assets/clients/vincula.png";
+import techimport from "@/assets/clients/techimport.png";
+import traumec from "@/assets/clients/traumec.png";
+import ultradent from "@/assets/clients/ultradent.png";
+import toride from "@/assets/clients/toride.png";
+import react from "@/assets/clients/react.png";
+import razek from "@/assets/clients/razek.png";
+import russer from "@/assets/clients/russer.png";
+import ossea from "@/assets/clients/ossea.jpg";
+import orthometric from "@/assets/clients/orthometric.png";
 const heroImages = [reception, cleanroom, exterior, medicalScrew];
 export default function Home() {
   const {
@@ -143,6 +153,52 @@ export default function Home() {
                 See All Industries We Serve
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Clients Section */}
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-background to-secondary/20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Trusted by Leading Medical Device Companies</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4"></div>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
+              Partnering with innovative companies to deliver precision medical components worldwide
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-6xl mx-auto items-center">
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={vincula} alt="Vincula - Medical device manufacturer client" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={techimport} alt="TechImport - Medical technology client" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={traumec} alt="Traumec Health Technology - Medical equipment client" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={ultradent} alt="Ultradent Products - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={toride} alt="Toride - Medical manufacturing client" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={react} alt="React - Creation in health medical technology" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={razek} alt="Razek - Medical device solutions client" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={russer} alt="Russer - Medical equipment manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={ossea} alt="Óssea Medical Technology - Orthopedic implant manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={orthometric} alt="Orthometric - Orthopedic solutions provider" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
           </div>
         </div>
       </section>
