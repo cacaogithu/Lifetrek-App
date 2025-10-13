@@ -11,6 +11,8 @@ import tornosGT13 from "@/assets/equipment/tornos-gt13.png";
 import doosan from "@/assets/equipment/doosan.png";
 import espritCam from "@/assets/equipment/esprit-cam.png";
 import robodrill from "@/assets/equipment/robodrill.png";
+import laserMarking from "@/assets/equipment/laser-marking.png";
+import electropolishLine from "@/assets/equipment/electropolish-line.jpg";
 
 export default function Infrastructure() {
   const { t } = useLanguage();
@@ -63,6 +65,19 @@ export default function Infrastructure() {
       image: espritCam,
       name: "ESPRIT CAM System",
       category: "CAD/CAM Software",
+    },
+  ];
+
+  const finishingEquipment = [
+    {
+      image: electropolishLine,
+      name: "Electropolish Line",
+      category: "Surface Treatment System",
+    },
+    {
+      image: laserMarking,
+      name: "Laser Marking",
+      category: "Product Identification System",
     },
   ];
 
@@ -192,7 +207,7 @@ export default function Infrastructure() {
             CAD/CAM Software
           </h3>
           
-          <div className="grid grid-cols-1 max-w-md mx-auto">
+          <div className="grid grid-cols-1 max-w-md mx-auto mb-12">
             {software.map((item, index) => (
               <div
                 key={index}
@@ -203,6 +218,32 @@ export default function Infrastructure() {
                     src={item.image}
                     alt={item.name}
                     className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="p-4 text-center">
+                  <h3 className="font-bold text-lg mb-1">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground">{item.category}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Finishing Equipment */}
+          <h3 className="text-2xl font-bold text-center mb-8">
+            Surface Finishing & Marking
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {finishingEquipment.map((item, index) => (
+              <div
+                key={index}
+                className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+              >
+                <div className="aspect-video bg-secondary/30 flex items-center justify-center p-6">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover rounded"
                   />
                 </div>
                 <div className="p-4 text-center">

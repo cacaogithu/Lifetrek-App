@@ -9,6 +9,8 @@ import polimento from "@/assets/metrology/polimento.png";
 import cortadora from "@/assets/metrology/cortadora.png";
 import embutidora from "@/assets/metrology/embutidora.png";
 import hardnessVickers from "@/assets/metrology/hardness-vickers.png";
+import labOverview from "@/assets/metrology/lab-overview.png";
+import olympusMicroscope from "@/assets/metrology/olympus-microscope.png";
 
 export default function Quality() {
   const { t } = useLanguage();
@@ -164,6 +166,24 @@ export default function Quality() {
       {/* Metrology Equipment */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
+          {/* Lab Overview Images */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-6xl mx-auto">
+            <div className="rounded-lg overflow-hidden shadow-2xl">
+              <img
+                src={labOverview}
+                alt="Metrology Laboratory Overview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="rounded-lg overflow-hidden shadow-2xl">
+              <img
+                src={olympusMicroscope}
+                alt="Olympus Microscope System"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
           <h2 className="text-3xl font-bold text-center mb-4">
             Metrology Laboratory Equipment
           </h2>
