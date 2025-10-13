@@ -31,6 +31,16 @@ const translations = {
     "home.benefits.compliance.text": "ISO 13485 & ANVISA certified, ensuring your products meet global medical device standards.",
     "home.benefits.precision": "Zero-Defect Manufacturing",
     "home.benefits.precision.text": "Advanced metrology lab with ZEISS equipment guarantees dimensional accuracy on every part.",
+    "home.stats.experience": "Years Experience",
+    "home.stats.partners": "Global Partners",
+    "home.stats.certified": "ISO Certified",
+    "home.whyChoose.title": "Why Leading Medical Device Companies Choose Lifetrek",
+    "home.whyChoose.subtitle": "Eliminate supplier risks and accelerate your product development timeline",
+    "home.whoWeServe.title": "Who We Serve",
+    "home.whoWeServe.subtitle": "Trusted by leading medical device manufacturers worldwide",
+    "home.whoWeServe.cta": "See All Industries We Serve",
+    "home.clients.title": "Trusted by Leading Medical Device Companies",
+    "home.clients.subtitle": "Partnering with innovative companies to deliver precision medical components worldwide",
     
     // About
     "about.title": "About Us",
@@ -185,6 +195,16 @@ const translations = {
     "home.benefits.compliance.text": "Certificados ISO 13485 e ANVISA, garantindo que seus produtos atendam aos padrões globais de dispositivos médicos.",
     "home.benefits.precision": "Fabricação com Zero Defeitos",
     "home.benefits.precision.text": "Laboratório de metrologia avançado com equipamento ZEISS garante precisão dimensional em cada peça.",
+    "home.stats.experience": "Anos de Experiência",
+    "home.stats.partners": "Parceiros Globais",
+    "home.stats.certified": "Certificado ISO",
+    "home.whyChoose.title": "Por Que as Principais Empresas de Dispositivos Médicos Escolhem a Lifetrek",
+    "home.whyChoose.subtitle": "Elimine riscos de fornecedores e acelere o cronograma de desenvolvimento do seu produto",
+    "home.whoWeServe.title": "Quem Atendemos",
+    "home.whoWeServe.subtitle": "Confiado pelos principais fabricantes de dispositivos médicos em todo o mundo",
+    "home.whoWeServe.cta": "Veja Todas as Indústrias que Atendemos",
+    "home.clients.title": "Confiado pelas Principais Empresas de Dispositivos Médicos",
+    "home.clients.subtitle": "Fazendo parcerias com empresas inovadoras para entregar componentes médicos de precisão em todo o mundo",
     
     // About
     "about.title": "Quem Somos",

@@ -102,7 +102,7 @@ export const AIChatbot = () => {
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
-          className="fixed bottom-6 right-6 h-14 w-14 md:h-14 md:w-14 sm:h-12 sm:w-12 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-primary"
+          className="fixed bottom-6 left-6 h-14 w-14 md:h-14 md:w-14 sm:h-12 sm:w-12 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-primary"
         >
           <MessageCircle className="h-6 w-6 md:h-6 md:w-6 sm:h-5 sm:w-5" />
         </Button>
@@ -110,7 +110,7 @@ export const AIChatbot = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col z-50 animate-scale-in">
+        <div className="fixed bottom-6 left-6 w-96 h-[600px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col z-50 animate-scale-in">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-primary text-primary-foreground rounded-t-2xl">
             <div className="flex items-center gap-2">

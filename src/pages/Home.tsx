@@ -104,26 +104,25 @@ export default function Home() {
   return <div className="min-h-screen">
       {/* Hero Section with Slideshow and Parallax */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-        <div style={{ transform: `translateY(${parallaxOffset}px)` }}>
-          {heroImages.map((image, index) => (
-            <div 
-              key={index} 
-              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
-            >
+        {heroImages.map((image, index) => (
+          <div 
+            key={index} 
+            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
+          >
             <img 
               src={image} 
               alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
               className="w-full h-full object-cover scale-110" 
               loading={index === 0 ? "eager" : "lazy"} 
               width="1920" 
-              height="600" 
+              height="600"
+              style={{ transform: `translateY(${parallaxOffset}px)` }}
             />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
-              {/* Beautiful Blue Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
-            </div>
-          ))}
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
+            {/* Beautiful Blue Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
+          </div>
+        ))}
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10">
@@ -167,7 +166,7 @@ export default function Home() {
                 30+
               </div>
               <div className="text-base md:text-lg font-semibold text-foreground">
-                Years Experience
+                {t("home.stats.experience")}
               </div>
             </div>
             
@@ -176,7 +175,7 @@ export default function Home() {
                 30+
               </div>
               <div className="text-base md:text-lg font-semibold text-foreground">
-                Global Partners
+                {t("home.stats.partners")}
               </div>
             </div>
             
@@ -185,7 +184,7 @@ export default function Home() {
                 100%
               </div>
               <div className="text-base md:text-lg font-semibold text-foreground">
-                ISO Certified
+                {t("home.stats.certified")}
               </div>
             </div>
           </div>
@@ -203,9 +202,9 @@ export default function Home() {
             ref={benefitsAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Why Leading Medical Device Companies Choose Lifetrek</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.whyChoose.title")}</h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Eliminate supplier risks and accelerate your product development timeline
+              {t("home.whyChoose.subtitle")}
             </p>
           </div>
           <div ref={benefitsStagger.containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -234,9 +233,9 @@ export default function Home() {
       <section className="py-16 sm:py-20 md:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Who We Serve</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.whoWeServe.title")}</h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Trusted by leading medical device manufacturers worldwide
+              {t("home.whoWeServe.subtitle")}
             </p>
           </div>
 
@@ -266,7 +265,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <Link to="/clients">
               <MagneticButton variant="outline" size="lg">
-                See All Industries We Serve
+                {t("home.whoWeServe.cta")}
               </MagneticButton>
             </Link>
           </div>
@@ -280,10 +279,10 @@ export default function Home() {
             ref={clientsAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Trusted by Leading Medical Device Companies</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.clients.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Partnering with innovative companies to deliver precision medical components worldwide
+              {t("home.clients.subtitle")}
             </p>
           </div>
           
