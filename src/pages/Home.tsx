@@ -28,7 +28,6 @@ import { useParallax, useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
 import { StatCard } from "@/components/StatCard";
 import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
-import { TestimonialsCarousel } from "@/components/TestimonialsCarousel";
 import { InteractiveCapabilities } from "@/components/InteractiveCapabilities";
 import { MagneticButton } from "@/components/MagneticButton";
 import { BlobBackground } from "@/components/BlobBackground";
@@ -394,9 +393,6 @@ export default function Home() {
 
       {/* Manufacturing Timeline */}
       <ManufacturingTimeline />
-
-      {/* Testimonials Carousel */}
-      <TestimonialsCarousel />
 
       {/* Final CTA Section with 3D Globe */}
       <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary via-primary-hover to-accent text-primary-foreground overflow-hidden">

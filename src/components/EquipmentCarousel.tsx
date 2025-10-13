@@ -139,6 +139,7 @@ export const EquipmentCarousel = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory>("All");
   const animationRef = useRef<number>();
+  const isUserInteractingRef = useRef(false);
 
   const categories: EquipmentCategory[] = ["All", "Metrology", "CNC", "Sample Prep", "Finishing"];
 
@@ -154,7 +155,7 @@ export const EquipmentCarousel = () => {
     const scrollSpeed = 0.665;
 
     const animate = () => {
-      if (!isPaused) {
+      if (!isPaused && !isUserInteractingRef.current) {
         scrollPosition += scrollSpeed;
         
         if (scrollPosition >= scrollContainer.scrollWidth / 2) {
@@ -168,10 +169,30 @@ export const EquipmentCarousel = () => {
 
     animationRef.current = requestAnimationFrame(animate);
 
+    // Handle user interaction
+    const handleInteractionStart = () => {
+      isUserInteractingRef.current = true;
+    };
+
+    const handleInteractionEnd = () => {
+      setTimeout(() => {
+        isUserInteractingRef.current = false;
+      }, 1000);
+    };
+
+    scrollContainer.addEventListener('touchstart', handleInteractionStart);
+    scrollContainer.addEventListener('mousedown', handleInteractionStart);
+    scrollContainer.addEventListener('touchend', handleInteractionEnd);
+    scrollContainer.addEventListener('mouseup', handleInteractionEnd);
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      scrollContainer.removeEventListener('touchstart', handleInteractionStart);
+      scrollContainer.removeEventListener('mousedown', handleInteractionStart);
+      scrollContainer.removeEventListener('touchend', handleInteractionEnd);
+      scrollContainer.removeEventListener('mouseup', handleInteractionEnd);
     };
   }, [isPaused, filteredItems]);
 
@@ -207,8 +228,11 @@ export const EquipmentCarousel = () => {
       
       <div 
         ref={scrollRef}
-        className="flex gap-6 overflow-x-hidden whitespace-nowrap cursor-pointer"
-        style={{ scrollBehavior: 'auto' }}
+        className="flex gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide cursor-grab active:cursor-grabbing"
+        style={{ 
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+        }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
