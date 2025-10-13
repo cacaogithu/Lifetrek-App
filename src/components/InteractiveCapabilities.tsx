@@ -1,6 +1,13 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useState } from "react";
 import { Microscope, Cog, Sparkles, Shield } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface Capability {
   id: string;
@@ -67,47 +74,58 @@ export const InteractiveCapabilities = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {capabilities.map((capability, index) => {
-            const isActive = activeId === capability.id;
-            
-            return (
-              <div
-                key={capability.id}
-                className={`glass-card p-6 rounded-xl cursor-pointer transition-all duration-500 hover:scale-105 ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                } ${isActive ? 'ring-2 ring-primary shadow-[var(--shadow-premium)]' : ''}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-                onMouseEnter={() => setActiveId(capability.id)}
-                onMouseLeave={() => setActiveId(null)}
-              >
-                <div className={`text-4xl font-bold mb-4 ${capability.color} transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
-                  {capability.stat}
-                </div>
-                
-                <h3 className="text-xl font-bold mb-3">{capability.title}</h3>
-                
-                <div 
-                  className="overflow-hidden transition-all duration-500"
-                  style={{ 
-                    maxHeight: isActive ? '200px' : '0px',
-                    opacity: isActive ? 1 : 0 
-                  }}
-                >
-                  <p className="text-muted-foreground leading-relaxed">
-                    {capability.description}
-                  </p>
-                </div>
-                
-                {!isActive && (
-                  <p className="text-sm text-muted-foreground/70 mt-2">
-                    Hover for details
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full max-w-7xl mx-auto"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
+            {capabilities.map((capability, index) => {
+              const isActive = activeId === capability.id;
+              
+              return (
+                <CarouselItem key={capability.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <div
+                    className={`glass-card p-6 rounded-xl cursor-pointer transition-all duration-500 hover:scale-105 h-full ${
+                      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                    } ${isActive ? 'ring-2 ring-primary shadow-[var(--shadow-premium)]' : ''}`}
+                    style={{ transitionDelay: `${index * 100}ms` }}
+                    onMouseEnter={() => setActiveId(capability.id)}
+                    onMouseLeave={() => setActiveId(null)}
+                  >
+                    <div className={`text-4xl font-bold mb-4 ${capability.color} transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
+                      {capability.stat}
+                    </div>
+                    
+                    <h3 className="text-xl font-bold mb-3">{capability.title}</h3>
+                    
+                    <div 
+                      className="overflow-hidden transition-all duration-500"
+                      style={{ 
+                        maxHeight: isActive ? '200px' : '0px',
+                        opacity: isActive ? 1 : 0 
+                      }}
+                    >
+                      <p className="text-muted-foreground leading-relaxed">
+                        {capability.description}
+                      </p>
+                    </div>
+                    
+                    {!isActive && (
+                      <p className="text-sm text-muted-foreground/70 mt-2">
+                        Hover for details
+                      </p>
+                    )}
+                  </div>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex" />
+          <CarouselNext className="hidden md:flex" />
+        </Carousel>
       </div>
     </section>
   );
