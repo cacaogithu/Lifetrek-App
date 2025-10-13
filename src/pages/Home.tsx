@@ -362,7 +362,7 @@ export default function Home() {
               <div className="mb-6 flex justify-center">
                 <img src={isoLogo} alt="ISO 13485:2016 certification for medical device quality management" className="h-20 sm:h-24 object-contain group-hover:scale-110 transition-transform" loading="lazy" width="160" height="96" />
               </div>
-              <h3 className="text-lg font-bold mb-2">{t("quality.iso")}</h3>
+              <h3 className="text-lg font-bold mb-2">ISO 13485:2016</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Medical Device Quality Management
               </p>
@@ -372,7 +372,7 @@ export default function Home() {
               <div className="mb-6 flex justify-center">
                 <img src={anvisaLogo} alt="ANVISA Brazilian Health Regulatory Agency certification" className="h-20 sm:h-24 object-contain group-hover:scale-110 transition-transform" loading="lazy" width="160" height="96" />
               </div>
-              <h3 className="text-lg font-bold mb-2">{t("quality.anvisa")}</h3>
+              <h3 className="text-lg font-bold mb-2">ANVISA Certified</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Brazilian Health Regulatory Agency
               </p>

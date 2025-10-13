@@ -45,7 +45,7 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold mb-4 text-foreground">{t("quality.certifications")}</h3>
+            <h3 className="font-bold mb-4 text-foreground">Certifications</h3>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
                 <img 
@@ -56,7 +56,7 @@ export const Footer = () => {
                   width="80"
                   height="48"
                 />
-                <span className="text-sm font-medium text-foreground">{t("quality.iso")}</span>
+                <span className="text-sm font-medium text-foreground">ISO 13485:2016</span>
               </div>
               <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
                 <img 
@@ -67,7 +67,7 @@ export const Footer = () => {
                   width="80"
                   height="48"
                 />
-                <span className="text-sm font-medium text-foreground">{t("quality.anvisa")}</span>
+                <span className="text-sm font-medium text-foreground">ANVISA Certified</span>
               </div>
             </div>
           </div>

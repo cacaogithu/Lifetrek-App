@@ -99,6 +99,19 @@ const translations = {
     "capabilities.finishing.benefit": "Enhanced Biocompatibility",
     "capabilities.finishing.text": "In-house electropolishing and passivation deliver smooth, corrosion-resistant surfaces that meet ASTM standards for implantable devices.",
     
+    // Quality
+    "quality.title": "Quality & Compliance",
+    "quality.intro": "Our commitment to quality excellence is demonstrated through international certifications, advanced metrology capabilities, and rigorous process controls.",
+    "quality.certifications": "Certifications",
+    "quality.iso": "ISO 13485:2016",
+    "quality.anvisa": "ANVISA Certified",
+    "quality.continuous": "Continuous Improvement",
+    "quality.traceability": "Full Batch Traceability",
+    "quality.metrology.title": "Advanced Metrology Lab",
+    "quality.metrology.text": "State-of-the-art measurement equipment including ZEISS Contura CMM, Hardness Vickers, and optical measurement systems verify every critical dimension.",
+    "quality.electropolishing.title": "Medical-Grade Surface Treatment",
+    "quality.electropolishing.text": "In-house electropolishing and passivation deliver smooth, corrosion-resistant surfaces that meet ASTM standards for implantable devices.",
+    
     // Culture
     "culture.title": "Our Culture",
     "culture.cleanliness": "Cleanliness, organization, and continuous professional development are the foundations of our culture.",
@@ -239,6 +252,19 @@ const translations = {
     "capabilities.finishing.title": "Tratamento de Superfície de Grau Médico",
     "capabilities.finishing.benefit": "Biocompatibilidade Aprimorada",
     "capabilities.finishing.text": "Eletropolimento e passivação internos entregam superfícies lisas e resistentes à corrosão que atendem aos padrões ASTM para dispositivos implantáveis.",
+    
+    // Quality
+    "quality.title": "Qualidade e Conformidade",
+    "quality.intro": "Nosso compromisso com a excelência em qualidade é demonstrado através de certificações internacionais, capacidades avançadas de metrologia e controles rigorosos de processo.",
+    "quality.certifications": "Certificações",
+    "quality.iso": "ISO 13485:2016",
+    "quality.anvisa": "Certificado ANVISA",
+    "quality.continuous": "Melhoria Contínua",
+    "quality.traceability": "Rastreabilidade Completa de Lote",
+    "quality.metrology.title": "Laboratório de Metrologia Avançado",
+    "quality.metrology.text": "Equipamentos de medição de última geração incluindo CMM ZEISS Contura, Hardness Vickers e sistemas de medição óptica verificam cada dimensão crítica.",
+    "quality.electropolishing.title": "Tratamento de Superfície de Grau Médico",
+    "quality.electropolishing.text": "Eletropolimento e passivação internos entregam superfícies lisas e resistentes à corrosão que atendem aos padrões ASTM para dispositivos implantáveis.",
     
     // Culture
     "culture.title": "Nossa Cultura",
