@@ -6,6 +6,9 @@ import reception from "@/assets/facility/reception.jpg";
 import cleanroom from "@/assets/facility/cleanroom.jpg";
 import exterior from "@/assets/facility/exterior.jpg";
 import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
+import productDisplay from "@/assets/products/product-display.png";
+import isoLogo from "@/assets/certifications/iso.jpg";
+import anvisaLogo from "@/assets/certifications/anvisa.png";
 import { useState, useEffect } from "react";
 
 const heroImages = [reception, cleanroom, exterior, surgicalInstruments];
@@ -105,7 +108,140 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* About Us Preview Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("about.title")}</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              {t("about.intro")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+              <h3 className="text-2xl font-bold mb-4">{t("about.mission.title")}</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("about.mission.text")}
+              </p>
+            </div>
+
+            <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+              <h3 className="text-2xl font-bold mb-4">{t("about.vision.title")}</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("about.vision.text")}
+              </p>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <Link to="/about">
+              <Button variant="outline">
+                {t("nav.about")}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Products Preview Section */}
+      <section className="py-20 bg-gradient-to-b from-secondary/30 to-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("products.title")}</h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto mb-12">
+            <img
+              src={productDisplay}
+              alt="Medical Products Overview"
+              className="w-full rounded-lg shadow-2xl"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="bg-card p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-xl font-bold mb-3">{t("products.medical.title")}</h3>
+              <p className="text-muted-foreground">{t("products.medical.text")}</p>
+            </div>
+            <div className="bg-card p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-xl font-bold mb-3">{t("products.instruments.title")}</h3>
+              <p className="text-muted-foreground">{t("products.instruments.text")}</p>
+            </div>
+            <div className="bg-card p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-xl font-bold mb-3">{t("products.dental.title")}</h3>
+              <p className="text-muted-foreground">{t("products.dental.text")}</p>
+            </div>
+            <div className="bg-card p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
+              <h3 className="text-xl font-bold mb-3">{t("products.veterinary.title")}</h3>
+              <p className="text-muted-foreground">{t("products.veterinary.text")}</p>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <Link to="/products">
+              <Button variant="outline">
+                {t("nav.products")}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Quality Preview Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("quality.title")}</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              {t("quality.intro")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto mb-8">
+            <div className="bg-card p-6 rounded-lg shadow-lg text-center">
+              <div className="mb-4 flex justify-center">
+                <img
+                  src={isoLogo}
+                  alt="ISO 13485:2016"
+                  className="h-24 object-contain"
+                />
+              </div>
+              <h3 className="text-lg font-bold">{t("quality.iso")}</h3>
+              <p className="text-sm text-muted-foreground mt-2">
+                Medical Device Quality Management
+              </p>
+            </div>
+
+            <div className="bg-card p-6 rounded-lg shadow-lg text-center">
+              <div className="mb-4 flex justify-center">
+                <img
+                  src={anvisaLogo}
+                  alt="ANVISA"
+                  className="h-24 object-contain"
+                />
+              </div>
+              <h3 className="text-lg font-bold">{t("quality.anvisa")}</h3>
+              <p className="text-sm text-muted-foreground mt-2">
+                Brazilian Health Regulatory Agency
+              </p>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link to="/quality">
+              <Button variant="outline">
+                {t("nav.quality")}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
