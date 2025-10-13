@@ -5,9 +5,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import reception from "@/assets/facility/reception.jpg";
 import cleanroom from "@/assets/facility/cleanroom.jpg";
 import exterior from "@/assets/facility/exterior.jpg";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import { useState, useEffect } from "react";
 
-const heroImages = [reception, cleanroom, exterior];
+const heroImages = [reception, cleanroom, exterior, surgicalInstruments];
 
 export default function Home() {
   const { t } = useLanguage();

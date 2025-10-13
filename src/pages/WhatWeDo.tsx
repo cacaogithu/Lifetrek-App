@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Cog, Sparkles, CheckCircle2 } from "lucide-react";
-import cleanroom from "@/assets/facility/cleanroom.jpg";
+import productApplications from "@/assets/products/product-applications.png";
 
 export default function WhatWeDo() {
   const { t } = useLanguage();
@@ -55,8 +55,8 @@ export default function WhatWeDo() {
 
             <div className="relative">
               <img
-                src={cleanroom}
-                alt="Cleanroom Technology"
+                src={productApplications}
+                alt="Medical Product Applications"
                 className="rounded-lg shadow-2xl"
               />
             </div>
