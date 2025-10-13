@@ -6,8 +6,8 @@ import receptionHero from "@/assets/facility/reception-hero.png";
 import cleanroom from "@/assets/facility/cleanroom.jpg";
 import exterior from "@/assets/facility/exterior.jpg";
 import medicalScrew from "@/assets/products/medical-screw.png";
-import surgicalInstrumentsSet from "@/assets/products/surgical-instruments-set.png";
-import dentalParts from "@/assets/products/dental-parts.png";
+import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.png";
+import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.png";
 import isoLogo from "@/assets/certifications/iso.jpg";
 import anvisaLogo from "@/assets/certifications/anvisa.png";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
@@ -192,8 +192,8 @@ export default function Home() {
 
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
-                src={surgicalInstrumentsSet}
-                alt="Medical Products"
+                src={medicalImplantsDiagram}
+                alt="Medical Implants"
                 className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex items-end p-6">
@@ -203,7 +203,7 @@ export default function Home() {
 
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
-                src={dentalParts}
+                src={dentalImplantsDiagram}
                 alt="Dental Products"
                 className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
               />
