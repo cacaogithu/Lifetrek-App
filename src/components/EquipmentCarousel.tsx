@@ -42,7 +42,7 @@ export const EquipmentCarousel = () => {
     if (!scrollContainer) return;
 
     let scrollPosition = 0;
-    const scrollSpeed = 0.5;
+    const scrollSpeed = 0.665; // Increased by 33% from 0.5
 
     const animate = () => {
       scrollPosition += scrollSpeed;

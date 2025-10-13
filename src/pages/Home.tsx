@@ -44,6 +44,9 @@ import hcs from "@/assets/clients/hcs.png";
 import gmi from "@/assets/clients/gmi.png";
 import plenum from "@/assets/clients/plenum.png";
 import medens from "@/assets/clients/medens.png";
+import neoortho from "@/assets/clients/neoortho.jpg";
+import oblDental from "@/assets/clients/obl-dental.jpg";
+import orthometric2 from "@/assets/clients/orthometric-2.png";
 const heroImages = [reception, cleanroom, exterior, medicalScrew];
 export default function Home() {
   const {
@@ -238,6 +241,15 @@ export default function Home() {
             </div>
             <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
               <img src={medens} alt="Medens - Medical device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={neoortho} alt="Neoortho - Orthopedic device solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={oblDental} alt="OBL Dental - Dental equipment provider" className="max-h-16 w-auto object-contain" loading="lazy" />
+            </div>
+            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+              <img src={orthometric2} alt="Orthometric - Medical solutions partner" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
           </div>
         </div>
