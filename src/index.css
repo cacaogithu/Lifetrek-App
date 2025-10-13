@@ -125,6 +125,7 @@ All colors MUST be HSL.
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
   
   * {
@@ -141,26 +142,42 @@ All colors MUST be HSL.
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1.2;
+    text-rendering: optimizeLegibility;
   }
 
   h1 { 
     @apply text-4xl md:text-5xl lg:text-6xl;
     letter-spacing: -0.03em;
     font-weight: 800;
+    line-height: 1.1;
   }
   h2 { 
     @apply text-3xl md:text-4xl lg:text-5xl;
     letter-spacing: -0.025em;
     font-weight: 700;
+    line-height: 1.15;
   }
   h3 { 
     @apply text-2xl md:text-3xl;
     letter-spacing: -0.02em;
+    line-height: 1.25;
   }
 
   p {
     line-height: 1.7;
     letter-spacing: 0.01em;
+    font-weight: 400;
+  }
+  
+  @media (max-width: 768px) {
+    h1 {
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    
+    p {
+      line-height: 1.65;
+    }
   }
 }
 
@@ -239,5 +256,28 @@ All colors MUST be HSL.
   .stagger-item.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+  
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .page-enter {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  .page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  
+  /* Ensure proper spacing for mobile bottom nav */
+  @media (max-width: 768px) {
+    main {
+      padding-bottom: 5rem;
+    }
   }
 }

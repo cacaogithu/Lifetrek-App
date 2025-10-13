@@ -18,9 +18,16 @@ import walter from "@/assets/equipment/walter.png";
 import robodrill from "@/assets/equipment/robodrill.png";
 import electropolishLine from "@/assets/equipment/electropolish-line.jpg";
 import laserMarking from "@/assets/equipment/laser-marking.png";
+import { PullToRefresh } from "@/components/PullToRefresh";
+import { ImageGallery } from "@/components/ImageGallery";
 
 export default function Capabilities() {
   const { t } = useLanguage();
+
+  const handleRefresh = async () => {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    window.location.reload();
+  };
 
   const capabilities = [
     {
@@ -88,7 +95,8 @@ export default function Capabilities() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16 sm:py-20 md:py-24">
         <div className="container mx-auto px-4 sm:px-6">
@@ -289,5 +297,6 @@ export default function Capabilities() {
         </div>
       </section>
     </div>
+    </PullToRefresh>
   );
 }

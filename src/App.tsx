@@ -17,6 +17,9 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Assessment from "./pages/Assessment";
 import { StickyCTA } from "./components/StickyCTA";
+import { MobileNav } from "./components/MobileNav";
+import { PageTransition } from "./components/PageTransition";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -30,21 +33,25 @@ const App = () => (
           <div className="flex flex-col min-h-screen overflow-x-hidden">
             <Header />
             <main className="flex-1 w-full">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/what-we-do" element={<WhatWeDo />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/capabilities" element={<Capabilities />} />
-                <Route path="/culture" element={<Culture />} />
-                <Route path="/clients" element={<Clients />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/assessment" element={<Assessment />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <PageTransition>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/what-we-do" element={<WhatWeDo />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/capabilities" element={<Capabilities />} />
+                  <Route path="/culture" element={<Culture />} />
+                  <Route path="/clients" element={<Clients />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/assessment" element={<Assessment />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </PageTransition>
             </main>
             <Footer />
             <StickyCTA />
+            <MobileNav />
+            <ScrollToTop />
           </div>
         </BrowserRouter>
       </LanguageProvider>
