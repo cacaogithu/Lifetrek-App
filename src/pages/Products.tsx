@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.png";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.png";
 import medicalScrew from "@/assets/products/medical-screw.png";
-import productDisplay from "@/assets/products/product-display.png";
+import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
 
 export default function Products() {
   const { t } = useLanguage();
@@ -55,7 +55,7 @@ export default function Products() {
     },
     {
       icon: PawPrint,
-      image: productDisplay,
+      image: veterinaryImplants,
       title: t("products.veterinary.title"),
       benefit: t("products.veterinary.benefit"),
       description: t("products.veterinary.text"),
@@ -115,7 +115,7 @@ export default function Products() {
                 
                 <div className={index % 2 === 1 ? "lg:order-1" : ""}>
                   <div className="relative group">
-                    <div className={`absolute -inset-4 bg-gradient-to-br ${category.color} rounded-2xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity`} />
+                    <div className={`absolute -inset-1 bg-gradient-to-br ${category.color} rounded-3xl blur-3xl opacity-10 group-hover:opacity-20 transition-opacity`} />
                     <img
                       src={category.image}
                       alt={`${category.title} - ${category.benefit}`}
