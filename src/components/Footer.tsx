@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo.png";
+import isoLogo from "@/assets/certifications/iso.jpg";
+import anvisaLogo from "@/assets/certifications/anvisa.png";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -44,9 +46,29 @@ export const Footer = () => {
 
           <div>
             <h3 className="font-bold mb-4 text-foreground">{t("quality.certifications")}</h3>
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <div className="block">{t("quality.iso")}</div>
-              <div className="block">{t("quality.anvisa")}</div>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
+                <img 
+                  src={isoLogo} 
+                  alt="ISO 13485:2016 Medical Device Quality Management certification" 
+                  className="h-12 w-auto object-contain"
+                  loading="lazy"
+                  width="80"
+                  height="48"
+                />
+                <span className="text-sm font-medium text-foreground">{t("quality.iso")}</span>
+              </div>
+              <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
+                <img 
+                  src={anvisaLogo} 
+                  alt="ANVISA Brazilian Health Regulatory Agency certification" 
+                  className="h-12 w-auto object-contain"
+                  loading="lazy"
+                  width="80"
+                  height="48"
+                />
+                <span className="text-sm font-medium text-foreground">{t("quality.anvisa")}</span>
+              </div>
             </div>
           </div>
         </div>
