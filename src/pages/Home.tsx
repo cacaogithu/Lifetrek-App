@@ -31,7 +31,7 @@ import { TestimonialsCarousel } from "@/components/TestimonialsCarousel";
 import { InteractiveCapabilities } from "@/components/InteractiveCapabilities";
 import { MagneticButton } from "@/components/MagneticButton";
 import { BlobBackground } from "@/components/BlobBackground";
-import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
+import { ClientCarousel } from "@/components/ClientCarousel";
 import vincula from "@/assets/clients/vincula.png";
 import techimport from "@/assets/clients/techimport.png";
 import traumec from "@/assets/clients/traumec.png";
@@ -68,7 +68,32 @@ export default function Home() {
   const productsAnimation = useScrollAnimation();
   const capabilitiesAnimation = useScrollAnimation();
   const benefitsStagger = useStaggerAnimation(3, { staggerDelay: 150 });
-  const clientsStagger = useStaggerAnimation(23, { staggerDelay: 50 });
+
+  const clientLogos = [
+    { src: vincula, alt: "Vincula - Medical device manufacturer client" },
+    { src: techimport, alt: "TechImport - Medical technology client" },
+    { src: traumec, alt: "Traumec Health Technology - Medical equipment client" },
+    { src: ultradent, alt: "Ultradent Products - Dental device manufacturer" },
+    { src: toride, alt: "Toride - Medical manufacturing client" },
+    { src: react, alt: "React - Creation in health medical technology" },
+    { src: razek, alt: "Razek - Medical device solutions client" },
+    { src: russer, alt: "Russer - Medical equipment manufacturer" },
+    { src: ossea, alt: "Óssea Medical Technology - Orthopedic implant manufacturer" },
+    { src: orthometric, alt: "Orthometric - Orthopedic solutions provider" },
+    { src: cpmh, alt: "CPMH - Medical device solutions" },
+    { src: evolve, alt: "Evolve - Medical technology innovation" },
+    { src: fgm, alt: "FGM Dental Group - Dental device manufacturer" },
+    { src: iol, alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer" },
+    { src: implanfix, alt: "Implanfix - Surgical materials provider" },
+    { src: impol, alt: "Impol - Medical instruments manufacturer" },
+    { src: hcs, alt: "HCS - Healthcare solutions provider" },
+    { src: gmi, alt: "GMI - Global medical innovation" },
+    { src: plenum, alt: "Plenum - Medical device technology" },
+    { src: medens, alt: "Medens - Medical device manufacturer" },
+    { src: neoortho, alt: "Neoortho - Orthopedic solutions" },
+    { src: oblDental, alt: "OBL Dental - Dental device manufacturer" },
+    { src: orthometric2, alt: "Orthometric - Medical orthopedic systems" },
+  ];
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -93,7 +118,9 @@ export default function Home() {
               width="1920" 
               height="600" 
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/75 to-primary/60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
+            {/* Beautiful Blue Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
           </div>
         ))}
         
@@ -245,7 +272,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Our Clients Section */}
+      {/* Our Clients Section with Carousel */}
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
         <div className="container mx-auto px-4 sm:px-6">
           <div 
@@ -259,77 +286,7 @@ export default function Home() {
             </p>
           </div>
           
-          <div ref={clientsStagger.containerRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-6xl mx-auto items-center">
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[0] ? 'visible' : ''}`}>
-              <img src={vincula} alt="Vincula - Medical device manufacturer client" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[1] ? 'visible' : ''}`}>
-              <img src={techimport} alt="TechImport - Medical technology client" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[2] ? 'visible' : ''}`}>
-              <img src={traumec} alt="Traumec Health Technology - Medical equipment client" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[3] ? 'visible' : ''}`}>
-              <img src={ultradent} alt="Ultradent Products - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[4] ? 'visible' : ''}`}>
-              <img src={toride} alt="Toride - Medical manufacturing client" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[5] ? 'visible' : ''}`}>
-              <img src={react} alt="React - Creation in health medical technology" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[6] ? 'visible' : ''}`}>
-              <img src={razek} alt="Razek - Medical device solutions client" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[7] ? 'visible' : ''}`}>
-              <img src={russer} alt="Russer - Medical equipment manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[8] ? 'visible' : ''}`}>
-              <img src={ossea} alt="Óssea Medical Technology - Orthopedic implant manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[9] ? 'visible' : ''}`}>
-              <img src={orthometric} alt="Orthometric - Orthopedic solutions provider" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[10] ? 'visible' : ''}`}>
-              <img src={cpmh} alt="CPMH - Medical device solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[11] ? 'visible' : ''}`}>
-              <img src={evolve} alt="Evolve - Medical technology innovation" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[12] ? 'visible' : ''}`}>
-              <img src={fgm} alt="FGM Dental Group - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[13] ? 'visible' : ''}`}>
-              <img src={iol} alt="IOL Implantes Ortopédicos - Orthopedic implant manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[14] ? 'visible' : ''}`}>
-              <img src={implanfix} alt="Implanfix - Surgical materials provider" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[15] ? 'visible' : ''}`}>
-              <img src={impol} alt="Impol - Medical instruments manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[16] ? 'visible' : ''}`}>
-              <img src={hcs} alt="HCS - Healthcare solutions provider" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[17] ? 'visible' : ''}`}>
-              <img src={gmi} alt="GMI - Global medical innovation" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[18] ? 'visible' : ''}`}>
-              <img src={plenum} alt="Plenum - Medical device technology" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[19] ? 'visible' : ''}`}>
-              <img src={medens} alt="Medens - Medical device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[20] ? 'visible' : ''}`}>
-              <img src={neoortho} alt="Neoortho - Orthopedic solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[21] ? 'visible' : ''}`}>
-              <img src={oblDental} alt="OBL Dental - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[22] ? 'visible' : ''}`}>
-              <img src={orthometric2} alt="Orthometric - Medical orthopedic systems" className="max-h-16 w-auto object-contain" loading="lazy" />
-            </div>
-          </div>
+          <ClientCarousel clients={clientLogos} />
         </div>
       </section>
 
