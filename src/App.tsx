@@ -15,6 +15,8 @@ import Culture from "./pages/Culture";
 import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Assessment from "./pages/Assessment";
+import { StickyCTA } from "./components/StickyCTA";
 
 const queryClient = new QueryClient();
 
@@ -37,10 +39,12 @@ const App = () => (
                 <Route path="/culture" element={<Culture />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/assessment" element={<Assessment />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
             <Footer />
+            <StickyCTA />
           </div>
         </BrowserRouter>
       </LanguageProvider>

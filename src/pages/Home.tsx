@@ -29,6 +29,9 @@ import { StatCard } from "@/components/StatCard";
 import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
 import { TestimonialsCarousel } from "@/components/TestimonialsCarousel";
 import { InteractiveCapabilities } from "@/components/InteractiveCapabilities";
+import { MagneticButton } from "@/components/MagneticButton";
+import { BlobBackground } from "@/components/BlobBackground";
+import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
 import vincula from "@/assets/clients/vincula.png";
 import techimport from "@/assets/clients/techimport.png";
 import traumec from "@/assets/clients/traumec.png";
@@ -64,6 +67,8 @@ export default function Home() {
   const clientsAnimation = useScrollAnimation();
   const productsAnimation = useScrollAnimation();
   const capabilitiesAnimation = useScrollAnimation();
+  const benefitsStagger = useStaggerAnimation(3, { staggerDelay: 150 });
+  const clientsStagger = useStaggerAnimation(23, { staggerDelay: 50 });
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -103,11 +108,11 @@ export default function Home() {
               {t("home.hero.subtitle")}
             </p>
             <Link to="/about">
-              <Button size="lg" variant="secondary" className="animate-fade-in hover:scale-105 transition-transform" style={{
-                animationDelay: "0.4s"
-              }}>
-                {t("home.hero.cta")}
-              </Button>
+              <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+                <MagneticButton size="lg" variant="secondary" className="shadow-xl">
+                  {t("home.hero.cta")}
+                </MagneticButton>
+              </div>
             </Link>
           </div>
         </div>
@@ -136,8 +141,9 @@ export default function Home() {
       
 
       {/* Benefits Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/30">
-        <div className="container mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/30 relative overflow-hidden">
+        <BlobBackground />
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div 
             ref={benefitsAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}
@@ -147,20 +153,20 @@ export default function Home() {
               Eliminate supplier risks and accelerate your product development timeline
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <div className="glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-primary group">
+          <div ref={benefitsStagger.containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className={`glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-primary group stagger-item ${benefitsStagger.visibleItems[0] ? 'visible' : ''}`}>
               <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-primary to-transparent animate-pulse-glow"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-primary transition-colors">{t("home.benefits.speed")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.speed.text")}</p>
             </div>
 
-            <div className="glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-accent group">
+            <div className={`glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-accent group stagger-item ${benefitsStagger.visibleItems[1] ? 'visible' : ''}`}>
               <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-accent to-transparent animate-pulse-glow"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent transition-colors">{t("home.benefits.compliance")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.compliance.text")}</p>
             </div>
 
-            <div className="glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-accent-orange group">
+            <div className={`glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-accent-orange group stagger-item ${benefitsStagger.visibleItems[2] ? 'visible' : ''}`}>
               <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-accent-orange to-transparent animate-pulse-glow"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent-orange transition-colors">{t("home.benefits.precision")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.precision.text")}</p>
@@ -204,9 +210,9 @@ export default function Home() {
 
           <div className="text-center mt-10">
             <Link to="/clients">
-              <Button variant="outline" size="lg" className="hover:scale-105 transition-transform">
+              <MagneticButton variant="outline" size="lg">
                 See All Industries We Serve
-              </Button>
+              </MagneticButton>
             </Link>
           </div>
         </div>
@@ -226,75 +232,75 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-6xl mx-auto items-center">
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+          <div ref={clientsStagger.containerRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-6xl mx-auto items-center">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[0] ? 'visible' : ''}`}>
               <img src={vincula} alt="Vincula - Medical device manufacturer client" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[1] ? 'visible' : ''}`}>
               <img src={techimport} alt="TechImport - Medical technology client" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[2] ? 'visible' : ''}`}>
               <img src={traumec} alt="Traumec Health Technology - Medical equipment client" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[3] ? 'visible' : ''}`}>
               <img src={ultradent} alt="Ultradent Products - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[4] ? 'visible' : ''}`}>
               <img src={toride} alt="Toride - Medical manufacturing client" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[5] ? 'visible' : ''}`}>
               <img src={react} alt="React - Creation in health medical technology" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[6] ? 'visible' : ''}`}>
               <img src={razek} alt="Razek - Medical device solutions client" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[7] ? 'visible' : ''}`}>
               <img src={russer} alt="Russer - Medical equipment manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[8] ? 'visible' : ''}`}>
               <img src={ossea} alt="Óssea Medical Technology - Orthopedic implant manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[9] ? 'visible' : ''}`}>
               <img src={orthometric} alt="Orthometric - Orthopedic solutions provider" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[10] ? 'visible' : ''}`}>
               <img src={cpmh} alt="CPMH - Medical device solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[11] ? 'visible' : ''}`}>
               <img src={evolve} alt="Evolve - Medical technology innovation" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[12] ? 'visible' : ''}`}>
               <img src={fgm} alt="FGM Dental Group - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[13] ? 'visible' : ''}`}>
               <img src={iol} alt="IOL Implantes Ortopédicos - Orthopedic implant manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[14] ? 'visible' : ''}`}>
               <img src={implanfix} alt="Implanfix - Surgical materials provider" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
-              <img src={impol} alt="Impol Ortopedia e Traumatologia - Orthopedic solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[15] ? 'visible' : ''}`}>
+              <img src={impol} alt="Impol - Medical instruments manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
-              <img src={hcs} alt="HCS Health Care Solutions - Medical equipment provider" className="max-h-16 w-auto object-contain" loading="lazy" />
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[16] ? 'visible' : ''}`}>
+              <img src={hcs} alt="HCS - Healthcare solutions provider" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
-              <img src={gmi} alt="Gabisa Medical International - Global medical solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[17] ? 'visible' : ''}`}>
+              <img src={gmi} alt="GMI - Global medical innovation" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
-              <img src={plenum} alt="Plenum Bioengenharia - Bioengineering solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[18] ? 'visible' : ''}`}>
+              <img src={plenum} alt="Plenum - Medical device technology" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[19] ? 'visible' : ''}`}>
               <img src={medens} alt="Medens - Medical device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
-              <img src={neoortho} alt="Neoortho - Orthopedic device solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[20] ? 'visible' : ''}`}>
+              <img src={neoortho} alt="Neoortho - Orthopedic solutions" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
-              <img src={oblDental} alt="OBL Dental - Dental equipment provider" className="max-h-16 w-auto object-contain" loading="lazy" />
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[21] ? 'visible' : ''}`}>
+              <img src={oblDental} alt="OBL Dental - Dental device manufacturer" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
-            <div className="flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110">
-              <img src={orthometric2} alt="Orthometric - Medical solutions partner" className="max-h-16 w-auto object-contain" loading="lazy" />
+            <div className={`flex items-center justify-center p-6 grayscale hover:grayscale-0 transition-all duration-300 hover:scale-110 stagger-item ${clientsStagger.visibleItems[22] ? 'visible' : ''}`}>
+              <img src={orthometric2} alt="Orthometric - Medical orthopedic systems" className="max-h-16 w-auto object-contain" loading="lazy" />
             </div>
           </div>
         </div>
@@ -390,9 +396,9 @@ export default function Home() {
 
           <div className="text-center mt-10">
             <Link to="/capabilities">
-              <Button size="lg" className="hover:scale-105 transition-transform shadow-xl">
+              <MagneticButton size="lg" className="shadow-xl">
                 See All Capabilities
-              </Button>
+              </MagneticButton>
             </Link>
           </div>
         </div>
@@ -424,9 +430,9 @@ export default function Home() {
                 Partner with a manufacturer that understands the regulatory demands and quality standards of the medical device industry.
               </p>
               <Link to="/contact">
-                <Button size="lg" variant="secondary" className="shadow-xl">
+                <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
                   Get Started Today
-                </Button>
+                </MagneticButton>
               </Link>
             </div>
             <div className="hidden lg:block">
