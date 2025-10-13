@@ -117,13 +117,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Animated Statistics Overlay */}
-        <div className="absolute bottom-20 right-4 sm:right-8 md:right-16 z-20 flex flex-col gap-3 sm:gap-4">
-          <StatCard value="30+" label="Years Experience" delay={600} />
-          <StatCard value="30+" label="Global Partners" delay={800} />
-          <StatCard value="100%" label="ISO Certified" delay={1000} />
-        </div>
-
         {/* Slideshow Indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {heroImages.map((_, index) => (
@@ -134,6 +127,40 @@ export default function Home() {
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
+        </div>
+      </section>
+
+      {/* Statistics Section - Moved from hero */}
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-primary/5 to-background">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105">
+              <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-pulse-glow">
+                30+
+              </div>
+              <div className="text-base md:text-lg font-semibold text-foreground">
+                Years Experience
+              </div>
+            </div>
+            
+            <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105" style={{ animationDelay: "200ms" }}>
+              <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-accent to-accent-orange bg-clip-text text-transparent animate-pulse-glow">
+                30+
+              </div>
+              <div className="text-base md:text-lg font-semibold text-foreground">
+                Global Partners
+              </div>
+            </div>
+            
+            <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105" style={{ animationDelay: "400ms" }}>
+              <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-accent-orange to-primary bg-clip-text text-transparent animate-pulse-glow">
+                100%
+              </div>
+              <div className="text-base md:text-lg font-semibold text-foreground">
+                ISO Certified
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
