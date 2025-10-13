@@ -74,49 +74,55 @@ export default function Quality() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">
             {t("quality.title")}
           </h1>
-          <p className="text-xl max-w-3xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <p className="text-lg sm:text-xl max-w-3xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
             {t("quality.intro")}
           </p>
         </div>
       </section>
 
       {/* Certifications */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Award className="h-16 w-16 text-primary mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-4">{t("quality.certifications")}</h2>
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <Award className="h-12 w-12 sm:h-16 sm:w-16 text-primary mx-auto mb-4" />
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t("quality.certifications")}</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="bg-card p-8 rounded-lg shadow-lg text-center">
-              <div className="mb-6 flex justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+            <div className="bg-card p-6 sm:p-8 rounded-lg shadow-lg text-center">
+              <div className="mb-4 sm:mb-6 flex justify-center">
                 <img
                   src={isoLogo}
-                  alt="ISO 13485:2016"
-                  className="h-32 object-contain"
+                  alt="ISO 13485:2016 medical device quality management certification"
+                  className="h-24 sm:h-32 object-contain"
+                  loading="lazy"
+                  width="160"
+                  height="128"
                 />
               </div>
-              <h3 className="text-xl font-bold">{t("quality.iso")}</h3>
+              <h3 className="text-lg sm:text-xl font-bold">{t("quality.iso")}</h3>
               <p className="text-sm text-muted-foreground mt-2">
                 Medical Device Quality Management
               </p>
             </div>
 
-            <div className="bg-card p-8 rounded-lg shadow-lg text-center">
-              <div className="mb-6 flex justify-center">
+            <div className="bg-card p-6 sm:p-8 rounded-lg shadow-lg text-center">
+              <div className="mb-4 sm:mb-6 flex justify-center">
                 <img
                   src={anvisaLogo}
-                  alt="ANVISA"
-                  className="h-32 object-contain"
+                  alt="ANVISA Brazilian Health Regulatory Agency certification"
+                  className="h-24 sm:h-32 object-contain"
+                  loading="lazy"
+                  width="160"
+                  height="128"
                 />
               </div>
-              <h3 className="text-xl font-bold">{t("quality.anvisa")}</h3>
+              <h3 className="text-lg sm:text-xl font-bold">{t("quality.anvisa")}</h3>
               <p className="text-sm text-muted-foreground mt-2">
                 Brazilian Health Regulatory Agency
               </p>
@@ -126,9 +132,9 @@ export default function Quality() {
       </section>
 
       {/* Quality Features */}
-      <section className="py-20 bg-gradient-to-b from-background to-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-background to-secondary/30">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto mb-12 sm:mb-16">
             {qualityFeatures.map((feature, index) => (
               <div
                 key={index}
@@ -164,27 +170,33 @@ export default function Quality() {
       </section>
 
       {/* Metrology Equipment */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-20 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
           {/* Lab Overview Images */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16 max-w-6xl mx-auto">
             <div className="rounded-lg overflow-hidden shadow-2xl">
               <img
                 src={labOverview}
-                alt="Metrology Laboratory Overview"
+                alt="Advanced metrology laboratory with precision measurement equipment"
                 className="w-full h-full object-cover"
+                loading="lazy"
+                width="600"
+                height="400"
               />
             </div>
             <div className="rounded-lg overflow-hidden shadow-2xl">
               <img
                 src={olympusMicroscope}
-                alt="Olympus Microscope System"
+                alt="Olympus microscope system for metallographic analysis"
                 className="w-full h-full object-cover"
+                loading="lazy"
+                width="600"
+                height="400"
               />
             </div>
           </div>
 
-          <h2 className="text-3xl font-bold text-center mb-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">
             Metrology Laboratory Equipment
           </h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">

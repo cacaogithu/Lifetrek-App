@@ -19,18 +19,18 @@ export default function WhatWeDo() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">
             {t("whatWeDo.title")}
           </h1>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
             <div>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 {t("whatWeDo.text")}
@@ -56,8 +56,11 @@ export default function WhatWeDo() {
             <div className="relative">
               <img
                 src={productApplications}
-                alt="Medical Product Applications"
+                alt="Medical, dental, and veterinary product applications across multiple healthcare sectors"
                 className="rounded-lg shadow-2xl"
+                loading="lazy"
+                width="600"
+                height="450"
               />
             </div>
           </div>
@@ -65,12 +68,12 @@ export default function WhatWeDo() {
       </section>
 
       {/* Capabilities Grid */}
-      <section className="py-20 bg-gradient-to-b from-background to-secondary/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-background to-secondary/30">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
             Our Capabilities
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {capabilities.map((capability, index) => (
               <div
                 key={index}

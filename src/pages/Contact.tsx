@@ -51,9 +51,9 @@ export default function Contact() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-32">
+      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-16 sm:py-20 md:py-32">
         <div className="absolute inset-0 bg-[image:var(--gradient-subtle)] opacity-30" />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <h1 className="font-bold animate-fade-in">
             {t("contact.title")}
           </h1>
@@ -61,9 +61,9 @@ export default function Contact() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-32">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <section className="py-16 sm:py-20 md:py-32">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16">
             {/* Contact Form */}
             <div className="bg-card p-10 lg:p-12 rounded-2xl shadow-[var(--shadow-elevated)] border border-border/50">
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -131,12 +131,15 @@ export default function Contact() {
             </div>
 
             {/* Contact Info & Image */}
-            <div className="space-y-10">
+            <div className="space-y-6 sm:space-y-10">
               <div>
                 <img
                   src={exterior}
-                  alt="Lifetrek Medical Facility"
+                  alt="Lifetrek Medical facility exterior building"
                   className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  width="600"
+                  height="400"
                 />
               </div>
 

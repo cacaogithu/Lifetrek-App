@@ -41,21 +41,21 @@ export default function Clients() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">
             {t("clients.title")}
           </h1>
-          <p className="text-xl max-w-3xl leading-relaxed opacity-95">
+          <p className="text-lg sm:text-xl max-w-3xl leading-relaxed opacity-95">
             {t("clients.intro")}
           </p>
         </div>
       </section>
 
       {/* Client Types Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4">
+      <section className="py-12 sm:py-16 md:py-20 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">
             {t("clients.types.title")}
           </h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">

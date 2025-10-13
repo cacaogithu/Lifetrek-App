@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Slideshow */}
-      <section className="relative h-[600px] overflow-hidden">
+      <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
         {heroImages.map((image, index) => (
           <div
             key={index}
@@ -56,19 +56,22 @@ export default function Home() {
           >
             <img
               src={image}
-              alt="Lifetrek Medical Facility"
+              alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`}
               className="w-full h-full object-cover"
+              loading={index === 0 ? "eager" : "lazy"}
+              width="1920"
+              height="600"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/60" />
           </div>
         ))}
         
-        <div className="relative container mx-auto px-4 h-full flex items-center">
+        <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in leading-tight">
               {t("home.hero.title")}
             </h1>
-            <p className="text-xl mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
               {t("home.hero.subtitle")}
             </p>
             <Link to="/about">
@@ -96,22 +99,25 @@ export default function Home() {
       </section>
 
       {/* Reception Image Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-20 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <img
               src={receptionHero}
-              alt="Lifetrek Medical Reception"
+              alt="Lifetrek Medical modern reception area with professional facilities"
               className="w-full rounded-lg shadow-2xl"
+              loading="lazy"
+              width="1200"
+              height="675"
             />
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-b from-background to-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-background to-secondary/30">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className="relative text-center p-8 rounded-lg bg-card hover:shadow-lg transition-shadow border-t-4 border-primary">
               <div className="absolute top-0 left-8 w-12 h-1 bg-gradient-to-r from-primary to-transparent"></div>
               <h3 className="text-xl font-semibold mb-2 mt-4">{t("about.values.excellence")}</h3>
@@ -134,16 +140,16 @@ export default function Home() {
       </section>
 
       {/* About Us Preview Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("about.title")}</h2>
+      <section className="py-12 sm:py-16 md:py-20 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("about.title")}</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("about.intro")}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
             <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
               <h3 className="text-2xl font-bold mb-4">{t("about.mission.title")}</h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -169,20 +175,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Products Preview Section with 3D Animation */}
-      <section className="py-20 bg-gradient-to-b from-secondary/30 to-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("products.title")}</h2>
+      {/* Products Preview Section */}
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-secondary/30 to-background">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("products.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto mb-8 sm:mb-12">
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
                 src={medicalScrew}
-                alt="Medical Implants"
-                className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+                alt="Precision medical implant screws manufactured with Swiss CNC technology"
+                className="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+                width="400"
+                height="320"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex items-end p-6">
                 <h3 className="text-xl font-bold text-primary-foreground">{t("products.instruments.title")}</h3>
@@ -192,8 +201,11 @@ export default function Home() {
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
                 src={medicalImplantsDiagram}
-                alt="Medical Implants"
-                className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+                alt="Medical orthopedic implants and surgical instruments product range"
+                className="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+                width="400"
+                height="320"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex items-end p-6">
                 <h3 className="text-xl font-bold text-primary-foreground">{t("products.medical.title")}</h3>
@@ -203,8 +215,11 @@ export default function Home() {
             <div className="group relative overflow-hidden rounded-lg shadow-xl hover:shadow-2xl transition-all">
               <img
                 src={dentalImplantsDiagram}
-                alt="Dental Products"
-                className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+                alt="Dental implants and prosthetic components for dental applications"
+                className="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+                width="400"
+                height="320"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex items-end p-6">
                 <h3 className="text-xl font-bold text-primary-foreground">{t("products.dental.title")}</h3>
@@ -222,11 +237,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Quality Preview Section with 3D Animation */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("quality.title")}</h2>
+      {/* Quality Preview Section */}
+      <section className="py-12 sm:py-16 md:py-20 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("quality.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-accent to-primary mx-auto mb-4"></div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("quality.intro")}
@@ -238,13 +253,16 @@ export default function Home() {
           </div>
 
           {/* Certifications */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto mb-12 sm:mb-16">
             <div className="relative bg-card p-6 rounded-lg shadow-lg text-center border-l-4 border-primary">
               <div className="mb-4 flex justify-center">
                 <img
                   src={isoLogo}
-                  alt="ISO 13485:2016"
-                  className="h-24 object-contain"
+                  alt="ISO 13485:2016 certification for medical device quality management"
+                  className="h-20 sm:h-24 object-contain"
+                  loading="lazy"
+                  width="160"
+                  height="96"
                 />
               </div>
               <h3 className="text-lg font-bold">{t("quality.iso")}</h3>
@@ -257,8 +275,11 @@ export default function Home() {
               <div className="mb-4 flex justify-center">
                 <img
                   src={anvisaLogo}
-                  alt="ANVISA"
-                  className="h-24 object-contain"
+                  alt="ANVISA Brazilian Health Regulatory Agency certification"
+                  className="h-20 sm:h-24 object-contain"
+                  loading="lazy"
+                  width="160"
+                  height="96"
                 />
               </div>
               <h3 className="text-lg font-bold">{t("quality.anvisa")}</h3>
@@ -269,16 +290,19 @@ export default function Home() {
           </div>
 
           {/* Equipment Carousels */}
-          <div className="mb-12 max-w-5xl mx-auto">
-            <h3 className="text-2xl font-bold text-center mb-8">Advanced Metrology Equipment</h3>
-            <Carousel className="w-full">
+          <div className="mb-12 max-w-5xl mx-auto px-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">Advanced Metrology Equipment</h3>
+            <Carousel className="w-full max-w-full overflow-hidden">
               <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
                   <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
                     <img
                       src={zeissContura}
-                      alt="ZEISS Contura"
-                      className="w-full h-48 object-cover"
+                      alt="ZEISS Contura G2 3D Coordinate Measuring Machine for precision metrology"
+                      className="w-full h-40 sm:h-48 object-cover"
+                      loading="lazy"
+                      width="300"
+                      height="192"
                     />
                     <div className="p-4">
                       <h4 className="font-bold mb-2">ZEISS Contura G2</h4>
@@ -290,8 +314,11 @@ export default function Home() {
                   <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
                     <img
                       src={opticalCnc}
-                      alt="Optical CNC"
-                      className="w-full h-48 object-cover"
+                      alt="Optical CNC comparator for precision measurement"
+                      className="w-full h-40 sm:h-48 object-cover"
+                      loading="lazy"
+                      width="300"
+                      height="192"
                     />
                     <div className="p-4">
                       <h4 className="font-bold mb-2">Optical Comparator CNC</h4>
@@ -357,9 +384,9 @@ export default function Home() {
             </Carousel>
           </div>
 
-          <div className="mb-12 max-w-5xl mx-auto">
-            <h3 className="text-2xl font-bold text-center mb-8">Sample Preparation Equipment</h3>
-            <Carousel className="w-full">
+          <div className="mb-12 max-w-5xl mx-auto px-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">Sample Preparation Equipment</h3>
+            <Carousel className="w-full max-w-full overflow-hidden">
               <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
                   <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">

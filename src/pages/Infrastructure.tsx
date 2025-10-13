@@ -83,9 +83,9 @@ export default function Infrastructure() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-32">
+      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-16 sm:py-20 md:py-32">
         <div className="absolute inset-0 bg-[image:var(--gradient-subtle)] opacity-30" />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <h1 className="font-bold animate-fade-in">
             {t("infrastructure.title")}
           </h1>
@@ -93,9 +93,9 @@ export default function Infrastructure() {
       </section>
 
       {/* Cleanrooms */}
-      <section className="py-32">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
+      <section className="py-16 sm:py-20 md:py-32">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center mb-16 sm:mb-20 lg:mb-32">
             <div>
               <div className="h-1 w-16 bg-gradient-to-r from-accent to-accent/50 mb-8 rounded-full" />
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">
@@ -108,19 +108,25 @@ export default function Infrastructure() {
             <div>
               <img
                 src={cleanroom}
-                alt="ISO 7 Cleanroom"
+                alt="ISO 7 certified cleanroom for sterile medical device manufacturing"
                 className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
             </div>
           </div>
 
           {/* Equipment */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
             <div className="order-2 lg:order-1">
               <img
                 src={reception}
-                alt="Facility Reception"
+                alt="Modern medical manufacturing facility reception and offices"
                 className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                width="600"
+                height="400"
               />
             </div>
             <div className="order-1 lg:order-2">

@@ -32,18 +32,18 @@ export default function Culture() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
+      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">
             {t("culture.title")}
           </h1>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center mb-12 sm:mb-16 lg:mb-20">
             <div>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
                 {t("culture.cleanliness")}
@@ -63,8 +63,11 @@ export default function Culture() {
             <div>
               <img
                 src={reception}
-                alt="Lifetrek Medical Culture"
+                alt="Lifetrek Medical workplace culture emphasizing cleanliness, quality, and professional development"
                 className="rounded-lg shadow-2xl"
+                loading="lazy"
+                width="600"
+                height="400"
               />
             </div>
           </div>
@@ -72,9 +75,9 @@ export default function Culture() {
       </section>
 
       {/* Culture Values */}
-      <section className="py-20 bg-gradient-to-b from-background to-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-background to-secondary/30">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {cultureValues.map((value, index) => (
               <div
                 key={index}

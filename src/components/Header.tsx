@@ -24,9 +24,15 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <nav className="container mx-auto flex h-20 items-center justify-between px-4">
-        <Link to="/" className="flex items-center">
-          <img src={logo} alt="Lifetrek Medical" className="h-12" />
+      <nav className="container mx-auto flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6">
+        <Link to="/" className="flex items-center flex-shrink-0">
+          <img 
+            src={logo} 
+            alt="Lifetrek Medical - ISO 13485 Certified Medical Device Manufacturer" 
+            className="h-10 sm:h-12"
+            width="120"
+            height="48"
+          />
         </Link>
 
         {/* Desktop Navigation */}

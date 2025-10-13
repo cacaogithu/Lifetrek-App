@@ -7,10 +7,17 @@ export const Footer = () => {
 
   return (
     <footer className="border-t border-border bg-secondary/30">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div>
-            <img src={logo} alt="Lifetrek Medical" className="h-12 mb-4" />
+            <img 
+              src={logo} 
+              alt="Lifetrek Medical logo" 
+              className="h-10 sm:h-12 mb-4"
+              width="120"
+              height="48"
+              loading="lazy"
+            />
             <p className="text-sm text-muted-foreground">
               {t("home.hero.subtitle")}
             </p>
