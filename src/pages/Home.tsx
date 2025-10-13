@@ -12,13 +12,23 @@ import isoLogo from "@/assets/certifications/iso.jpg";
 import anvisaLogo from "@/assets/certifications/anvisa.png";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
 import opticalCnc from "@/assets/metrology/optical-cnc.png";
+import opticalManual from "@/assets/metrology/optical-manual.jpg";
 import olympusMicroscope from "@/assets/metrology/olympus-microscope.png";
+import hardnessVickers from "@/assets/metrology/hardness-vickers.png";
+import labOverview from "@/assets/metrology/lab-overview.png";
+import polimento from "@/assets/metrology/polimento.png";
+import cortadora from "@/assets/metrology/cortadora.png";
+import embutidora from "@/assets/metrology/embutidora.png";
 import { useState, useEffect } from "react";
-import { RotatingImplant } from "@/components/3d/RotatingImplant";
-import { FloatingParts } from "@/components/3d/FloatingParts";
 import { DNA3D } from "@/components/3d/DNA3D";
 import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
-import { ScrollScrews } from "@/components/3d/ScrollScrews";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const heroImages = [reception, cleanroom, exterior, medicalScrew];
 
@@ -85,23 +95,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Reception & 3D Animation Section */}
+      {/* Reception Image Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
-            <div>
-              <img
-                src={receptionHero}
-                alt="Lifetrek Medical Reception"
-                className="w-full rounded-lg shadow-2xl"
-              />
-            </div>
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Precision Medical Manufacturing
-              </h2>
-              <RotatingImplant />
-            </div>
+          <div className="max-w-6xl mx-auto">
+            <img
+              src={receptionHero}
+              alt="Lifetrek Medical Reception"
+              className="w-full rounded-lg shadow-2xl"
+            />
           </div>
         </div>
       </section>
@@ -173,10 +175,6 @@ export default function Home() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("products.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto"></div>
-          </div>
-
-          <div className="mb-12 max-w-6xl mx-auto relative">
-            <ScrollScrews />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
@@ -270,46 +268,142 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Equipment Preview */}
-          <div className="mb-12">
+          {/* Equipment Carousels */}
+          <div className="mb-12 max-w-5xl mx-auto">
             <h3 className="text-2xl font-bold text-center mb-8">Advanced Metrology Equipment</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <img
-                  src={zeissContura}
-                  alt="ZEISS Contura"
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h4 className="font-bold mb-2">ZEISS Contura G2</h4>
-                  <p className="text-sm text-muted-foreground">3D Coordinate Measuring Machine</p>
-                </div>
-              </div>
+            <Carousel className="w-full">
+              <CarouselContent>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={zeissContura}
+                      alt="ZEISS Contura"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">ZEISS Contura G2</h4>
+                      <p className="text-sm text-muted-foreground">3D Coordinate Measuring Machine</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={opticalCnc}
+                      alt="Optical CNC"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Optical Comparator CNC</h4>
+                      <p className="text-sm text-muted-foreground">Precision Measurement System</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={opticalManual}
+                      alt="Optical Manual"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Optical Manual</h4>
+                      <p className="text-sm text-muted-foreground">Manual Measurement System</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={hardnessVickers}
+                      alt="Hardness Vickers"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Hardness Vickers</h4>
+                      <p className="text-sm text-muted-foreground">Material Hardness Testing</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={olympusMicroscope}
+                      alt="Olympus Microscope"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Olympus Microscope</h4>
+                      <p className="text-sm text-muted-foreground">Metallographic Analysis</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={labOverview}
+                      alt="Lab Overview"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Laboratory Overview</h4>
+                      <p className="text-sm text-muted-foreground">Complete Metrology Lab</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
 
-              <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <img
-                  src={opticalCnc}
-                  alt="Optical CNC"
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h4 className="font-bold mb-2">Optical Comparator CNC</h4>
-                  <p className="text-sm text-muted-foreground">Precision Measurement System</p>
-                </div>
-              </div>
-
-              <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <img
-                  src={olympusMicroscope}
-                  alt="Olympus Microscope"
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h4 className="font-bold mb-2">Olympus Microscope</h4>
-                  <p className="text-sm text-muted-foreground">Metallographic Analysis</p>
-                </div>
-              </div>
-            </div>
+          <div className="mb-12 max-w-5xl mx-auto">
+            <h3 className="text-2xl font-bold text-center mb-8">Sample Preparation Equipment</h3>
+            <Carousel className="w-full">
+              <CarouselContent>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={polimento}
+                      alt="Polimento"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Polishing Machine</h4>
+                      <p className="text-sm text-muted-foreground">Sample Surface Preparation</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={cortadora}
+                      alt="Cortadora"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Cutting Machine</h4>
+                      <p className="text-sm text-muted-foreground">Precision Sample Cutting</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="bg-card rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full">
+                    <img
+                      src={embutidora}
+                      alt="Embutidora"
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">Mounting Press</h4>
+                      <p className="text-sm text-muted-foreground">Sample Mounting System</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
 
           <div className="text-center">
