@@ -114,61 +114,74 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Benefits Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-background to-secondary/30">
         <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Why Leading Medical Device Companies Choose Lifetrek</h2>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
+              Eliminate supplier risks and accelerate your product development timeline
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className="relative text-center p-8 rounded-lg bg-card hover:shadow-lg transition-shadow border-t-4 border-primary">
               <div className="absolute top-0 left-8 w-12 h-1 bg-gradient-to-r from-primary to-transparent"></div>
-              <h3 className="text-xl font-semibold mb-2 mt-4">{t("about.values.excellence")}</h3>
-              <p className="text-muted-foreground">{t("about.values.excellence.text")}</p>
+              <h3 className="text-xl font-semibold mb-2 mt-4">{t("home.benefits.speed")}</h3>
+              <p className="text-muted-foreground">{t("home.benefits.speed.text")}</p>
             </div>
 
             <div className="relative text-center p-8 rounded-lg bg-card hover:shadow-lg transition-shadow border-t-4 border-accent">
               <div className="absolute top-0 left-8 w-12 h-1 bg-gradient-to-r from-accent to-transparent"></div>
-              <h3 className="text-xl font-semibold mb-2 mt-4">{t("whatWeDo.precision")}</h3>
-              <p className="text-muted-foreground">{t("whatWeDo.cleanroom")}</p>
+              <h3 className="text-xl font-semibold mb-2 mt-4">{t("home.benefits.compliance")}</h3>
+              <p className="text-muted-foreground">{t("home.benefits.compliance.text")}</p>
             </div>
 
             <div className="relative text-center p-8 rounded-lg bg-card hover:shadow-lg transition-shadow border-t-4 border-accent-orange">
               <div className="absolute top-0 left-8 w-12 h-1 bg-gradient-to-r from-accent-orange to-transparent"></div>
-              <h3 className="text-xl font-semibold mb-2 mt-4">{t("about.values.respect")}</h3>
-              <p className="text-muted-foreground">{t("about.values.respect.text")}</p>
+              <h3 className="text-xl font-semibold mb-2 mt-4">{t("home.benefits.precision")}</h3>
+              <p className="text-muted-foreground">{t("home.benefits.precision.text")}</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* About Us Preview Section */}
+      {/* Who We Serve Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("about.title")}</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t("about.intro")}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Who We Serve</h2>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
+              Trusted by leading medical device manufacturers worldwide
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
-            <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-              <h3 className="text-2xl font-bold mb-4">{t("about.mission.title")}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+            <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border-l-4 border-primary">
+              <h3 className="text-xl font-bold mb-4">{t("clients.types.medical.title")}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                {t("about.mission.text")}
+                {t("clients.types.medical.description")}
               </p>
             </div>
 
-            <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-              <h3 className="text-2xl font-bold mb-4">{t("about.vision.title")}</h3>
+            <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border-l-4 border-accent">
+              <h3 className="text-xl font-bold mb-4">{t("clients.types.dental.title")}</h3>
               <p className="text-muted-foreground leading-relaxed">
-                {t("about.vision.text")}
+                {t("clients.types.dental.description")}
+              </p>
+            </div>
+
+            <div className="bg-card p-8 rounded-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border-l-4 border-accent-orange">
+              <h3 className="text-xl font-bold mb-4">{t("clients.types.contract.title")}</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("clients.types.contract.description")}
               </p>
             </div>
           </div>
 
           <div className="text-center mt-8">
-            <Link to="/about">
+            <Link to="/clients">
               <Button variant="outline">
-                {t("nav.about")}
+                See All Industries We Serve
               </Button>
             </Link>
           </div>
@@ -237,14 +250,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Quality Preview Section */}
+      {/* Capabilities Preview Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("quality.title")}</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Manufacturing Capabilities</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-accent to-primary mx-auto mb-4"></div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t("quality.intro")}
+              Advanced equipment and certified processes that de-risk your supply chain
             </p>
           </div>
 
@@ -433,10 +446,10 @@ export default function Home() {
             </Carousel>
           </div>
 
-          <div className="text-center">
-            <Link to="/quality">
+          <div className="text-center mt-8">
+            <Link to="/capabilities">
               <Button size="lg">
-                {t("nav.quality")}
+                See All Capabilities
               </Button>
             </Link>
           </div>
@@ -444,21 +457,24 @@ export default function Home() {
       </section>
 
       {/* Final CTA Section with 3D Globe */}
-      <section className="relative py-20 bg-gradient-to-br from-primary via-primary-hover to-accent text-primary-foreground overflow-hidden">
+      <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary via-primary-hover to-accent text-primary-foreground overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-accent-orange rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
         </div>
-        <div className="relative container mx-auto px-4">
+        <div className="relative container mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             <div className="text-center lg:text-left">
               <div className="w-24 h-1 bg-gradient-to-r from-accent-orange via-primary-foreground to-accent mb-6 mx-auto lg:mx-0"></div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                {t("about.mission.text")}
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+                Ready to Accelerate Your Product Development?
               </h2>
+              <p className="text-lg sm:text-xl mb-8 opacity-95">
+                Partner with a manufacturer that understands the regulatory demands and quality standards of the medical device industry.
+              </p>
               <Link to="/contact">
                 <Button size="lg" variant="secondary" className="shadow-xl">
-                  {t("nav.contact")}
+                  Get Started Today
                 </Button>
               </Link>
             </div>
