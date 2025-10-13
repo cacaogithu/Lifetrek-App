@@ -41,6 +41,7 @@ const translations = {
     "home.whoWeServe.cta": "See All Industries We Serve",
     "home.clients.title": "Trusted by Leading Medical Device Companies",
     "home.clients.subtitle": "Partnering with innovative companies to deliver precision medical components worldwide",
+    "home.clients.cta": "View All Industries",
     
     // About
     "about.title": "About Us",
@@ -205,6 +206,7 @@ const translations = {
     "home.whoWeServe.cta": "Veja Todas as Indústrias que Atendemos",
     "home.clients.title": "Confiado pelas Principais Empresas de Dispositivos Médicos",
     "home.clients.subtitle": "Fazendo parcerias com empresas inovadoras para entregar componentes médicos de precisão em todo o mundo",
+    "home.clients.cta": "Ver Todas as Indústrias",
     
     // About
     "about.title": "Quem Somos",

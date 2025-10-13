@@ -191,11 +191,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Reception Image Section */}
-      
+      {/* Our Clients Section with Carousel */}
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div 
+            ref={clientsAnimation.elementRef}
+            className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.clients.title")}</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
+              {t("home.clients.subtitle")}
+            </p>
+          </div>
+          
+          <ClientCarousel clients={clientLogos} />
+          
+          <div className="text-center mt-10">
+            <Link to="/clients">
+              <MagneticButton variant="outline" size="lg">
+                {t("home.clients.cta")}
+              </MagneticButton>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Benefits Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/30 relative overflow-hidden">
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/20 to-secondary/30 relative overflow-hidden">
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div 
@@ -228,70 +251,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Who We Serve Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-background">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.whoWeServe.title")}</h2>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t("home.whoWeServe.subtitle")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 max-w-5xl mx-auto">
-            <div className="glass-card-strong p-10 rounded-2xl hover:shadow-2xl transition-all hover:-translate-y-2 border-l-4 border-primary group">
-              <h3 className="text-xl font-bold mb-4 group-hover:text-primary transition-colors">{t("clients.types.medical.title")}</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {t("clients.types.medical.description")}
-              </p>
-            </div>
-
-            <div className="glass-card-strong p-10 rounded-2xl hover:shadow-2xl transition-all hover:-translate-y-2 border-l-4 border-accent group">
-              <h3 className="text-xl font-bold mb-4 group-hover:text-accent transition-colors">{t("clients.types.dental.title")}</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {t("clients.types.dental.description")}
-              </p>
-            </div>
-
-            <div className="glass-card-strong p-10 rounded-2xl hover:shadow-2xl transition-all hover:-translate-y-2 border-l-4 border-accent-orange group">
-              <h3 className="text-xl font-bold mb-4 group-hover:text-accent-orange transition-colors">{t("clients.types.contract.title")}</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {t("clients.types.contract.description")}
-              </p>
-            </div>
-          </div>
-
-          <div className="text-center mt-10">
-            <Link to="/clients">
-              <MagneticButton variant="outline" size="lg">
-                {t("home.whoWeServe.cta")}
-              </MagneticButton>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Clients Section with Carousel */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div 
-            ref={clientsAnimation.elementRef}
-            className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.clients.title")}</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t("home.clients.subtitle")}
-            </p>
-          </div>
-          
-          <ClientCarousel clients={clientLogos} />
-        </div>
-      </section>
-
-      {/* Equipment Carousel Section */}
-      <EquipmentCarousel />
 
       {/* Products Preview Section */}
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/30 to-background">
@@ -336,6 +295,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Equipment Carousel Section */}
+      <EquipmentCarousel />
 
       {/* Capabilities Preview Section */}
       <section className="py-16 sm:py-20 md:py-24 bg-background">
