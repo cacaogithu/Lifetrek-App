@@ -19,6 +19,7 @@ import { StickyCTA } from "./components/StickyCTA";
 import { MobileNav } from "./components/MobileNav";
 import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { AIChatbot } from "./components/AIChatbot";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             <StickyCTA />
             <MobileNav />
             <ScrollToTop />
+            <AIChatbot />
           </div>
         </BrowserRouter>
       </LanguageProvider>

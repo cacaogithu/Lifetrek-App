@@ -120,35 +120,25 @@ export default function Capabilities() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
-            <div className="bg-card p-6 rounded-lg shadow-lg text-center border-l-4 border-primary">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+            <div className="bg-card p-8 rounded-lg shadow-lg text-center border-l-4 border-primary hover:shadow-xl transition-shadow">
               <img
                 src={isoLogo}
                 alt="ISO 13485:2016 medical device quality management"
-                className="h-20 object-contain mx-auto mb-4"
+                className="h-24 object-contain mx-auto mb-4"
                 loading="lazy"
               />
-              <h3 className="font-bold text-sm">{t("capabilities.iso")}</h3>
+              <h3 className="font-bold text-base">{t("capabilities.iso")}</h3>
             </div>
 
-            <div className="bg-card p-6 rounded-lg shadow-lg text-center border-l-4 border-accent">
+            <div className="bg-card p-8 rounded-lg shadow-lg text-center border-l-4 border-accent hover:shadow-xl transition-shadow">
               <img
                 src={anvisaLogo}
                 alt="ANVISA certification"
-                className="h-20 object-contain mx-auto mb-4"
+                className="h-24 object-contain mx-auto mb-4"
                 loading="lazy"
               />
-              <h3 className="font-bold text-sm">{t("capabilities.anvisa")}</h3>
-            </div>
-
-            <div className="bg-card p-6 rounded-lg shadow-lg text-center border-l-4 border-accent-orange">
-              <TrendingUp className="h-12 w-12 text-accent-orange mx-auto mb-4" />
-              <h3 className="font-bold text-sm">{t("capabilities.continuous")}</h3>
-            </div>
-
-            <div className="bg-card p-6 rounded-lg shadow-lg text-center border-l-4 border-primary">
-              <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h3 className="font-bold text-sm">{t("capabilities.traceability")}</h3>
+              <h3 className="font-bold text-base">{t("capabilities.anvisa")}</h3>
             </div>
           </div>
         </div>

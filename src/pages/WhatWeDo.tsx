@@ -139,10 +139,9 @@ export default function WhatWeDo() {
                 }`}
               >
                 <div className={index % 2 === 1 ? "lg:order-2" : ""}>
-                  <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${service.bg} mb-6`}>
-                    <service.icon className={`h-8 w-8 ${service.color}`} />
-                  </div>
-                  <h3 className="text-3xl font-bold mb-4">{service.title}</h3>
+                  <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-accent-orange bg-clip-text text-transparent">
+                    {service.title}
+                  </h3>
                   <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                     {service.description}
                   </p>
