@@ -205,6 +205,7 @@ export const EquipmentCarousel = () => {
                       decoding="async"
                       width="400"
                       height="400"
+                      sizes="(max-width: 640px) 380px, (max-width: 1024px) 400px, 400px"
                     />
                     
                     {/* Specifications Overlay */}

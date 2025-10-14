@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo-optimized.webp";
+import logoMobile from "@/assets/logo-mobile.webp";
 import isoLogo from "@/assets/certifications/iso.webp";
+import isoLogoMobile from "@/assets/certifications/iso-mobile.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
+import anvisaLogoMobile from "@/assets/certifications/anvisa-mobile.webp";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -13,6 +16,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div>
             <img 
+              srcSet={`${logoMobile} 640w, ${logo} 1024w`}
+              sizes="(max-width: 640px) 120px, 120px"
               src={logo} 
               alt="Lifetrek Medical logo" 
               className="h-10 sm:h-12 mb-4"
@@ -49,6 +54,8 @@ export const Footer = () => {
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
                 <img 
+                  srcSet={`${isoLogoMobile} 640w, ${isoLogo} 1024w`}
+                  sizes="(max-width: 640px) 80px, 80px"
                   src={isoLogo} 
                   alt="ISO 13485:2016 Medical Device Quality Management certification" 
                   className="h-12 w-auto object-contain"
@@ -60,6 +67,8 @@ export const Footer = () => {
               </div>
               <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
                 <img 
+                  srcSet={`${anvisaLogoMobile} 640w, ${anvisaLogo} 1024w`}
+                  sizes="(max-width: 640px) 80px, 80px"
                   src={anvisaLogo} 
                   alt="ANVISA Brazilian Health Regulatory Agency certification" 
                   className="h-12 w-auto object-contain"

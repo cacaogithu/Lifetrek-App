@@ -38,6 +38,7 @@ export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
               width={client.width}
               height={client.height}
               decoding="async"
+              sizes="(max-width: 640px) 128px, 128px"
             />
           </div>
         ))}
