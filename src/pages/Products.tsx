@@ -18,7 +18,6 @@ import spinalImplants from "@/assets/products/spinal-implants.png";
 import measuringTools from "@/assets/products/measuring-tools.jpg";
 import dentalComponents from "@/assets/products/dental-components.jpg";
 import dentalAngulados from "@/assets/products/dental-angulados.png";
-import dentalBrocas from "@/assets/products/dental-brocas.png";
 import dentalImplanteOptimized from "@/assets/products/dental-implante-optimized.png";
 import dentalFresasOptimized from "@/assets/products/dental-fresas-optimized.png";
 import dentalInstrumentosOptimized from "@/assets/products/dental-instrumentos-optimized.png";
@@ -81,13 +80,12 @@ export default function Products() {
       ],
       color: "from-accent-orange to-accent-orange/80",
       catalogImages: [
-        { src: dentalImplanteOptimized, alt: "Titanium dental implants" },
-        { src: dentalAngulados, alt: "Angled dental abutments" },
-        { src: dentalBrocas, alt: "Dental preparation drills" },
-        { src: dentalFresasOptimized, alt: "Dental cutting burs and fresas" },
-        { src: dentalInstrumentosOptimized, alt: "Dental surgical instruments" },
-        { src: dentalComponents, alt: "Dental prosthetic components" },
-        { src: precisionComponents, alt: "Precision dental parts" }
+        { src: dentalImplanteOptimized, alt: "Implante Dentário em Titânio - Sistema de implante com conexão interna para reabilitação oral" },
+        { src: dentalAngulados, alt: "Pilares Protéticos Angulados - Componentes angulados Multi-unit para prótese sobre implante" },
+        { src: dentalFresasOptimized, alt: "Fresas Cirúrgicas para Implantodontia - Kit de fresas helicoidais para perfuração óssea progressiva" },
+        { src: dentalInstrumentosOptimized, alt: "Instrumentos Cirúrgicos Dentários - Conjunto de instrumentos de precisão para cirurgia de implantes" },
+        { src: dentalComponents, alt: "Componentes Protéticos Dentários - Peças de conexão e parafusos para sistemas protéticos implanto-suportados" },
+        { src: precisionComponents, alt: "Componentes de Precisão em Titânio - Parafusos e conectores usinados para aplicações odontológicas" }
       ]
     },
     {
