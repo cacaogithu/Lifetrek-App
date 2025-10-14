@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo-optimized.webp";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

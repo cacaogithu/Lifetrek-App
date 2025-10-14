@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import reception from "@/assets/facility/reception.jpg";
+import reception from "@/assets/facility/reception.webp";
 import receptionHero from "@/assets/facility/reception-hero.webp";
 import cleanroom from "@/assets/facility/cleanroom.webp";
 import exterior from "@/assets/facility/exterior.webp";
@@ -199,7 +199,15 @@ export default function Home() {
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
         {/* Desktop: Image Slideshow */}
         {!isMobile && heroImages.map((image, index) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}>
-            <img src={image} alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} className="w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} width="1920" height="600" />
+            <img 
+              src={image} 
+              alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
+              className="w-full h-full object-cover" 
+              loading={index === 0 ? "eager" : "lazy"} 
+              fetchPriority={index === 0 ? "high" : "low"}
+              width="1920" 
+              height="600" 
+            />
             <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
             {/* Beautiful Blue Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
