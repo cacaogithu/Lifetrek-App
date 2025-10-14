@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Target, Eye, Award, Users, Zap, Shield } from "lucide-react";
+import { Award, Users, Zap } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BlobBackground } from "@/components/BlobBackground";
 import { MagneticButton } from "@/components/MagneticButton";
@@ -15,32 +15,24 @@ export default function About() {
 
   const values = [
     {
-      icon: Award,
       title: t("about.values.excellence"),
       description: t("about.values.excellence.text"),
-      color: "text-primary",
-      bg: "bg-primary/10",
+      borderColor: "border-primary",
     },
     {
-      icon: Zap,
       title: t("about.values.innovation"),
       description: t("about.values.innovation.text"),
-      color: "text-accent-orange",
-      bg: "bg-accent-orange/10",
+      borderColor: "border-accent-orange",
     },
     {
-      icon: Shield,
       title: t("about.values.ethics"),
       description: t("about.values.ethics.text"),
-      color: "text-accent",
-      bg: "bg-accent/10",
+      borderColor: "border-accent",
     },
     {
-      icon: Users,
       title: t("about.values.respect"),
       description: t("about.values.respect.text"),
-      color: "text-primary",
-      bg: "bg-primary/10",
+      borderColor: "border-primary",
     },
   ];
 
@@ -75,9 +67,6 @@ export default function About() {
           {/* Mission */}
           <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-32 scroll-reveal ${missionAnimation.isVisible ? 'visible' : ''}`}>
             <div>
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
-                <Target className="h-8 w-8 text-primary" />
-              </div>
               <h2 className="text-4xl font-bold mb-6">{t("about.mission.title")}</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 {t("about.mission.text")}
@@ -114,9 +103,6 @@ export default function About() {
               />
             </div>
             <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">
-                <Eye className="h-8 w-8 text-accent" />
-              </div>
               <h2 className="text-4xl font-bold mb-6">{t("about.vision.title")}</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 {t("about.vision.text")}
@@ -147,8 +133,7 @@ export default function About() {
       </section>
 
       {/* Core Values */}
-      <section ref={valuesAnimation.elementRef} className="py-20 sm:py-32 bg-gradient-to-b from-secondary/20 to-background relative overflow-hidden">
-        <BlobBackground />
+      <section ref={valuesAnimation.elementRef} className="py-20 sm:py-32 bg-background relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="font-bold mb-6">
@@ -158,20 +143,15 @@ export default function About() {
               The principles that guide every decision we make and every component we manufacture
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => (
               <div
                 key={index}
-                className={`glass-card-strong p-8 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 ${
-                  index === 0 ? 'border-primary' : index === 1 ? 'border-accent-orange' : index === 2 ? 'border-accent' : 'border-primary'
-                } scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`}
+                className={`glass-card p-10 rounded-xl hover:scale-105 transition-all duration-500 border-l-4 ${value.borderColor} scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${value.bg} mb-6`}>
-                  <value.icon className={`h-7 w-7 ${value.color}`} />
-                </div>
-                <h3 className="text-xl font-bold mb-4">{value.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{value.description}</p>
+                <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-lg">{value.description}</p>
               </div>
             ))}
           </div>

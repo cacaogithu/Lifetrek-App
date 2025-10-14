@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import gradientBg from "@/assets/gradient-bg.png";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
 import opticalCnc from "@/assets/metrology/optical-cnc.png";
 import opticalManual from "@/assets/metrology/optical-manual.jpg";
@@ -158,12 +159,16 @@ export const EquipmentCarousel = () => {
   };
 
   return (
-    <div className="relative bg-gradient-to-r from-secondary/20 via-background to-secondary/20 py-16 sm:py-20">
-      <div className="container mx-auto px-4 sm:px-6">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+    <div className="relative py-16 sm:py-20 overflow-hidden">
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${gradientBg})` }}
+      />
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 text-white">
           {t("equipment.title")}
         </h2>
-        <p className="text-lg sm:text-xl text-center text-muted-foreground max-w-3xl mx-auto mb-8">
+        <p className="text-lg sm:text-xl text-center text-white/90 max-w-3xl mx-auto mb-8">
           {t("equipment.subtitle")}
         </p>
         
