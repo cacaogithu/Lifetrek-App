@@ -20,7 +20,7 @@ const getCapabilities = (t: (key: string) => string): Capability[] => [
     title: t("interactive.capabilities.precision.title"),
     stat: t("interactive.capabilities.precision.stat"),
     description: t("interactive.capabilities.precision.description"),
-    color: "text-primary",
+    color: "text-white",
     bg: "bg-primary/10",
   },
   {
@@ -29,7 +29,7 @@ const getCapabilities = (t: (key: string) => string): Capability[] => [
     title: t("interactive.capabilities.metrology.title"),
     stat: t("interactive.capabilities.metrology.stat"),
     description: t("interactive.capabilities.metrology.description"),
-    color: "text-accent",
+    color: "text-white",
     bg: "bg-accent/10",
   },
   {
@@ -38,7 +38,7 @@ const getCapabilities = (t: (key: string) => string): Capability[] => [
     title: t("interactive.capabilities.finishing.title"),
     stat: t("interactive.capabilities.finishing.stat"),
     description: t("interactive.capabilities.finishing.description"),
-    color: "text-accent-orange",
+    color: "text-white",
     bg: "bg-accent-orange/10",
   },
   {
@@ -47,7 +47,7 @@ const getCapabilities = (t: (key: string) => string): Capability[] => [
     title: t("interactive.capabilities.cleanroom.title"),
     stat: t("interactive.capabilities.cleanroom.stat"),
     description: t("interactive.capabilities.cleanroom.description"),
-    color: "text-primary",
+    color: "text-white",
     bg: "bg-primary/10",
   },
 ];
@@ -59,13 +59,14 @@ export const InteractiveCapabilities = () => {
   const capabilities = getCapabilities(t);
 
   return (
-    <section ref={elementRef} className="py-20 sm:py-32 bg-background">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section ref={elementRef} className="py-20 sm:py-32 bg-gradient-to-br from-primary via-accent to-primary text-white relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30" />
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {t("interactive.capabilities.title")}
           </h2>
-          <p className={`text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto transition-all duration-1000 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <p className={`text-lg sm:text-xl text-white/90 max-w-3xl mx-auto transition-all duration-1000 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {t("interactive.capabilities.subtitle")}
           </p>
         </div>
@@ -79,7 +80,7 @@ export const InteractiveCapabilities = () => {
                 key={capability.id}
                 className={`glass-card p-6 rounded-xl cursor-pointer transition-all duration-500 hover:scale-105 ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                } ${isActive ? 'ring-2 ring-primary shadow-[var(--shadow-premium)]' : ''}`}
+                } ${isActive ? 'ring-2 ring-white/50 shadow-[var(--shadow-premium)]' : ''}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
                 onMouseEnter={() => setActiveId(capability.id)}
                 onMouseLeave={() => setActiveId(null)}
@@ -97,13 +98,13 @@ export const InteractiveCapabilities = () => {
                     opacity: isActive ? 1 : 0 
                   }}
                 >
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-white/80 leading-relaxed">
                     {capability.description}
                   </p>
                 </div>
                 
                 {!isActive && (
-                  <p className="text-sm text-muted-foreground/70 mt-2">
+                  <p className="text-sm text-white/60 mt-2">
                     {t("interactive.capabilities.hover")}
                   </p>
                 )}
