@@ -125,7 +125,27 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static hero content for instant LCP - will be replaced by React -->
+      <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur-sm">
+        <nav class="container mx-auto flex h-16 sm:h-20 items-center justify-between px-4">
+          <a href="/" class="flex items-center gap-2">
+            <img src="/assets/logo-optimized-BbWD8Rac.webp" alt="Lifetrek Medical" class="h-10 sm:h-12" width="120" height="48">
+          </a>
+        </nav>
+      </header>
+      <main>
+        <section class="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden" style="background:linear-gradient(to bottom right,hsl(210 100% 45%),hsl(210 100% 40%),hsl(210 100% 35%))">
+          <div class="relative container mx-auto h-full flex items-center text-white px-4">
+            <div class="max-w-2xl relative">
+              <h1 class="text-white text-4xl sm:text-5xl md:text-6xl font-bold mb-6 sm:mb-8 fade-in">Precision Medical Manufacturing Excellence</h1>
+              <p class="text-white text-base sm:text-lg md:text-xl mb-6 sm:mb-8 fade-in" style="animation-delay:0.2s">Get precision medical components to market faster with our ISO 13485 certified manufacturing and state-of-the-art Swiss CNC machining capabilities.</p>
+              <a href="/contact" class="btn">Get Started</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
