@@ -62,39 +62,83 @@ export default function Home() {
   } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const parallaxOffset = useParallax(0.4);
-  
   const benefitsAnimation = useScrollAnimation();
   const clientsAnimation = useScrollAnimation();
   const productsAnimation = useScrollAnimation();
   const capabilitiesAnimation = useScrollAnimation();
-  const benefitsStagger = useStaggerAnimation(3, { staggerDelay: 150 });
-
-  const clientLogos = [
-    { src: vincula, alt: "Vincula - Medical device manufacturer client" },
-    { src: techimport, alt: "TechImport - Medical technology client" },
-    { src: traumec, alt: "Traumec Health Technology - Medical equipment client" },
-    { src: ultradent, alt: "Ultradent Products - Dental device manufacturer" },
-    { src: toride, alt: "Toride - Medical manufacturing client" },
-    { src: react, alt: "React - Creation in health medical technology" },
-    { src: razek, alt: "Razek - Medical device solutions client" },
-    { src: russer, alt: "Russer - Medical equipment manufacturer" },
-    { src: ossea, alt: "Óssea Medical Technology - Orthopedic implant manufacturer" },
-    { src: orthometric, alt: "Orthometric - Orthopedic solutions provider" },
-    { src: cpmh, alt: "CPMH - Medical device solutions" },
-    { src: evolve, alt: "Evolve - Medical technology innovation" },
-    { src: fgm, alt: "FGM Dental Group - Dental device manufacturer" },
-    { src: iol, alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer" },
-    { src: implanfix, alt: "Implanfix - Surgical materials provider" },
-    { src: impol, alt: "Impol - Medical instruments manufacturer" },
-    { src: hcs, alt: "HCS - Healthcare solutions provider" },
-    { src: gmi, alt: "GMI - Global medical innovation" },
-    { src: plenum, alt: "Plenum - Medical device technology" },
-    { src: medens, alt: "Medens - Medical device manufacturer" },
-    { src: neoortho, alt: "Neoortho - Orthopedic solutions" },
-    { src: oblDental, alt: "OBL Dental - Dental device manufacturer" },
-    { src: orthometric2, alt: "Orthometric - Medical orthopedic systems" },
-  ];
-  
+  const benefitsStagger = useStaggerAnimation(3, {
+    staggerDelay: 150
+  });
+  const clientLogos = [{
+    src: vincula,
+    alt: "Vincula - Medical device manufacturer client"
+  }, {
+    src: techimport,
+    alt: "TechImport - Medical technology client"
+  }, {
+    src: traumec,
+    alt: "Traumec Health Technology - Medical equipment client"
+  }, {
+    src: ultradent,
+    alt: "Ultradent Products - Dental device manufacturer"
+  }, {
+    src: toride,
+    alt: "Toride - Medical manufacturing client"
+  }, {
+    src: react,
+    alt: "React - Creation in health medical technology"
+  }, {
+    src: razek,
+    alt: "Razek - Medical device solutions client"
+  }, {
+    src: russer,
+    alt: "Russer - Medical equipment manufacturer"
+  }, {
+    src: ossea,
+    alt: "Óssea Medical Technology - Orthopedic implant manufacturer"
+  }, {
+    src: orthometric,
+    alt: "Orthometric - Orthopedic solutions provider"
+  }, {
+    src: cpmh,
+    alt: "CPMH - Medical device solutions"
+  }, {
+    src: evolve,
+    alt: "Evolve - Medical technology innovation"
+  }, {
+    src: fgm,
+    alt: "FGM Dental Group - Dental device manufacturer"
+  }, {
+    src: iol,
+    alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer"
+  }, {
+    src: implanfix,
+    alt: "Implanfix - Surgical materials provider"
+  }, {
+    src: impol,
+    alt: "Impol - Medical instruments manufacturer"
+  }, {
+    src: hcs,
+    alt: "HCS - Healthcare solutions provider"
+  }, {
+    src: gmi,
+    alt: "GMI - Global medical innovation"
+  }, {
+    src: plenum,
+    alt: "Plenum - Medical device technology"
+  }, {
+    src: medens,
+    alt: "Medens - Medical device manufacturer"
+  }, {
+    src: neoortho,
+    alt: "Neoortho - Orthopedic solutions"
+  }, {
+    src: oblDental,
+    alt: "OBL Dental - Dental device manufacturer"
+  }, {
+    src: orthometric2,
+    alt: "Orthometric - Medical orthopedic systems"
+  }];
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex(prev => (prev + 1) % heroImages.length);
@@ -104,26 +148,17 @@ export default function Home() {
   return <div className="min-h-screen">
       {/* Hero Section with Slideshow and Parallax */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-        {heroImages.map((image, index) => (
-          <div 
-            key={index} 
-            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
-          >
-            <div className="w-full h-full" style={{ transform: `translate3d(0, ${parallaxOffset}px, 0)`, willChange: 'transform' }}>
-              <img 
-                src={image} 
-                alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
-                className="w-full h-full object-cover" 
-                loading={index === 0 ? "eager" : "lazy"} 
-                width="1920" 
-                height="600"
-              />
+        {heroImages.map((image, index) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}>
+            <div className="w-full h-full" style={{
+          transform: `translate3d(0, ${parallaxOffset}px, 0)`,
+          willChange: 'transform'
+        }}>
+              <img src={image} alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} className="w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} width="1920" height="600" />
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
             {/* Beautiful Blue Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
-          </div>
-        ))}
+          </div>)}
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10">
@@ -131,12 +166,14 @@ export default function Home() {
               {t("home.hero.title")}
             </h1>
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 animate-fade-in" style={{
-              animationDelay: "0.2s"
-            }}>
+            animationDelay: "0.2s"
+          }}>
               {t("home.hero.subtitle")}
             </p>
             <Link to="/about">
-              <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+              <div className="animate-fade-in" style={{
+              animationDelay: "0.4s"
+            }}>
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
                   {t("home.hero.cta")}
                 </MagneticButton>
@@ -147,14 +184,7 @@ export default function Home() {
 
         {/* Slideshow Indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {heroImages.map((_, index) => (
-            <button 
-              key={index} 
-              onClick={() => setCurrentImageIndex(index)} 
-              className={`w-3 h-3 rounded-full transition-all ${index === currentImageIndex ? "bg-primary-foreground w-8" : "bg-primary-foreground/40 hover:bg-primary-foreground/60"}`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+          {heroImages.map((_, index) => <button key={index} onClick={() => setCurrentImageIndex(index)} className={`w-3 h-3 rounded-full transition-all ${index === currentImageIndex ? "bg-primary-foreground w-8" : "bg-primary-foreground/40 hover:bg-primary-foreground/60"}`} aria-label={`Go to slide ${index + 1}`} />)}
         </div>
       </section>
 
@@ -171,7 +201,9 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105" style={{ animationDelay: "200ms" }}>
+            <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105" style={{
+            animationDelay: "200ms"
+          }}>
               <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-accent to-accent-orange bg-clip-text text-transparent animate-pulse-glow">
                 30+
               </div>
@@ -180,7 +212,9 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105" style={{ animationDelay: "400ms" }}>
+            <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105" style={{
+            animationDelay: "400ms"
+          }}>
               <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-accent-orange to-primary bg-clip-text text-transparent animate-pulse-glow">
                 100%
               </div>
@@ -199,10 +233,7 @@ export default function Home() {
         <div className="absolute bottom-20 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
         
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div 
-            ref={clientsAnimation.elementRef}
-            className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}
-          >
+          <div ref={clientsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.clients.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-blue-500 to-accent-orange mx-auto mb-4 animate-float"></div>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -226,10 +257,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/20 to-secondary/30 relative overflow-hidden">
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div 
-            ref={benefitsAnimation.elementRef}
-            className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}
-          >
+          <div ref={benefitsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.whyChoose.title")}</h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("home.whyChoose.subtitle")}
@@ -260,10 +288,7 @@ export default function Home() {
       {/* Products Preview Section */}
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/30 to-background">
         <div className="container mx-auto px-4 sm:px-6">
-          <div 
-            ref={productsAnimation.elementRef}
-            className={`text-center mb-12 sm:mb-16 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}
-          >
+          <div ref={productsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("products.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto animate-float"></div>
           </div>
@@ -305,59 +330,7 @@ export default function Home() {
       <EquipmentCarousel />
 
       {/* Capabilities Preview Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-blue-600/5 via-background to-blue-500/5 relative overflow-hidden">
-        {/* Blue accent decorations */}
-        <div className="absolute top-0 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
-        
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div 
-            ref={capabilitiesAnimation.elementRef}
-            className={`text-center mb-12 sm:mb-16 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.capabilities.title")}</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 via-primary to-accent mx-auto mb-4 animate-float"></div>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t("home.capabilities.subtitle")}
-            </p>
-          </div>
-
-          <div className="mb-12 max-w-5xl mx-auto">
-            <DNA3D />
-          </div>
-
-          {/* Certifications */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 max-w-3xl mx-auto mb-12 sm:mb-16">
-            <div className="glass-card-strong p-8 rounded-2xl text-center border-l-4 border-blue-500 hover:scale-105 transition-all duration-500 group">
-              <div className="mb-6 flex justify-center">
-                <img src={isoLogo} alt="ISO 13485:2016 certification for medical device quality management" className="h-20 sm:h-24 object-contain group-hover:scale-110 transition-transform" loading="lazy" width="160" height="96" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">{t("home.capabilities.iso.title")}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("home.capabilities.iso.text")}
-              </p>
-            </div>
-
-            <div className="glass-card-strong p-8 rounded-2xl text-center border-l-4 border-blue-600 hover:scale-105 transition-all duration-500 group">
-              <div className="mb-6 flex justify-center">
-                <img src={anvisaLogo} alt="ANVISA Brazilian Health Regulatory Agency certification" className="h-20 sm:h-24 object-contain group-hover:scale-110 transition-transform" loading="lazy" width="160" height="96" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">{t("home.capabilities.anvisa.title")}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("home.capabilities.anvisa.text")}
-              </p>
-            </div>
-          </div>
-
-          <div className="text-center mt-10">
-            <Link to="/capabilities">
-              <MagneticButton size="lg" className="shadow-xl">
-                {t("home.capabilities.cta")}
-              </MagneticButton>
-            </Link>
-          </div>
-        </div>
-      </section>
+      
 
       {/* Interactive Capabilities Section */}
       <InteractiveCapabilities />
