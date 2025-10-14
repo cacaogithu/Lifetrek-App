@@ -216,7 +216,7 @@ export default function Home() {
                 loading={index === 0 ? "eager" : "lazy"} 
                 fetchPriority={index === 0 ? "high" : "low"}
                 width="1920" 
-                height="600" 
+                height="600"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
