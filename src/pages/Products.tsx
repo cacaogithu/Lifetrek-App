@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ImageGallery } from "@/components/ImageGallery";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.png";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.png";
 import medicalScrew from "@/assets/products/medical-screw.png";
@@ -18,9 +19,9 @@ import measuringTools from "@/assets/products/measuring-tools.jpg";
 import dentalComponents from "@/assets/products/dental-components.jpg";
 import dentalAngulados from "@/assets/products/dental-angulados.png";
 import dentalBrocas from "@/assets/products/dental-brocas.png";
-import dentalImplante from "@/assets/products/dental-implante.png";
-import dentalFresas from "@/assets/products/dental-fresas.png";
-import dentalInstrumentos from "@/assets/products/dental-instrumentos.png";
+import dentalImplanteOptimized from "@/assets/products/dental-implante-optimized.png";
+import dentalFresasOptimized from "@/assets/products/dental-fresas-optimized.png";
+import dentalInstrumentosOptimized from "@/assets/products/dental-instrumentos-optimized.png";
 
 export default function Products() {
   const { t } = useLanguage();
@@ -39,7 +40,11 @@ export default function Products() {
         "Cranial fixation devices"
       ],
       color: "from-primary to-primary/80",
-      gallery: [spinalImplants, orthopedicScrews, surgicalPins]
+      catalogImages: [
+        { src: spinalImplants, alt: "Spinal implant systems for fusion procedures" },
+        { src: orthopedicScrews, alt: "Orthopedic fixation screws" },
+        { src: surgicalPins, alt: "Surgical pins for bone fixation" }
+      ]
     },
     {
       icon: Sparkles,
@@ -54,7 +59,13 @@ export default function Products() {
         "Surgical guide systems"
       ],
       color: "from-accent to-accent/80",
-      gallery: [surgicalDrills, surgicalHandles, microInstruments, measuringTools, surgicalParts]
+      catalogImages: [
+        { src: surgicalDrills, alt: "Powered surgical drills" },
+        { src: surgicalHandles, alt: "Surgical instrument handles" },
+        { src: microInstruments, alt: "Micro surgical instruments" },
+        { src: measuringTools, alt: "Precision measuring tools" },
+        { src: surgicalParts, alt: "Surgical instrument components" }
+      ]
     },
     {
       icon: Heart,
@@ -69,7 +80,15 @@ export default function Products() {
         "Custom surgical instruments"
       ],
       color: "from-accent-orange to-accent-orange/80",
-      gallery: [dentalImplante, dentalAngulados, dentalBrocas, dentalFresas, dentalInstrumentos, dentalComponents, precisionComponents]
+      catalogImages: [
+        { src: dentalImplanteOptimized, alt: "Titanium dental implants" },
+        { src: dentalAngulados, alt: "Angled dental abutments" },
+        { src: dentalBrocas, alt: "Dental preparation drills" },
+        { src: dentalFresasOptimized, alt: "Dental cutting burs and fresas" },
+        { src: dentalInstrumentosOptimized, alt: "Dental surgical instruments" },
+        { src: dentalComponents, alt: "Dental prosthetic components" },
+        { src: precisionComponents, alt: "Precision dental parts" }
+      ]
     },
     {
       icon: PawPrint,
@@ -84,7 +103,7 @@ export default function Products() {
         "Custom veterinary implants"
       ],
       color: "from-primary to-accent",
-      gallery: []
+      catalogImages: []
     },
   ];
 
@@ -107,60 +126,55 @@ export default function Products() {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="space-y-16 sm:space-y-20 md:space-y-24">
             {productCategories.map((category, index) => (
-              <div
-                key={index}
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center ${
-                  index % 2 === 1 ? "lg:flex-row-reverse" : ""
-                }`}
-              >
-                <div className={index % 2 === 1 ? "lg:order-2" : ""}>
-                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br ${category.color} text-white mb-4`}>
-                    <category.icon className="h-7 w-7" />
-                  </div>
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">{category.title}</h2>
-                  <p className="text-lg sm:text-xl font-semibold text-primary mb-4">{category.benefit}</p>
-                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6">
-                    {category.description}
-                  </p>
-                  <ul className="space-y-3">
-                    {category.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-                        <span className="text-sm sm:text-base">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className={index % 2 === 1 ? "lg:order-1" : ""}>
-                  <div className="relative group">
-                    <div className={`absolute -inset-1 bg-gradient-to-br ${category.color} rounded-3xl blur-3xl opacity-10 group-hover:opacity-15 transition-opacity`} />
-                    <img
-                      src={category.image}
-                      alt={`${category.title} - ${category.benefit}`}
-                      className="relative w-full rounded-2xl shadow-2xl mb-4"
-                      loading="lazy"
-                      width="600"
-                      height="450"
-                    />
+              <div key={index}>
+                <div
+                  className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center ${
+                    index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                  }`}
+                >
+                  <div className={index % 2 === 1 ? "lg:order-2" : ""}>
+                    <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br ${category.color} text-white mb-4`}>
+                      <category.icon className="h-7 w-7" />
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">{category.title}</h2>
+                    <p className="text-lg sm:text-xl font-semibold text-primary mb-4">{category.benefit}</p>
+                    <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6">
+                      {category.description}
+                    </p>
+                    <ul className="space-y-3">
+                      {category.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
+                          <span className="text-sm sm:text-base">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   
-                  {/* Product Gallery */}
-                  {category.gallery && category.gallery.length > 0 && (
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-                      {category.gallery.map((img, idx) => (
-                        <div key={idx} className="relative group">
-                          <img
-                            src={img}
-                            alt={`${category.title} example ${idx + 1}`}
-                            className="w-full aspect-square object-cover rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
-                            loading="lazy"
-                          />
-                        </div>
-                      ))}
+                  <div className={index % 2 === 1 ? "lg:order-1" : ""}>
+                    <div className="relative group">
+                      <div className={`absolute -inset-1 bg-gradient-to-br ${category.color} rounded-3xl blur-3xl opacity-10 group-hover:opacity-15 transition-opacity`} />
+                      <img
+                        src={category.image}
+                        alt={`${category.title} - ${category.benefit}`}
+                        className="relative w-full rounded-2xl shadow-2xl"
+                        loading="lazy"
+                        width="600"
+                        height="450"
+                      />
                     </div>
-                  )}
+                  </div>
                 </div>
+                
+                {/* Product Catalog */}
+                {category.catalogImages && category.catalogImages.length > 0 && (
+                  <div className="mt-12">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+                      {category.title} Catalog
+                    </h3>
+                    <ImageGallery images={category.catalogImages} columns={category.catalogImages.length > 4 ? 4 : 3} />
+                  </div>
+                )}
               </div>
             ))}
           </div>

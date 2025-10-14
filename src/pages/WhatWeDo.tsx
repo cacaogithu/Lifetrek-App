@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Cog, Sparkles, CheckCircle2, Microscope, Shield, Package, Zap } from "lucide-react";
+import { Cog, Sparkles, CheckCircle2, Microscope, Shield } from "lucide-react";
 import productApplications from "@/assets/products/product-applications.png";
 import cleanroom from "@/assets/facility/cleanroom.jpg";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
@@ -13,7 +13,6 @@ export default function WhatWeDo() {
   const { t } = useLanguage();
   const servicesAnimation = useScrollAnimation();
   const capabilitiesAnimation = useScrollAnimation();
-  const processAnimation = useScrollAnimation();
 
   const capabilities = [
     "Swiss-Type CNC Lathes",
@@ -65,28 +64,6 @@ export default function WhatWeDo() {
     },
   ];
 
-  const processSteps = [
-    {
-      icon: Package,
-      title: "Design Engineering",
-      description: "CAD/CAM programming and DFM analysis for optimal manufacturability",
-    },
-    {
-      icon: Cog,
-      title: "Precision Machining",
-      description: "Swiss CNC manufacturing with live tooling and multi-axis capabilities",
-    },
-    {
-      icon: Sparkles,
-      title: "Surface Finishing",
-      description: "Electropolishing, passivation, and laser marking services",
-    },
-    {
-      icon: Microscope,
-      title: "Quality Verification",
-      description: "Comprehensive dimensional and material testing with certification",
-    },
-  ];
 
   return (
     <div className="min-h-screen">
@@ -167,37 +144,6 @@ export default function WhatWeDo() {
         </div>
       </section>
 
-      {/* Manufacturing Process */}
-      <section ref={processAnimation.elementRef} className="py-20 sm:py-32 bg-gradient-to-b from-secondary/20 to-background relative overflow-hidden">
-        <BlobBackground />
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className={`text-center mb-16 scroll-reveal ${processAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="font-bold mb-6">
-              Our Manufacturing Process
-            </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              From design to delivery: precision at every step
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {processSteps.map((step, index) => (
-              <div
-                key={index}
-                className={`glass-card-strong p-8 rounded-2xl hover:scale-105 transition-all duration-500 scroll-reveal ${processAnimation.isVisible ? 'visible' : ''}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-6">
-                  <step.icon className="h-7 w-7 text-primary" />
-                </div>
-                <div className="text-4xl font-bold text-primary mb-4">{index + 1}</div>
-                <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Capabilities Grid */}
       <section ref={capabilitiesAnimation.elementRef} className="py-20 sm:py-32 bg-background relative overflow-hidden">

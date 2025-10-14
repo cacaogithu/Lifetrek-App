@@ -24,7 +24,7 @@ import { DNA3D } from "@/components/3d/DNA3D";
 import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
 import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { useParallax, useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
 import { StatCard } from "@/components/StatCard";
 import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
@@ -61,7 +61,6 @@ export default function Home() {
     t
   } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const parallaxOffset = useParallax(0.4);
   const benefitsAnimation = useScrollAnimation();
   const clientsAnimation = useScrollAnimation();
   const productsAnimation = useScrollAnimation();
@@ -146,15 +145,10 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
   return <div className="min-h-screen">
-      {/* Hero Section with Slideshow and Parallax */}
+      {/* Hero Section with Slideshow */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
         {heroImages.map((image, index) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}>
-            <div className="w-full h-full" style={{
-          transform: `translate3d(0, ${parallaxOffset}px, 0)`,
-          willChange: 'transform'
-        }}>
-              <img src={image} alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} className="w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} width="1920" height="600" />
-            </div>
+            <img src={image} alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} className="w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} width="1920" height="600" />
             <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
             {/* Beautiful Blue Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
@@ -227,15 +221,11 @@ export default function Home() {
       </section>
 
       {/* Our Clients Section with Carousel */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-blue-600/5 via-blue-500/10 to-background relative overflow-hidden">
-        {/* Blue accent decorations */}
-        <div className="absolute top-20 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
-        
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+      <section className="py-16 sm:py-20 md:py-24 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
           <div ref={clientsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.clients.title")}</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary via-blue-500 to-accent-orange mx-auto mb-4 animate-float"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("home.clients.subtitle")}
             </p>

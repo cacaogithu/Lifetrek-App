@@ -73,21 +73,21 @@ const equipmentItems: EquipmentItem[] = [
   },
   { 
     image: polimento, 
-    title: "Polimento", 
+    title: "Polishing Machine", 
     subtitle: "Sample Surface Preparation",
     category: "Sample Prep",
     specs: ["Variable speed", "Multiple wheels", "Fine surface finish"]
   },
   { 
     image: cortadora, 
-    title: "Cortadora", 
+    title: "Cutting Machine", 
     subtitle: "Precision Sample Cutting",
     category: "Sample Prep",
     specs: ["Diamond blade", "Coolant system", "Precision cuts"]
   },
   { 
     image: embutidora, 
-    title: "Embutidora", 
+    title: "Mounting Press", 
     subtitle: "Sample Mounting System",
     category: "Sample Prep",
     specs: ["Hot mounting", "Quick cycle", "Consistent results"]
