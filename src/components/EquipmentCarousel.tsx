@@ -158,12 +158,12 @@ export const EquipmentCarousel = () => {
   };
 
   return (
-    <div className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-blue-800 via-teal-700 to-teal-800">
+    <div className="relative py-24 sm:py-32 overflow-hidden bg-gradient-to-br from-blue-800 via-teal-700 to-teal-800">
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 text-white">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-6 text-white">
           {t("equipment.title")}
         </h2>
-        <p className="text-lg sm:text-xl text-center text-white/90 max-w-3xl mx-auto mb-8">
+        <p className="text-lg sm:text-xl text-center text-white/90 max-w-3xl mx-auto mb-12">
           {t("equipment.subtitle")}
         </p>
         
@@ -196,22 +196,22 @@ export const EquipmentCarousel = () => {
             {filteredItems.map((item, index) => (
               <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
                 <div className="group h-full">
-                  <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-white shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                  <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-white shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-[1.02]">
                     <img
                       src={item.image}
                       alt={`${item.title} - ${item.subtitle}`}
-                      className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                     
                     {/* Specifications Overlay */}
                     {item.specs && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/95 to-primary/80 text-primary-foreground p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h4 className="font-bold text-lg mb-3">{item.title}</h4>
+                      <div className="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/98 to-blue-900/95 text-white p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h4 className="font-bold text-xl mb-4">{item.title}</h4>
                         <ul className="space-y-2">
                           {item.specs.map((spec, i) => (
                             <li key={i} className="text-sm flex items-start">
-                              <span className="mr-2">•</span>
+                              <span className="mr-2 text-teal-400">•</span>
                               <span>{spec}</span>
                             </li>
                           ))}
@@ -219,16 +219,12 @@ export const EquipmentCarousel = () => {
                       </div>
                     )}
                   </div>
-                  <div className="mt-4 text-center px-2">
-                    <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.subtitle}</p>
-                  </div>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="hidden md:flex -left-12" />
-          <CarouselNext className="hidden md:flex -right-12" />
+          <CarouselPrevious className="hidden md:flex -left-12 bg-white/90 hover:bg-white" />
+          <CarouselNext className="hidden md:flex -right-12 bg-white/90 hover:bg-white" />
         </Carousel>
       </div>
     </div>
