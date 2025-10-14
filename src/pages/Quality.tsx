@@ -56,18 +56,18 @@ export default function Quality() {
   const labEquipment = [
     {
       image: polimento,
-      name: "Polishing Machine",
-      description: "Sample Surface Preparation",
+      name: "Polimento",
+      description: "Polishing Equipment",
     },
     {
       image: cortadora,
-      name: "Cutting Machine",
-      description: "Precision Sample Cutting",
+      name: "Cortadora",
+      description: "Precision Cutting Machine",
     },
     {
       image: embutidora,
-      name: "Mounting Press",
-      description: "Sample Mounting System",
+      name: "Embutidora",
+      description: "Embedding Press",
     },
   ];
 
