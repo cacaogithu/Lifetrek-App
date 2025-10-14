@@ -61,7 +61,7 @@ export default function ProductCatalog() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data as any) || []);
     } catch (error) {
       console.error("Error fetching products:", error);
       toast({
@@ -113,7 +113,7 @@ export default function ProductCatalog() {
           description: analysisData.description,
           category: analysisData.category,
           image_url: publicUrl,
-        });
+        } as any);
 
       if (insertError) throw insertError;
 
@@ -139,7 +139,7 @@ export default function ProductCatalog() {
     try {
       const { error } = await supabase
         .from("product_catalog")
-        .update({ name, description })
+        .update({ name, description } as any)
         .eq("id", id);
 
       if (error) throw error;
@@ -171,7 +171,7 @@ export default function ProductCatalog() {
       }
 
       const { error } = await supabase
-        .from("product_catalog")
+        .from("product_catalog" as any)
         .delete()
         .eq("id", id);
 
