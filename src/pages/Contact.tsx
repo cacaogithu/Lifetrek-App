@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import exterior from "@/assets/facility/exterior.jpg";
+import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 
 export default function Contact() {
   const { t } = useLanguage();
@@ -16,7 +17,7 @@ export default function Contact() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -39,6 +40,14 @@ export default function Contact() {
       });
       return;
     }
+
+    // Track analytics event
+    await trackAnalyticsEvent({
+      eventType: "form_submission",
+      companyName: formData.company,
+      companyEmail: formData.email,
+      metadata: { formType: "contact", name: formData.name }
+    });
 
     toast({
       title: "Message Sent!",

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Send, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 import type { CalculatorInputs, CalculationResults } from "@/pages/Calculator";
 
 interface LeadCaptureFormProps {
@@ -31,6 +32,19 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
     setIsSubmitting(true);
 
     try {
+      // Track analytics event
+      await trackAnalyticsEvent({
+        eventType: "lead_magnet_usage",
+        companyName: formData.company,
+        companyEmail: formData.email,
+        metadata: { 
+          leadMagnetType: "calculator",
+          name: formData.name,
+          inputs,
+          results 
+        }
+      });
+
       // Call edge function to send email with results
       const { error } = await supabase.functions.invoke('send-calculator-report', {
         body: {

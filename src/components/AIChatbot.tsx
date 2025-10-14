@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 
 interface Message {
   role: "user" | "assistant";
@@ -59,6 +60,14 @@ export const AIChatbot = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+
+    // Track chatbot interaction (only first message from user)
+    if (messages.length === 1) {
+      await trackAnalyticsEvent({
+        eventType: "chatbot_interaction",
+        metadata: { firstMessage: input }
+      });
+    }
 
     try {
       const { data, error } = await supabase.functions.invoke("chat", {
