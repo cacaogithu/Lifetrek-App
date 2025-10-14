@@ -7,9 +7,9 @@ import reception from "@/assets/facility/reception.jpg";
 import receptionHero from "@/assets/facility/reception-hero.webp";
 import cleanroom from "@/assets/facility/cleanroom.webp";
 import exterior from "@/assets/facility/exterior.webp";
-import medicalScrew from "@/assets/products/medical-screw.png";
-import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.png";
-import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.png";
+import medicalScrew from "@/assets/products/medical-screw.webp";
+import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
+import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import isoLogo from "@/assets/certifications/iso.jpg";
 import anvisaLogo from "@/assets/certifications/anvisa.png";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
@@ -74,73 +74,119 @@ export default function Home() {
   });
   const clientLogos = [{
     src: vincula,
-    alt: "Vincula - Medical device manufacturer client"
+    alt: "Vincula - Medical device manufacturer client",
+    width: 128,
+    height: 32
   }, {
     src: techimport,
-    alt: "TechImport - Medical technology client"
+    alt: "TechImport - Medical technology client",
+    width: 119,
+    height: 64
   }, {
     src: traumec,
-    alt: "Traumec Health Technology - Medical equipment client"
+    alt: "Traumec Health Technology - Medical equipment client",
+    width: 128,
+    height: 31
   }, {
     src: ultradent,
-    alt: "Ultradent Products - Dental device manufacturer"
+    alt: "Ultradent Products - Dental device manufacturer",
+    width: 105,
+    height: 64
   }, {
     src: toride,
-    alt: "Toride - Medical manufacturing client"
+    alt: "Toride - Medical manufacturing client",
+    width: 114,
+    height: 64
   }, {
     src: react,
-    alt: "React - Creation in health medical technology"
+    alt: "React - Creation in health medical technology",
+    width: 128,
+    height: 47
   }, {
     src: razek,
-    alt: "Razek - Medical device solutions client"
+    alt: "Razek - Medical device solutions client",
+    width: 64,
+    height: 64
   }, {
     src: russer,
-    alt: "Russer - Medical equipment manufacturer"
+    alt: "Russer - Medical equipment manufacturer",
+    width: 128,
+    height: 37
   }, {
     src: ossea,
-    alt: "Óssea Medical Technology - Orthopedic implant manufacturer"
+    alt: "Óssea Medical Technology - Orthopedic implant manufacturer",
+    width: 64,
+    height: 64
   }, {
     src: orthometric,
-    alt: "Orthometric - Orthopedic solutions provider"
+    alt: "Orthometric - Orthopedic solutions provider",
+    width: 128,
+    height: 34
   }, {
     src: cpmh,
-    alt: "CPMH - Medical device solutions"
+    alt: "CPMH - Medical device solutions",
+    width: 128,
+    height: 39
   }, {
     src: evolve,
-    alt: "Evolve - Medical technology innovation"
+    alt: "Evolve - Medical technology innovation",
+    width: 128,
+    height: 64
   }, {
     src: fgm,
-    alt: "FGM Dental Group - Dental device manufacturer"
+    alt: "FGM Dental Group - Dental device manufacturer",
+    width: 128,
+    height: 64
   }, {
     src: iol,
-    alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer"
+    alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer",
+    width: 128,
+    height: 64
   }, {
     src: implanfix,
-    alt: "Implanfix - Surgical materials provider"
+    alt: "Implanfix - Surgical materials provider",
+    width: 128,
+    height: 64
   }, {
     src: impol,
-    alt: "Impol - Medical instruments manufacturer"
+    alt: "Impol - Medical instruments manufacturer",
+    width: 128,
+    height: 64
   }, {
     src: hcs,
-    alt: "HCS - Healthcare solutions provider"
+    alt: "HCS - Healthcare solutions provider",
+    width: 128,
+    height: 64
   }, {
     src: gmi,
-    alt: "GMI - Global medical innovation"
+    alt: "GMI - Global medical innovation",
+    width: 128,
+    height: 64
   }, {
     src: plenum,
-    alt: "Plenum - Medical device technology"
+    alt: "Plenum - Medical device technology",
+    width: 128,
+    height: 64
   }, {
     src: medens,
-    alt: "Medens - Medical device manufacturer"
+    alt: "Medens - Medical device manufacturer",
+    width: 128,
+    height: 64
   }, {
     src: neoortho,
-    alt: "Neoortho - Orthopedic solutions"
+    alt: "Neoortho - Orthopedic solutions",
+    width: 128,
+    height: 64
   }, {
     src: oblDental,
-    alt: "OBL Dental - Dental device manufacturer"
+    alt: "OBL Dental - Dental device manufacturer",
+    width: 128,
+    height: 64
   }, {
     src: orthometric2,
-    alt: "Orthometric - Medical orthopedic systems"
+    alt: "Orthometric - Medical orthopedic systems",
+    width: 128,
+    height: 34
   }];
   useEffect(() => {
     const interval = setInterval(() => {

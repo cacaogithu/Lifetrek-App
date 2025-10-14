@@ -3,6 +3,8 @@ import { useRef, useEffect } from "react";
 interface Client {
   src: string;
   alt: string;
+  width?: number;
+  height?: number;
 }
 
 interface ClientCarouselProps {
@@ -85,7 +87,9 @@ export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
               src={client.src} 
               alt={client.alt} 
               className="max-h-16 w-auto object-contain" 
-              loading="lazy" 
+              loading="lazy"
+              width={client.width}
+              height={client.height}
             />
           </div>
         ))}
