@@ -294,7 +294,11 @@ All colors MUST be HSL.
     }
   }
   
-  /* Performance optimizations */
+  /* Performance optimizations - Prevent forced reflows */
+  section {
+    contain: layout style;
+  }
+  
   .carousel-item {
     content-visibility: auto;
     contain: layout style paint;
@@ -302,6 +306,16 @@ All colors MUST be HSL.
   
   img[loading="lazy"] {
     content-visibility: auto;
+  }
+  
+  /* GPU acceleration for transforms */
+  .scroll-reveal,
+  .scroll-reveal-left,
+  .scroll-reveal-right,
+  .scroll-reveal-scale,
+  .stagger-item {
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   
   /* Optimize animations for mobile */
