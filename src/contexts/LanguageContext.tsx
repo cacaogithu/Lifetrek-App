@@ -173,6 +173,60 @@ const translations = {
     "clients.cta.title": "Become a Partner",
     "clients.cta.text": "Join leading medical companies who trust Lifetrek for precision manufacturing, cleanroom technology, and certified quality.",
     "clients.cta.button": "Contact Us",
+
+    // Home - Additional sections
+    "home.capabilities.title": "Manufacturing Capabilities",
+    "home.capabilities.subtitle": "Advanced equipment and certified processes that de-risk your supply chain",
+    "home.capabilities.iso.title": "ISO 13485:2016 Certified",
+    "home.capabilities.iso.text": "Complete quality management system for medical device manufacturing with full regulatory compliance.",
+    "home.capabilities.anvisa.title": "ANVISA Approved",
+    "home.capabilities.anvisa.text": "Brazilian health regulatory agency approval ensuring compliance with national medical device standards.",
+    "home.capabilities.cta": "See All Capabilities",
+    "home.finalCta.title": "Ready to Accelerate Your Product Development?",
+    "home.finalCta.subtitle": "Partner with Lifetrek to bring your medical devices to market faster with certified quality and precision manufacturing.",
+    "home.finalCta.button": "Get Started Today",
+
+    // Interactive Capabilities
+    "interactive.capabilities.title": "Core Capabilities",
+    "interactive.capabilities.subtitle": "World-class manufacturing and quality assurance systems",
+    "interactive.capabilities.precision.title": "Swiss CNC Precision",
+    "interactive.capabilities.precision.stat": "±0.001mm",
+    "interactive.capabilities.precision.description": "Multi-axis Swiss-type CNC lathes with live tooling. Capable of producing complex medical components with micron-level accuracy for implants and instruments.",
+    "interactive.capabilities.metrology.title": "Advanced Metrology",
+    "interactive.capabilities.metrology.stat": "ISO 17025",
+    "interactive.capabilities.metrology.description": "ZEISS CMM 3D coordinate measuring, optical comparators, and metallographic analysis. Complete dimensional verification and material testing capabilities.",
+    "interactive.capabilities.finishing.title": "Electropolishing",
+    "interactive.capabilities.finishing.stat": "Ra < 0.1μm",
+    "interactive.capabilities.finishing.description": "State-of-the-art electropolishing line producing mirror finishes. Enhances corrosion resistance and biocompatibility for surgical and implantable devices.",
+    "interactive.capabilities.cleanroom.title": "ISO 7 Cleanroom",
+    "interactive.capabilities.cleanroom.stat": "Class 10,000",
+    "interactive.capabilities.cleanroom.description": "Climate-controlled cleanroom environments for sterile medical device assembly and packaging. Full traceability and documentation for regulatory compliance.",
+    "interactive.capabilities.hover": "Hover for details",
+
+    // Manufacturing Timeline
+    "timeline.title": "Our Manufacturing Process",
+    "timeline.subtitle": "From concept to delivery: precision engineering at every step",
+    "timeline.step1.title": "Design & Engineering",
+    "timeline.step1.description": "CAD/CAM programming with ESPRIT software for optimal tool paths and precision",
+    "timeline.step2.title": "Swiss CNC Machining",
+    "timeline.step2.description": "Multi-axis Swiss-type CNC manufacturing with ±0.001mm precision tolerance",
+    "timeline.step3.title": "Surface Finishing",
+    "timeline.step3.description": "Electropolishing for biocompatible mirror finish and enhanced corrosion resistance",
+    "timeline.step4.title": "Quality Control",
+    "timeline.step4.description": "ZEISS CMM 3D measurement and metallographic analysis in ISO-certified lab",
+    "timeline.step5.title": "Cleanroom Packaging",
+    "timeline.step5.description": "ISO 7 cleanroom sterile packaging with full batch traceability documentation",
+    "timeline.step6.title": "Final Certification",
+    "timeline.step6.description": "Complete quality documentation and ISO 13485 compliance certification",
+
+    // Equipment Carousel
+    "equipment.title": "Advanced Manufacturing Equipment",
+    "equipment.subtitle": "State-of-the-art technology for precision medical device manufacturing",
+    "equipment.category.all": "All Equipment",
+    "equipment.category.metrology": "Metrology",
+    "equipment.category.cnc": "CNC Machines",
+    "equipment.category.sampleprep": "Sample Prep",
+    "equipment.category.finishing": "Finishing",
   },
   pt: {
     // Navigation
@@ -346,7 +400,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>("en");
 
-  const t = (key: string): string => {
+  const t = (key: string) => {
     return translations[language][key as keyof typeof translations.en] || key;
   };
 
@@ -359,8 +413,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
+  if (!context) {
+    throw new Error("useLanguage must be used within LanguageProvider");
   }
   return context;
 };

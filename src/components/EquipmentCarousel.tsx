@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
 import opticalCnc from "@/assets/metrology/optical-cnc.png";
 import opticalManual from "@/assets/metrology/optical-manual.jpg";
@@ -135,57 +137,99 @@ const equipmentItems: EquipmentItem[] = [
 ];
 
 export const EquipmentCarousel = () => {
-  // Get only Finishing category items, limited to 2
-  const finishingItems = equipmentItems
-    .filter(item => item.category === "Finishing")
-    .slice(0, 2);
+  const { t } = useLanguage();
+  const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory>("All");
+
+  const categories: EquipmentCategory[] = ["All", "Metrology", "CNC", "Sample Prep", "Finishing"];
+
+  const filteredItems = selectedCategory === "All" 
+    ? equipmentItems 
+    : equipmentItems.filter(item => item.category === selectedCategory);
+
+  const getCategoryLabel = (category: EquipmentCategory) => {
+    const labels: Record<EquipmentCategory, string> = {
+      "All": t("equipment.category.all"),
+      "Metrology": t("equipment.category.metrology"),
+      "CNC": t("equipment.category.cnc"),
+      "Sample Prep": t("equipment.category.sampleprep"),
+      "Finishing": t("equipment.category.finishing"),
+    };
+    return labels[category];
+  };
 
   return (
-    <div className="relative bg-gradient-to-r from-secondary/20 via-background to-secondary/20 py-12 sm:py-16">
+    <div className="relative bg-gradient-to-r from-secondary/20 via-background to-secondary/20 py-16 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4">
-          Surface Finishing Capabilities
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+          {t("equipment.title")}
         </h2>
-        <p className="text-base sm:text-lg text-center text-muted-foreground max-w-2xl mx-auto mb-12">
-          Advanced finishing systems for biocompatible, precision medical devices
+        <p className="text-lg sm:text-xl text-center text-muted-foreground max-w-3xl mx-auto mb-8">
+          {t("equipment.subtitle")}
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {finishingItems.map((item, index) => (
-            <div
-              key={index}
-              className="group"
+        {/* Category Filter */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                selectedCategory === category
+                  ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              }`}
             >
-              <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-white shadow-lg group-hover:shadow-2xl transition-all duration-500">
-                <img
-                  src={item.image}
-                  alt={`${item.title} - ${item.subtitle}`}
-                  className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-                  loading="lazy"
-                />
-                
-                {/* Specifications Overlay */}
-                {item.specs && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/95 to-primary/80 text-primary-foreground p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <h4 className="font-bold text-lg mb-3">{item.title}</h4>
-                    <ul className="space-y-1.5">
-                      {item.specs.map((spec, i) => (
-                        <li key={i} className="text-sm flex items-start">
-                          <span className="mr-2">•</span>
-                          <span>{spec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              <div className="mt-4 text-center px-2">
-                <h3 className="text-base sm:text-lg font-semibold mb-1">{item.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">{item.subtitle}</p>
-              </div>
-            </div>
+              {getCategoryLabel(category)}
+            </button>
           ))}
         </div>
+
+        {/* Equipment Carousel */}
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full max-w-7xl mx-auto"
+        >
+          <CarouselContent className="-ml-4">
+            {filteredItems.map((item, index) => (
+              <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                <div className="group h-full">
+                  <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-white shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                    <img
+                      src={item.image}
+                      alt={`${item.title} - ${item.subtitle}`}
+                      className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    
+                    {/* Specifications Overlay */}
+                    {item.specs && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/95 to-primary/80 text-primary-foreground p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h4 className="font-bold text-lg mb-3">{item.title}</h4>
+                        <ul className="space-y-2">
+                          {item.specs.map((spec, i) => (
+                            <li key={i} className="text-sm flex items-start">
+                              <span className="mr-2">•</span>
+                              <span>{spec}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-4 text-center px-2">
+                    <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.subtitle}</p>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex -left-12" />
+          <CarouselNext className="hidden md:flex -right-12" />
+        </Carousel>
       </div>
     </div>
   );

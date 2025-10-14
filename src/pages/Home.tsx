@@ -109,15 +109,16 @@ export default function Home() {
             key={index} 
             className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
           >
-            <img 
-              src={image} 
-              alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
-              className="w-full h-full object-cover scale-110" 
-              loading={index === 0 ? "eager" : "lazy"} 
-              width="1920" 
-              height="600"
-              style={{ transform: `translateY(${parallaxOffset}px)` }}
-            />
+            <div className="w-full h-full" style={{ transform: `translate3d(0, ${parallaxOffset}px, 0)`, willChange: 'transform' }}>
+              <img 
+                src={image} 
+                alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
+                className="w-full h-full object-cover" 
+                loading={index === 0 ? "eager" : "lazy"} 
+                width="1920" 
+                height="600"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
             {/* Beautiful Blue Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
@@ -306,10 +307,10 @@ export default function Home() {
             ref={capabilitiesAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Manufacturing Capabilities</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.capabilities.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-accent to-primary mx-auto mb-4 animate-float"></div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Advanced equipment and certified processes that de-risk your supply chain
+              {t("home.capabilities.subtitle")}
             </p>
           </div>
 
@@ -343,7 +344,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <Link to="/capabilities">
               <MagneticButton size="lg" className="shadow-xl">
-                See All Capabilities
+                {t("home.capabilities.cta")}
               </MagneticButton>
             </Link>
           </div>
@@ -367,14 +368,14 @@ export default function Home() {
             <div className="text-center lg:text-left">
               <div className="w-24 h-1 bg-gradient-to-r from-accent-orange via-primary-foreground to-accent mb-6 mx-auto lg:mx-0"></div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
-                Ready to Accelerate Your Product Development?
+                {t("home.finalCta.title")}
               </h2>
               <p className="text-lg sm:text-xl mb-8 opacity-95">
-                Partner with a manufacturer that understands the regulatory demands and quality standards of the medical device industry.
+                {t("home.finalCta.subtitle")}
               </p>
               <Link to="/contact">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
-                  Get Started Today
+                  {t("home.finalCta.button")}
                 </MagneticButton>
               </Link>
             </div>

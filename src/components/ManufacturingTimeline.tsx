@@ -1,5 +1,7 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { FileText, Cog, Microscope, Sparkles, Package, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { BlobBackground } from "@/components/BlobBackground";
 
 interface TimelineStep {
   icon: React.ElementType;
@@ -9,46 +11,46 @@ interface TimelineStep {
   bg: string;
 }
 
-const steps: TimelineStep[] = [
+const getSteps = (t: (key: string) => string): TimelineStep[] => [
   {
     icon: FileText,
-    title: "Design & Engineering",
-    description: "CAD/CAM programming with ESPRIT software for optimal tool paths and precision",
+    title: t("timeline.step1.title"),
+    description: t("timeline.step1.description"),
     color: "text-primary",
     bg: "bg-primary/10",
   },
   {
     icon: Cog,
-    title: "Swiss CNC Machining",
-    description: "Multi-axis Swiss-type CNC manufacturing with ±0.001mm precision tolerance",
+    title: t("timeline.step2.title"),
+    description: t("timeline.step2.description"),
     color: "text-accent",
     bg: "bg-accent/10",
   },
   {
     icon: Sparkles,
-    title: "Surface Finishing",
-    description: "Electropolishing for biocompatible mirror finish and enhanced corrosion resistance",
+    title: t("timeline.step3.title"),
+    description: t("timeline.step3.description"),
     color: "text-accent-orange",
     bg: "bg-accent-orange/10",
   },
   {
     icon: Microscope,
-    title: "Quality Control",
-    description: "ZEISS CMM 3D measurement and metallographic analysis in ISO-certified lab",
+    title: t("timeline.step4.title"),
+    description: t("timeline.step4.description"),
     color: "text-primary",
     bg: "bg-primary/10",
   },
   {
     icon: Package,
-    title: "Cleanroom Packaging",
-    description: "ISO 7 cleanroom sterile packaging with full batch traceability documentation",
+    title: t("timeline.step5.title"),
+    description: t("timeline.step5.description"),
     color: "text-accent",
     bg: "bg-accent/10",
   },
   {
     icon: CheckCircle,
-    title: "Final Certification",
-    description: "Complete quality documentation and ISO 13485 compliance certification",
+    title: t("timeline.step6.title"),
+    description: t("timeline.step6.description"),
     color: "text-accent-orange",
     bg: "bg-accent-orange/10",
   },
@@ -56,16 +58,19 @@ const steps: TimelineStep[] = [
 
 export const ManufacturingTimeline = () => {
   const { elementRef, isVisible } = useScrollAnimation();
+  const { t } = useLanguage();
+  const steps = getSteps(t);
 
   return (
-    <section ref={elementRef} className="py-20 sm:py-32 bg-gradient-to-b from-background to-secondary/20">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section ref={elementRef} className="py-20 sm:py-32 bg-gradient-to-b from-background to-secondary/20 relative overflow-hidden">
+      <BlobBackground />
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            Our Manufacturing Process
+            {t("timeline.title")}
           </h2>
           <p className={`text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto transition-all duration-1000 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            From concept to delivery: precision engineering at every step
+            {t("timeline.subtitle")}
           </p>
         </div>
 

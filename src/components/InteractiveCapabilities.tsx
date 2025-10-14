@@ -1,6 +1,7 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useState } from "react";
 import { Microscope, Cog, Sparkles, Shield } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Capability {
   id: string;
@@ -12,40 +13,40 @@ interface Capability {
   bg: string;
 }
 
-const capabilities: Capability[] = [
+const getCapabilities = (t: (key: string) => string): Capability[] => [
   {
     id: "precision",
     icon: Cog,
-    title: "Swiss CNC Precision",
-    stat: "±0.001mm",
-    description: "Multi-axis Swiss-type CNC lathes with live tooling. Capable of producing complex medical components with micron-level accuracy for implants and instruments.",
+    title: t("interactive.capabilities.precision.title"),
+    stat: t("interactive.capabilities.precision.stat"),
+    description: t("interactive.capabilities.precision.description"),
     color: "text-primary",
     bg: "bg-primary/10",
   },
   {
     id: "metrology",
     icon: Microscope,
-    title: "Advanced Metrology",
-    stat: "ISO 17025",
-    description: "ZEISS CMM 3D coordinate measuring, optical comparators, and metallographic analysis. Complete dimensional verification and material testing capabilities.",
+    title: t("interactive.capabilities.metrology.title"),
+    stat: t("interactive.capabilities.metrology.stat"),
+    description: t("interactive.capabilities.metrology.description"),
     color: "text-accent",
     bg: "bg-accent/10",
   },
   {
     id: "finishing",
     icon: Sparkles,
-    title: "Electropolishing",
-    stat: "Ra < 0.1μm",
-    description: "State-of-the-art electropolishing line producing mirror finishes. Enhances corrosion resistance and biocompatibility for surgical and implantable devices.",
+    title: t("interactive.capabilities.finishing.title"),
+    stat: t("interactive.capabilities.finishing.stat"),
+    description: t("interactive.capabilities.finishing.description"),
     color: "text-accent-orange",
     bg: "bg-accent-orange/10",
   },
   {
     id: "cleanroom",
     icon: Shield,
-    title: "ISO 7 Cleanroom",
-    stat: "Class 10,000",
-    description: "Climate-controlled cleanroom environments for sterile medical device assembly and packaging. Full traceability and documentation for regulatory compliance.",
+    title: t("interactive.capabilities.cleanroom.title"),
+    stat: t("interactive.capabilities.cleanroom.stat"),
+    description: t("interactive.capabilities.cleanroom.description"),
     color: "text-primary",
     bg: "bg-primary/10",
   },
@@ -54,16 +55,18 @@ const capabilities: Capability[] = [
 export const InteractiveCapabilities = () => {
   const { elementRef, isVisible } = useScrollAnimation();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const { t } = useLanguage();
+  const capabilities = getCapabilities(t);
 
   return (
     <section ref={elementRef} className="py-20 sm:py-32 bg-background">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
           <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            Core Capabilities
+            {t("interactive.capabilities.title")}
           </h2>
           <p className={`text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto transition-all duration-1000 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            World-class manufacturing and quality assurance systems
+            {t("interactive.capabilities.subtitle")}
           </p>
         </div>
 
@@ -101,7 +104,7 @@ export const InteractiveCapabilities = () => {
                 
                 {!isActive && (
                   <p className="text-sm text-muted-foreground/70 mt-2">
-                    Hover for details
+                    {t("interactive.capabilities.hover")}
                   </p>
                 )}
               </div>
