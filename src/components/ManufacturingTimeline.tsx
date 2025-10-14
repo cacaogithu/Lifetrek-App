@@ -1,6 +1,5 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { FileText, Cog, Microscope, Sparkles, Package, CheckCircle } from "lucide-react";
-import { BlobBackground } from "@/components/BlobBackground";
 
 interface TimelineStep {
   icon: React.ElementType;
@@ -59,9 +58,8 @@ export const ManufacturingTimeline = () => {
   const { elementRef, isVisible } = useScrollAnimation();
 
   return (
-    <section ref={elementRef} className="py-20 sm:py-32 bg-gradient-to-b from-background to-secondary/20 relative overflow-hidden">
-      <BlobBackground />
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+    <section ref={elementRef} className="py-20 sm:py-32 bg-gradient-to-b from-background to-secondary/20">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
           <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             Our Manufacturing Process

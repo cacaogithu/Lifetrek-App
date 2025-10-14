@@ -300,9 +300,8 @@ export default function Home() {
       <EquipmentCarousel />
 
       {/* Capabilities Preview Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-background relative overflow-hidden">
-        <BlobBackground />
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+      <section className="py-16 sm:py-20 md:py-24 bg-background">
+        <div className="container mx-auto px-4 sm:px-6">
           <div 
             ref={capabilitiesAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}
