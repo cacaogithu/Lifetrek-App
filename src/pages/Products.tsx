@@ -16,6 +16,11 @@ import surgicalHandles from "@/assets/products/surgical-handles.png";
 import spinalImplants from "@/assets/products/spinal-implants.png";
 import measuringTools from "@/assets/products/measuring-tools.jpg";
 import dentalComponents from "@/assets/products/dental-components.jpg";
+import dentalAngulados from "@/assets/products/dental-angulados.png";
+import dentalBrocas from "@/assets/products/dental-brocas.png";
+import dentalImplante from "@/assets/products/dental-implante.png";
+import dentalFresas from "@/assets/products/dental-fresas.png";
+import dentalInstrumentos from "@/assets/products/dental-instrumentos.png";
 
 export default function Products() {
   const { t } = useLanguage();
@@ -64,7 +69,7 @@ export default function Products() {
         "Custom surgical instruments"
       ],
       color: "from-accent-orange to-accent-orange/80",
-      gallery: [dentalComponents, precisionComponents]
+      gallery: [dentalImplante, dentalAngulados, dentalBrocas, dentalFresas, dentalInstrumentos, dentalComponents, precisionComponents]
     },
     {
       icon: PawPrint,
