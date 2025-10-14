@@ -11,6 +11,7 @@ import { StickyCTA } from "./components/StickyCTA";
 import { MobileNav } from "./components/MobileNav";
 import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { AIChatbot } from "./components/AIChatbot";
 import { LoadingSpinner } from "./components/LoadingSpinner";
 
 // Lazy load route components for better code splitting
@@ -27,9 +28,6 @@ const Calculator = lazy(() => import("./pages/Calculator"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
-
-// Lazy load non-critical components to improve TTI
-const AIChatbotLazy = lazy(() => import("./components/AIChatbot").then(m => ({ default: m.AIChatbot })));
 
 const queryClient = new QueryClient();
 
@@ -67,9 +65,7 @@ const App = () => (
             <StickyCTA />
             <MobileNav />
             <ScrollToTop />
-            <Suspense fallback={null}>
-              <AIChatbotLazy />
-            </Suspense>
+            <AIChatbot />
           </div>
         </BrowserRouter>
       </LanguageProvider>

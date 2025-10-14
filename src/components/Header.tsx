@@ -4,7 +4,6 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo-optimized.webp";
-import logoMobile from "@/assets/logo-mobile.webp";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,8 +25,6 @@ export const Header = () => {
       <nav className="container mx-auto flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center flex-shrink-0">
           <img 
-            srcSet={`${logoMobile} 640w, ${logo} 1024w`}
-            sizes="(max-width: 640px) 120px, 120px"
             src={logo} 
             alt="Lifetrek Medical - ISO 13485 Certified Medical Device Manufacturer" 
             className="h-10 sm:h-12"

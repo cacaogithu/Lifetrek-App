@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LazyLoad } from "@/components/LazyLoad";
 import reception from "@/assets/facility/reception.webp";
 
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
@@ -25,15 +24,16 @@ import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
 import { useState, useEffect } from "react";
+// DNA3D now lazy loaded at top of file
 // Lazy load 3D components for better mobile performance
 const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({ default: module.MedicalGlobe })));
-// Lazy load below-the-fold components to improve TTI
-const EquipmentCarouselLazy = lazy(() => import("@/components/EquipmentCarousel").then(module => ({ default: module.EquipmentCarousel })));
-const InteractiveCapabilitiesLazy = lazy(() => import("@/components/InteractiveCapabilities").then(module => ({ default: module.InteractiveCapabilities })));
-const ManufacturingTimelineLazy = lazy(() => import("@/components/ManufacturingTimeline").then(module => ({ default: module.ManufacturingTimeline })));
+import { EquipmentCarousel } from "@/components/EquipmentCarousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
 import { StatCard } from "@/components/StatCard";
+import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
+import { InteractiveCapabilities } from "@/components/InteractiveCapabilities";
 import { MagneticButton } from "@/components/MagneticButton";
 import { BlobBackground } from "@/components/BlobBackground";
 import { ClientCarousel } from "@/components/ClientCarousel";
@@ -215,9 +215,8 @@ export default function Home() {
                 className="w-full h-full object-cover" 
                 loading={index === 0 ? "eager" : "lazy"} 
                 fetchPriority={index === 0 ? "high" : "low"}
-                decoding="async"
                 width="1920" 
-                height="600"
+                height="600" 
               />
               <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
@@ -361,21 +360,21 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 max-w-6xl mx-auto mb-12 sm:mb-16">
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-primary/20 transition-all hover:-translate-y-2">
-              <img src={medicalScrew} alt="Precision medical implant screws manufactured with Swiss CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" sizes="(max-width: 640px) 380px, (max-width: 1024px) 400px, 400px" decoding="async" />
+              <img src={medicalScrew} alt="Precision medical implant screws manufactured with Swiss CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.instruments.title")}</h3>
               </div>
             </div>
 
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent/20 transition-all hover:-translate-y-2">
-              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" sizes="(max-width: 640px) 380px, (max-width: 1024px) 400px, 400px" decoding="async" />
+              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
               <div className="absolute inset-0 bg-gradient-to-t from-accent via-accent/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.medical.title")}</h3>
               </div>
             </div>
 
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent-orange/20 transition-all hover:-translate-y-2">
-              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" sizes="(max-width: 640px) 380px, (max-width: 1024px) 400px, 400px" decoding="async" />
+              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
               <div className="absolute inset-0 bg-gradient-to-t from-accent-orange via-accent-orange/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
               </div>
@@ -393,28 +392,16 @@ export default function Home() {
       </section>
 
       {/* Equipment Carousel Section */}
-      <LazyLoad fallback={<div className="py-16 bg-secondary/20 animate-pulse h-96" />}>
-        <Suspense fallback={<div className="py-16 bg-secondary/20 animate-pulse h-96" />}>
-          <EquipmentCarouselLazy />
-        </Suspense>
-      </LazyLoad>
+      <EquipmentCarousel />
 
       {/* Capabilities Preview Section */}
       
 
       {/* Interactive Capabilities Section */}
-      <LazyLoad fallback={<div className="py-16 bg-background animate-pulse h-96" />}>
-        <Suspense fallback={<div className="py-16 bg-background animate-pulse h-96" />}>
-          <InteractiveCapabilitiesLazy />
-        </Suspense>
-      </LazyLoad>
+      <InteractiveCapabilities />
 
       {/* Manufacturing Timeline */}
-      <LazyLoad fallback={<div className="py-16 bg-secondary/10 animate-pulse h-96" />}>
-        <Suspense fallback={<div className="py-16 bg-secondary/10 animate-pulse h-96" />}>
-          <ManufacturingTimelineLazy />
-        </Suspense>
-      </LazyLoad>
+      <ManufacturingTimeline />
 
       {/* Final CTA Section with 3D Globe */}
       <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary via-primary-hover to-accent text-primary-foreground overflow-hidden">
@@ -440,11 +427,9 @@ export default function Home() {
             </div>
             {!isMobile && (
               <div className="hidden lg:block">
-                <LazyLoad fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
-                  <Suspense fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
-                    <MedicalGlobe />
-                  </Suspense>
-                </LazyLoad>
+                <Suspense fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
+                  <MedicalGlobe />
+                </Suspense>
               </div>
             )}
           </div>

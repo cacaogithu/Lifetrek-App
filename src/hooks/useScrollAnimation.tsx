@@ -50,28 +50,14 @@ export const useScrollAnimation = (options: ScrollAnimationOptions = {}) => {
 
 export const useParallax = (speed: number = 0.5) => {
   const [offset, setOffset] = useState(0);
-  const rafRef = useRef<number>();
 
   useEffect(() => {
     const handleScroll = () => {
-      // Cancel any pending frame
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-      
-      // Batch layout read in next frame to avoid forced reflow
-      rafRef.current = requestAnimationFrame(() => {
-        setOffset(window.pageYOffset * speed);
-      });
+      setOffset(window.pageYOffset * speed);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [speed]);
 
   return offset;
