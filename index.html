@@ -62,6 +62,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
+    <!-- Preload LCP image for faster Speed Index -->
+    <link rel="preload" as="image" href="/assets/reception-Byw2jluU.webp" fetchpriority="high" type="image/webp">
+    
     
     <!-- Load full font set asynchronously -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -101,7 +104,7 @@
       <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur-sm">
         <nav class="container mx-auto flex h-16 sm:h-20 items-center justify-between px-4">
           <a href="/" class="flex items-center gap-2">
-            <img src="/assets/logo-optimized-BbWD8Rac.webp" alt="Lifetrek Medical" class="h-10 sm:h-12" width="120" height="48">
+            <img src="/assets/logo-optimized-BbWD8Rac.webp" alt="Lifetrek Medical" class="h-10 sm:h-12" width="120" height="48" decoding="async">
           </a>
         </nav>
       </header>
