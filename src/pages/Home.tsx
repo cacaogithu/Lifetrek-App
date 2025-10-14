@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { LazyLoad } from "@/components/LazyLoad";
 import reception from "@/assets/facility/reception.webp";
 
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
@@ -24,16 +25,15 @@ import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
 import { useState, useEffect } from "react";
-// DNA3D now lazy loaded at top of file
 // Lazy load 3D components for better mobile performance
 const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({ default: module.MedicalGlobe })));
-import { EquipmentCarousel } from "@/components/EquipmentCarousel";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+// Lazy load below-the-fold components to improve TTI
+const EquipmentCarouselLazy = lazy(() => import("@/components/EquipmentCarousel").then(module => ({ default: module.EquipmentCarousel })));
+const InteractiveCapabilitiesLazy = lazy(() => import("@/components/InteractiveCapabilities").then(module => ({ default: module.InteractiveCapabilities })));
+const ManufacturingTimelineLazy = lazy(() => import("@/components/ManufacturingTimeline").then(module => ({ default: module.ManufacturingTimeline })));
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
 import { StatCard } from "@/components/StatCard";
-import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
-import { InteractiveCapabilities } from "@/components/InteractiveCapabilities";
 import { MagneticButton } from "@/components/MagneticButton";
 import { BlobBackground } from "@/components/BlobBackground";
 import { ClientCarousel } from "@/components/ClientCarousel";
@@ -393,16 +393,28 @@ export default function Home() {
       </section>
 
       {/* Equipment Carousel Section */}
-      <EquipmentCarousel />
+      <LazyLoad fallback={<div className="py-16 bg-secondary/20 animate-pulse h-96" />}>
+        <Suspense fallback={<div className="py-16 bg-secondary/20 animate-pulse h-96" />}>
+          <EquipmentCarouselLazy />
+        </Suspense>
+      </LazyLoad>
 
       {/* Capabilities Preview Section */}
       
 
       {/* Interactive Capabilities Section */}
-      <InteractiveCapabilities />
+      <LazyLoad fallback={<div className="py-16 bg-background animate-pulse h-96" />}>
+        <Suspense fallback={<div className="py-16 bg-background animate-pulse h-96" />}>
+          <InteractiveCapabilitiesLazy />
+        </Suspense>
+      </LazyLoad>
 
       {/* Manufacturing Timeline */}
-      <ManufacturingTimeline />
+      <LazyLoad fallback={<div className="py-16 bg-secondary/10 animate-pulse h-96" />}>
+        <Suspense fallback={<div className="py-16 bg-secondary/10 animate-pulse h-96" />}>
+          <ManufacturingTimelineLazy />
+        </Suspense>
+      </LazyLoad>
 
       {/* Final CTA Section with 3D Globe */}
       <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary via-primary-hover to-accent text-primary-foreground overflow-hidden">
@@ -428,9 +440,11 @@ export default function Home() {
             </div>
             {!isMobile && (
               <div className="hidden lg:block">
-                <Suspense fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
-                  <MedicalGlobe />
-                </Suspense>
+                <LazyLoad fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
+                  <Suspense fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
+                    <MedicalGlobe />
+                  </Suspense>
+                </LazyLoad>
               </div>
             )}
           </div>
