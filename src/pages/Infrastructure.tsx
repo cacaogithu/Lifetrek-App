@@ -1,17 +1,17 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import cleanroom from "@/assets/facility/cleanroom.webp";
-import reception from "@/assets/facility/reception.jpg";
-import citizenL20 from "@/assets/equipment/citizen.png";
-import citizenL32 from "@/assets/equipment/citizen-l32.png";
+import reception from "@/assets/facility/reception.webp";
+import citizenL20 from "@/assets/equipment/citizen.webp";
+import citizenL32 from "@/assets/equipment/citizen-l32.webp";
 import citizenL20X from "@/assets/equipment/citizen-l20x.png";
-import walter from "@/assets/equipment/walter.png";
-import tornosGT26 from "@/assets/equipment/tornos-gt26.png";
+import walter from "@/assets/equipment/walter.webp";
+import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
 import tornosGT13 from "@/assets/equipment/tornos-gt13.png";
 import doosan from "@/assets/equipment/doosan.png";
 import espritCam from "@/assets/equipment/esprit-cam.png";
-import robodrill from "@/assets/equipment/robodrill.png";
-import laserMarking from "@/assets/equipment/laser-marking.png";
-import electropolishLine from "@/assets/equipment/electropolish-line.jpg";
+import robodrill from "@/assets/equipment/robodrill.webp";
+import laserMarking from "@/assets/equipment/laser-marking.webp";
+import electropolishLine from "@/assets/equipment/electropolish-line.webp";
 
 export default function Infrastructure() {
   const { t } = useLanguage();

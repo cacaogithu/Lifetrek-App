@@ -1,16 +1,16 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Award, TrendingUp, FileCheck, Zap } from "lucide-react";
-import isoLogo from "@/assets/certifications/iso.jpg";
-import anvisaLogo from "@/assets/certifications/anvisa.png";
-import zeissContura from "@/assets/metrology/zeiss-contura.png";
-import opticalCnc from "@/assets/metrology/optical-cnc.png";
-import opticalManual from "@/assets/metrology/optical-manual.jpg";
-import polimento from "@/assets/metrology/polimento.png";
-import cortadora from "@/assets/metrology/cortadora.png";
-import embutidora from "@/assets/metrology/embutidora.png";
-import hardnessVickers from "@/assets/metrology/hardness-vickers.png";
-import labOverview from "@/assets/metrology/lab-overview.png";
-import olympusMicroscope from "@/assets/metrology/olympus-microscope.png";
+import isoLogo from "@/assets/certifications/iso.webp";
+import anvisaLogo from "@/assets/certifications/anvisa.webp";
+import zeissContura from "@/assets/metrology/zeiss-contura.webp";
+import opticalCnc from "@/assets/metrology/optical-cnc.webp";
+import opticalManual from "@/assets/metrology/optical-manual.webp";
+import polimento from "@/assets/metrology/polimento.webp";
+import cortadora from "@/assets/metrology/cortadora.webp";
+import embutidora from "@/assets/metrology/embutidora.webp";
+import hardnessVickers from "@/assets/metrology/hardness-vickers.webp";
+import labOverview from "@/assets/metrology/lab-overview.webp";
+import olympusMicroscope from "@/assets/metrology/olympus-microscope.webp";
 
 export default function Quality() {
   const { t } = useLanguage();

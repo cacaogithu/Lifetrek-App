@@ -3,9 +3,9 @@ import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint } from "luc
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
-import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.png";
-import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.png";
-import medicalScrew from "@/assets/products/medical-screw.png";
+import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
+import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
+import medicalScrew from "@/assets/products/medical-screw.webp";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
 import surgicalParts from "@/assets/products/surgical-parts-1.jpg";
 import precisionComponents from "@/assets/products/precision-components.png";

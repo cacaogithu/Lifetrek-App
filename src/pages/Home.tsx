@@ -197,28 +197,32 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
   return <div className="min-h-screen">
-      {/* Hero Section - Gradient on Mobile, Slideshow on Desktop */}
+      {/* Hero Section - Blue Gradient on Mobile, Slideshow on Desktop */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-        {/* Desktop: Image Slideshow */}
-        {!isMobile && heroImages.map((image, index) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}>
-            <img 
-              src={image} 
-              alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
-              className="w-full h-full object-cover" 
-              loading={index === 0 ? "eager" : "lazy"} 
-              fetchPriority={index === 0 ? "high" : "low"}
-              width="1920" 
-              height="600" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
-            {/* Beautiful Blue Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
-          </div>)}
+        {/* Mobile: Beautiful Blue Gradient Background Only (No Images) */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--primary))]/90 to-[hsl(var(--accent))] sm:hidden" />
         
-        {/* Mobile: Solid Gradient Background */}
-        {isMobile && (
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-accent" />
-        )}
+        {/* Desktop: Image Slideshow with Gradient Overlays */}
+        <div className="hidden sm:block">
+          {heroImages.map((image, index) => (
+            <div 
+              key={index} 
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
+            >
+              <img 
+                src={image} 
+                alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} 
+                className="w-full h-full object-cover" 
+                loading={index === 0 ? "eager" : "lazy"} 
+                fetchPriority={index === 0 ? "high" : "low"}
+                width="1920" 
+                height="600" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
+            </div>
+          ))}
+        </div>
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10">
@@ -243,11 +247,16 @@ export default function Home() {
         </div>
 
         {/* Slideshow Indicators - Desktop Only */}
-        {!isMobile && (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-            {heroImages.map((_, index) => <button key={index} onClick={() => setCurrentImageIndex(index)} className={`w-3 h-3 rounded-full transition-all ${index === currentImageIndex ? "bg-primary-foreground w-8" : "bg-primary-foreground/40 hover:bg-primary-foreground/60"}`} aria-label={`Go to slide ${index + 1}`} />)}
-          </div>
-        )}
+        <div className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 gap-2 z-20">
+          {heroImages.map((_, index) => (
+            <button 
+              key={index} 
+              onClick={() => setCurrentImageIndex(index)} 
+              className={`w-3 h-3 rounded-full transition-all ${index === currentImageIndex ? "bg-primary-foreground w-8" : "bg-primary-foreground/40 hover:bg-primary-foreground/60"}`} 
+              aria-label={`Go to slide ${index + 1}`} 
+            />
+          ))}
+        </div>
       </section>
 
       {/* Statistics Section - Moved from hero */}
