@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Suspense, lazy } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import reception from "@/assets/facility/reception.jpg";
 import receptionHero from "@/assets/facility/reception-hero.webp";
 import cleanroom from "@/assets/facility/cleanroom.webp";
@@ -21,7 +23,8 @@ import cortadora from "@/assets/metrology/cortadora.png";
 import embutidora from "@/assets/metrology/embutidora.png";
 import { useState, useEffect } from "react";
 import { DNA3D } from "@/components/3d/DNA3D";
-import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
+// Lazy load 3D components for better mobile performance
+const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({ default: module.MedicalGlobe })));
 import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -60,6 +63,7 @@ export default function Home() {
   const {
     t
   } = useLanguage();
+  const isMobile = useIsMobile();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const benefitsAnimation = useScrollAnimation();
   const clientsAnimation = useScrollAnimation();
@@ -145,14 +149,20 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
   return <div className="min-h-screen">
-      {/* Hero Section with Slideshow */}
+      {/* Hero Section - Gradient on Mobile, Slideshow on Desktop */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-        {heroImages.map((image, index) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}>
+        {/* Desktop: Image Slideshow */}
+        {!isMobile && heroImages.map((image, index) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}>
             <img src={image} alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} className="w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} width="1920" height="600" />
             <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
             {/* Beautiful Blue Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
           </div>)}
+        
+        {/* Mobile: Solid Gradient Background */}
+        {isMobile && (
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-accent" />
+        )}
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10">
@@ -176,10 +186,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Slideshow Indicators */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {heroImages.map((_, index) => <button key={index} onClick={() => setCurrentImageIndex(index)} className={`w-3 h-3 rounded-full transition-all ${index === currentImageIndex ? "bg-primary-foreground w-8" : "bg-primary-foreground/40 hover:bg-primary-foreground/60"}`} aria-label={`Go to slide ${index + 1}`} />)}
-        </div>
+        {/* Slideshow Indicators - Desktop Only */}
+        {!isMobile && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+            {heroImages.map((_, index) => <button key={index} onClick={() => setCurrentImageIndex(index)} className={`w-3 h-3 rounded-full transition-all ${index === currentImageIndex ? "bg-primary-foreground w-8" : "bg-primary-foreground/40 hover:bg-primary-foreground/60"}`} aria-label={`Go to slide ${index + 1}`} />)}
+          </div>
+        )}
       </section>
 
       {/* Statistics Section - Moved from hero */}
@@ -348,9 +360,13 @@ export default function Home() {
                 </MagneticButton>
               </Link>
             </div>
-            <div className="hidden lg:block">
-              <MedicalGlobe />
-            </div>
+            {!isMobile && (
+              <div className="hidden lg:block">
+                <Suspense fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
+                  <MedicalGlobe />
+                </Suspense>
+              </div>
+            )}
           </div>
         </div>
       </section>

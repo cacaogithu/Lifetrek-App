@@ -7,6 +7,8 @@ interface ProgressiveImageProps {
   width?: string | number;
   height?: string | number;
   loading?: "lazy" | "eager";
+  srcSet?: string;
+  sizes?: string;
 }
 
 export const ProgressiveImage = ({
@@ -15,7 +17,9 @@ export const ProgressiveImage = ({
   className = "",
   width,
   height,
-  loading = "lazy"
+  loading = "lazy",
+  srcSet,
+  sizes
 }: ProgressiveImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentSrc, setCurrentSrc] = useState("");
@@ -43,6 +47,8 @@ export const ProgressiveImage = ({
       {/* Actual image */}
       <img
         src={currentSrc || src}
+        srcSet={srcSet}
+        sizes={sizes}
         alt={alt}
         width={width}
         height={height}
