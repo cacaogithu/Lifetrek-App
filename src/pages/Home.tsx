@@ -244,7 +244,6 @@ export default function Home() {
 
       {/* Benefits Section */}
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/20 to-secondary/30 relative overflow-hidden">
-        <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div ref={benefitsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.whyChoose.title")}</h2>

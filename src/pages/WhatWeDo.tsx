@@ -96,7 +96,6 @@ export default function WhatWeDo() {
 
       {/* Core Services */}
       <section ref={servicesAnimation.elementRef} className="py-20 sm:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/30 via-transparent to-transparent dark:from-blue-950/20 dark:via-transparent dark:to-transparent pointer-events-none" style={{ top: '25%', height: '50%' }} />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${servicesAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="font-bold mb-6">
