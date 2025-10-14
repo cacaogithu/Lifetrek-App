@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
@@ -139,12 +139,26 @@ const equipmentItems: EquipmentItem[] = [
 export const EquipmentCarousel = () => {
   const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory>("All");
+  const [api, setApi] = useState<any>();
 
   const categories: EquipmentCategory[] = ["All", "Metrology", "CNC", "Sample Prep", "Finishing"];
 
   const filteredItems = selectedCategory === "All" 
     ? equipmentItems 
     : equipmentItems.filter(item => item.category === selectedCategory);
+
+  // Auto-slide only when "All" is selected
+  useEffect(() => {
+    if (!api || selectedCategory !== "All") {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 3000); // Slide every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [api, selectedCategory]);
 
   const getCategoryLabel = (category: EquipmentCategory) => {
     const labels: Record<EquipmentCategory, string> = {
@@ -186,6 +200,7 @@ export const EquipmentCarousel = () => {
 
         {/* Equipment Carousel */}
         <Carousel
+          setApi={setApi}
           opts={{
             align: "start",
             loop: true,

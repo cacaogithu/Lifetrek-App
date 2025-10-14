@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Cog, Sparkles, CheckCircle2, Microscope, Shield, Package, Zap } from "lucide-react";
+import { Cog, Sparkles, Microscope, Shield, Package } from "lucide-react";
 import productApplications from "@/assets/products/product-applications.png";
 import cleanroom from "@/assets/facility/cleanroom.jpg";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
@@ -12,19 +12,7 @@ import { Link } from "react-router-dom";
 export default function WhatWeDo() {
   const { t } = useLanguage();
   const servicesAnimation = useScrollAnimation();
-  const capabilitiesAnimation = useScrollAnimation();
   const processAnimation = useScrollAnimation();
-
-  const capabilities = [
-    "Swiss-Type CNC Lathes",
-    "Multi-Axis Machining",
-    "Precision Tool Grinding",
-    "CAD/CAM Programming",
-    "ISO 7 Cleanrooms",
-    "Electropolishing",
-    "Laser Marking",
-    "3D CMM Inspection",
-  ];
 
   const services = [
     {
@@ -193,35 +181,6 @@ export default function WhatWeDo() {
                 <div className="text-4xl font-bold text-primary mb-4">{index + 1}</div>
                 <h3 className="text-xl font-bold mb-3">{step.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Capabilities Grid */}
-      <section ref={capabilitiesAnimation.elementRef} className="py-20 sm:py-32 bg-background relative overflow-hidden">
-        <BlobBackground />
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className={`text-center mb-16 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="font-bold mb-6">
-              Manufacturing Capabilities
-            </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              State-of-the-art equipment and expertise
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {capabilities.map((capability, index) => (
-              <div
-                key={index}
-                className={`glass-card p-6 rounded-xl hover:shadow-[var(--shadow-elevated)] transition-all duration-500 hover:-translate-y-2 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}
-                style={{ transitionDelay: `${index * 50}ms` }}
-              >
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-accent flex-shrink-0" />
-                  <span className="font-semibold">{capability}</span>
-                </div>
               </div>
             ))}
           </div>
