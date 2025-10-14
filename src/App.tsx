@@ -18,6 +18,7 @@ import Assessment from "./pages/Assessment";
 import Calculator from "./pages/Calculator";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
+import ProductCatalog from "./pages/ProductCatalog";
 import { StickyCTA } from "./components/StickyCTA";
 import { MobileNav } from "./components/MobileNav";
 import { PageTransition } from "./components/PageTransition";
@@ -49,6 +50,7 @@ const App = () => (
                 <Route path="/calculator" element={<Calculator />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/product-catalog" element={<ProductCatalog />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
               </PageTransition>

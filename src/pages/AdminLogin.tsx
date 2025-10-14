@@ -50,6 +50,11 @@ export default function AdminLogin() {
     }
   };
 
+  const handleDevLogin = () => {
+    setEmail("admin@precisionparts.com");
+    setPassword("admin123");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 px-4">
       <Card className="w-full max-w-md p-8">
@@ -92,6 +97,18 @@ export default function AdminLogin() {
             {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
+
+        <div className="mt-4">
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="w-full" 
+            onClick={handleDevLogin}
+            disabled={loading}
+          >
+            🔧 Dev Login (Temporário)
+          </Button>
+        </div>
 
         <div className="mt-6 text-center">
           <Button
