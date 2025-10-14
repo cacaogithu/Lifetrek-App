@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Cog, Sparkles, CheckCircle2, Microscope, Shield } from "lucide-react";
 import productApplications from "@/assets/products/product-applications.png";
-import cleanroom from "@/assets/facility/cleanroom.jpg";
+import cleanroom from "@/assets/facility/cleanroom.webp";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
 import electropolishLine from "@/assets/equipment/electropolish-line.jpg";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import exterior from "@/assets/facility/exterior.jpg";
+import exterior from "@/assets/facility/exterior.webp";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 
 export default function Contact() {

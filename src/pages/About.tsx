@@ -5,7 +5,7 @@ import { BlobBackground } from "@/components/BlobBackground";
 import { MagneticButton } from "@/components/MagneticButton";
 import { Link } from "react-router-dom";
 import reception from "@/assets/facility/reception.jpg";
-import exterior from "@/assets/facility/exterior.jpg";
+import exterior from "@/assets/facility/exterior.webp";
 
 export default function About() {
   const { t } = useLanguage();

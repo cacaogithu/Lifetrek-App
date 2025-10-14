@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import cleanroom from "@/assets/facility/cleanroom.jpg";
+import cleanroom from "@/assets/facility/cleanroom.webp";
 import reception from "@/assets/facility/reception.jpg";
 import citizenL20 from "@/assets/equipment/citizen.png";
 import citizenL32 from "@/assets/equipment/citizen-l32.png";

@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Award, Shield, TrendingUp, Target, Zap, Sparkles } from "lucide-react";
 import isoLogo from "@/assets/certifications/iso.jpg";
 import anvisaLogo from "@/assets/certifications/anvisa.png";
-import cleanroom from "@/assets/facility/cleanroom.jpg";
+import cleanroom from "@/assets/facility/cleanroom.webp";
 import zeissContura from "@/assets/metrology/zeiss-contura.png";
 import opticalCnc from "@/assets/metrology/optical-cnc.png";
 import hardnessVickers from "@/assets/metrology/hardness-vickers.png";
