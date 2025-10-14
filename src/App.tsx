@@ -15,6 +15,7 @@ import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Assessment from "./pages/Assessment";
+import Calculator from "./pages/Calculator";
 import { StickyCTA } from "./components/StickyCTA";
 import { MobileNav } from "./components/MobileNav";
 import { PageTransition } from "./components/PageTransition";
@@ -43,6 +44,7 @@ const App = () => (
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/assessment" element={<Assessment />} />
+                <Route path="/calculator" element={<Calculator />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
               </PageTransition>
