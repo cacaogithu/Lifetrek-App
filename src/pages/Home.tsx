@@ -234,7 +234,7 @@ export default function Home() {
           }}>
               {t("home.hero.subtitle")}
             </p>
-            <Link to="/about">
+            <Link to="/assessment">
               <div className="animate-fade-in" style={{
               animationDelay: "0.4s"
             }}>
