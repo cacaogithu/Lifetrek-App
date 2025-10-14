@@ -158,7 +158,7 @@ export const EquipmentCarousel = () => {
   };
 
   return (
-    <div className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-blue-600 via-teal-500 to-teal-600">
+    <div className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-blue-800 via-teal-700 to-teal-800">
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 text-white">
           {t("equipment.title")}
