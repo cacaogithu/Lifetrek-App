@@ -55,6 +55,48 @@ export default function AdminLogin() {
     setPassword("admin123");
   };
 
+  const handleCreateAdmin = async () => {
+    setLoading(true);
+    try {
+      // Try to sign up the admin user
+      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+        email: "admin@precisionparts.com",
+        password: "admin123",
+      });
+
+      if (signupError) {
+        // If user already exists, that's fine
+        if (signupError.message.includes("already registered")) {
+          toast.error("Admin já existe. Use o Dev Login.");
+          setEmail("admin@precisionparts.com");
+          setPassword("admin123");
+        } else {
+          throw signupError;
+        }
+        return;
+      }
+
+      if (signupData.user) {
+        // Add to admin_users table
+        const { error: adminError } = await supabase
+          .from("admin_users")
+          .insert({ user_id: signupData.user.id });
+
+        if (adminError && !adminError.message.includes("duplicate")) {
+          console.error("Error adding to admin_users:", adminError);
+        }
+
+        toast.success("Admin criado! Use o Dev Login agora.");
+        setEmail("admin@precisionparts.com");
+        setPassword("admin123");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao criar admin");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 px-4">
       <Card className="w-full max-w-md p-8">
@@ -98,7 +140,7 @@ export default function AdminLogin() {
           </Button>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-4 space-y-2">
           <Button 
             type="button" 
             variant="outline" 
@@ -107,6 +149,15 @@ export default function AdminLogin() {
             disabled={loading}
           >
             🔧 Dev Login (Temporário)
+          </Button>
+          <Button 
+            type="button" 
+            variant="secondary" 
+            className="w-full" 
+            onClick={handleCreateAdmin}
+            disabled={loading}
+          >
+            ➕ Criar Admin (Primeira vez)
           </Button>
         </div>
 
