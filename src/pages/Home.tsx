@@ -24,7 +24,7 @@ import { DNA3D } from "@/components/3d/DNA3D";
 import { MedicalGlobe } from "@/components/3d/MedicalGlobe";
 import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { useParallax, useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
 import { StatCard } from "@/components/StatCard";
 import { ManufacturingTimeline } from "@/components/ManufacturingTimeline";
@@ -61,7 +61,6 @@ export default function Home() {
     t
   } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const parallaxOffset = useParallax(0.4);
   const benefitsAnimation = useScrollAnimation();
   const clientsAnimation = useScrollAnimation();
   const productsAnimation = useScrollAnimation();
@@ -149,10 +148,7 @@ export default function Home() {
       {/* Hero Section with Slideshow and Parallax */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
         {heroImages.map((image, index) => <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}>
-            <div className="w-full h-full" style={{
-          transform: `translate3d(0, ${parallaxOffset}px, 0)`,
-          willChange: 'transform'
-        }}>
+            <div className="w-full h-full">
               <img src={image} alt={`Lifetrek Medical - ${index === 0 ? 'ISO 7 cleanroom facility' : index === 1 ? 'Cleanroom manufacturing' : index === 2 ? 'Medical facility exterior' : 'Precision medical components'}`} className="w-full h-full object-cover" loading={index === 0 ? "eager" : "lazy"} width="1920" height="600" />
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
