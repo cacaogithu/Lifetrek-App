@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Sparkles, TrendingUp, Award, Users } from "lucide-react";
-import reception from "@/assets/facility/reception.jpg";
+import reception from "@/assets/facility/reception.webp";
 
 export default function Culture() {
   const { t } = useLanguage();

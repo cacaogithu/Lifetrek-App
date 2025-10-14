@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface Client {
   src: string;
@@ -12,71 +12,18 @@ interface ClientCarouselProps {
 }
 
 export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const autoScrollRef = useRef<number>();
-  const isUserInteractingRef = useRef(false);
-
-  useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (!scrollContainer) return;
-
-    let scrollPosition = 0;
-    const scrollSpeed = 0.5;
-
-    const animate = () => {
-      if (!isUserInteractingRef.current) {
-        scrollPosition += scrollSpeed;
-        
-        if (scrollPosition >= scrollContainer.scrollWidth / 2) {
-          scrollPosition = 0;
-        }
-        
-        scrollContainer.scrollLeft = scrollPosition;
-      }
-      autoScrollRef.current = requestAnimationFrame(animate);
-    };
-
-    autoScrollRef.current = requestAnimationFrame(animate);
-
-    // Handle user interaction
-    const handleInteractionStart = () => {
-      isUserInteractingRef.current = true;
-    };
-
-    const handleInteractionEnd = () => {
-      setTimeout(() => {
-        isUserInteractingRef.current = false;
-      }, 1000);
-    };
-
-    scrollContainer.addEventListener('touchstart', handleInteractionStart);
-    scrollContainer.addEventListener('mousedown', handleInteractionStart);
-    scrollContainer.addEventListener('touchend', handleInteractionEnd);
-    scrollContainer.addEventListener('mouseup', handleInteractionEnd);
-
-    return () => {
-      if (autoScrollRef.current) {
-        cancelAnimationFrame(autoScrollRef.current);
-      }
-      scrollContainer.removeEventListener('touchstart', handleInteractionStart);
-      scrollContainer.removeEventListener('mousedown', handleInteractionStart);
-      scrollContainer.removeEventListener('touchend', handleInteractionEnd);
-      scrollContainer.removeEventListener('mouseup', handleInteractionEnd);
-    };
-  }, []);
-
-  // Double the items for seamless loop
-  const doubledClients = [...clients, ...clients];
+  const [isPaused, setIsPaused] = useState(false);
+  const doubledClients = [...clients, ...clients, ...clients];
 
   return (
     <div className="relative overflow-hidden py-8">
       <div 
-        ref={scrollRef}
-        className="flex gap-12 overflow-x-auto whitespace-nowrap scrollbar-hide cursor-grab active:cursor-grabbing"
+        className="flex gap-12 animate-scroll"
         style={{ 
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
+          animationPlayState: isPaused ? 'paused' : 'running'
         }}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
         {doubledClients.map((client, index) => (
           <div
@@ -90,10 +37,20 @@ export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
               loading="lazy"
               width={client.width}
               height={client.height}
+              decoding="async"
             />
           </div>
         ))}
       </div>
+      <style>{`
+        @keyframes scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(calc(-100% / 3)); }
+        }
+        .animate-scroll {
+          animation: scroll 60s linear infinite;
+        }
+      `}</style>
     </div>
   );
 };

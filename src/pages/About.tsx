@@ -4,7 +4,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BlobBackground } from "@/components/BlobBackground";
 import { MagneticButton } from "@/components/MagneticButton";
 import { Link } from "react-router-dom";
-import reception from "@/assets/facility/reception.jpg";
+import reception from "@/assets/facility/reception.webp";
 import exterior from "@/assets/facility/exterior.webp";
 
 export default function About() {
