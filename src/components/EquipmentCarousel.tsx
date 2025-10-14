@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import zeissContura from "@/assets/metrology/zeiss-contura.png";
-import opticalCnc from "@/assets/metrology/optical-cnc.png";
+import zeissContura from "@/assets/metrology/zeiss-contura.webp";
+import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.jpg";
-import hardnessVickers from "@/assets/metrology/hardness-vickers.png";
-import olympusMicroscope from "@/assets/metrology/olympus-microscope.png";
-import labOverview from "@/assets/metrology/lab-overview.png";
-import polimento from "@/assets/metrology/polimento.png";
-import cortadora from "@/assets/metrology/cortadora.png";
-import embutidora from "@/assets/metrology/embutidora.png";
-import citizen from "@/assets/equipment/citizen.png";
-import citizenL32 from "@/assets/equipment/citizen-l32.png";
-import tornosGT26 from "@/assets/equipment/tornos-gt26.png";
-import walter from "@/assets/equipment/walter.png";
-import robodrill from "@/assets/equipment/robodrill.png";
+import hardnessVickers from "@/assets/metrology/hardness-vickers.webp";
+import olympusMicroscope from "@/assets/metrology/olympus-microscope.webp";
+import labOverview from "@/assets/metrology/lab-overview.webp";
+import polimento from "@/assets/metrology/polimento.webp";
+import cortadora from "@/assets/metrology/cortadora.webp";
+import embutidora from "@/assets/metrology/embutidora.webp";
+import citizen from "@/assets/equipment/citizen.webp";
+import citizenL32 from "@/assets/equipment/citizen-l32.webp";
+import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
+import walter from "@/assets/equipment/walter.webp";
+import robodrill from "@/assets/equipment/robodrill.webp";
 import electropolishLine from "@/assets/equipment/electropolish-line.jpg";
-import laserMarking from "@/assets/equipment/laser-marking.png";
+import laserMarking from "@/assets/equipment/laser-marking.webp";
 
 type EquipmentCategory = "All" | "Metrology" | "CNC" | "Sample Prep" | "Finishing";
 
@@ -202,6 +202,9 @@ export const EquipmentCarousel = () => {
                       alt={`${item.title} - ${item.subtitle}`}
                       className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
+                      decoding="async"
+                      width="400"
+                      height="400"
                     />
                     
                     {/* Specifications Overlay */}

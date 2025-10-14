@@ -4,6 +4,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import reception from "@/assets/facility/reception.webp";
+
+const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import receptionHero from "@/assets/facility/reception-hero.webp";
 import cleanroom from "@/assets/facility/cleanroom.webp";
 import exterior from "@/assets/facility/exterior.webp";
@@ -22,7 +24,7 @@ import polimento from "@/assets/metrology/polimento.png";
 import cortadora from "@/assets/metrology/cortadora.png";
 import embutidora from "@/assets/metrology/embutidora.png";
 import { useState, useEffect } from "react";
-import { DNA3D } from "@/components/3d/DNA3D";
+// DNA3D now lazy loaded at top of file
 // Lazy load 3D components for better mobile performance
 const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({ default: module.MedicalGlobe })));
 import { EquipmentCarousel } from "@/components/EquipmentCarousel";

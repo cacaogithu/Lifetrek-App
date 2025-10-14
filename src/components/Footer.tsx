@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo-optimized.webp";
-import isoLogo from "@/assets/certifications/iso.jpg";
-import anvisaLogo from "@/assets/certifications/anvisa.png";
+import isoLogo from "@/assets/certifications/iso.webp";
+import anvisaLogo from "@/assets/certifications/anvisa.webp";
 
 export const Footer = () => {
   const { t } = useLanguage();
