@@ -193,14 +193,18 @@ export default function Home() {
       </section>
 
       {/* Our Clients Section with Carousel */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
-        <div className="container mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-blue-600/5 via-blue-500/10 to-background relative overflow-hidden">
+        {/* Blue accent decorations */}
+        <div className="absolute top-20 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div 
             ref={clientsAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.clients.title")}</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-blue-500 to-accent-orange mx-auto mb-4 animate-float"></div>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("home.clients.subtitle")}
             </p>
@@ -301,14 +305,18 @@ export default function Home() {
       <EquipmentCarousel />
 
       {/* Capabilities Preview Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-background">
-        <div className="container mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-blue-600/5 via-background to-blue-500/5 relative overflow-hidden">
+        {/* Blue accent decorations */}
+        <div className="absolute top-0 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div 
             ref={capabilitiesAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.capabilities.title")}</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-accent to-primary mx-auto mb-4 animate-float"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 via-primary to-accent mx-auto mb-4 animate-float"></div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("home.capabilities.subtitle")}
             </p>
@@ -320,23 +328,23 @@ export default function Home() {
 
           {/* Certifications */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 max-w-3xl mx-auto mb-12 sm:mb-16">
-            <div className="glass-card-strong p-8 rounded-2xl text-center border-l-4 border-primary hover:scale-105 transition-all duration-500 group">
+            <div className="glass-card-strong p-8 rounded-2xl text-center border-l-4 border-blue-500 hover:scale-105 transition-all duration-500 group">
               <div className="mb-6 flex justify-center">
                 <img src={isoLogo} alt="ISO 13485:2016 certification for medical device quality management" className="h-20 sm:h-24 object-contain group-hover:scale-110 transition-transform" loading="lazy" width="160" height="96" />
               </div>
-              <h3 className="text-lg font-bold mb-2">ISO 13485:2016</h3>
+              <h3 className="text-lg font-bold mb-2">{t("home.capabilities.iso.title")}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Medical Device Quality Management
+                {t("home.capabilities.iso.text")}
               </p>
             </div>
 
-            <div className="glass-card-strong p-8 rounded-2xl text-center border-l-4 border-accent hover:scale-105 transition-all duration-500 group">
+            <div className="glass-card-strong p-8 rounded-2xl text-center border-l-4 border-blue-600 hover:scale-105 transition-all duration-500 group">
               <div className="mb-6 flex justify-center">
                 <img src={anvisaLogo} alt="ANVISA Brazilian Health Regulatory Agency certification" className="h-20 sm:h-24 object-contain group-hover:scale-110 transition-transform" loading="lazy" width="160" height="96" />
               </div>
-              <h3 className="text-lg font-bold mb-2">ANVISA Certified</h3>
+              <h3 className="text-lg font-bold mb-2">{t("home.capabilities.anvisa.title")}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Brazilian Health Regulatory Agency
+                {t("home.capabilities.anvisa.text")}
               </p>
             </div>
           </div>

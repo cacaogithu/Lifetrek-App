@@ -6,6 +6,16 @@ import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.p
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.png";
 import medicalScrew from "@/assets/products/medical-screw.png";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
+import surgicalParts from "@/assets/products/surgical-parts-1.jpg";
+import precisionComponents from "@/assets/products/precision-components.png";
+import surgicalDrills from "@/assets/products/surgical-drills.png";
+import surgicalPins from "@/assets/products/surgical-pins.jpg";
+import orthopedicScrews from "@/assets/products/orthopedic-screws.png";
+import microInstruments from "@/assets/products/micro-instruments.png";
+import surgicalHandles from "@/assets/products/surgical-handles.png";
+import spinalImplants from "@/assets/products/spinal-implants.png";
+import measuringTools from "@/assets/products/measuring-tools.jpg";
+import dentalComponents from "@/assets/products/dental-components.jpg";
 
 export default function Products() {
   const { t } = useLanguage();
@@ -24,6 +34,7 @@ export default function Products() {
         "Cranial fixation devices"
       ],
       color: "from-primary to-primary/80",
+      gallery: [spinalImplants, orthopedicScrews, surgicalPins]
     },
     {
       icon: Sparkles,
@@ -38,6 +49,7 @@ export default function Products() {
         "Surgical guide systems"
       ],
       color: "from-accent to-accent/80",
+      gallery: [surgicalDrills, surgicalHandles, microInstruments, measuringTools, surgicalParts]
     },
     {
       icon: Heart,
@@ -52,6 +64,7 @@ export default function Products() {
         "Custom surgical instruments"
       ],
       color: "from-accent-orange to-accent-orange/80",
+      gallery: [dentalComponents, precisionComponents]
     },
     {
       icon: PawPrint,
@@ -66,6 +79,7 @@ export default function Products() {
         "Custom veterinary implants"
       ],
       color: "from-primary to-accent",
+      gallery: []
     },
   ];
 
@@ -119,12 +133,28 @@ export default function Products() {
                     <img
                       src={category.image}
                       alt={`${category.title} - ${category.benefit}`}
-                      className="relative w-full rounded-2xl shadow-2xl"
+                      className="relative w-full rounded-2xl shadow-2xl mb-4"
                       loading="lazy"
                       width="600"
                       height="450"
                     />
                   </div>
+                  
+                  {/* Product Gallery */}
+                  {category.gallery && category.gallery.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                      {category.gallery.map((img, idx) => (
+                        <div key={idx} className="relative group">
+                          <img
+                            src={img}
+                            alt={`${category.title} example ${idx + 1}`}
+                            className="w-full aspect-square object-cover rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
