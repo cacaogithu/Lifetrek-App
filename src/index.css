@@ -137,6 +137,13 @@ All colors MUST be HSL.
   img {
     max-width: 100%;
     height: auto;
+    content-visibility: auto;
+  }
+  
+  /* Performance optimization for sections */
+  section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */

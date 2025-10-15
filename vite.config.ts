@@ -37,5 +37,7 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     sourcemap: false,
     minify: 'esbuild',
+    target: 'es2015',
+    chunkSizeWarningLimit: 1000,
   },
 }));

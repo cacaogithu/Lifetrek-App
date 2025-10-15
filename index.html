@@ -56,11 +56,15 @@
     }
     </script>
     
-    <!-- Fonts -->
+    <!-- DNS prefetch for faster lookups -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    
+    <!-- Fonts - optimized for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
     <!-- Critical CSS for above-the-fold content -->
     <style>
@@ -89,8 +93,8 @@
       @keyframes fadeIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
     </style>
     
-    <!-- Preload hero image for LCP -->
-    <link rel="preload" as="image" href="/src/assets/facility/reception-hero.webp" type="image/webp" fetchpriority="high">
+    <!-- Preload critical assets -->
+    <link rel="preload" as="image" href="/src/assets/logo-small.webp" type="image/webp" fetchpriority="high">
     <meta property="og:title" content="Lifetrek Medical - High-Precision Medical Manufacturing | ISO 13485 Certified">
   <meta name="twitter:title" content="Lifetrek Medical - High-Precision Medical Manufacturing | ISO 13485 Certified">
   <meta property="og:description" content="ISO 13485 &amp; ANVISA certified manufacturer of medical, dental, and veterinary implants and instruments. State-of-the-art Swiss CNC machining and ISO 7 cleanroom facilities in Brazil.">
