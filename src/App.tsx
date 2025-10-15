@@ -14,6 +14,7 @@ import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { AIChatbot } from "./components/AIChatbot";
 import { LoadingSpinner } from "./components/LoadingSpinner";
+import { CookieConsent } from "./components/CookieConsent";
 
 // Lazy load route components for better code splitting
 const Home = lazy(() => import("./pages/Home"));
@@ -29,6 +30,8 @@ const Calculator = lazy(() => import("./pages/Calculator"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 
 const queryClient = new QueryClient();
 
@@ -58,6 +61,8 @@ const App = () => (
                       <Route path="/admin" element={<Admin />} />
                       <Route path="/admin/login" element={<AdminLogin />} />
                       <Route path="/product-catalog" element={<ProductCatalog />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/terms-of-service" element={<TermsOfService />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
@@ -68,6 +73,7 @@ const App = () => (
               <MobileNav />
               <ScrollToTop />
               <AIChatbot />
+              <CookieConsent />
             </div>
           </BrowserRouter>
         </LanguageProvider>
