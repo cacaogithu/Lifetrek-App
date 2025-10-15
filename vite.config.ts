@@ -32,12 +32,25 @@ export default defineConfig(({ mode }) => ({
           ],
           'query-vendor': ['@tanstack/react-query'],
         },
+        // Better cache control with content hashing
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
     cssCodeSplit: true,
     sourcemap: false,
     minify: 'esbuild',
-    target: 'es2015',
+    target: 'es2020',
     chunkSizeWarningLimit: 1000,
+    // Improve asset handling
+    assetsInlineLimit: 4096,
+    // Enable compression-friendly builds
+    reportCompressedSize: false,
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+    exclude: ['@react-three/fiber', '@react-three/drei'],
   },
 }));
