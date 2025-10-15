@@ -189,13 +189,15 @@ export default function Capabilities() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {cncMachines.map((machine, index) => (
-                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover-lift" style={{ minHeight: '240px' }}>
                   <div className="aspect-square bg-secondary/30 flex items-center justify-center p-4">
                     <img
                       src={machine.image}
                       alt={machine.name}
                       className="w-full h-full object-contain"
                       loading="lazy"
+                      width="200"
+                      height="200"
                     />
                   </div>
                   <div className="p-3">
@@ -214,13 +216,15 @@ export default function Capabilities() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {metrologyEquipment.map((equipment, index) => (
-                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover-lift" style={{ minHeight: '240px' }}>
                   <div className="aspect-square bg-secondary/30 flex items-center justify-center p-4">
                     <img
                       src={equipment.image}
                       alt={equipment.name}
                       className="w-full h-full object-contain"
                       loading="lazy"
+                      width="200"
+                      height="200"
                     />
                   </div>
                   <div className="p-3">
@@ -239,13 +243,15 @@ export default function Capabilities() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {labEquipment.map((equipment, index) => (
-                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover-lift" style={{ minHeight: '240px' }}>
                   <div className="aspect-square bg-secondary/30 flex items-center justify-center p-4">
                     <img
                       src={equipment.image}
                       alt={equipment.name}
                       className="w-full h-full object-contain"
                       loading="lazy"
+                      width="200"
+                      height="200"
                     />
                   </div>
                   <div className="p-3">
@@ -264,13 +270,15 @@ export default function Capabilities() {
             </h2>
             <div className="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
               {finishingEquipment.map((equipment, index) => (
-                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                <div key={index} className="bg-card rounded-lg overflow-hidden shadow-lg hover-lift" style={{ minHeight: '280px' }}>
                   <div className="aspect-video bg-secondary/30 flex items-center justify-center p-4">
                     <img
                       src={equipment.image}
                       alt={equipment.name}
                       className="w-full h-full object-cover rounded"
                       loading="lazy"
+                      width="400"
+                      height="225"
                     />
                   </div>
                   <div className="p-3">

@@ -139,12 +139,6 @@ All colors MUST be HSL.
     height: auto;
     content-visibility: auto;
   }
-  
-  /* Performance optimization for sections */
-  section {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
   .scrollbar-hide::-webkit-scrollbar {
@@ -352,6 +346,21 @@ All colors MUST be HSL.
   
   img[loading="lazy"] {
     content-visibility: auto;
+  }
+  
+  /* Optimized hover effects */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateZ(0);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px) translateZ(0);
+    will-change: transform;
+  }
+  
+  .hover-lift:not(:hover) {
+    will-change: auto;
   }
   
   /* Optimize animations for mobile */
