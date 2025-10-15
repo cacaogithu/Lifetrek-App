@@ -3,6 +3,8 @@ import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint } from "luc
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
+import { SEO } from "@/components/SEO";
+import { medicalImplantsSchema, dentalImplantsSchema, surgicalInstrumentsSchema, generateBreadcrumbSchema } from "@/utils/structuredData";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import medicalScrew from "@/assets/products/medical-screw.webp";
@@ -24,6 +26,11 @@ import dentalInstrumentosOptimized from "@/assets/products/dental-instrumentos-o
 
 export default function Products() {
   const { t } = useLanguage();
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: 'https://lifetrek-global-site.lovable.app/' },
+    { name: 'Products', url: 'https://lifetrek-global-site.lovable.app/products' }
+  ]);
 
   const productCategories = [
     {
@@ -107,6 +114,17 @@ export default function Products() {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Medical Device Products"
+        description="Comprehensive range of precision-manufactured medical devices: orthopedic implants, dental implants, surgical instruments, and veterinary implants. ISO 13485 certified manufacturing."
+        keywords="medical implants, orthopedic screws, dental implants, surgical instruments, trauma plates, spinal implants, veterinary implants, medical device manufacturing"
+        ogType="product"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [medicalImplantsSchema, dentalImplantsSchema, surgicalInstrumentsSchema, breadcrumbSchema]
+        }}
+      />
+      
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16 sm:py-20 md:py-24">
         <div className="container mx-auto px-4 sm:px-6">

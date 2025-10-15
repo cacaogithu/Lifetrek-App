@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Send, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle2, TrendingUp, DollarSign, Wrench, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
+import { calculateLeadScore } from "@/utils/leadScoring";
 import type { CalculatorInputs, CalculationResults } from "@/pages/Calculator";
+import { Progress } from "@/components/ui/progress";
 
 interface LeadCaptureFormProps {
   inputs: CalculatorInputs;
@@ -27,12 +29,15 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
     message: ""
   });
 
+  // Calculate lead score
+  const leadScore = calculateLeadScore(inputs, results);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // Track analytics event
+      // Track analytics event with lead score
       await trackAnalyticsEvent({
         eventType: "lead_magnet_usage",
         companyName: formData.company,
@@ -41,7 +46,9 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
           leadMagnetType: "calculator",
           name: formData.name,
           inputs,
-          results 
+          results,
+          leadScore: leadScore.total,
+          leadTier: leadScore.tier
         }
       });
 
@@ -50,7 +57,8 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
         body: {
           contact: formData,
           inputs,
-          results
+          results,
+          leadScore
         }
       });
 
@@ -128,6 +136,74 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Results
       </Button>
+
+      {/* Lead Score Display */}
+      <div className={`border-2 rounded-xl p-6 ${
+        leadScore.tier === 'hot' ? 'border-red-500 bg-red-500/5' :
+        leadScore.tier === 'warm' ? 'border-orange-500 bg-orange-500/5' :
+        'border-blue-500 bg-blue-500/5'
+      }`}>
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-bold mb-1">Project Opportunity Score</h3>
+            <p className="text-sm text-muted-foreground">Based on volume, budget, and complexity</p>
+          </div>
+          <div className="text-right">
+            <div className={`text-3xl font-bold ${
+              leadScore.tier === 'hot' ? 'text-red-500' :
+              leadScore.tier === 'warm' ? 'text-orange-500' :
+              'text-blue-500'
+            }`}>
+              {leadScore.total}/100
+            </div>
+            <div className="text-xs uppercase font-semibold tracking-wider">
+              {leadScore.tier} lead
+            </div>
+          </div>
+        </div>
+
+        <Progress value={leadScore.total} className="h-2 mb-4" />
+
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <div className="text-xs">
+              <div className="font-semibold">Volume</div>
+              <div className="text-muted-foreground">{leadScore.factors.volumeScore}/30</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-accent" />
+            <div className="text-xs">
+              <div className="font-semibold">Budget</div>
+              <div className="text-muted-foreground">{leadScore.factors.budgetScore}/25</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Wrench className="w-4 h-4 text-accent-orange" />
+            <div className="text-xs">
+              <div className="font-semibold">Complexity</div>
+              <div className="text-muted-foreground">{leadScore.factors.complexityScore}/25</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
+            <div className="text-xs">
+              <div className="font-semibold">Urgency</div>
+              <div className="text-muted-foreground">{leadScore.factors.urgencyScore}/20</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-xs text-muted-foreground">
+          <p className="font-semibold mb-2">Key Insights:</p>
+          <ul className="space-y-1">
+            {leadScore.insights.slice(0, 3).map((insight, i) => (
+              <li key={i}>• {insight}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
       <div className="space-y-2">
         <h2 className="text-2xl font-bold">Get Your Detailed Report</h2>
