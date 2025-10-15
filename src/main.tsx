@@ -12,9 +12,11 @@ if (import.meta.env.PROD) {
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration(),
     ],
-    tracesSampleRate: 1.0,
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
+    // Performance monitoring
+    tracesSampleRate: 1.0, // Capture 100% of transactions for performance monitoring
+    // Session replay
+    replaysSessionSampleRate: 0.1, // 10% of sessions
+    replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
     beforeSend(event) {
       // Don't send events if DSN is not configured
       if (!import.meta.env.VITE_SENTRY_DSN) {
