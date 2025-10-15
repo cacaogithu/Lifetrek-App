@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useMemo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
@@ -59,13 +59,15 @@ import medens from "@/assets/clients/medens.webp";
 import neoortho from "@/assets/clients/neoortho.webp";
 import oblDental from "@/assets/clients/obl-dental.webp";
 import orthometric2 from "@/assets/clients/orthometric-2.webp";
-const heroImages = [receptionHero, cleanroomHero, exteriorHero, medicalScrewHero];
+
 export default function Home() {
   const {
     t
   } = useLanguage();
   const isMobile = useIsMobile();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  const heroImages = useMemo(() => [receptionHero, cleanroomHero, exteriorHero, medicalScrewHero], []);
   const benefitsAnimation = useScrollAnimation();
   const clientsAnimation = useScrollAnimation();
   const productsAnimation = useScrollAnimation();
@@ -189,15 +191,24 @@ export default function Home() {
     width: 128,
     height: 34
   }];
+  
   useEffect(() => {
     // Only run slideshow on desktop where images are shown
-    if (!isMobile) {
+    if (!isMobile && heroImages.length > 1) {
       const interval = setInterval(() => {
         setCurrentImageIndex(prev => (prev + 1) % heroImages.length);
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [isMobile]);
+  }, [isMobile, heroImages.length]);
+
+  useEffect(() => {
+    // Performance monitoring
+    if (typeof window !== 'undefined' && 'performance' in window) {
+      performance.mark('hero-loaded');
+    }
+  }, []);
+  
   return <div className="min-h-screen">
       {/* Hero Section - Blue Gradient on Mobile, Slideshow on Desktop */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">

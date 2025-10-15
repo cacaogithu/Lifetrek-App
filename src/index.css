@@ -195,12 +195,52 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* Animation Performance Optimizations */
+  .animate-fade-in {
+    will-change: opacity, transform;
+  }
+  
+  .animate-pulse-glow {
+    will-change: opacity;
+  }
+  
+  .animate-float {
+    will-change: transform;
+  }
+
+  /* Animation Delay Classes */
+  .animate-delay-100 {
+    animation-delay: 0.1s;
+  }
+  
+  .animate-delay-200 {
+    animation-delay: 0.2s;
+  }
+  
+  .animate-delay-300 {
+    animation-delay: 0.3s;
+  }
+  
+  .animate-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  /* CSS Containment for Performance */
+  section {
+    contain: layout style;
+  }
+
   .glass-card {
     background: linear-gradient(135deg, hsl(var(--card) / 0.7) 0%, hsl(var(--card) / 0.5) 100%);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid hsl(var(--border) / 0.2);
     box-shadow: var(--shadow-glass);
+    contain: layout style paint;
   }
 
   .glass-card-strong {
@@ -209,6 +249,7 @@ All colors MUST be HSL.
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid hsl(var(--border) / 0.3);
     box-shadow: var(--shadow-premium);
+    contain: layout style paint;
   }
 
   .scroll-reveal {

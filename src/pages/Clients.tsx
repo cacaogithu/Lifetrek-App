@@ -126,7 +126,7 @@ export default function Clients() {
                 className={`flex items-center justify-center p-4 bg-card rounded-lg border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 grayscale hover:grayscale-0 ${
                   logosAnimation.isVisible ? 'animate-fade-in' : 'opacity-0'
                 }`}
-                style={{ animationDelay: `${index * 50}ms` }}
+                style={{ animationDelay: `${index * 50}ms`, willChange: logosAnimation.isVisible ? 'auto' : 'opacity, transform' }}
               >
                 <img 
                   src={logo.src} 

@@ -75,10 +75,10 @@ export default function WhatWeDo() {
             <h1 className="font-bold mb-6 animate-fade-in">
               {t("whatWeDo.title")}
             </h1>
-            <p className="text-xl md:text-2xl leading-relaxed animate-fade-in opacity-95 mb-8" style={{ animationDelay: "0.2s" }}>
+            <p className="text-xl md:text-2xl leading-relaxed animate-fade-in animate-delay-200 opacity-95 mb-8">
               {t("whatWeDo.text")}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animate-delay-400">
               <Link to="/assessment">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
                   Schedule Assessment

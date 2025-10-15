@@ -79,7 +79,7 @@ export default function Quality() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">
             {t("quality.title")}
           </h1>
-          <p className="text-lg sm:text-xl max-w-3xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <p className="text-lg sm:text-xl max-w-3xl animate-fade-in animate-delay-200">
             {t("quality.intro")}
           </p>
         </div>

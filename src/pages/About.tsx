@@ -46,10 +46,10 @@ export default function About() {
             <h1 className="font-bold mb-6 animate-fade-in">
               {t("about.title")}
             </h1>
-            <p className="text-xl md:text-2xl leading-relaxed animate-fade-in opacity-95 mb-8" style={{ animationDelay: "0.2s" }}>
+            <p className="text-xl md:text-2xl leading-relaxed animate-fade-in animate-delay-200 opacity-95 mb-8">
               {t("about.intro")}
             </p>
-            <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <div className="animate-fade-in animate-delay-400">
               <Link to="/contact">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
                   Partner With Us
