@@ -3,13 +3,35 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import exterior from "@/assets/facility/exterior.webp";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
+import { z } from "zod";
+import { logError } from "@/utils/errorLogger";
+
+// Zod validation schema
+const contactSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, { message: "Name is required" })
+    .max(100, { message: "Name must be less than 100 characters" }),
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email address" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  company: z.string()
+    .trim()
+    .max(200, { message: "Company name must be less than 200 characters" })
+    .optional(),
+  message: z.string()
+    .trim()
+    .min(1, { message: "Message is required" })
+    .max(2000, { message: "Message must be less than 2000 characters" }),
+});
 
 export default function Contact() {
   const { t } = useLanguage();
-  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,42 +41,49 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please fill in all required fields.",
+    setLoading(true);
+
+    try {
+      // Validate form data with Zod
+      const validatedData = contactSchema.parse({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company || undefined,
+        message: formData.message,
       });
-      return;
-    }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter a valid email address.",
+      // Track form submission with sanitized data
+      await trackAnalyticsEvent({
+        eventType: "form_submission",
+        companyName: validatedData.company || "Not provided",
+        companyEmail: validatedData.email,
+        metadata: {
+          formType: "contact",
+          name: validatedData.name,
+          message: validatedData.message.substring(0, 100),
+        },
       });
-      return;
+
+      toast.success("Message sent successfully! We'll get back to you soon.");
+      
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        message: "",
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Show first validation error
+        toast.error(error.errors[0].message);
+      } else {
+        logError(error, "Contact form submission");
+        toast.error("Failed to send message. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
-
-    // Track analytics event
-    await trackAnalyticsEvent({
-      eventType: "form_submission",
-      companyName: formData.company,
-      companyEmail: formData.email,
-      metadata: { formType: "contact", name: formData.name }
-    });
-
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
-
-    setFormData({ name: "", email: "", company: "", message: "" });
   };
 
   return (
@@ -87,6 +116,7 @@ export default function Contact() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -102,6 +132,7 @@ export default function Contact() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -115,6 +146,7 @@ export default function Contact() {
                     onChange={(e) =>
                       setFormData({ ...formData, company: e.target.value })
                     }
+                    disabled={loading}
                   />
                 </div>
 
@@ -130,11 +162,12 @@ export default function Contact() {
                       setFormData({ ...formData, message: e.target.value })
                     }
                     required
+                    disabled={loading}
                   />
                 </div>
 
-                <Button type="submit" size="lg" className="w-full">
-                  {t("contact.form.submit")}
+                <Button type="submit" size="lg" className="w-full" disabled={loading}>
+                  {loading ? "Sending..." : t("contact.form.submit")}
                 </Button>
               </form>
             </div>

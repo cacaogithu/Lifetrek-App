@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logError } from "./errorLogger";
 
 type EventType = "chatbot_interaction" | "form_submission" | "lead_magnet_usage" | "consultation_scheduled";
 
@@ -24,9 +25,9 @@ export const trackAnalyticsEvent = async ({
     });
 
     if (error) {
-      console.error("Failed to track analytics event:", error);
+      logError(error, "Track analytics event");
     }
   } catch (error) {
-    console.error("Error tracking analytics:", error);
+    logError(error, "Track analytics");
   }
 };

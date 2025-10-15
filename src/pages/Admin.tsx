@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen } from "lucide-react";
 import { toast } from "sonner";
+import { logError } from "@/utils/errorLogger";
 
 type AnalyticsData = {
   chatbot_interactions: number;
@@ -48,14 +49,16 @@ export default function Admin() {
         return;
       }
 
-      const { data: adminData } = await supabase
-        .from("admin_users")
+      // Check if user has admin role using new role system
+      const { data: roleData } = await supabase
+        .from("user_roles")
         .select("*")
         .eq("user_id", user.id)
-        .single();
+        .eq("role", "admin")
+        .maybeSingle();
 
-      if (!adminData) {
-        toast.error("Access denied");
+      if (!roleData) {
+        toast.error("Access denied. Not an admin user.");
         navigate("/");
         return;
       }
@@ -63,7 +66,7 @@ export default function Admin() {
       setIsAdmin(true);
       await fetchAnalytics();
     } catch (error) {
-      console.error("Error checking admin access:", error);
+      logError(error, "Admin access check");
       navigate("/admin/login");
     } finally {
       setLoading(false);
@@ -95,7 +98,7 @@ export default function Admin() {
         recent_events: events?.slice(0, 20) || [],
       });
     } catch (error) {
-      console.error("Error fetching analytics:", error);
+      logError(error, "Fetch analytics");
       toast.error("Failed to load analytics");
     }
   };

@@ -52,12 +52,27 @@ export const useParallax = (speed: number = 0.5) => {
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
+    let rafId: number;
+    
     const handleScroll = () => {
-      setOffset(window.pageYOffset * speed);
+      // Throttle with requestAnimationFrame for smooth performance
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      
+      rafId = requestAnimationFrame(() => {
+        setOffset(window.pageYOffset * speed);
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, [speed]);
 
   return offset;
