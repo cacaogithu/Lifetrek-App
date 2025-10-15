@@ -3,8 +3,6 @@ import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint } from "luc
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import medicalScrew from "@/assets/products/medical-screw.webp";
@@ -26,40 +24,6 @@ import dentalInstrumentosOptimized from "@/assets/products/dental-instrumentos-o
 
 export default function Products() {
   const { t } = useLanguage();
-  const [dentalImageNames, setDentalImageNames] = useState<{[key: string]: string}>({});
-
-  useEffect(() => {
-    const analyzeImages = async () => {
-      const images = [
-        { src: dentalImplanteOptimized, key: 'implante' },
-        { src: dentalAngulados, key: 'angulados' },
-        { src: dentalFresasOptimized, key: 'fresas' },
-        { src: dentalInstrumentosOptimized, key: 'instrumentos' },
-        { src: dentalComponents, key: 'components' },
-        { src: precisionComponents, key: 'precision' }
-      ];
-
-      const results: {[key: string]: string} = {};
-      
-      for (const image of images) {
-        try {
-          const { data, error } = await supabase.functions.invoke('analyze-product-image', {
-            body: { imageUrl: `${window.location.origin}${image.src}` }
-          });
-          
-          if (data && !error) {
-            results[image.key] = `${data.name} - ${data.description}`;
-          }
-        } catch (error) {
-          console.error(`Failed to analyze ${image.key}:`, error);
-        }
-      }
-      
-      setDentalImageNames(results);
-    };
-
-    analyzeImages();
-  }, []);
 
   const productCategories = [
     {
@@ -116,12 +80,12 @@ export default function Products() {
       ],
       color: "from-accent-orange to-accent-orange/80",
       catalogImages: [
-        { src: dentalImplanteOptimized, alt: dentalImageNames.implante || "Implante Dentário em Titânio" },
-        { src: dentalAngulados, alt: dentalImageNames.angulados || "Pilares Protéticos Angulados" },
-        { src: dentalFresasOptimized, alt: dentalImageNames.fresas || "Fresas Cirúrgicas para Implantodontia" },
-        { src: dentalInstrumentosOptimized, alt: dentalImageNames.instrumentos || "Instrumentos Cirúrgicos Dentários" },
-        { src: dentalComponents, alt: dentalImageNames.components || "Componentes Protéticos Dentários" },
-        { src: precisionComponents, alt: dentalImageNames.precision || "Componentes de Precisão em Titânio" }
+        { src: dentalImplanteOptimized, alt: "Implante Dentário em Titânio - Sistema completo de implante com conexão hexagonal" },
+        { src: dentalAngulados, alt: "Pilares Protéticos Angulados - Componentes protéticos multi-angulados para implantes dentários" },
+        { src: dentalFresasOptimized, alt: "Fresas Cirúrgicas para Implantodontia - Kit completo de brocas para preparação óssea" },
+        { src: dentalInstrumentosOptimized, alt: "Instrumentos Cirúrgicos Dentários - Ferramentas de precisão para cirurgia de implantes" },
+        { src: dentalComponents, alt: "Componentes Protéticos Dentários - Conectores e parafusos protéticos em titânio" },
+        { src: precisionComponents, alt: "Componentes de Precisão em Titânio - Peças usinadas de alta precisão para aplicações médicas" }
       ]
     },
     {
@@ -193,8 +157,9 @@ export default function Products() {
                         alt={`${category.title} - ${category.benefit}`}
                         className="relative w-full rounded-2xl shadow-2xl"
                         loading="lazy"
-                        width="600"
-                        height="450"
+                        width="800"
+                        height="600"
+                        decoding="async"
                       />
                     </div>
                   </div>

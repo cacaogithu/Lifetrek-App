@@ -61,13 +61,15 @@ export const AIChatbot = () => {
     setInput("");
     setIsLoading(true);
 
-    // Track chatbot interaction (only first message from user)
-    if (messages.length === 1) {
-      await trackAnalyticsEvent({
-        eventType: "chatbot_interaction",
-        metadata: { firstMessage: input }
-      });
-    }
+    // Track chatbot interaction
+    await trackAnalyticsEvent({
+      eventType: "chatbot_interaction",
+      metadata: { 
+        message: input,
+        conversationDepth: messages.length,
+        isFirstMessage: messages.length === 1
+      }
+    });
 
     try {
       const { data, error } = await supabase.functions.invoke("chat", {
@@ -111,9 +113,10 @@ export const AIChatbot = () => {
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
-          className="fixed bottom-28 left-6 h-14 w-14 md:h-14 md:w-14 sm:h-12 sm:w-12 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-primary"
+          className="fixed bottom-28 left-6 h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-primary"
+          aria-label="Open AI assistant chat"
         >
-          <MessageCircle className="h-6 w-6 md:h-6 md:w-6 sm:h-5 sm:w-5" />
+          <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
       )}
 

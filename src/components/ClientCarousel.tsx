@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useState } from "react";
 
 interface Client {
   src: string;
@@ -13,7 +13,7 @@ interface ClientCarouselProps {
 
 export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
   const [isPaused, setIsPaused] = useState(false);
-  const doubledClients = [...clients, ...clients, ...clients];
+  const doubledClients = [...clients, ...clients];
 
   return (
     <div className="relative overflow-hidden py-8">
@@ -45,10 +45,10 @@ export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
       <style>{`
         @keyframes scroll {
           0% { transform: translateX(0); }
-          100% { transform: translateX(calc(-100% / 3)); }
+          100% { transform: translateX(-50%); }
         }
         .animate-scroll {
-          animation: scroll 60s linear infinite;
+          animation: scroll 40s linear infinite;
         }
       `}</style>
     </div>
