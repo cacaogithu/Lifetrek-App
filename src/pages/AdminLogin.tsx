@@ -62,15 +62,15 @@ export default function AdminLogin() {
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Shield className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold mb-2">Admin Login</h1>
-          <p className="text-muted-foreground text-center">
+          <h1 className="text-3xl font-bold mb-2 text-foreground">Admin Login</h1>
+          <p className="text-foreground/70 text-center text-base">
             Access the internal analytics dashboard
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
             <Input
               id="email"
               type="email"
@@ -78,11 +78,13 @@ export default function AdminLogin() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@lifetrek.com"
               required
+              className="h-12"
+              aria-label="Admin email address"
             />
           </div>
 
-          <div>
-            <Label htmlFor="password">Password</Label>
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
             <Input
               id="password"
               type="password"
@@ -90,23 +92,32 @@ export default function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
+              className="h-12"
+              aria-label="Admin password"
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button 
+            type="submit" 
+            className="w-full h-12 text-base" 
+            disabled={loading}
+            aria-label={loading ? "Logging in, please wait" : "Login to admin dashboard"}
+          >
             {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-6">
           <Button 
             type="button" 
             variant="outline" 
-            className="w-full" 
+            className="w-full h-12 text-base" 
             onClick={handleDevLogin}
             disabled={loading}
+            aria-label="Development login with pre-filled credentials"
           >
-            🔧 Dev Login (Development)
+            <span className="mr-2" aria-hidden="true">🔧</span>
+            Dev Login (Development)
           </Button>
         </div>
 
@@ -114,7 +125,8 @@ export default function AdminLogin() {
           <Button
             variant="link"
             onClick={() => navigate("/")}
-            className="text-sm text-muted-foreground"
+            className="text-base h-12 min-w-[44px] min-h-[44px]"
+            aria-label="Return to main website homepage"
           >
             Back to website
           </Button>
