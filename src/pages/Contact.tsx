@@ -8,8 +8,6 @@ import exterior from "@/assets/facility/exterior.webp";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 import { z } from "zod";
 import { logError } from "@/utils/errorLogger";
-import { SEO } from "@/components/SEO";
-import { organizationSchema, generateBreadcrumbSchema } from "@/utils/structuredData";
 
 // Zod validation schema
 const contactSchema = z.object({
@@ -34,11 +32,6 @@ const contactSchema = z.object({
 export default function Contact() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
-
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'Home', url: 'https://lifetrek-global-site.lovable.app/' },
-    { name: 'Contact', url: 'https://lifetrek-global-site.lovable.app/contact' }
-  ]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -95,16 +88,6 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen">
-      <SEO
-        title="Contact Us"
-        description="Contact Lifetrek Medical for precision medical device manufacturing. Get in touch for quotes, technical consultations, and partnership opportunities. ISO 13485 certified manufacturer."
-        keywords="contact medical device manufacturer, medical device quote, precision manufacturing inquiry, medical implant supplier contact"
-        structuredData={{
-          "@context": "https://schema.org",
-          "@graph": [organizationSchema, breadcrumbSchema]
-        }}
-      />
-      
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-16 sm:py-20 md:py-32">
         <div className="absolute inset-0 bg-[image:var(--gradient-subtle)] opacity-30" />

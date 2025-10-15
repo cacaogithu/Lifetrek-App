@@ -2,9 +2,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
-import { SEO } from "@/components/SEO";
-import { organizationSchema, faqSchema, generateBreadcrumbSchema } from "@/utils/structuredData";
-import { SocialProof } from "@/components/SocialProof";
 
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
@@ -193,21 +190,7 @@ export default function Home() {
     }
   }, []);
   
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: 'Home', url: 'https://lifetrek-global-site.lovable.app/' }
-  ]);
-
   return <div className="min-h-screen">
-      <SEO
-        title="Home"
-        description="Lifetrek Medical - Precision medical device manufacturing with Swiss CNC technology. ISO 13485 certified manufacturer of orthopedic implants, dental implants, and surgical instruments."
-        keywords="medical device manufacturing, Swiss CNC, orthopedic implants, dental implants, surgical instruments, ISO 13485, ANVISA certified, medical precision machining"
-        structuredData={{
-          "@context": "https://schema.org",
-          "@graph": [organizationSchema, faqSchema, breadcrumbSchema]
-        }}
-      />
-      
       {/* Hero Section - Clean Gradient Background */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
         {/* Beautiful Blue Gradient Background */}
@@ -231,9 +214,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Social Proof Banner */}
-      <SocialProof />
 
       {/* Statistics Section - Moved from hero */}
       <section className="py-12 sm:py-16 bg-gradient-to-b from-primary/5 to-background">

@@ -15,7 +15,6 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import { AIChatbot } from "./components/AIChatbot";
 import { LoadingSpinner } from "./components/LoadingSpinner";
 import { CookieConsent } from "./components/CookieConsent";
-import { ExitIntentPopup } from "./components/ExitIntentPopup";
 
 // Lazy load route components for better code splitting
 const Home = lazy(() => import("./pages/Home"));
@@ -75,7 +74,6 @@ const App = () => (
               <ScrollToTop />
               <AIChatbot />
               <CookieConsent />
-              <ExitIntentPopup />
             </div>
           </BrowserRouter>
         </LanguageProvider>
