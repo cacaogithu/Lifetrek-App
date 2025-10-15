@@ -3,13 +3,12 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import reception from "@/assets/facility/reception.webp";
 
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import receptionHero from "@/assets/facility/reception-hero.webp";
-import cleanroom from "@/assets/facility/cleanroom.webp";
-import exterior from "@/assets/facility/exterior.webp";
-import medicalScrew from "@/assets/products/medical-screw.webp";
+import cleanroomHero from "@/assets/facility/cleanroom-hero.webp";
+import exteriorHero from "@/assets/facility/exterior-hero.webp";
+import medicalScrewHero from "@/assets/products/medical-screw-hero.webp";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import isoLogo from "@/assets/certifications/iso.webp";
@@ -60,7 +59,7 @@ import medens from "@/assets/clients/medens.webp";
 import neoortho from "@/assets/clients/neoortho.webp";
 import oblDental from "@/assets/clients/obl-dental.webp";
 import orthometric2 from "@/assets/clients/orthometric-2.webp";
-const heroImages = [reception, cleanroom, exterior, medicalScrew];
+const heroImages = [receptionHero, cleanroomHero, exteriorHero, medicalScrewHero];
 export default function Home() {
   const {
     t
@@ -215,8 +214,9 @@ export default function Home() {
                 className="w-full h-full object-cover" 
                 loading={index === 0 ? "eager" : "lazy"} 
                 fetchPriority={index === 0 ? "high" : "low"}
-                width="1920" 
-                height="600" 
+                decoding="async"
+                width="1000" 
+                height="667" 
               />
               <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-blue-500/20 to-transparent mix-blend-overlay" />
@@ -360,7 +360,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 max-w-6xl mx-auto mb-12 sm:mb-16">
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-primary/20 transition-all hover:-translate-y-2">
-              <img src={medicalScrew} alt="Precision medical implant screws manufactured with Swiss CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
+              <img src={medicalScrewHero} alt="Precision medical implant screws manufactured with Swiss CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.instruments.title")}</h3>
               </div>
