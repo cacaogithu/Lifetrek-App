@@ -190,11 +190,14 @@ export default function Home() {
     height: 34
   }];
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex(prev => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    // Only run slideshow on desktop where images are shown
+    if (!isMobile) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % heroImages.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isMobile]);
   return <div className="min-h-screen">
       {/* Hero Section - Blue Gradient on Mobile, Slideshow on Desktop */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
@@ -226,18 +229,14 @@ export default function Home() {
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
               {t("home.hero.title")}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 animate-fade-in" style={{
-            animationDelay: "0.2s"
-          }}>
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8">
               {t("home.hero.subtitle")}
             </p>
             <Link to="/about">
-              <div className="animate-fade-in" style={{
-              animationDelay: "0.4s"
-            }}>
+              <div>
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
                   {t("home.hero.cta")}
                 </MagneticButton>
