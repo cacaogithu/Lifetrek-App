@@ -1,19 +1,14 @@
 // Centralized error logging utility
-import * as Sentry from "@sentry/react";
+// Only logs errors in development, silent in production to avoid exposing sensitive info
 
 const isDevelopment = import.meta.env.DEV;
 
 export const logError = (error: unknown, context?: string) => {
   if (isDevelopment) {
     console.error(`[Error${context ? ` - ${context}` : ''}]:`, error);
-  } else {
-    // Send to Sentry in production
-    if (import.meta.env.VITE_SENTRY_DSN) {
-      Sentry.captureException(error, {
-        tags: { context: context || 'unknown' }
-      });
-    }
   }
+  // In production, you could send to an error tracking service here
+  // Example: Sentry.captureException(error);
 };
 
 export const logInfo = (message: string, data?: any) => {

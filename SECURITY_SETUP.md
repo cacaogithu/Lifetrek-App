@@ -1,12 +1,5 @@
 # Security Setup Guide
 
-## ✅ COMPLETED PHASES
-
-### Phase 1: Security & Critical Fixes ✅
-### Phase 2: Legal Compliance & Monitoring ✅
-
----
-
 ## Phase 1 Implementation Status ✅
 
 ### ✅ Database Security - COMPLETED
@@ -55,20 +48,53 @@ Rate limiting prevents abuse and DDoS attacks by tracking requests per IP addres
 3. Enable "Leaked Password Protection"
 4. This will prevent users from using commonly leaked passwords
 
-### ✅ Error Tracking - COMPLETED
+### 🔧 Error Tracking Setup - NEXT STEPS
 
-**Sentry Integration Implemented:**
-- ✅ @sentry/react installed and configured
-- ✅ Automatic error capture in production
-- ✅ Session replay on errors
-- ✅ Performance monitoring
-- ✅ Centralized error logging via errorLogger.ts
+The application already has:
+- ✅ ErrorBoundary component for catching React errors
+- ✅ Centralized error logging utility (errorLogger.ts)
+- ✅ Development mode error logging
 
-**Next Steps:**
-1. Create Sentry account at [sentry.io](https://sentry.io)
-2. Create new React project in Sentry
-3. Add `VITE_SENTRY_DSN` environment variable to deployment
-4. See MONITORING_SETUP.md for detailed instructions
+**Recommended: Add Production Error Tracking**
+
+#### Option 1: Sentry (Recommended)
+```bash
+npm install @sentry/react
+```
+
+Then add to `src/main.tsx`:
+```typescript
+import * as Sentry from "@sentry/react";
+
+Sentry.init({
+  dsn: "YOUR_SENTRY_DSN",
+  environment: import.meta.env.MODE,
+  integrations: [
+    new Sentry.BrowserTracing(),
+    new Sentry.Replay(),
+  ],
+  tracesSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+});
+```
+
+Update `src/utils/errorLogger.ts` to send to Sentry in production:
+```typescript
+export const logError = (error: unknown, context?: string) => {
+  if (isDevelopment) {
+    console.error(`[Error${context ? ` - ${context}` : ''}]:`, error);
+  } else {
+    // Send to Sentry in production
+    Sentry.captureException(error, {
+      tags: { context: context || 'unknown' }
+    });
+  }
+};
+```
+
+#### Option 2: LogRocket
+Alternative for session replay and error tracking.
 
 ## Security Best Practices Implemented
 
@@ -111,110 +137,19 @@ Before deploying to production, verify:
 - [ ] Leaked password protection enabled
 - [ ] Production error tracking configured (if using Sentry/LogRocket)
 
----
+## Next Steps (Phase 2)
 
-## Phase 2 Implementation Status ✅
+1. Legal Compliance Pages
+   - Privacy Policy
+   - Terms of Service
+   - Cookie Consent Banner
+   - LGPD/GDPR compliance
 
-### ✅ Legal Compliance Pages - COMPLETED
-
-**Created Pages:**
-- ✅ Privacy Policy (`/privacy-policy`)
-  - LGPD compliant
-  - GDPR compliant
-  - Data rights explained
-  - Contact information for DPO
-  
-- ✅ Terms of Service (`/terms-of-service`)
-  - Service description
-  - User responsibilities
-  - Warranties and disclaimers
-  - Governing law (Brazilian jurisdiction)
-
-- ✅ Cookie Consent Banner
-  - Appears on first visit
-  - Accept/Decline options
-  - Links to Privacy Policy
-  - Stores preference in localStorage
-
-**Footer Updates:**
-- ✅ Added links to Privacy Policy
-- ✅ Added links to Terms of Service
-- ✅ Improved layout for legal compliance
-
-### ✅ Monitoring Infrastructure - COMPLETED
-
-**Error Tracking:**
-- ✅ Sentry integration configured
-- ✅ Production error logging
-- ✅ Session replay on errors
-- ✅ Performance monitoring
-- See MONITORING_SETUP.md for setup instructions
-
-**Monitoring Documentation Created:**
-- ✅ Database backup procedures
-- ✅ Uptime monitoring setup guide (UptimeRobot)
-- ✅ Performance monitoring recommendations
-- ✅ Alerting system configuration
-- ✅ Incident response plan
-- See MONITORING_SETUP.md for details
-
----
-
----
-
-## Phase 3 Implementation Status ✅
-
-### ✅ Performance Optimizations - COMPLETED
-
-**Status:** Complete
-**Completed:** 2025-10-15
-
-See [PERFORMANCE_OPTIMIZATIONS.md](./PERFORMANCE_OPTIMIZATIONS.md) for detailed documentation.
-
-**Summary:**
-- ✅ Image optimization with WebP conversion
-- ✅ Lazy loading for all images and routes  
-- ✅ Caching headers for static assets (1 year)
-- ✅ Security headers (XSS, frame options, etc.)
-- ✅ Performance monitoring with Sentry
-- ✅ Bundle size optimization with code splitting
-- ✅ Runtime optimizations (memo, callbacks)
-
-**Performance Targets Achieved:**
-- First Contentful Paint: ~1.2s (target: <1.8s) ✅
-- Largest Contentful Paint: ~1.8s (target: <2.5s) ✅
-- Time to Interactive: ~2.4s (target: <3.5s) ✅
-- Cumulative Layout Shift: ~0.05 (target: <0.1) ✅
-
----
-
-## Next Steps (Phase 4)
-
-### Phase 4: SEO & Conversion Optimization
-1. SEO Enhancement
-   - Add comprehensive meta tags to all pages
-   - Implement structured data (Schema.org)
-   - Add Open Graph tags for social sharing
-   - Create XML image sitemap
-
-2. Conversion Improvements
-   - Add lead scoring to calculator
-   - Implement automated follow-up email sequences
-   - Add social proof elements
-   - Create exit-intent capture
-
-### Phase 5: Testing & Polish
-1. Testing Suite
-   - Add critical path unit tests
-   - E2E tests for main user flows
-   - Load testing for edge functions
-   - Security penetration testing
-
-2. Final Polish
-   - Create comprehensive staging environment
-   - Further performance optimization
-   - Mobile UX improvements
-   - Admin dashboard enhancements
+2. Monitoring Setup
+   - Uptime monitoring
+   - Database backup automation
+   - Performance monitoring
+   - Alerting system
 
 ## Support
 
@@ -225,5 +160,5 @@ If you encounter any security issues or need help with implementation:
 
 ---
 
-**Last Updated**: Phase 3 Complete - 2025-10-15
-**Status**: ✅ Security | ✅ Legal | ✅ Performance | ⚠️ Auth Config
+**Last Updated**: Phase 1 Implementation Complete
+**Status**: ✅ Database Security | ✅ Rate Limiting | ⚠️ Auth Config | 🔧 Error Tracking Ready
