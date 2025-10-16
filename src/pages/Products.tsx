@@ -3,7 +3,6 @@ import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint, ChevronDow
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
@@ -176,26 +175,23 @@ export default function Products() {
                 
                 {/* Minimalist Catalog */}
                 {category.catalogImages && category.catalogImages.length > 0 && (
-                  <Collapsible 
-                    open={openCatalog === index} 
-                    onOpenChange={(open) => setOpenCatalog(open ? index : null)}
-                    className="mt-8"
-                  >
-                    <CollapsibleTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <span className="text-sm font-medium">
-                          {openCatalog === index ? "Hide" : "View"} Product Catalog ({category.catalogImages.length} items)
-                        </span>
-                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openCatalog === index ? 'rotate-180' : ''}`} />
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-6 animate-accordion-down">
-                      <ImageGallery images={category.catalogImages} columns={category.catalogImages.length > 4 ? 4 : 3} />
-                    </CollapsibleContent>
-                  </Collapsible>
+                  <div className="mt-8">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setOpenCatalog(openCatalog === index ? null : index)}
+                      className="w-full flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <span className="text-sm font-medium">
+                        {openCatalog === index ? "Hide" : "View"} Product Catalog ({category.catalogImages.length} items)
+                      </span>
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openCatalog === index ? 'rotate-180' : ''}`} />
+                    </Button>
+                    {openCatalog === index && (
+                      <div className="mt-6 animate-fade-in">
+                        <ImageGallery images={category.catalogImages} columns={category.catalogImages.length > 4 ? 4 : 3} />
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             ))}
