@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
-import { logError } from "@/utils/errorLogger";
 
 interface Message {
   role: "user" | "assistant";
@@ -85,7 +84,7 @@ export const AIChatbot = () => {
         } else {
           toast.error("Failed to get response. Please try again.");
         }
-        logError(error, "AI Chatbot");
+        console.error("Chat error:", error);
         return;
       }
 
@@ -93,7 +92,7 @@ export const AIChatbot = () => {
         setMessages((prev) => [...prev, { role: "assistant", content: data.response }]);
       }
     } catch (error) {
-      logError(error, "AI Chatbot send message");
+      console.error("Error sending message:", error);
       toast.error("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);

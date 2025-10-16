@@ -53,11 +53,7 @@ const getCapabilities = (t: (key: string) => string): Capability[] => [
 ];
 
 export const InteractiveCapabilities = () => {
-  const { elementRef, isVisible } = useScrollAnimation({
-    threshold: 0.15,
-    rootMargin: '0px 0px -50px 0px',
-    triggerOnce: true
-  });
+  const { elementRef, isVisible } = useScrollAnimation();
   const [activeId, setActiveId] = useState<string | null>(null);
   const { t } = useLanguage();
   const capabilities = getCapabilities(t);

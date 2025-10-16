@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
-import ErrorBoundary from "./components/ErrorBoundary";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { StickyCTA } from "./components/StickyCTA";
@@ -33,47 +32,45 @@ const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <LanguageProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <div className="flex flex-col min-h-screen overflow-x-hidden">
-              <Header />
-              <main className="flex-1 w-full">
-                <PageTransition>
-                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><LoadingSpinner /></div>}>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/what-we-do" element={<WhatWeDo />} />
-                      <Route path="/products" element={<Products />} />
-                      <Route path="/capabilities" element={<Capabilities />} />
-                      <Route path="/clients" element={<Clients />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/assessment" element={<Assessment />} />
-                      <Route path="/calculator" element={<Calculator />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/admin/login" element={<AdminLogin />} />
-                      <Route path="/product-catalog" element={<ProductCatalog />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </PageTransition>
-              </main>
-              <Footer />
-              <StickyCTA />
-              <MobileNav />
-              <ScrollToTop />
-              <AIChatbot />
-            </div>
-          </BrowserRouter>
-        </LanguageProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <LanguageProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <div className="flex flex-col min-h-screen overflow-x-hidden">
+            <Header />
+            <main className="flex-1 w-full">
+              <PageTransition>
+                <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><LoadingSpinner /></div>}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/what-we-do" element={<WhatWeDo />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/capabilities" element={<Capabilities />} />
+                    <Route path="/clients" element={<Clients />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/assessment" element={<Assessment />} />
+                    <Route path="/calculator" element={<Calculator />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/product-catalog" element={<ProductCatalog />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </PageTransition>
+            </main>
+            <Footer />
+            <StickyCTA />
+            <MobileNav />
+            <ScrollToTop />
+            <AIChatbot />
+          </div>
+        </BrowserRouter>
+      </LanguageProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 export default App;

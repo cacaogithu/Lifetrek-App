@@ -8,24 +8,16 @@ export const StickyCTA = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    let ticking = false;
-    
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollTop = window.scrollY;
-          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-          const progress = (scrollTop / docHeight) * 100;
-          
-          setScrollProgress(progress);
-          setIsVisible(scrollTop > 800);
-          ticking = false;
-        });
-        ticking = true;
-      }
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      
+      setScrollProgress(progress);
+      setIsVisible(scrollTop > 800);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

@@ -27,15 +27,14 @@ export default function AdminLogin() {
       if (error) throw error;
 
       if (data.user) {
-        // Check if user has admin role using new role system
-        const { data: roleData } = await supabase
-          .from("user_roles")
+        // Check if user is admin
+        const { data: adminData } = await supabase
+          .from("admin_users")
           .select("*")
           .eq("user_id", data.user.id)
-          .eq("role", "admin")
-          .maybeSingle();
+          .single();
 
-        if (!roleData) {
+        if (!adminData) {
           await supabase.auth.signOut();
           toast.error("Access denied. Not an admin user.");
           return;

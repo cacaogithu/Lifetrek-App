@@ -20,8 +20,7 @@ export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
       <div 
         className="flex gap-12 animate-scroll"
         style={{ 
-          animationPlayState: isPaused ? 'paused' : 'running',
-          willChange: isPaused ? 'auto' : 'transform'
+          animationPlayState: isPaused ? 'paused' : 'running'
         }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
@@ -36,8 +35,8 @@ export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
               alt={client.alt} 
               className="max-h-16 w-auto object-contain" 
               loading="lazy"
-              width={client.width || 128}
-              height={client.height || 64}
+              width={client.width}
+              height={client.height}
               decoding="async"
             />
           </div>
@@ -45,8 +44,8 @@ export const ClientCarousel = ({ clients }: ClientCarouselProps) => {
       </div>
       <style>{`
         @keyframes scroll {
-          0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-50%, 0, 0); }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
         .animate-scroll {
           animation: scroll 40s linear infinite;

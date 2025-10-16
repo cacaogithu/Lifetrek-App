@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import logo from "@/assets/logo-small.webp";
+import logo from "@/assets/logo-optimized.webp";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
 

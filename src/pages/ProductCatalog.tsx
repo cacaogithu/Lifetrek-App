@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Upload, Trash2, Edit2, X, Check, ArrowLeft } from "lucide-react";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { logError } from "@/utils/errorLogger";
+import { useToast } from "@/hooks/use-toast";
+import { Upload, Loader2, Trash2, Edit } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   id: string;
@@ -24,6 +22,7 @@ export default function ProductCatalog() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,20 +33,22 @@ export default function ProductCatalog() {
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      navigate("/admin/login");
+      navigate("/admin-login");
       return;
     }
 
-    // Check if user has admin role using new role system
-    const { data: roleData } = await supabase
-      .from("user_roles")
+    const { data: adminData } = await supabase
+      .from("admin_users")
       .select("*")
       .eq("user_id", user.id)
-      .eq("role", "admin")
-      .maybeSingle();
+      .single();
 
-    if (!roleData) {
-      toast.error("Access denied. Not an admin user.");
+    if (!adminData) {
+      toast({
+        title: "Acesso negado",
+        description: "Você não tem permissão para acessar esta página",
+        variant: "destructive",
+      });
       navigate("/");
     }
   };
@@ -60,10 +61,14 @@ export default function ProductCatalog() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data as any) || []);
     } catch (error) {
-      logError(error, "Fetch products");
-      toast.error("Failed to load products");
+      console.error("Error fetching products:", error);
+      toast({
+        title: "Erro",
+        description: "Falha ao carregar produtos",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -89,7 +94,10 @@ export default function ProductCatalog() {
         .from("product-images")
         .getPublicUrl(filePath);
 
-      toast.success("Analyzing image with AI...");
+      toast({
+        title: "Upload concluído",
+        description: "Analisando imagem com AI...",
+      });
 
       const { data: analysisData, error: analysisError } = await supabase.functions.invoke(
         "analyze-product-image",
@@ -105,15 +113,23 @@ export default function ProductCatalog() {
           description: analysisData.description,
           category: analysisData.category,
           image_url: publicUrl,
-        });
+        } as any);
 
       if (insertError) throw insertError;
 
-      toast.success("Product added successfully!");
-      await fetchProducts();
+      toast({
+        title: "Sucesso",
+        description: "Produto adicionado ao catálogo",
+      });
+
+      fetchProducts();
     } catch (error) {
-      logError(error, "Product upload");
-      toast.error(error instanceof Error ? error.message : "Failed to upload product");
+      console.error("Error uploading:", error);
+      toast({
+        title: "Erro",
+        description: "Falha ao processar imagem",
+        variant: "destructive",
+      });
     } finally {
       setUploading(false);
     }
@@ -123,22 +139,30 @@ export default function ProductCatalog() {
     try {
       const { error } = await supabase
         .from("product_catalog")
-        .update({ name, description })
+        .update({ name, description } as any)
         .eq("id", id);
 
       if (error) throw error;
 
-      toast.success("Product updated successfully!");
+      toast({
+        title: "Sucesso",
+        description: "Produto atualizado",
+      });
+
       setEditingId(null);
-      await fetchProducts();
+      fetchProducts();
     } catch (error) {
-      logError(error, "Product update");
-      toast.error("Failed to update product");
+      console.error("Error updating:", error);
+      toast({
+        title: "Erro",
+        description: "Falha ao atualizar produto",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDelete = async (id: string, imageUrl: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+    if (!confirm("Tem certeza que deseja deletar este produto?")) return;
 
     try {
       const fileName = imageUrl.split("/").pop();
@@ -147,24 +171,32 @@ export default function ProductCatalog() {
       }
 
       const { error } = await supabase
-        .from("product_catalog")
+        .from("product_catalog" as any)
         .delete()
         .eq("id", id);
 
       if (error) throw error;
 
-      toast.success("Product deleted successfully!");
-      await fetchProducts();
+      toast({
+        title: "Sucesso",
+        description: "Produto deletado",
+      });
+
+      fetchProducts();
     } catch (error) {
-      logError(error, "Product delete");
-      toast.error("Failed to delete product");
+      console.error("Error deleting:", error);
+      toast({
+        title: "Erro",
+        description: "Falha ao deletar produto",
+        variant: "destructive",
+      });
     }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
+        <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
   }
@@ -173,11 +205,8 @@ export default function ProductCatalog() {
     <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">Product Catalog</h1>
-          <Button onClick={() => navigate("/admin")} variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Admin
-          </Button>
+          <h1 className="text-4xl font-bold">Catálogo de Produtos</h1>
+          <Button onClick={() => navigate("/admin")}>Voltar</Button>
         </div>
 
         <Card className="p-6 mb-8">
@@ -192,13 +221,13 @@ export default function ProductCatalog() {
             <Button disabled={uploading}>
               {uploading ? (
                 <>
-                  <LoadingSpinner />
-                  <span className="ml-2">Processing...</span>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Processando...
                 </>
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Upload New Product Image
+                  Upload Nova Imagem
                 </>
               )}
             </Button>
@@ -233,16 +262,14 @@ export default function ProductCatalog() {
                           handleUpdate(product.id, name, description);
                         }}
                       >
-                        <Check className="w-4 h-4 mr-1" />
-                        Save
+                        Salvar
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => setEditingId(null)}
                       >
-                        <X className="w-4 h-4 mr-1" />
-                        Cancel
+                        Cancelar
                       </Button>
                     </div>
                   </div>
@@ -253,7 +280,7 @@ export default function ProductCatalog() {
                       {product.description}
                     </p>
                     <div className="text-xs text-muted-foreground mb-4">
-                      Category: {product.category}
+                      Categoria: {product.category}
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -261,7 +288,7 @@ export default function ProductCatalog() {
                         variant="outline"
                         onClick={() => setEditingId(product.id)}
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit className="w-4 h-4" />
                       </Button>
                       <Button
                         size="sm"
