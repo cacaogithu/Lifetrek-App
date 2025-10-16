@@ -7,8 +7,10 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     allowedHosts: [
-      'f2ed7667-54dc-48f8-aca8-3fc20a3e643d-00-2figax8w6b8vp.riker.replit.dev'
-    ]
+      "f2ed7667-54dc-48f8-aca8-3fc20a3e643d-00-2figax8w6b8vp.riker.replit.dev",
+      // or simply ".replit.dev" if you want to allow all replit subdomains
+      // ".replit.dev"
+    ],
     host: "::",
     port: 8080,
   },
@@ -22,23 +24,23 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
-          'ui-vendor': [
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-toast',
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "three-vendor": ["three", "@react-three/fiber", "@react-three/drei"],
+          "ui-vendor": [
+            "@radix-ui/react-accordion",
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-popover",
+            "@radix-ui/react-select",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-toast",
           ],
-          'query-vendor': ['@tanstack/react-query'],
+          "query-vendor": ["@tanstack/react-query"],
         },
       },
     },
     cssCodeSplit: true,
     sourcemap: false,
-    minify: 'esbuild',
+    minify: "esbuild",
   },
 }));
