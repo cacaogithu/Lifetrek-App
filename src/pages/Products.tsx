@@ -35,10 +35,10 @@ export default function Products() {
       benefit: t("products.medical.benefit"),
       description: t("products.medical.text"),
       features: [
-        "Trauma fixation plates & screws",
-        "Spinal fusion systems",
-        "Upper & lower extremity implants",
-        "Cranial fixation devices"
+        t("products.medical.feature1"),
+        t("products.medical.feature2"),
+        t("products.medical.feature3"),
+        t("products.medical.feature4")
       ],
       color: "from-blue-600 to-blue-400",
       iconBg: "bg-blue-600",
@@ -55,10 +55,10 @@ export default function Products() {
       benefit: t("products.instruments.benefit"),
       description: t("products.instruments.text"),
       features: [
-        "Powered surgical drills",
-        "Precision reamers & taps",
-        "Custom cutting instruments",
-        "Surgical guide systems"
+        t("products.instruments.feature1"),
+        t("products.instruments.feature2"),
+        t("products.instruments.feature3"),
+        t("products.instruments.feature4")
       ],
       color: "from-blue-500 to-blue-300",
       iconBg: "bg-blue-500",
@@ -77,10 +77,10 @@ export default function Products() {
       benefit: t("products.dental.benefit"),
       description: t("products.dental.text"),
       features: [
-        "Titanium dental implants",
-        "Angled abutments",
-        "Bone preparation drills",
-        "Custom surgical instruments"
+        t("products.dental.feature1"),
+        t("products.dental.feature2"),
+        t("products.dental.feature3"),
+        t("products.dental.feature4")
       ],
       color: "from-green-600 to-green-400",
       iconBg: "bg-green-600",
@@ -100,10 +100,10 @@ export default function Products() {
       benefit: t("products.veterinary.benefit"),
       description: t("products.veterinary.text"),
       features: [
-        "Small animal orthopedic plates",
-        "Veterinary fixation screws",
-        "Adapted surgical instruments",
-        "Custom veterinary implants"
+        t("products.veterinary.feature1"),
+        t("products.veterinary.feature2"),
+        t("products.veterinary.feature3"),
+        t("products.veterinary.feature4")
       ],
       color: "from-orange-600 to-orange-400",
       iconBg: "bg-orange-600",
@@ -115,11 +115,11 @@ export default function Products() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16 sm:py-20 md:py-24">
-        <div className="container mx-auto px-4 sm:px-6">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in max-w-4xl">
+        <div className="container mx-auto px-4 sm:px-6 text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in max-w-4xl mx-auto">
             {t("products.title")}
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl max-w-3xl leading-relaxed opacity-95">
+          <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed opacity-95">
             {t("products.hero.subtitle")}
           </p>
         </div>
@@ -182,7 +182,7 @@ export default function Products() {
                       className="w-full flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <span className="text-sm font-medium">
-                        {openCatalog === index ? "Hide" : "View"} Product Catalog ({category.catalogImages.length} items)
+                        {openCatalog === index ? t("products.catalog.hide") : t("products.catalog.view")} {t("products.catalog.items")} ({category.catalogImages.length} items)
                       </span>
                       <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openCatalog === index ? 'rotate-180' : ''}`} />
                     </Button>

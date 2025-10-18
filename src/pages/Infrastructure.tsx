@@ -85,7 +85,7 @@ export default function Infrastructure() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-16 sm:py-20 md:py-32">
         <div className="absolute inset-0 bg-[image:var(--gradient-subtle)] opacity-30" />
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center">
           <h1 className="font-bold animate-fade-in">
             {t("infrastructure.title")}
           </h1>
@@ -152,7 +152,7 @@ export default function Infrastructure() {
                 {t("infrastructure.technology")}
               </h3>
               <p className="text-muted-foreground text-lg leading-relaxed">
-                Latest generation CNC equipment and advanced manufacturing systems
+                {t("infrastructure.technology.text")}
               </p>
             </div>
 
@@ -162,7 +162,7 @@ export default function Infrastructure() {
                 {t("infrastructure.team")}
               </h3>
               <p className="text-muted-foreground text-lg leading-relaxed">
-                Expert professionals dedicated to excellence and precision
+                {t("infrastructure.team.text")}
               </p>
             </div>
           </div>
@@ -173,10 +173,10 @@ export default function Infrastructure() {
       <section className="py-32 bg-background">
         <div className="container mx-auto px-4">
           <h2 className="font-bold text-center mb-6">
-            CNC Manufacturing Equipment
+            {t("infrastructure.cnc.title")}
           </h2>
           <p className="text-center text-muted-foreground text-lg md:text-xl mb-20 max-w-3xl mx-auto leading-relaxed">
-            State-of-the-art precision machining equipment for high-quality medical device manufacturing
+            {t("infrastructure.cnc.subtitle")}
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
@@ -202,7 +202,7 @@ export default function Infrastructure() {
 
           {/* Software */}
           <h3 className="text-2xl font-bold text-center mb-8">
-            CAD/CAM Software
+            {t("infrastructure.software.title")}
           </h3>
           
           <div className="grid grid-cols-1 max-w-md mx-auto mb-12">
@@ -228,7 +228,7 @@ export default function Infrastructure() {
 
           {/* Finishing Equipment */}
           <h3 className="text-2xl font-bold text-center mb-8">
-            Surface Finishing & Marking
+            {t("infrastructure.finishing.title")}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">

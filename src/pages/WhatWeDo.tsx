@@ -28,8 +28,8 @@ export default function WhatWeDo() {
   const services = [
     {
       icon: Cog,
-      title: "Precision Swiss CNC Machining",
-      description: "Multi-axis Swiss-type manufacturing with ±0.001mm tolerance for complex medical components, implants, and surgical instruments",
+      title: t("whatWeDo.service1.title"),
+      description: t("whatWeDo.service1.description"),
       image: productApplications,
       stats: ["±0.001mm", "12-Axis", "Ø0.5-32mm"],
       color: "text-primary",
@@ -37,8 +37,8 @@ export default function WhatWeDo() {
     },
     {
       icon: Microscope,
-      title: "Advanced Quality Control",
-      description: "ZEISS CMM 3D measurement, optical inspection, and metallographic analysis with ISO 17025 certified metrology lab",
+      title: t("whatWeDo.service2.title"),
+      description: t("whatWeDo.service2.description"),
       image: zeissContura,
       stats: ["ISO 17025", "3D CMM", "Ra < 0.05μm"],
       color: "text-accent",
@@ -46,8 +46,8 @@ export default function WhatWeDo() {
     },
     {
       icon: Sparkles,
-      title: "Surface Treatment Excellence",
-      description: "State-of-the-art electropolishing producing mirror finishes with enhanced biocompatibility and corrosion resistance",
+      title: t("whatWeDo.service3.title"),
+      description: t("whatWeDo.service3.description"),
       image: electropolishLine,
       stats: ["Ra < 0.1μm", "Mirror Finish", "Biocompatible"],
       color: "text-accent-orange",
@@ -55,8 +55,8 @@ export default function WhatWeDo() {
     },
     {
       icon: Shield,
-      title: "Cleanroom Manufacturing",
-      description: "ISO 7 certified cleanroom environments for sterile assembly, packaging with complete batch traceability",
+      title: t("whatWeDo.service4.title"),
+      description: t("whatWeDo.service4.description"),
       image: cleanroom,
       stats: ["ISO 7", "Class 10,000", "Validated"],
       color: "text-primary",
@@ -71,22 +71,22 @@ export default function WhatWeDo() {
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-20 sm:py-32 md:py-40">
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto text-center">
             <h1 className="font-bold mb-6 animate-fade-in">
               {t("whatWeDo.title")}
             </h1>
             <p className="text-xl md:text-2xl leading-relaxed animate-fade-in animate-delay-200 opacity-95 mb-8">
               {t("whatWeDo.text")}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animate-delay-400">
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animate-delay-400 justify-center">
               <Link to="/assessment">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
-                  Schedule Assessment
+                  {t("whatWeDo.cta.schedule")}
                 </MagneticButton>
               </Link>
               <Link to="/capabilities">
                 <MagneticButton size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 border-white text-white shadow-xl">
-                  View All Capabilities
+                  {t("whatWeDo.cta.viewAll")}
                 </MagneticButton>
               </Link>
             </div>
@@ -99,10 +99,10 @@ export default function WhatWeDo() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${servicesAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="font-bold mb-6">
-              Core Manufacturing Services
+              {t("whatWeDo.services.title")}
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              End-to-end manufacturing solutions for medical device OEMs
+              {t("whatWeDo.services.subtitle")}
             </p>
           </div>
 
@@ -150,10 +150,10 @@ export default function WhatWeDo() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="font-bold mb-6">
-              Manufacturing Capabilities
+              {t("whatWeDo.capabilities.title")}
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              State-of-the-art equipment and expertise
+              {t("whatWeDo.capabilities.subtitle")}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
@@ -179,14 +179,14 @@ export default function WhatWeDo() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-              Let's Discuss Your Manufacturing Needs
+              {t("whatWeDo.cta.title")}
             </h2>
             <p className="text-xl mb-8 opacity-95">
-              Get expert guidance on feasibility, timelines, and cost estimates for your medical device project
+              {t("whatWeDo.cta.subtitle")}
             </p>
             <Link to="/assessment">
               <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
-                Schedule Free Assessment
+                {t("whatWeDo.cta.assessment")}
               </MagneticButton>
             </Link>
           </div>

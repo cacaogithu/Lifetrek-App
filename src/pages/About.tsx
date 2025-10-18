@@ -18,21 +18,25 @@ export default function About() {
       title: t("about.values.excellence"),
       description: t("about.values.excellence.text"),
       borderColor: "border-primary",
+      iconBg: "bg-primary",
     },
     {
       title: t("about.values.innovation"),
       description: t("about.values.innovation.text"),
       borderColor: "border-accent-orange",
+      iconBg: "bg-accent-orange",
     },
     {
       title: t("about.values.ethics"),
       description: t("about.values.ethics.text"),
-      borderColor: "border-accent",
+      borderColor: "border-green-600",
+      iconBg: "bg-green-600",
     },
     {
       title: t("about.values.respect"),
       description: t("about.values.respect.text"),
       borderColor: "border-primary",
+      iconBg: "bg-primary",
     },
   ];
 
@@ -42,7 +46,7 @@ export default function About() {
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-20 sm:py-32 md:py-40">
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto text-center">
             <h1 className="font-bold mb-6 animate-fade-in">
               {t("about.title")}
             </h1>
@@ -52,7 +56,7 @@ export default function About() {
             <div className="animate-fade-in animate-delay-400">
               <Link to="/contact">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
-                  Partner With Us
+                  {t("about.cta.partner")}
                 </MagneticButton>
               </Link>
             </div>
@@ -74,11 +78,11 @@ export default function About() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="glass-card p-6 rounded-xl text-center">
                   <div className="text-3xl font-bold text-primary mb-2">30+</div>
-                  <div className="text-sm text-muted-foreground">Years Experience</div>
+                  <div className="text-sm text-muted-foreground">{t("about.stats.years")}</div>
                 </div>
                 <div className="glass-card p-6 rounded-xl text-center">
                   <div className="text-3xl font-bold text-accent mb-2">ISO</div>
-                  <div className="text-sm text-muted-foreground">13485 Certified</div>
+                  <div className="text-sm text-muted-foreground">{t("about.stats.iso")}</div>
                 </div>
               </div>
             </div>
@@ -112,19 +116,19 @@ export default function About() {
                   <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-1">
                     <Award className="h-4 w-4 text-accent" />
                   </div>
-                  <span className="text-muted-foreground">Uncompromising quality standards</span>
+                  <span className="text-muted-foreground">{t("about.vision.quality")}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-1">
                     <Zap className="h-4 w-4 text-accent" />
                   </div>
-                  <span className="text-muted-foreground">Continuous technological innovation</span>
+                  <span className="text-muted-foreground">{t("about.vision.innovation")}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-1">
                     <Users className="h-4 w-4 text-accent" />
                   </div>
-                  <span className="text-muted-foreground">Long-term strategic partnerships</span>
+                  <span className="text-muted-foreground">{t("about.vision.partnerships")}</span>
                 </li>
               </ul>
             </div>
@@ -140,7 +144,7 @@ export default function About() {
               {t("about.values.title")}
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              The principles that guide every decision we make and every component we manufacture
+              {t("about.values.intro")}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -150,6 +154,9 @@ export default function About() {
                 className={`glass-card p-10 rounded-xl hover:scale-105 transition-all duration-500 border-l-4 ${value.borderColor} scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
+                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${value.iconBg} text-white mb-4`}>
+                  <div className="w-6 h-6 rounded-full bg-white/20" />
+                </div>
                 <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">{value.description}</p>
               </div>
@@ -164,20 +171,20 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`max-w-4xl mx-auto text-center scroll-reveal ${ctaAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-              Ready to Experience World-Class Manufacturing?
+              {t("about.cta.title")}
             </h2>
             <p className="text-xl mb-8 opacity-95">
-              Join 30+ leading medical device companies who trust Lifetrek for precision manufacturing
+              {t("about.cta.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/contact">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
-                  Schedule Consultation
+                  {t("about.cta.consultation")}
                 </MagneticButton>
               </Link>
               <Link to="/capabilities">
                 <MagneticButton size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 border-white text-white shadow-xl">
-                  Explore Capabilities
+                  {t("about.cta.explore")}
                 </MagneticButton>
               </Link>
             </div>
