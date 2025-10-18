@@ -60,10 +60,10 @@ export default function Assessment() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-              Free Manufacturing Assessment
+              {t("assessment.hero.title")}
             </h1>
             <p className="text-2xl md:text-3xl mb-8 opacity-95">
-              Get expert guidance on your medical device manufacturing project
+              {t("assessment.hero.subtitle")}
             </p>
           </div>
         </div>
@@ -76,20 +76,20 @@ export default function Assessment() {
           {step === 3 ? (
             <div className="max-w-2xl mx-auto text-center glass-card-strong p-12 rounded-2xl">
               <CheckCircle2 className="h-20 w-20 text-accent mx-auto mb-6" />
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">Assessment Scheduled!</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">{t("assessment.success.title")}</h2>
               <p className="text-xl md:text-2xl text-muted-foreground mb-6">
-                We've received your request and will send you a confirmation email shortly.
+                {t("assessment.success.subtitle")}
               </p>
               {date && formData.timeSlot && (
                 <div className="glass-card p-6 rounded-xl mb-8">
-                  <p className="font-semibold mb-2">Your scheduled consultation:</p>
+                  <p className="font-semibold mb-2">{t("assessment.success.scheduledLabel")}</p>
                   <p className="text-lg">
                     {format(date, "MMMM dd, yyyy")} at {formData.timeSlot}
                   </p>
                 </div>
               )}
               <p className="text-muted-foreground">
-                Our team will reach out to you at <strong>{formData.email}</strong> to confirm the details.
+                {t("assessment.success.contactMessage")} <strong>{formData.email}</strong> {t("assessment.success.confirmDetails")}
               </p>
             </div>
           ) : (
@@ -105,7 +105,7 @@ export default function Assessment() {
                   }`}>
                     1
                   </div>
-                  <span className="text-sm font-medium hidden sm:inline">Project Details</span>
+                  <span className="text-sm font-medium hidden sm:inline">{t("assessment.steps.projectDetails")}</span>
                 </div>
                 <div className="h-0.5 w-12 bg-border" />
                 <div className="flex items-center gap-2">
@@ -114,18 +114,18 @@ export default function Assessment() {
                   }`}>
                     2
                   </div>
-                  <span className="text-sm font-medium hidden sm:inline">Schedule Call</span>
+                  <span className="text-sm font-medium hidden sm:inline">{t("assessment.steps.scheduleCall")}</span>
                 </div>
               </div>
 
               <form onSubmit={handleSubmit} className="glass-card-strong p-8 sm:p-12 rounded-2xl space-y-6">
                 {step === 1 ? (
                   <>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">Tell us about your project</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6">{t("assessment.form.step1Title")}</h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="name">Full Name *</Label>
+                        <Label htmlFor="name">{t("assessment.form.fullName")}</Label>
                         <Input
                           id="name"
                           required
@@ -136,7 +136,7 @@ export default function Assessment() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email *</Label>
+                        <Label htmlFor="email">{t("assessment.form.email")}</Label>
                         <Input
                           id="email"
                           type="email"
@@ -150,7 +150,7 @@ export default function Assessment() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="company">Company *</Label>
+                        <Label htmlFor="company">{t("assessment.form.company")}</Label>
                         <Input
                           id="company"
                           required
@@ -161,7 +161,7 @@ export default function Assessment() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
+                        <Label htmlFor="phone">{t("assessment.form.phone")}</Label>
                         <Input
                           id="phone"
                           type="tel"
@@ -174,30 +174,30 @@ export default function Assessment() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="projectType">Project Type *</Label>
+                        <Label htmlFor="projectType">{t("assessment.form.projectType")}</Label>
                         <Select 
                           required
                           value={formData.projectType}
                           onValueChange={(value) => setFormData({ ...formData, projectType: value })}
                         >
                           <SelectTrigger className="glass-card">
-                            <SelectValue placeholder="Select type" />
+                            <SelectValue placeholder={t("assessment.form.selectType")} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="medical">Medical Implants</SelectItem>
-                            <SelectItem value="dental">Dental Components</SelectItem>
-                            <SelectItem value="surgical">Surgical Instruments</SelectItem>
-                            <SelectItem value="veterinary">Veterinary Devices</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
+                            <SelectItem value="medical">{t("assessment.form.medicalImplants")}</SelectItem>
+                            <SelectItem value="dental">{t("assessment.form.dentalComponents")}</SelectItem>
+                            <SelectItem value="surgical">{t("assessment.form.surgicalInstruments")}</SelectItem>
+                            <SelectItem value="veterinary">{t("assessment.form.veterinaryDevices")}</SelectItem>
+                            <SelectItem value="other">{t("assessment.form.other")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="volume">Expected Volume</Label>
+                        <Label htmlFor="volume">{t("assessment.form.expectedVolume")}</Label>
                         <Input
                           id="volume"
-                          placeholder="e.g., 10,000 units/year"
+                          placeholder={t("assessment.form.volumePlaceholder")}
                           value={formData.volume}
                           onChange={(e) => setFormData({ ...formData, volume: e.target.value })}
                           className="glass-card"
@@ -206,10 +206,10 @@ export default function Assessment() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="timeline">Project Timeline</Label>
+                      <Label htmlFor="timeline">{t("assessment.form.projectTimeline")}</Label>
                       <Input
                         id="timeline"
-                        placeholder="When do you need to start production?"
+                        placeholder={t("assessment.form.timelinePlaceholder")}
                         value={formData.timeline}
                         onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
                         className="glass-card"
@@ -217,10 +217,10 @@ export default function Assessment() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="requirements">Project Requirements</Label>
+                      <Label htmlFor="requirements">{t("assessment.form.projectRequirements")}</Label>
                       <Textarea
                         id="requirements"
-                        placeholder="Tell us about your specific requirements, tolerances, materials, certifications needed, etc."
+                        placeholder={t("assessment.form.requirementsPlaceholder")}
                         rows={4}
                         value={formData.requirements}
                         onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
@@ -229,16 +229,16 @@ export default function Assessment() {
                     </div>
 
                     <Button type="submit" size="lg" className="w-full">
-                      Continue to Schedule
+                      {t("assessment.form.continueButton")}
                     </Button>
                   </>
                 ) : (
                   <>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">Schedule your consultation</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6">{t("assessment.form.step2Title")}</h2>
                     
                     <div className="space-y-6">
                       <div className="space-y-2">
-                        <Label>Select Date *</Label>
+                        <Label>{t("assessment.form.selectDate")}</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -249,7 +249,7 @@ export default function Assessment() {
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {date ? format(date, "PPP") : "Pick a date"}
+                              {date ? format(date, "PPP") : t("assessment.form.pickDate")}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0">
@@ -267,14 +267,14 @@ export default function Assessment() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="timeSlot">Select Time Slot *</Label>
+                        <Label htmlFor="timeSlot">{t("assessment.form.selectTimeSlot")}</Label>
                         <Select 
                           required
                           value={formData.timeSlot}
                           onValueChange={(value) => setFormData({ ...formData, timeSlot: value })}
                         >
                           <SelectTrigger className="glass-card">
-                            <SelectValue placeholder="Choose a time" />
+                            <SelectValue placeholder={t("assessment.form.chooseTime")} />
                           </SelectTrigger>
                           <SelectContent>
                             {timeSlots.map((slot) => (
@@ -291,8 +291,7 @@ export default function Assessment() {
 
                       <div className="glass-card p-4 rounded-lg bg-accent/10 border border-accent/20">
                         <p className="text-sm text-muted-foreground">
-                          <strong>What to expect:</strong> Our manufacturing expert will review your project requirements, 
-                          discuss feasibility, provide preliminary timeline and cost estimates, and answer your technical questions.
+                          <strong>{t("assessment.form.whatToExpect")}</strong> {t("assessment.form.expectationText")}
                         </p>
                       </div>
                     </div>
@@ -304,7 +303,7 @@ export default function Assessment() {
                         onClick={() => setStep(1)}
                         className="flex-1"
                       >
-                        Back
+                        {t("assessment.form.backButton")}
                       </Button>
                       <Button 
                         type="submit" 
@@ -312,7 +311,7 @@ export default function Assessment() {
                         className="flex-1"
                         disabled={!date || !formData.timeSlot}
                       >
-                        Schedule Assessment
+                        {t("assessment.form.scheduleButton")}
                       </Button>
                     </div>
                   </>

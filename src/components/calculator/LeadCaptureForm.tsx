@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 import type { CalculatorInputs, CalculationResults } from "@/pages/Calculator";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LeadCaptureFormProps {
   inputs: CalculatorInputs;
@@ -16,6 +17,7 @@ interface LeadCaptureFormProps {
 }
 
 export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProps) {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,15 +60,15 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
 
       setIsSubmitted(true);
       toast({
-        title: "Report Sent!",
-        description: "Check your email for the detailed analysis.",
+        title: t("leadCapture.toast.successTitle"),
+        description: t("leadCapture.toast.successDescription"),
       });
     } catch (error) {
       console.error('Error sending report:', error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to send report. Please try again.",
+        title: t("leadCapture.toast.errorTitle"),
+        description: t("leadCapture.toast.errorDescription"),
       });
     } finally {
       setIsSubmitting(false);
@@ -81,36 +83,36 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
         </div>
         
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold">Report Sent Successfully!</h2>
+          <h2 className="text-2xl font-bold">{t("leadCapture.success.title")}</h2>
           <p className="text-muted-foreground">
-            We've sent a detailed PDF report to <strong>{formData.email}</strong>
+            {t("leadCapture.success.subtitle")} <strong>{formData.email}</strong>
           </p>
         </div>
 
         <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 space-y-3">
-          <p className="font-semibold text-sm">What's Next?</p>
+          <p className="font-semibold text-sm">{t("leadCapture.success.whatsNext")}</p>
           <ul className="text-sm text-muted-foreground space-y-2 text-left">
             <li className="flex items-start gap-2">
               <span className="text-primary mt-1">•</span>
-              <span>Review your detailed PDF report with cost breakdowns and material specifications</span>
+              <span>{t("leadCapture.success.step1")}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-1">•</span>
-              <span>Our engineering team will contact you within 24 hours to discuss your project</span>
+              <span>{t("leadCapture.success.step2")}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-1">•</span>
-              <span>Schedule a free consultation to refine requirements and get a formal quote</span>
+              <span>{t("leadCapture.success.step3")}</span>
             </li>
           </ul>
         </div>
 
         <div className="pt-4 space-y-3">
           <Button onClick={onBack} variant="outline" className="w-full">
-            View Results Again
+            {t("leadCapture.success.viewResultsButton")}
           </Button>
           <p className="text-xs text-muted-foreground">
-            Questions? Call us at <a href="tel:+551939367193" className="text-primary hover:underline">+55 19 3936-7193</a>
+            {t("leadCapture.success.questionsText")} <a href="tel:+551939367193" className="text-primary hover:underline">+55 19 3936-7193</a>
           </p>
         </div>
       </div>
@@ -126,98 +128,97 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
         className="mb-2"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Results
+        {t("leadCapture.form.backButton")}
       </Button>
 
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Get Your Detailed Report</h2>
+        <h2 className="text-2xl font-bold">{t("leadCapture.form.title")}</h2>
         <p className="text-muted-foreground">
-          Enter your details to receive a comprehensive PDF analysis including material specifications, 
-          production timeline, and expert recommendations.
+          {t("leadCapture.form.subtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name *</Label>
+          <Label htmlFor="name">{t("leadCapture.form.fullName")}</Label>
           <Input
             id="name"
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
             required
-            placeholder="John Smith"
+            placeholder={t("leadCapture.form.fullNamePlaceholder")}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email Address *</Label>
+          <Label htmlFor="email">{t("leadCapture.form.email")}</Label>
           <Input
             id="email"
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({...formData, email: e.target.value})}
             required
-            placeholder="john@company.com"
+            placeholder={t("leadCapture.form.emailPlaceholder")}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="company">Company *</Label>
+          <Label htmlFor="company">{t("leadCapture.form.company")}</Label>
           <Input
             id="company"
             value={formData.company}
             onChange={(e) => setFormData({...formData, company: e.target.value})}
             required
-            placeholder="Medical Devices Inc."
+            placeholder={t("leadCapture.form.companyPlaceholder")}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
+          <Label htmlFor="phone">{t("leadCapture.form.phone")}</Label>
           <Input
             id="phone"
             type="tel"
             value={formData.phone}
             onChange={(e) => setFormData({...formData, phone: e.target.value})}
-            placeholder="+1 (555) 123-4567"
+            placeholder={t("leadCapture.form.phonePlaceholder")}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="message">Additional Details (Optional)</Label>
+          <Label htmlFor="message">{t("leadCapture.form.additionalDetails")}</Label>
           <Textarea
             id="message"
             value={formData.message}
             onChange={(e) => setFormData({...formData, message: e.target.value})}
-            placeholder="Tell us more about your project timeline, specific requirements, or questions..."
+            placeholder={t("leadCapture.form.detailsPlaceholder")}
             rows={3}
           />
         </div>
 
         <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 text-sm">
-          <p className="font-semibold mb-2">📧 You'll Receive:</p>
+          <p className="font-semibold mb-2">{t("leadCapture.form.receiveTitle")}</p>
           <ul className="space-y-1 text-muted-foreground">
-            <li>• Detailed PDF cost analysis</li>
-            <li>• Material specifications & recommendations</li>
-            <li>• Production timeline breakdown</li>
-            <li>• Quality control procedures</li>
-            <li>• Free 30-minute consultation</li>
+            <li>• {t("leadCapture.form.receiveItem1")}</li>
+            <li>• {t("leadCapture.form.receiveItem2")}</li>
+            <li>• {t("leadCapture.form.receiveItem3")}</li>
+            <li>• {t("leadCapture.form.receiveItem4")}</li>
+            <li>• {t("leadCapture.form.receiveItem5")}</li>
           </ul>
         </div>
 
         <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? (
-            <>Processing...</>
+            <>{t("leadCapture.form.processingButton")}</>
           ) : (
             <>
               <Send className="w-5 h-5 mr-2" />
-              Send My Detailed Report
+              {t("leadCapture.form.submitButton")}
             </>
           )}
         </Button>
 
         <p className="text-xs text-center text-muted-foreground">
-          We respect your privacy. Your information is secure and will never be shared.
+          {t("leadCapture.form.privacyText")}
         </p>
       </form>
     </div>
