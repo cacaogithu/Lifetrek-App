@@ -28,111 +28,171 @@ interface EquipmentItem {
   specs?: string[];
 }
 
-const equipmentItems: EquipmentItem[] = [
+const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
   { 
     image: zeissContura, 
-    title: "ZEISS Contura G2", 
-    subtitle: "3D Coordinate Measuring Machine",
+    title: t("equipment.name.zeiss"), 
+    subtitle: t("equipment.subtitle.zeiss"),
     category: "Metrology",
-    specs: ["Accuracy: ±0.001mm", "Measuring range: 700x1000x600mm", "Temperature controlled"]
+    specs: [
+      t("equipment.specs.zeiss.accuracy"),
+      t("equipment.specs.zeiss.range"),
+      t("equipment.specs.zeiss.temperature")
+    ]
   },
   { 
     image: citizen, 
-    title: "Swiss CNC Technology", 
-    subtitle: "Citizen Precision Lathe",
+    title: t("equipment.name.citizen"), 
+    subtitle: t("equipment.subtitle.citizen"),
     category: "CNC",
-    specs: ["Max diameter: 20mm", "Length: 150mm", "Live tooling capability"]
+    specs: [
+      t("equipment.specs.citizen.diameter"),
+      t("equipment.specs.citizen.length"),
+      t("equipment.specs.citizen.tooling")
+    ]
   },
   { 
     image: opticalCnc, 
-    title: "Optical Comparator CNC", 
-    subtitle: "Precision Measurement System",
+    title: t("equipment.name.opticalcnc"), 
+    subtitle: t("equipment.subtitle.opticalcnc"),
     category: "Metrology",
-    specs: ["Digital readout", "10x-50x magnification", "Profile measurement"]
+    specs: [
+      t("equipment.specs.opticalcnc.readout"),
+      t("equipment.specs.opticalcnc.magnification"),
+      t("equipment.specs.opticalcnc.profile")
+    ]
   },
   { 
     image: hardnessVickers, 
-    title: "Hardness Vickers", 
-    subtitle: "Material Hardness Testing",
+    title: t("equipment.name.vickers"), 
+    subtitle: t("equipment.subtitle.vickers"),
     category: "Metrology",
-    specs: ["HV 0.3 to HV 30", "Digital display", "Automated measurements"]
+    specs: [
+      t("equipment.specs.vickers.range"),
+      t("equipment.specs.vickers.display"),
+      t("equipment.specs.vickers.automated")
+    ]
   },
   { 
     image: laserMarking, 
-    title: "Laser Marking", 
-    subtitle: "Precision Part Identification",
+    title: t("equipment.name.laser"), 
+    subtitle: t("equipment.subtitle.laser"),
     category: "Finishing",
-    specs: ["Fiber laser", "Permanent marking", "High contrast"]
+    specs: [
+      t("equipment.specs.laser.fiber"),
+      t("equipment.specs.laser.permanent"),
+      t("equipment.specs.laser.contrast")
+    ]
   },
   { 
     image: olympusMicroscope, 
-    title: "Olympus Microscope", 
-    subtitle: "Metallographic Analysis",
+    title: t("equipment.name.olympus"), 
+    subtitle: t("equipment.subtitle.olympus"),
     category: "Metrology",
-    specs: ["100x-1000x magnification", "Digital imaging", "Grain analysis"]
+    specs: [
+      t("equipment.specs.olympus.magnification"),
+      t("equipment.specs.olympus.imaging"),
+      t("equipment.specs.olympus.grain")
+    ]
   },
   { 
     image: polimento, 
-    title: "Polishing Machine", 
-    subtitle: "Sample Surface Preparation",
+    title: t("equipment.name.polishing"), 
+    subtitle: t("equipment.subtitle.polishing"),
     category: "Sample Prep",
-    specs: ["Variable speed", "Multiple wheels", "Fine surface finish"]
+    specs: [
+      t("equipment.specs.polishing.speed"),
+      t("equipment.specs.polishing.wheels"),
+      t("equipment.specs.polishing.finish")
+    ]
   },
   { 
     image: cortadora, 
-    title: "Cutting Machine", 
-    subtitle: "Precision Sample Cutting",
+    title: t("equipment.name.cutting"), 
+    subtitle: t("equipment.subtitle.cutting"),
     category: "Sample Prep",
-    specs: ["Diamond blade", "Coolant system", "Precision cuts"]
+    specs: [
+      t("equipment.specs.cutting.blade"),
+      t("equipment.specs.cutting.coolant"),
+      t("equipment.specs.cutting.precision")
+    ]
   },
   { 
     image: embutidora, 
-    title: "Mounting Press", 
-    subtitle: "Sample Mounting System",
+    title: t("equipment.name.mounting"), 
+    subtitle: t("equipment.subtitle.mounting"),
     category: "Sample Prep",
-    specs: ["Hot mounting", "Quick cycle", "Consistent results"]
+    specs: [
+      t("equipment.specs.mounting.hot"),
+      t("equipment.specs.mounting.cycle"),
+      t("equipment.specs.mounting.results")
+    ]
   },
   { 
     image: citizenL32, 
-    title: "Citizen L32", 
-    subtitle: "Swiss-Type CNC Lathe",
+    title: t("equipment.name.citizenl32"), 
+    subtitle: t("equipment.subtitle.citizenl32"),
     category: "CNC",
-    specs: ["32mm bar capacity", "12-axis control", "High-speed machining"]
+    specs: [
+      t("equipment.specs.citizenl32.capacity"),
+      t("equipment.specs.citizenl32.axis"),
+      t("equipment.specs.citizenl32.machining")
+    ]
   },
   { 
     image: tornosGT26, 
-    title: "Tornos GT26", 
-    subtitle: "Multi-Axis Turning Center",
+    title: t("equipment.name.tornos"), 
+    subtitle: t("equipment.subtitle.tornos"),
     category: "CNC",
-    specs: ["26mm capacity", "Multi-spindle", "Complex geometries"]
+    specs: [
+      t("equipment.specs.tornos.capacity"),
+      t("equipment.specs.tornos.spindle"),
+      t("equipment.specs.tornos.geometries")
+    ]
   },
   { 
     image: walter, 
-    title: "Walter Helitronic", 
-    subtitle: "Tool Grinding System",
+    title: t("equipment.name.walter"), 
+    subtitle: t("equipment.subtitle.walter"),
     category: "CNC",
-    specs: ["5-axis grinding", "Tool precision", "Automated cycles"]
+    specs: [
+      t("equipment.specs.walter.grinding"),
+      t("equipment.specs.walter.precision"),
+      t("equipment.specs.walter.automated")
+    ]
   },
   { 
     image: robodrill, 
-    title: "FANUC Robodrill", 
-    subtitle: "High-Speed Machining Center",
+    title: t("equipment.name.robodrill"), 
+    subtitle: t("equipment.subtitle.robodrill"),
     category: "CNC",
-    specs: ["30,000 RPM spindle", "High precision", "Fast tool change"]
+    specs: [
+      t("equipment.specs.robodrill.spindle"),
+      t("equipment.specs.robodrill.precision"),
+      t("equipment.specs.robodrill.toolchange")
+    ]
   },
   { 
     image: electropolishLine, 
-    title: "Electropolish Line", 
-    subtitle: "Surface Finishing System",
+    title: t("equipment.name.electropolish"), 
+    subtitle: t("equipment.subtitle.electropolish"),
     category: "Finishing",
-    specs: ["Mirror finish", "Biocompatible", "Corrosion resistant"]
+    specs: [
+      t("equipment.specs.electropolish.finish"),
+      t("equipment.specs.electropolish.biocompatible"),
+      t("equipment.specs.electropolish.corrosion")
+    ]
   },
   { 
     image: labOverview, 
-    title: "Laboratory Overview", 
-    subtitle: "Complete Metrology Lab",
+    title: t("equipment.name.lab"), 
+    subtitle: t("equipment.subtitle.lab"),
     category: "Metrology",
-    specs: ["Climate controlled", "ISO 17025", "Comprehensive testing"]
+    specs: [
+      t("equipment.specs.lab.climate"),
+      t("equipment.specs.lab.iso"),
+      t("equipment.specs.lab.comprehensive")
+    ]
   },
 ];
 
@@ -141,6 +201,7 @@ export const EquipmentCarousel = () => {
   const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory>("All");
 
   const categories: EquipmentCategory[] = ["All", "Metrology", "CNC", "Sample Prep", "Finishing"];
+  const equipmentItems = getEquipmentItems(t);
 
   const filteredItems = selectedCategory === "All" 
     ? equipmentItems 
