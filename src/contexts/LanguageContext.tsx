@@ -144,6 +144,8 @@ const translations = {
     // Clients
     "clients.title": "Who We Work With",
     "clients.intro": "We partner with leading medical device manufacturers, healthcare institutions, and OEM partners worldwide to deliver precision-engineered components and implants that meet the highest quality standards.",
+    "clients.partners.title": "Trusted Partners",
+    "clients.partners.subtitle": "Partnering with innovative companies to deliver precision medical components worldwide",
     "clients.types.title": "Our Client Partners",
     "clients.types.subtitle": "We serve diverse sectors within the medical and healthcare industries",
     "clients.types.medical.title": "Medical Device Manufacturers",
@@ -431,6 +433,8 @@ const translations = {
     // Clients
     "clients.title": "Quem Atendemos",
     "clients.intro": "Fazemos parcerias com os principais fabricantes de dispositivos médicos, instituições de saúde e parceiros OEM em todo o mundo para fornecer componentes e implantes de precisão que atendem aos mais altos padrões de qualidade.",
+    "clients.partners.title": "Parceiros de Confiança",
+    "clients.partners.subtitle": "Parceria com empresas inovadoras para fornecer componentes médicos de precisão em todo o mundo",
     "clients.types.title": "Nossos Clientes Parceiros",
     "clients.types.subtitle": "Atendemos diversos setores dentro das indústrias médica e de saúde",
     "clients.types.medical.title": "Fabricantes de Dispositivos Médicos",

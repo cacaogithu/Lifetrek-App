@@ -111,11 +111,11 @@ export default function Clients() {
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${logosAnimation.isVisible ? 'visible' : ''}`}
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-              Trusted Partners
+              {t("clients.partners.title")}
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Partnering with innovative companies to deliver precision medical components worldwide
+              {t("clients.partners.subtitle")}
             </p>
           </div>
           
