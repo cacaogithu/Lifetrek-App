@@ -110,6 +110,34 @@ const translations = {
     "capabilities.finishing.benefit": "Enhanced Biocompatibility",
     "capabilities.finishing.text": "In-house electropolishing and passivation deliver smooth, corrosion-resistant surfaces that meet ASTM standards for implantable devices.",
     
+    // Equipment sections
+    "capabilities.equipment.cnc.title": "Swiss CNC Manufacturing Equipment",
+    "capabilities.equipment.metrology.title": "Advanced Metrology Laboratory",
+    "capabilities.equipment.sample.title": "Sample Preparation Equipment",
+    "capabilities.equipment.finishing.title": "Surface Finishing & Marking",
+    
+    // Equipment categories
+    "equipment.category.swiss": "Swiss-Type CNC",
+    "equipment.category.grinder": "Tool Grinder",
+    "equipment.category.machining": "Machining Center",
+    "equipment.category.cmm": "CMM",
+    "equipment.category.measurement": "Measurement",
+    "equipment.category.testing": "Material Testing",
+    "equipment.category.analysis": "Analysis",
+    "equipment.category.surface": "Surface Treatment",
+    "equipment.category.identification": "Identification",
+    
+    // Equipment names
+    "equipment.name.polishing": "Polishing Machine",
+    "equipment.name.cutting": "Cutting Machine",
+    "equipment.name.mounting": "Mounting Press",
+    "equipment.name.electropolish": "Electropolish Line",
+    "equipment.name.laser": "Laser Marking",
+    "equipment.name.optical": "Optical CNC",
+    "equipment.name.hardness": "Hardness Vickers",
+    "equipment.name.microscope": "Olympus Microscope",
+    "equipment.name.zeiss": "ZEISS Contura G2",
+    
     // Quality
     "quality.title": "Quality & Compliance",
     "quality.intro": "Our commitment to quality excellence is demonstrated through international certifications, advanced metrology capabilities, and rigorous process controls.",
@@ -140,6 +168,10 @@ const translations = {
     "contact.info.phone": "Phone",
     "contact.info.address": "Address",
     "contact.location": "Indaiatuba / SP, Brazil",
+    
+    // Footer
+    "footer.certifications": "Certifications",
+    "footer.rights": "All rights reserved.",
     
     // Clients
     "clients.title": "Who We Work With",
@@ -234,6 +266,14 @@ const translations = {
     "whatWeDo.cta.assessment": "Schedule Free Assessment",
     "whatWeDo.cta.schedule": "Schedule Assessment",
     "whatWeDo.cta.viewAll": "View All Capabilities",
+    
+    // Sticky CTA
+    "stickyCta.message": "Ready to elevate your medical device manufacturing?",
+    "stickyCta.features": "ISO 13485 certified • 30+ years experience • ±0.001mm precision",
+    
+    // Testimonials
+    "testimonials.title": "Trusted by Industry Leaders",
+    "testimonials.subtitle": "30+ years of excellence in medical device manufacturing",
 
     // Products - Additional features
     "products.medical.feature1": "Trauma fixation plates & screws",
@@ -399,6 +439,34 @@ const translations = {
     "capabilities.finishing.benefit": "Biocompatibilidade Aprimorada",
     "capabilities.finishing.text": "Eletropolimento e passivação internos entregam superfícies lisas e resistentes à corrosão que atendem aos padrões ASTM para dispositivos implantáveis.",
     
+    // Equipment sections
+    "capabilities.equipment.cnc.title": "Equipamento de Fabricação CNC Suíço",
+    "capabilities.equipment.metrology.title": "Laboratório de Metrologia Avançado",
+    "capabilities.equipment.sample.title": "Equipamento de Preparação de Amostras",
+    "capabilities.equipment.finishing.title": "Acabamento de Superfície e Marcação",
+    
+    // Equipment categories
+    "equipment.category.swiss": "CNC Tipo Suíço",
+    "equipment.category.grinder": "Retificadora de Ferramentas",
+    "equipment.category.machining": "Centro de Usinagem",
+    "equipment.category.cmm": "MMC",
+    "equipment.category.measurement": "Medição",
+    "equipment.category.testing": "Teste de Material",
+    "equipment.category.analysis": "Análise",
+    "equipment.category.surface": "Tratamento de Superfície",
+    "equipment.category.identification": "Identificação",
+    
+    // Equipment names
+    "equipment.name.polishing": "Máquina de Polimento",
+    "equipment.name.cutting": "Máquina de Corte",
+    "equipment.name.mounting": "Prensa de Embutimento",
+    "equipment.name.electropolish": "Linha de Eletropolimento",
+    "equipment.name.laser": "Marcação a Laser",
+    "equipment.name.optical": "CNC Óptico",
+    "equipment.name.hardness": "Dureza Vickers",
+    "equipment.name.microscope": "Microscópio Olympus",
+    "equipment.name.zeiss": "ZEISS Contura G2",
+    
     // Quality
     "quality.title": "Qualidade e Conformidade",
     "quality.intro": "Nosso compromisso com a excelência em qualidade é demonstrado através de certificações internacionais, capacidades avançadas de metrologia e controles rigorosos de processo.",
@@ -429,6 +497,10 @@ const translations = {
     "contact.info.phone": "Telefone",
     "contact.info.address": "Endereço",
     "contact.location": "Indaiatuba / SP, Brasil",
+    
+    // Footer
+    "footer.certifications": "Certificações",
+    "footer.rights": "Todos os direitos reservados.",
     
     // Clients
     "clients.title": "Quem Atendemos",
@@ -523,6 +595,14 @@ const translations = {
     "whatWeDo.cta.assessment": "Agendar Avaliação Gratuita",
     "whatWeDo.cta.schedule": "Agendar Avaliação",
     "whatWeDo.cta.viewAll": "Ver Todas as Capacidades",
+    
+    // Sticky CTA
+    "stickyCta.message": "Pronto para elevar a fabricação de seus dispositivos médicos?",
+    "stickyCta.features": "Certificado ISO 13485 • 30+ anos de experiência • Precisão de ±0,001mm",
+    
+    // Testimonials
+    "testimonials.title": "Confiado por Líderes da Indústria",
+    "testimonials.subtitle": "30+ anos de excelência em fabricação de dispositivos médicos",
 
     // Products - Additional features (PT)
     "products.medical.feature1": "Placas e parafusos de fixação de trauma",

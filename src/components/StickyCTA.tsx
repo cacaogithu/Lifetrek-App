@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Calendar } from "lucide-react";
 import { MagneticButton } from "./MagneticButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const StickyCTA = () => {
+  const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -24,7 +26,7 @@ export const StickyCTA = () => {
   const getCtaContent = () => {
     return {
       icon: Calendar,
-      text: "Schedule Free Assessment",
+      text: t("whatWeDo.cta.assessment"),
       link: "/assessment"
     };
   };
@@ -52,10 +54,10 @@ export const StickyCTA = () => {
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
               <p className="text-sm font-medium">
-                Ready to elevate your medical device manufacturing?
+                {t("stickyCta.message")}
               </p>
               <p className="text-xs text-muted-foreground">
-                ISO 13485 certified • 30+ years experience • ±0.001mm precision
+                {t("stickyCta.features")}
               </p>
             </div>
             

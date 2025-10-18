@@ -1,6 +1,7 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Quote } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Testimonial {
   quote: string;
@@ -38,6 +39,7 @@ const testimonials: Testimonial[] = [
 ];
 
 export const TestimonialsCarousel = () => {
+  const { t } = useLanguage();
   const { elementRef, isVisible } = useScrollAnimation();
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -54,10 +56,10 @@ export const TestimonialsCarousel = () => {
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
           <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            Trusted by Industry Leaders
+            {t("testimonials.title")}
           </h2>
           <p className={`text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto transition-all duration-1000 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            30+ years of excellence in medical device manufacturing
+            {t("testimonials.subtitle")}
           </p>
         </div>
 

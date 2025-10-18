@@ -69,29 +69,29 @@ export default function Capabilities() {
   ];
 
   const cncMachines = [
-    { image: citizenL20, name: "Citizen L20-VIII LFV", category: "Swiss-Type CNC" },
-    { image: citizenL32, name: "Citizen L32", category: "Swiss-Type CNC" },
-    { image: tornosGT26, name: "Tornos GT-26", category: "Swiss-Type CNC" },
-    { image: walter, name: "Walter Helitronic", category: "Tool Grinder" },
-    { image: robodrill, name: "FANUC Robodrill", category: "Machining Center" },
+    { image: citizenL20, name: "Citizen L20-VIII LFV", category: t("equipment.category.swiss") },
+    { image: citizenL32, name: "Citizen L32", category: t("equipment.category.swiss") },
+    { image: tornosGT26, name: "Tornos GT-26", category: t("equipment.category.swiss") },
+    { image: walter, name: "Walter Helitronic", category: t("equipment.category.grinder") },
+    { image: robodrill, name: "FANUC Robodrill", category: t("equipment.category.machining") },
   ];
 
   const metrologyEquipment = [
-    { image: zeissContura, name: "ZEISS Contura G2", category: "CMM" },
-    { image: opticalCnc, name: "Optical CNC", category: "Measurement" },
-    { image: hardnessVickers, name: "Hardness Vickers", category: "Material Testing" },
-    { image: olympusMicroscope, name: "Olympus Microscope", category: "Analysis" },
+    { image: zeissContura, name: t("equipment.name.zeiss"), category: t("equipment.category.cmm") },
+    { image: opticalCnc, name: t("equipment.name.optical"), category: t("equipment.category.measurement") },
+    { image: hardnessVickers, name: t("equipment.name.hardness"), category: t("equipment.category.testing") },
+    { image: olympusMicroscope, name: t("equipment.name.microscope"), category: t("equipment.category.analysis") },
   ];
 
   const labEquipment = [
-    { image: polimento, name: "Polishing Machine", category: "Sample Prep" },
-    { image: cortadora, name: "Cutting Machine", category: "Sample Prep" },
-    { image: embutidora, name: "Mounting Press", category: "Sample Prep" },
+    { image: polimento, name: t("equipment.name.polishing"), category: t("equipment.category.sampleprep") },
+    { image: cortadora, name: t("equipment.name.cutting"), category: t("equipment.category.sampleprep") },
+    { image: embutidora, name: t("equipment.name.mounting"), category: t("equipment.category.sampleprep") },
   ];
 
   const finishingEquipment = [
-    { image: electropolishLine, name: "Electropolish Line", category: "Surface Treatment" },
-    { image: laserMarking, name: "Laser Marking", category: "Identification" },
+    { image: electropolishLine, name: t("equipment.name.electropolish"), category: t("equipment.category.surface") },
+    { image: laserMarking, name: t("equipment.name.laser"), category: t("equipment.category.identification") },
   ];
 
   return (
@@ -185,7 +185,7 @@ export default function Capabilities() {
           {/* CNC Machines */}
           <div className="mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
-              Swiss CNC Manufacturing Equipment
+              {t("capabilities.equipment.cnc.title")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {cncMachines.map((machine, index) => (
@@ -210,7 +210,7 @@ export default function Capabilities() {
           {/* Metrology Equipment */}
           <div className="mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
-              Advanced Metrology Laboratory
+              {t("capabilities.equipment.metrology.title")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {metrologyEquipment.map((equipment, index) => (
@@ -235,7 +235,7 @@ export default function Capabilities() {
           {/* Sample Prep Equipment */}
           <div className="mb-16">
             <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">
-              Sample Preparation Equipment
+              {t("capabilities.equipment.sample.title")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {labEquipment.map((equipment, index) => (
@@ -260,7 +260,7 @@ export default function Capabilities() {
           {/* Finishing Equipment */}
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">
-              Surface Finishing & Marking
+              {t("capabilities.equipment.finishing.title")}
             </h2>
             <div className="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
               {finishingEquipment.map((equipment, index) => (

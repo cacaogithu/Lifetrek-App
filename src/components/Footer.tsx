@@ -45,7 +45,7 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-bold mb-4 text-foreground">Certifications</h3>
+            <h3 className="font-bold mb-4 text-foreground">{t("footer.certifications")}</h3>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
                 <img 
@@ -74,7 +74,7 @@ export const Footer = () => {
         </div>
 
         <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Lifetrek Medical. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Lifetrek Medical. {t("footer.rights")}</p>
         </div>
       </div>
     </footer>
