@@ -1,10 +1,34 @@
-import { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useRef, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
 function Globe() {
   const groupRef = useRef<THREE.Group>(null);
+  const { gl } = useThree();
+  
+  // WebGL Context Recovery
+  useEffect(() => {
+    const canvas = gl?.domElement;
+    if (!canvas) return;
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      console.log('WebGL context lost, attempting restore...');
+    };
+    
+    const handleContextRestored = () => {
+      console.log('WebGL context restored');
+    };
+
+    canvas.addEventListener('webglcontextlost', handleContextLost);
+    canvas.addEventListener('webglcontextrestored', handleContextRestored);
+
+    return () => {
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
+      canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+    };
+  }, [gl]);
   
   useFrame((state) => {
     if (groupRef.current) {

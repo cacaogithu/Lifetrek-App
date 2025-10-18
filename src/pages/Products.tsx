@@ -208,7 +208,7 @@ export default function Products() {
           <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 max-w-3xl mx-auto opacity-95">
             {t("products.cta.text")}
           </p>
-          <Link to="/contact">
+          <Link to="/assessment">
             <Button size="lg" variant="secondary" className="group">
               {t("products.cta.button")}
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

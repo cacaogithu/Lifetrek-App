@@ -376,7 +376,7 @@ export default function Home() {
               <p className="text-lg sm:text-xl mb-8 opacity-95">
                 {t("home.finalCta.subtitle")}
               </p>
-              <Link to="/contact">
+              <Link to="/assessment">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
                   {t("home.finalCta.button")}
                 </MagneticButton>

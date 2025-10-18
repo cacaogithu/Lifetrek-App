@@ -230,7 +230,7 @@ export default function Clients() {
           <p className="text-xl mb-8 opacity-95 max-w-2xl mx-auto">
             {t("clients.cta.text")}
           </p>
-          <Link to="/contact">
+          <Link to="/assessment">
             <Button size="lg" variant="secondary">
               {t("clients.cta.button")}
               <ArrowRight className="ml-2 h-5 w-5" />

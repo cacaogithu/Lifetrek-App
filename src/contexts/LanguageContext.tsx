@@ -471,7 +471,7 @@ const translations = {
     "home.capabilities.cta": "Ver Todas as Capacidades",
     "home.finalCta.title": "Pronto Para Transformar Seu Desenvolvimento de Produtos?",
     "home.finalCta.subtitle": "Junte-se às principais empresas de dispositivos médicos que confiam na Lifetrek para componentes de missão crítica.",
-    "home.finalCta.button": "Comece Hoje",
+    "home.finalCta.button": "Agende Avaliação Gratuita",
 
     // About - Additional (PT)
     "about.stats.years": "Anos de Experiência",
@@ -537,9 +537,51 @@ const translations = {
     "products.veterinary.feature2": "Parafusos de fixação veterinária",
     "products.veterinary.feature3": "Instrumentos cirúrgicos adaptados",
     "products.veterinary.feature4": "Implantes veterinários personalizados",
-    "products.catalog.view": "Ver Catálogo",
-    "products.catalog.hide": "Ocultar Catálogo",
+    "products.catalog.view": "Ver",
+    "products.catalog.hide": "Ocultar",
     "products.catalog.items": "Catálogo de Produtos",
+
+    // Interactive Capabilities (PT)
+    "interactive.capabilities.title": "Capacidades Principais",
+    "interactive.capabilities.subtitle": "Sistemas de fabricação e garantia de qualidade de classe mundial",
+    "interactive.capabilities.precision.title": "Precisão CNC Suíça",
+    "interactive.capabilities.precision.stat": "±0,001mm",
+    "interactive.capabilities.precision.description": "Tornos CNC tipo suíço multi-eixos com ferramental vivo. Capaz de produzir componentes médicos complexos com precisão em nível de mícron para implantes e instrumentos.",
+    "interactive.capabilities.metrology.title": "Metrologia Avançada",
+    "interactive.capabilities.metrology.stat": "ISO 17025",
+    "interactive.capabilities.metrology.description": "Medição 3D CMM ZEISS, comparadores ópticos e análise metalográfica. Capacidades completas de verificação dimensional e testes de materiais.",
+    "interactive.capabilities.finishing.title": "Eletropolimento",
+    "interactive.capabilities.finishing.stat": "Ra < 0,1μm",
+    "interactive.capabilities.finishing.description": "Linha de eletropolimento de última geração produzindo acabamentos espelhados. Aumenta a resistência à corrosão e biocompatibilidade para dispositivos cirúrgicos e implantáveis.",
+    "interactive.capabilities.cleanroom.title": "Sala Limpa ISO 7",
+    "interactive.capabilities.cleanroom.stat": "Classe 10.000",
+    "interactive.capabilities.cleanroom.description": "Ambientes de sala limpa com controle climático para montagem estéril de dispositivos médicos e embalagem. Rastreabilidade completa e documentação para conformidade regulatória.",
+    "interactive.capabilities.hover": "Passe o mouse para detalhes",
+
+    // Manufacturing Timeline (PT)
+    "timeline.title": "Nosso Processo de Fabricação",
+    "timeline.subtitle": "Do conceito à entrega: engenharia de precisão em cada etapa",
+    "timeline.step1.title": "Design e Engenharia",
+    "timeline.step1.description": "Programação CAD/CAM com software ESPRIT para trajetórias de ferramentas ideais e precisão",
+    "timeline.step2.title": "Usinagem CNC Suíça",
+    "timeline.step2.description": "Fabricação CNC tipo suíço multi-eixos com tolerância de precisão de ±0,001mm",
+    "timeline.step3.title": "Acabamento de Superfície",
+    "timeline.step3.description": "Eletropolimento para acabamento espelhado biocompatível e resistência aprimorada à corrosão",
+    "timeline.step4.title": "Controle de Qualidade",
+    "timeline.step4.description": "Medição 3D CMM ZEISS e análise metalográfica em laboratório certificado ISO",
+    "timeline.step5.title": "Embalagem em Sala Limpa",
+    "timeline.step5.description": "Embalagem estéril em sala limpa ISO 7 com documentação completa de rastreabilidade de lote",
+    "timeline.step6.title": "Certificação Final",
+    "timeline.step6.description": "Documentação completa de qualidade e certificação de conformidade ISO 13485",
+
+    // Equipment Carousel (PT)
+    "equipment.title": "Equipamentos de Fabricação Avançados",
+    "equipment.subtitle": "Tecnologia de ponta para fabricação de dispositivos médicos de precisão",
+    "equipment.category.all": "Todos os Equipamentos",
+    "equipment.category.metrology": "Metrologia",
+    "equipment.category.cnc": "Máquinas CNC",
+    "equipment.category.sampleprep": "Preparação de Amostras",
+    "equipment.category.finishing": "Acabamento",
   },
 };
 

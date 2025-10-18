@@ -54,7 +54,7 @@ export default function About() {
               {t("about.intro")}
             </p>
             <div className="animate-fade-in animate-delay-400">
-              <Link to="/contact">
+              <Link to="/assessment">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
                   {t("about.cta.partner")}
                 </MagneticButton>
@@ -177,7 +177,7 @@ export default function About() {
               {t("about.cta.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact">
+              <Link to="/assessment">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
                   {t("about.cta.consultation")}
                 </MagneticButton>
