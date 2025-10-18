@@ -199,7 +199,7 @@ export default function Home() {
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-center">
               {t("home.hero.title")}
             </h1>
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8">
