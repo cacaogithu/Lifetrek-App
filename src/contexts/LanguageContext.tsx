@@ -182,8 +182,8 @@ const translations = {
     "home.capabilities.anvisa.title": "ANVISA Approved",
     "home.capabilities.anvisa.text": "Brazilian health regulatory agency approval ensuring compliance with national medical device standards.",
     "home.capabilities.cta": "See All Capabilities",
-    "home.finalCta.title": "Ready to Accelerate Your Product Development?",
-    "home.finalCta.subtitle": "Partner with Lifetrek to bring your medical devices to market faster with certified quality and precision manufacturing.",
+    "home.finalCta.title": "Ready to Transform Your Product Development?",
+    "home.finalCta.subtitle": "Join the leading medical device companies that trust Lifetrek for mission-critical components.",
     "home.finalCta.button": "Get Started Today",
 
     // About - Additional
@@ -250,8 +250,8 @@ const translations = {
     "products.veterinary.feature2": "Veterinary fixation screws",
     "products.veterinary.feature3": "Adapted surgical instruments",
     "products.veterinary.feature4": "Custom veterinary implants",
-    "products.catalog.view": "View",
-    "products.catalog.hide": "Hide",
+    "products.catalog.view": "View Catalog",
+    "products.catalog.hide": "Hide Catalog",
     "products.catalog.items": "Product Catalog",
 
     // Interactive Capabilities
@@ -461,6 +461,18 @@ const translations = {
     "clients.cta.text": "Junte-se às principais empresas médicas que confiam na Lifetrek para manufatura de precisão, tecnologia de sala limpa e qualidade certificada.",
     "clients.cta.button": "Entre em Contato",
 
+    // Home - Additional sections (PT)
+    "home.capabilities.title": "Capacidades de Fabricação",
+    "home.capabilities.subtitle": "Equipamentos avançados e processos certificados que reduzem o risco da sua cadeia de suprimentos",
+    "home.capabilities.iso.title": "Certificado ISO 13485:2016",
+    "home.capabilities.iso.text": "Sistema completo de gestão de qualidade para fabricação de dispositivos médicos com conformidade regulatória total.",
+    "home.capabilities.anvisa.title": "Aprovado pela ANVISA",
+    "home.capabilities.anvisa.text": "Aprovação da agência reguladora de saúde brasileira garantindo conformidade com padrões nacionais de dispositivos médicos.",
+    "home.capabilities.cta": "Ver Todas as Capacidades",
+    "home.finalCta.title": "Pronto Para Transformar Seu Desenvolvimento de Produtos?",
+    "home.finalCta.subtitle": "Junte-se às principais empresas de dispositivos médicos que confiam na Lifetrek para componentes de missão crítica.",
+    "home.finalCta.button": "Comece Hoje",
+
     // About - Additional (PT)
     "about.stats.years": "Anos de Experiência",
     "about.stats.iso": "Certificado ISO 13485",
@@ -525,8 +537,8 @@ const translations = {
     "products.veterinary.feature2": "Parafusos de fixação veterinária",
     "products.veterinary.feature3": "Instrumentos cirúrgicos adaptados",
     "products.veterinary.feature4": "Implantes veterinários personalizados",
-    "products.catalog.view": "Ver",
-    "products.catalog.hide": "Ocultar",
+    "products.catalog.view": "Ver Catálogo",
+    "products.catalog.hide": "Ocultar Catálogo",
     "products.catalog.items": "Catálogo de Produtos",
   },
 };

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
@@ -382,9 +383,11 @@ export default function Home() {
               </Link>
             </div>
             <div className="hidden lg:block">
-              <Suspense fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
-                <MedicalGlobe />
-              </Suspense>
+              <ErrorBoundary>
+                <Suspense fallback={<div className="w-full h-[400px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg animate-pulse" />}>
+                  <MedicalGlobe />
+                </Suspense>
+              </ErrorBoundary>
             </div>
           </div>
         </div>
