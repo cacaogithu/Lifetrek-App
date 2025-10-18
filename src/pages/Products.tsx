@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
 import { useState } from "react";
-import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
+import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram-enhanced.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import medicalScrew from "@/assets/products/medical-screw-optimized.webp";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
