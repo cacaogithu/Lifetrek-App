@@ -342,14 +342,6 @@ const translations = {
     "stickyCta.message": "Ready to accelerate your medical device manufacturing?",
     "stickyCta.features": "ISO 13485 certified • Swiss CNC precision • Fast turnaround",
 
-    // Testimonials
-    "testimonials.title": "What Our Clients Say",
-    "testimonials.subtitle": "Trusted by leading medical device manufacturers worldwide",
-
-    // Footer
-    "footer.certifications": "Quality Certifications",
-    "footer.rights": "All rights reserved.",
-
     // Products - Additional features
     "products.medical.feature1": "Trauma fixation plates & screws",
     "products.medical.feature2": "Spinal fusion systems",
@@ -820,14 +812,6 @@ const translations = {
     // Sticky CTA (PT)
     "stickyCta.message": "Pronto para acelerar a fabricação do seu dispositivo médico?",
     "stickyCta.features": "Certificado ISO 13485 • Precisão CNC suíça • Entrega rápida",
-
-    // Testimonials (PT)
-    "testimonials.title": "O Que Nossos Clientes Dizem",
-    "testimonials.subtitle": "Confiado pelos principais fabricantes de dispositivos médicos em todo o mundo",
-
-    // Footer (PT)
-    "footer.certifications": "Certificações de Qualidade",
-    "footer.rights": "Todos os direitos reservados.",
 
     // Products - Additional features (PT)
     "products.medical.feature1": "Placas e parafusos de fixação de trauma",
