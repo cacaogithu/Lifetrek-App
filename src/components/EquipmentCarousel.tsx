@@ -250,12 +250,14 @@ export const EquipmentCarousel = () => {
           opts={{
             align: "start",
             loop: true,
+            dragFree: true,
+            containScroll: "trimSnaps",
           }}
           className="w-full max-w-7xl mx-auto"
         >
-          <CarouselContent className="-ml-4">
+          <CarouselContent className="-ml-2 md:-ml-4">
             {filteredItems.map((item, index) => (
-              <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={index} className="pl-2 md:pl-4 basis-[85%] sm:basis-[70%] md:basis-1/2 lg:basis-1/3">
                 <div className="group h-full">
                   <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-white shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-[1.02]">
                     <img
