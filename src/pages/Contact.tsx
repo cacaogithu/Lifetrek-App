@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import exterior from "@/assets/facility/exterior.webp";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 
@@ -14,6 +15,10 @@ export default function Contact() {
     name: "",
     email: "",
     company: "",
+    phone: "",
+    projectType: "",
+    annualVolume: "",
+    technicalRequirements: "",
     message: "",
   });
 
@@ -21,7 +26,7 @@ export default function Contact() {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.projectType || !formData.technicalRequirements) {
       toast({
         variant: "destructive",
         title: "Error",
@@ -41,20 +46,66 @@ export default function Contact() {
       return;
     }
 
-    // Track analytics event
-    await trackAnalyticsEvent({
-      eventType: "form_submission",
-      companyName: formData.company,
-      companyEmail: formData.email,
-      metadata: { formType: "contact", name: formData.name }
-    });
+    try {
+      // Send email via edge function
+      const { error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          phone: formData.phone,
+          projectType: formData.projectType,
+          annualVolume: formData.annualVolume,
+          technicalRequirements: formData.technicalRequirements,
+          message: formData.message,
+        }
+      });
 
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
+      if (error) {
+        console.error('Error sending email:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to send message. Please try again or contact us directly.",
+        });
+        return;
+      }
 
-    setFormData({ name: "", email: "", company: "", message: "" });
+      // Track analytics event
+      await trackAnalyticsEvent({
+        eventType: "form_submission",
+        companyName: formData.company,
+        companyEmail: formData.email,
+        metadata: { 
+          formType: "contact_quote", 
+          name: formData.name,
+          projectType: formData.projectType
+        }
+      });
+
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you as soon as possible with a personalized quote.",
+      });
+
+      setFormData({ 
+        name: "", 
+        email: "", 
+        company: "", 
+        phone: "", 
+        projectType: "", 
+        annualVolume: "", 
+        technicalRequirements: "", 
+        message: "" 
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+      });
+    }
   };
 
   return (
@@ -75,6 +126,11 @@ export default function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16">
             {/* Contact Form */}
             <div className="bg-card p-10 lg:p-12 rounded-2xl shadow-[var(--shadow-elevated)] border border-border/50">
+              <h2 className="text-2xl font-bold mb-2 text-primary">{t("contact.subtitle")}</h2>
+              <p className="text-muted-foreground mb-6">
+                {t("contact.form.description")}
+              </p>
+              
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -119,17 +175,73 @@ export default function Contact() {
                 </div>
 
                 <div>
+                  <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                    {t("contact.form.phone")} *
+                  </label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="projectType" className="block text-sm font-medium mb-2">
+                    {t("contact.form.projectType")} *
+                  </label>
+                  <Input
+                    id="projectType"
+                    value={formData.projectType}
+                    onChange={(e) =>
+                      setFormData({ ...formData, projectType: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="annualVolume" className="block text-sm font-medium mb-2">
+                    {t("contact.form.annualVolume")}
+                  </label>
+                  <Input
+                    id="annualVolume"
+                    value={formData.annualVolume}
+                    onChange={(e) =>
+                      setFormData({ ...formData, annualVolume: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="technicalRequirements" className="block text-sm font-medium mb-2">
+                    {t("contact.form.technicalRequirements")} *
+                  </label>
+                  <Textarea
+                    id="technicalRequirements"
+                    rows={4}
+                    value={formData.technicalRequirements}
+                    onChange={(e) =>
+                      setFormData({ ...formData, technicalRequirements: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2">
-                    {t("contact.form.message")} *
+                    {t("contact.form.message")}
                   </label>
                   <Textarea
                     id="message"
-                    rows={6}
+                    rows={4}
                     value={formData.message}
                     onChange={(e) =>
                       setFormData({ ...formData, message: e.target.value })
                     }
-                    required
                   />
                 </div>
 
@@ -156,10 +268,10 @@ export default function Contact() {
                 <div className="border-l-4 border-primary pl-6">
                   <h3 className="font-bold text-lg mb-2">{t("contact.info.email")}</h3>
                   <a
-                    href="mailto:contact@lifetrek-medical.com"
+                    href="mailto:contato@lifetrek-medical.com"
                     className="text-muted-foreground text-lg hover:text-primary transition-colors"
                   >
-                    contact@lifetrek-medical.com
+                    contato@lifetrek-medical.com
                   </a>
                 </div>
 
