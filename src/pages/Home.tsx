@@ -195,34 +195,34 @@ export default function Home() {
   
   return <div className="min-h-screen">
       {/* Hero Section - Factory Exterior Background */}
-      <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
+      <section className="relative min-h-[600px] sm:min-h-[700px] lg:min-h-[800px] overflow-hidden">
         {/* Factory Photo Background */}
         <div className="absolute inset-0">
           <img 
             src={factoryExteriorHero} 
             alt="Lifetrek Medical factory exterior - Modern industrial facility" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain object-center bg-slate-100"
           />
         </div>
         
-        {/* Blue Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))]/30 via-[hsl(var(--primary))]/25 to-[hsl(var(--accent))]/25" />
-        
-        <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
-          <div className="max-w-2xl text-primary-foreground z-10 text-center sm:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
-              {t("home.hero.title")}
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8">
-              {t("home.hero.subtitle")}
-            </p>
-            <Link to="/about">
-              <div className="flex justify-center sm:justify-start">
-                <MagneticButton size="lg" variant="secondary" className="shadow-xl">
-                  {t("home.hero.cta")}
-                </MagneticButton>
-              </div>
-            </Link>
+        <div className="relative container mx-auto px-4 sm:px-6 h-full min-h-[600px] sm:min-h-[700px] lg:min-h-[800px] flex items-center">
+          <div className="max-w-2xl z-10 text-center sm:text-left">
+            {/* Blue shading background behind text */}
+            <div className="bg-[hsl(var(--primary))]/80 backdrop-blur-sm p-8 sm:p-10 rounded-2xl shadow-2xl">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-primary-foreground">
+                {t("home.hero.title")}
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-primary-foreground/95">
+                {t("home.hero.subtitle")}
+              </p>
+              <Link to="/about">
+                <div className="flex justify-center sm:justify-start">
+                  <MagneticButton size="lg" variant="secondary" className="shadow-xl">
+                    {t("home.hero.cta")}
+                  </MagneticButton>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
