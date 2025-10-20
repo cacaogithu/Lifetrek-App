@@ -3,58 +3,30 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import vincula from "@/assets/clients/vincula.webp";
-import techimport from "@/assets/clients/techimport.webp";
-import traumec from "@/assets/clients/traumec.webp";
-import ultradent from "@/assets/clients/ultradent.webp";
-import toride from "@/assets/clients/toride.webp";
-import react from "@/assets/clients/react.webp";
-import razek from "@/assets/clients/razek.webp";
-import russer from "@/assets/clients/russer.webp";
-import ossea from "@/assets/clients/ossea.webp";
-import orthometric from "@/assets/clients/orthometric.webp";
-import cpmh from "@/assets/clients/cpmh.webp";
-import evolve from "@/assets/clients/evolve.webp";
-import fgm from "@/assets/clients/fgm.webp";
-import iol from "@/assets/clients/iol.webp";
-import implanfix from "@/assets/clients/implanfix.webp";
-import impol from "@/assets/clients/impol.webp";
-import hcs from "@/assets/clients/hcs.webp";
-import gmi from "@/assets/clients/gmi.webp";
-import plenum from "@/assets/clients/plenum.webp";
-import medens from "@/assets/clients/medens.webp";
-import neoortho from "@/assets/clients/neoortho.webp";
-import oblDental from "@/assets/clients/obl-dental.webp";
-import orthometric2 from "@/assets/clients/orthometric-2.webp";
+import cpmh from "@/assets/clients/cpmh-new.png";
+import evolve from "@/assets/clients/evolve-new.png";
+import fgm from "@/assets/clients/fgm-new.png";
+import gmi from "@/assets/clients/gmi-new.png";
+import hcs from "@/assets/clients/hcs-new.png";
+import impol from "@/assets/clients/impol-new.png";
+import implanfix from "@/assets/clients/implanfix-new.png";
+import iol from "@/assets/clients/iol-new.png";
+import plenum from "@/assets/clients/plenum-new.png";
 
 export default function Clients() {
   const { t } = useLanguage();
   const logosAnimation = useScrollAnimation();
 
   const clientLogos = [
-    { src: vincula, alt: "Vincula - Medical device manufacturer client" },
-    { src: techimport, alt: "TechImport - Medical technology client" },
-    { src: traumec, alt: "Traumec Health Technology - Medical equipment client" },
-    { src: ultradent, alt: "Ultradent Products - Dental device manufacturer" },
-    { src: toride, alt: "Toride - Medical manufacturing client" },
-    { src: react, alt: "React - Creation in health medical technology" },
-    { src: razek, alt: "Razek - Medical device solutions client" },
-    { src: russer, alt: "Russer - Medical equipment manufacturer" },
-    { src: ossea, alt: "Óssea Medical Technology - Orthopedic implant manufacturer" },
-    { src: orthometric, alt: "Orthometric - Orthopedic solutions provider" },
     { src: cpmh, alt: "CPMH - Medical device solutions" },
     { src: evolve, alt: "Evolve - Medical technology innovation" },
     { src: fgm, alt: "FGM Dental Group - Dental device manufacturer" },
-    { src: iol, alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer" },
-    { src: implanfix, alt: "Implanfix - Surgical materials provider" },
-    { src: impol, alt: "Impol - Medical instruments manufacturer" },
-    { src: hcs, alt: "HCS - Healthcare solutions provider" },
     { src: gmi, alt: "GMI - Global medical innovation" },
+    { src: hcs, alt: "HCS - Healthcare solutions provider" },
+    { src: impol, alt: "Impol - Medical instruments manufacturer" },
+    { src: implanfix, alt: "Implanfix - Surgical materials provider" },
+    { src: iol, alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer" },
     { src: plenum, alt: "Plenum - Medical device technology" },
-    { src: medens, alt: "Medens - Medical device manufacturer" },
-    { src: neoortho, alt: "Neoortho - Orthopedic solutions" },
-    { src: oblDental, alt: "OBL Dental - Dental device manufacturer" },
-    { src: orthometric2, alt: "Orthometric - Medical orthopedic systems" },
   ];
 
   const clientTypes = [
