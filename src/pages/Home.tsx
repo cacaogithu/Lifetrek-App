@@ -205,24 +205,24 @@ export default function Home() {
           />
         </div>
         
+        {/* Blue Gradient Overlay - Left to Right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--primary))]/90 via-[hsl(var(--primary))]/40 to-transparent" />
+        
         <div className="relative container mx-auto px-4 sm:px-6 h-full min-h-[600px] sm:min-h-[700px] lg:min-h-[800px] flex items-center">
           <div className="max-w-2xl z-10 text-center sm:text-left">
-            {/* Blue shading background behind text */}
-            <div className="bg-[hsl(var(--primary))]/80 backdrop-blur-sm p-8 sm:p-10 rounded-2xl shadow-2xl">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-primary-foreground">
-                {t("home.hero.title")}
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-primary-foreground/95">
-                {t("home.hero.subtitle")}
-              </p>
-              <Link to="/about">
-                <div className="flex justify-center sm:justify-start">
-                  <MagneticButton size="lg" variant="secondary" className="shadow-xl">
-                    {t("home.hero.cta")}
-                  </MagneticButton>
-                </div>
-              </Link>
-            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-primary-foreground drop-shadow-lg">
+              {t("home.hero.title")}
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-primary-foreground drop-shadow-md">
+              {t("home.hero.subtitle")}
+            </p>
+            <Link to="/about">
+              <div className="flex justify-center sm:justify-start">
+                <MagneticButton size="lg" variant="secondary" className="shadow-xl">
+                  {t("home.hero.cta")}
+                </MagneticButton>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
