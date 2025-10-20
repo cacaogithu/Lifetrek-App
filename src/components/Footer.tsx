@@ -29,8 +29,8 @@ export const Footer = () => {
             <h3 className="font-bold mb-4 text-foreground">{t("nav.contact")}</h3>
             <div className="space-y-3 text-sm text-muted-foreground">
               <div>
-                <a href="mailto:contact@lifetrek-medical.com" className="hover:text-primary transition-colors block">
-                  contact@lifetrek-medical.com
+                <a href="mailto:contato@lifetrek-medical.com" className="hover:text-primary transition-colors block">
+                  contato@lifetrek-medical.com
                 </a>
               </div>
               <div>

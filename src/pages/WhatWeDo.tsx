@@ -40,7 +40,7 @@ export default function WhatWeDo() {
       title: t("whatWeDo.service2.title"),
       description: t("whatWeDo.service2.description"),
       image: surgicalInstruments,
-      stats: ["Clean Room", "3D CMM", "ISO 17025"],
+      stats: ["Clean Room", "3D CMM", "DSX-1000"],
       color: "text-accent",
       bg: "bg-accent/10",
     },
