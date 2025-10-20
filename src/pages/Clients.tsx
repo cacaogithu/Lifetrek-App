@@ -21,6 +21,10 @@ import traumec from "@/assets/clients/traumec-new.png";
 import razek from "@/assets/clients/razek-new.png";
 import react from "@/assets/clients/react-new.png";
 import russer from "@/assets/clients/russer-new.png";
+import techimport from "@/assets/clients/techimport-new.png";
+import toride from "@/assets/clients/toride-new.png";
+import ultradent from "@/assets/clients/ultradent-new.png";
+import vincula from "@/assets/clients/vincula-new.png";
 
 export default function Clients() {
   const { t } = useLanguage();
@@ -45,6 +49,10 @@ export default function Clients() {
     { src: razek, alt: "Razek - Medical device solutions client" },
     { src: react, alt: "React - Creation in health medical technology" },
     { src: russer, alt: "Russer - Medical equipment manufacturer" },
+    { src: techimport, alt: "TechImport - Medical technology client" },
+    { src: toride, alt: "Toride - Medical manufacturing client" },
+    { src: ultradent, alt: "Ultradent Products - Dental device manufacturer" },
+    { src: vincula, alt: "Vincula - Medical device manufacturer client" },
   ];
 
   const clientTypes = [
