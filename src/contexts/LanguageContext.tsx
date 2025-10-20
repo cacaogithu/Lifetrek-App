@@ -708,7 +708,7 @@ const translations = {
     "culture.training": "Contínuas oportunidades para desenvolvimento e crescimento profissional.",
     
     // Contact
-    "contact.title": "Entre em Contato para Sua Cotação",
+    "contact.title": "Entre em contato conosco",
     "contact.subtitle": "Receba uma cotação personalizada",
     "contact.form.description": "Preencha o formulário abaixo para receber uma cotação personalizada para seu projeto",
     "contact.form.name": "Nome Completo",
