@@ -7,7 +7,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
-import factoryExteriorHero from "@/assets/facility/factory-exterior-hero.webp";
+import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
 import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
@@ -195,20 +195,20 @@ export default function Home() {
   
   return <div className="min-h-screen">
       {/* Hero Section - Factory Exterior Background */}
-      <section className="relative min-h-[600px] sm:min-h-[700px] lg:min-h-[800px] overflow-hidden">
+      <section className="relative h-[600px] sm:h-[700px] lg:h-[800px] overflow-hidden">
         {/* Factory Photo Background */}
         <div className="absolute inset-0">
           <img 
-            src={factoryExteriorHero} 
+            src={factoryHeroFull} 
             alt="Lifetrek Medical factory exterior - Modern industrial facility" 
-            className="w-full h-full object-contain object-center bg-slate-100"
+            className="w-full h-full object-cover object-center"
           />
         </div>
         
         {/* Blue Gradient Overlay - Left to Right */}
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--primary))]/90 via-[hsl(var(--primary))]/40 to-transparent" />
         
-        <div className="relative container mx-auto px-4 sm:px-6 h-full min-h-[600px] sm:min-h-[700px] lg:min-h-[800px] flex items-center">
+        <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl z-10 text-center sm:text-left">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-primary-foreground drop-shadow-lg">
               {t("home.hero.title")}
