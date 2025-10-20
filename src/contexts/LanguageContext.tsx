@@ -23,7 +23,7 @@ const translations = {
     
     // Home
     "home.hero.title": "Accelerate Your Product Development",
-    "home.hero.subtitle": "Get precision medical components to market faster with our ISO 13485 certified manufacturing, Swiss CNC technology, and cleanroom facilities.",
+    "home.hero.subtitle": "Get precision medical components to market faster with our ISO 13485 certified manufacturing, leading edge CNC technology, and cleanroom facilities.",
     "home.hero.cta": "Partner With Us",
     "home.benefits.speed": "Faster Time to Market",
     "home.benefits.speed.text": "Faster time to market: from prototype to production, with streamlined processes.",
@@ -63,7 +63,7 @@ const translations = {
     
     // What We Do
     "whatWeDo.title": "What We Do",
-    "whatWeDo.text": "We provide manufacturing services using state-of-the-art CNC machines such as sliding-head lathes, single-head lathes, machining centers, and grinders. Our processes include cleanrooms (ISO certified), electropolishing, passivation, and laser marking.",
+    "whatWeDo.text": "We provide manufacturing services using state-of-the-art CNC machines such as multi-axis lathes, machining centers, and grinders. Our processes include cleanrooms (ISO certified), electropolishing, passivation, and laser marking.",
     "whatWeDo.precision": "Medical Precision Manufacturing",
     "whatWeDo.cleanroom": "Cleanroom Technology",
     
@@ -324,14 +324,14 @@ const translations = {
     "whatWeDo.services.title": "Core Manufacturing Services",
     "whatWeDo.services.subtitle": "End-to-end manufacturing solutions for medical device OEMs",
     "whatWeDo.service1.title": "Precision CNC Machining",
-    "whatWeDo.service1.description": "Multi-axis CNC manufacturing with ±0.001mm tolerance for complex medical components, implants, and surgical instruments",
+    "whatWeDo.service1.description": "State-of-the-art CNC equipment — micrometric precision for implants and instruments",
     "whatWeDo.service2.title": "Advanced Quality Control",
     "whatWeDo.service2.description": "3D CMM measurement, optical inspection, and metallographic analysis with certified metrology lab",
     "whatWeDo.service3.title": "Surface Treatment Excellence",
     "whatWeDo.service3.description": "State-of-the-art electropolishing producing mirror finishes with enhanced biocompatibility and corrosion resistance",
     "whatWeDo.service4.title": "Cleanroom Manufacturing",
     "whatWeDo.service4.description": "ISO 7 certified cleanroom environments for sterile assembly, packaging with complete batch traceability",
-    "whatWeDo.capabilities.title": "Manufacturing Capabilities",
+    "whatWeDo.capabilities.title": "Advanced Manufacturing Equipment",
     "whatWeDo.capabilities.subtitle": "State-of-the-art equipment and expertise",
     "whatWeDo.cta.title": "Let's Discuss Your Manufacturing Needs",
     "whatWeDo.cta.subtitle": "Get expert guidance on feasibility, timelines, and cost estimates for your medical device project",
@@ -535,7 +535,7 @@ const translations = {
     
     // What We Do
     "whatWeDo.title": "O que Fazemos",
-    "whatWeDo.text": "Oferecemos aos nossos clientes serviços de manufatura com utilização de máquinas CNC ultra precisas de última geração como tornos de cabecote móvel, tornos de cabeçote simples, centros de usinagem e retíficas além de salas limpas certificadas, eletropolimento, passivação, gravação a laser.",
+    "whatWeDo.text": "Oferecemos aos nossos clientes serviços de manufatura com utilização de máquinas CNC ultra precisas de última geração como tornos multi-eixos, centros de usinagem e retíficas além de salas limpas certificadas, eletropolimento, passivação, gravação a laser.",
     "whatWeDo.precision": "Manufatura Médica de Precisão",
     "whatWeDo.cleanroom": "Tecnologia de Sala Limpa",
     
@@ -796,14 +796,14 @@ const translations = {
     "whatWeDo.services.title": "Serviços de Fabricação Principais",
     "whatWeDo.services.subtitle": "Soluções de fabricação completas para OEMs da área médica",
     "whatWeDo.service1.title": "Usinagem CNC de Precisão",
-    "whatWeDo.service1.description": "Fabricação CNC multi-eixos com tolerância de ±0,001mm para componentes médicos complexos, implantes e instrumentos cirúrgicos",
+    "whatWeDo.service1.description": "Equipamentos CNC de última geração — precisão micrométrica para implantes e instrumentais",
     "whatWeDo.service2.title": "Controle de Qualidade Avançado",
     "whatWeDo.service2.description": "Medição 3D CMM ZEISS, inspeção óptica e análise metalográfica com laboratório de metrologia certificado ISO 17025",
     "whatWeDo.service3.title": "Excelência em Tratamento de Superfície",
     "whatWeDo.service3.description": "Eletropolimento de última geração produzindo acabamentos espelhados com biocompatibilidade aprimorada e resistência à corrosão",
     "whatWeDo.service4.title": "Fabricação em Sala Limpa",
     "whatWeDo.service4.description": "Ambientes de sala limpa certificados ISO 7 para montagem estéril, embalagem com rastreabilidade completa de lote",
-    "whatWeDo.capabilities.title": "Capacidades de Fabricação",
+    "whatWeDo.capabilities.title": "Equipamentos de Fabricação Avançados",
     "whatWeDo.capabilities.subtitle": "Equipamentos e experiência de última geração",
     "whatWeDo.cta.title": "Vamos Discutir Suas Necessidades de Fabricação",
     "whatWeDo.cta.subtitle": "Obtenha orientação especializada sobre viabilidade, cronogramas e estimativas de custos para seu projeto da área médica",

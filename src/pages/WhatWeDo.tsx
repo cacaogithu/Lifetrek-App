@@ -15,9 +15,9 @@ export default function WhatWeDo() {
   const capabilitiesAnimation = useScrollAnimation();
 
   const capabilities = [
-    "Swiss-Type CNC Lathes",
+    "Multi-Axis High Precision CNC",
     "Multi-Axis Machining",
-    "Precision Tool Grinding",
+    "Walter Grinders",
     "CAD/CAM Programming",
     "ISO 7 Cleanrooms",
     "Electropolishing",
@@ -31,7 +31,7 @@ export default function WhatWeDo() {
       title: t("whatWeDo.service1.title"),
       description: t("whatWeDo.service1.description"),
       image: productApplications,
-      stats: ["±0.001mm", "12-Axis", "Ø0.5-32mm"],
+      stats: ["Multi-Axis", "12-Axis", "Ø0.5-32mm"],
       color: "text-primary",
       bg: "bg-primary/10",
     },
@@ -40,7 +40,7 @@ export default function WhatWeDo() {
       title: t("whatWeDo.service2.title"),
       description: t("whatWeDo.service2.description"),
       image: surgicalInstruments,
-      stats: ["Clean Room", "3D CMM", "Ra < 0.05μm"],
+      stats: ["Clean Room", "3D CMM", "ISO 17025"],
       color: "text-accent",
       bg: "bg-accent/10",
     },
@@ -49,7 +49,7 @@ export default function WhatWeDo() {
       title: t("whatWeDo.service3.title"),
       description: t("whatWeDo.service3.description"),
       image: electropolishLine,
-      stats: ["Ra < 0.1μm", "Mirror Finish", "Biocompatible"],
+      stats: ["Mirror Finish", "Biocompatible", "Corrosion Resistant"],
       color: "text-accent-orange",
       bg: "bg-accent-orange/10",
     },
