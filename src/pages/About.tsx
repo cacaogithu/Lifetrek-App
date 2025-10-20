@@ -6,48 +6,41 @@ import { MagneticButton } from "@/components/MagneticButton";
 import { Link } from "react-router-dom";
 import reception from "@/assets/facility/reception.webp";
 import exterior from "@/assets/facility/exterior.webp";
-
 export default function About() {
-  const { t } = useLanguage();
+  const {
+    t
+  } = useLanguage();
   const missionAnimation = useScrollAnimation();
   const valuesAnimation = useScrollAnimation();
   const ctaAnimation = useScrollAnimation();
-
-  const values = [
-    {
-      title: t("about.values.excellence"),
-      description: t("about.values.excellence.text"),
-      borderColor: "border-primary",
-      iconBg: "bg-primary",
-      textColor: "text-primary",
-    },
-    {
-      title: t("about.values.innovation"),
-      description: t("about.values.innovation.text"),
-      borderColor: "border-accent-orange",
-      iconBg: "bg-accent-orange",
-      textColor: "bg-gradient-to-r from-accent-orange to-orange-500 bg-clip-text text-transparent",
-    },
-    {
-      title: t("about.values.ethics"),
-      description: t("about.values.ethics.text"),
-      borderColor: "border-green-600",
-      iconBg: "bg-green-600",
-      textColor: "bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent",
-    },
-    {
-      title: t("about.values.respect"),
-      description: t("about.values.respect.text"),
-      borderColor: "border-primary",
-      iconBg: "bg-primary",
-      textColor: "text-primary",
-    },
-  ];
-
-  return (
-    <div className="min-h-screen">
+  const values = [{
+    title: t("about.values.excellence"),
+    description: t("about.values.excellence.text"),
+    borderColor: "border-primary",
+    iconBg: "bg-primary",
+    textColor: "text-primary"
+  }, {
+    title: t("about.values.innovation"),
+    description: t("about.values.innovation.text"),
+    borderColor: "border-accent-orange",
+    iconBg: "bg-accent-orange",
+    textColor: "bg-gradient-to-r from-accent-orange to-orange-500 bg-clip-text text-transparent"
+  }, {
+    title: t("about.values.ethics"),
+    description: t("about.values.ethics.text"),
+    borderColor: "border-green-600",
+    iconBg: "bg-green-600",
+    textColor: "bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent"
+  }, {
+    title: t("about.values.respect"),
+    description: t("about.values.respect.text"),
+    borderColor: "border-primary",
+    iconBg: "bg-primary",
+    textColor: "text-primary"
+  }];
+  return <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-14 sm:py-21 md:py-27">
+      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-20 sm:py-32 md:py-40">
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
@@ -57,13 +50,7 @@ export default function About() {
             <p className="text-xl md:text-2xl leading-relaxed animate-fade-in animate-delay-200 opacity-95 mb-8">
               {t("about.intro")}
             </p>
-            <div className="animate-fade-in animate-delay-400">
-              <Link to="/assessment">
-                <MagneticButton size="lg" variant="secondary" className="shadow-xl">
-                  {t("about.cta.partner")}
-                </MagneticButton>
-              </Link>
-            </div>
+            
           </div>
         </div>
       </section>
@@ -91,24 +78,14 @@ export default function About() {
               </div>
             </div>
             <div className="relative">
-              <img
-                src={reception}
-                alt="Lifetrek Medical modern facility reception"
-                className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-              />
+              <img src={reception} alt="Lifetrek Medical modern facility reception" className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
           </div>
 
           {/* Vision */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="order-2 lg:order-1 relative">
-              <img
-                src={exterior}
-                alt="Lifetrek Medical manufacturing facility exterior"
-                className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-              />
+              <img src={exterior} alt="Lifetrek Medical manufacturing facility exterior" className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
             <div className="order-1 lg:order-2">
               <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">{t("about.vision.title")}</h2>
@@ -152,16 +129,12 @@ export default function About() {
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
-              <div
-                key={index}
-                className={`glass-card p-10 rounded-xl hover:scale-105 transition-all duration-500 border-l-4 ${value.borderColor} scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
+            {values.map((value, index) => <div key={index} className={`glass-card p-10 rounded-xl hover:scale-105 transition-all duration-500 border-l-4 ${value.borderColor} scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`} style={{
+            transitionDelay: `${index * 100}ms`
+          }}>
                 <h3 className={`text-2xl font-bold mb-4 ${value.textColor}`}>{value.title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">{value.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -192,6 +165,5 @@ export default function About() {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 }
