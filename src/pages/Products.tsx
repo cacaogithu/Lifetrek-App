@@ -8,7 +8,7 @@ import { useState } from "react";
 import medicalScrewRaw from "@/assets/products/medical-screw-raw.png";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram-enhanced.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
-import medicalScrew from "@/assets/products/medical-screw-optimized.webp";
+import medicalScrew from "@/assets/products/medical-screw-hero.webp";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
 import surgicalParts from "@/assets/products/surgical-parts-1.jpg";
 import precisionComponents from "@/assets/products/precision-components.png";
