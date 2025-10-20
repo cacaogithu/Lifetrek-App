@@ -209,7 +209,7 @@ export default function Home() {
             <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-primary-foreground drop-shadow-[0_1.5px_5px_rgba(0,0,0,0.35)] [text-shadow:_0.5px_0.5px_3px_rgb(0_0_0_/_35%)]">
               {t("home.hero.subtitle")}
             </p>
-            <Link to="/about">
+            <Link to="/assessment">
               <div className="flex justify-center sm:justify-start">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
                   {t("home.hero.cta")}
