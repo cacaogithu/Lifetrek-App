@@ -210,10 +210,10 @@ export default function Home() {
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl z-10 text-center sm:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-primary-foreground drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] [text-shadow:_2px_2px_8px_rgb(0_0_0_/_80%)]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-primary-foreground drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)] [text-shadow:_1px_1px_4px_rgb(0_0_0_/_40%)]">
               {t("home.hero.title")}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-primary-foreground drop-shadow-[0_3px_10px_rgba(0,0,0,0.7)] [text-shadow:_1px_1px_6px_rgb(0_0_0_/_70%)]">
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-primary-foreground drop-shadow-[0_1.5px_5px_rgba(0,0,0,0.35)] [text-shadow:_0.5px_0.5px_3px_rgb(0_0_0_/_35%)]">
               {t("home.hero.subtitle")}
             </p>
             <Link to="/about">
