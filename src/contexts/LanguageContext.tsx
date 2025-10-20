@@ -494,7 +494,7 @@ const translations = {
     
     // Home
     "home.hero.title": "Acelere o Desenvolvimento do Seu Produto",
-    "home.hero.subtitle": "Leve componentes médicos de precisão ao mercado mais rapidamente com nossa fabricação certificada ISO 13485, tecnologia CNC suíça e instalações de sala limpa.",
+    "home.hero.subtitle": "Leve componentes médicos de precisão ao mercado mais rapidamente com nossa fabricação certificada ISO 13485, tecnologia CNC de última geração e instalações de sala limpa.",
     "home.hero.cta": "Seja Nosso Parceiro",
     "home.benefits.speed": "Tempo de Mercado Mais Rápido",
     "home.benefits.speed.text": "Do protótipo à produção, nossos processos simplificados reduzem prazos sem comprometer a qualidade.",
@@ -573,7 +573,7 @@ const translations = {
     "capabilities.metrology.benefit": "Precisão Dimensional Garantida",
     "capabilities.metrology.text": "Equipamentos de última geração, Hardness Vickers e sistemas de medição óptica verificam cada dimensão crítica antes do envio.",
     
-    "capabilities.equipment.title": "Tecnologia CNC Suíça",
+    "capabilities.equipment.title": "Tecnologia CNC de Última Geração",
     "capabilities.equipment.benefit": "Geometrias Complexas Simplificadas",
     "capabilities.equipment.text": "Máquinas multi-eixos Citizen, Tornos e Walter produzem componentes médicos intrincados com precisão em nível de mícron em uma única configuração.",
     
@@ -588,7 +588,7 @@ const translations = {
     "capabilities.equipment.finishing.title": "Acabamento de Superfície e Marcação",
     
     // Equipment categories
-    "equipment.category.swiss": "CNC Tipo Suíço",
+    "equipment.category.swiss": "CNC de Última Geração",
     "equipment.category.grinder": "Retificadora de Ferramentas",
     "equipment.category.machining": "Centro de Usinagem",
     "equipment.category.cmm": "MMC",
@@ -780,7 +780,7 @@ const translations = {
     "infrastructure.cleanrooms.title": "Fabricação em Sala Limpa ISO 7",
     "infrastructure.cleanrooms.text": "Duas salas limpas de 60m² entre as mais avançadas do Brasil—garantindo produção de componentes estéreis para implantes e instrumentos críticos.",
     "infrastructure.equipment.title": "Equipamentos de Fabricação Avançados",
-    "infrastructure.equipment.text": "Tecnologia CNC suíça de última geração, centros de usinagem multi-eixos e equipamentos de retificação de precisão para componentes médicos complexos.",
+    "infrastructure.equipment.text": "Tecnologia CNC de última geração, centros de usinagem multi-eixos e equipamentos de retificação de precisão para componentes médicos complexos.",
     "infrastructure.technology": "Tecnologia de Última Geração",
     "infrastructure.technology.text": "Equipamentos CNC de última geração e sistemas de fabricação avançados",
     "infrastructure.team": "Equipe de Especialistas",
@@ -793,8 +793,8 @@ const translations = {
     // What We Do - Additional (PT)
     "whatWeDo.services.title": "Serviços de Fabricação Principais",
     "whatWeDo.services.subtitle": "Soluções de fabricação completas para OEMs da área médica",
-    "whatWeDo.service1.title": "Usinagem CNC Suíça de Precisão",
-    "whatWeDo.service1.description": "Fabricação tipo suíço multi-eixos com tolerância de ±0,001mm para componentes médicos complexos, implantes e instrumentos cirúrgicos",
+    "whatWeDo.service1.title": "Usinagem CNC de Precisão",
+    "whatWeDo.service1.description": "Fabricação CNC multi-eixos com tolerância de ±0,001mm para componentes médicos complexos, implantes e instrumentos cirúrgicos",
     "whatWeDo.service2.title": "Controle de Qualidade Avançado",
     "whatWeDo.service2.description": "Medição 3D CMM ZEISS, inspeção óptica e análise metalográfica com laboratório de metrologia certificado ISO 17025",
     "whatWeDo.service3.title": "Excelência em Tratamento de Superfície",
@@ -811,7 +811,7 @@ const translations = {
 
     // Sticky CTA (PT)
     "stickyCta.message": "Pronto para acelerar a fabricação do seu dispositivo médico?",
-    "stickyCta.features": "Certificado ISO 13485 • Precisão CNC suíça • Entrega rápida",
+    "stickyCta.features": "Certificado ISO 13485 • Precisão CNC • Entrega rápida",
 
     // Products - Additional features (PT)
     "products.medical.feature1": "Placas e parafusos de fixação de trauma",
