@@ -42,17 +42,6 @@ const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
     ]
   },
   { 
-    image: surgicalInstruments, 
-    title: t("equipment.name.surgical"), 
-    subtitle: t("equipment.subtitle.surgical"),
-    category: "Metrology",
-    specs: [
-      t("equipment.specs.surgical.precision"),
-      t("equipment.specs.surgical.quality"),
-      t("equipment.specs.surgical.control")
-    ]
-  },
-  { 
     image: citizen, 
     title: t("equipment.name.citizen"), 
     subtitle: t("equipment.subtitle.citizen"),
