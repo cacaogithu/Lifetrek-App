@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
+import surgicalInstruments from "@/assets/products/surgical-instruments-new.webp";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";
 import hardnessVickers from "@/assets/metrology/hardness-vickers.webp";
