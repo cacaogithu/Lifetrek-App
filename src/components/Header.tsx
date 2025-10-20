@@ -27,8 +27,8 @@ export const Header = () => {
           <img 
             src={logo} 
             alt="Lifetrek Medical - ISO 13485 Certified Medical Device Manufacturer" 
-            className="h-[56px]"
-            style={{ width: '168px', height: '56px' }}
+            className="h-[64px]"
+            style={{ width: '193px', height: '64px' }}
           />
         </Link>
 

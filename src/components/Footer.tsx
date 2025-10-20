@@ -15,9 +15,9 @@ export const Footer = () => {
             <img 
               src={logo} 
               alt="Lifetrek Medical logo" 
-              className="h-10 sm:h-12 mb-4"
-              width="120"
-              height="48"
+              className="h-[46px] sm:h-[55px] mb-4"
+              width="138"
+              height="55"
               loading="lazy"
             />
             <p className="text-sm text-muted-foreground">
