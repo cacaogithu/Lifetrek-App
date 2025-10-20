@@ -9,8 +9,7 @@ import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.w
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
 import isoLogo from "@/assets/certifications/iso.webp";
-import anvisaLogo from "@/assets/certifications/anvisa.webp";
-import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
+import surgicalInstruments from "@/assets/products/surgical-instruments-new.webp";
 import orthopedicScrews from "@/assets/products/orthopedic-screws.png";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";

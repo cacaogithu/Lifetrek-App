@@ -1,7 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Award, TrendingUp, FileCheck, Zap } from "lucide-react";
 import isoLogo from "@/assets/certifications/iso.webp";
-import anvisaLogo from "@/assets/certifications/anvisa.webp";
 import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";
@@ -93,7 +92,7 @@ export default function Quality() {
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-primary">{t("quality.certifications")}</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 max-w-2xl mx-auto">
             <div className="bg-card p-6 sm:p-8 rounded-lg shadow-lg text-center">
               <div className="mb-4 sm:mb-6 flex justify-center">
                 <img
@@ -108,23 +107,6 @@ export default function Quality() {
               <h3 className="text-lg sm:text-xl font-bold">ISO 13485:2016</h3>
               <p className="text-sm text-muted-foreground mt-2">
                 Medical Device Quality Management
-              </p>
-            </div>
-
-            <div className="bg-card p-6 sm:p-8 rounded-lg shadow-lg text-center">
-              <div className="mb-4 sm:mb-6 flex justify-center">
-                <img
-                  src={anvisaLogo}
-                  alt="ANVISA Brazilian Health Regulatory Agency certification"
-                  className="h-24 sm:h-32 object-contain"
-                  loading="lazy"
-                  width="160"
-                  height="128"
-                />
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold">ANVISA Certified</h3>
-              <p className="text-sm text-muted-foreground mt-2">
-                Brazilian Health Regulatory Agency
               </p>
             </div>
           </div>

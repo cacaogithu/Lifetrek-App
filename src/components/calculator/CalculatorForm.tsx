@@ -148,8 +148,7 @@ export function CalculatorForm({ onCalculate }: CalculatorFormProps) {
           {[
             { id: "iso13485", label: "ISO 13485 (Medical Devices)" },
             { id: "fda", label: "FDA Compliance" },
-            { id: "ce", label: "CE Marking" },
-            { id: "anvisa", label: "ANVISA (Brazilian)" }
+            { id: "ce", label: "CE Marking" }
           ].map((cert) => (
             <div key={cert.id} className="flex items-center space-x-2">
               <Checkbox

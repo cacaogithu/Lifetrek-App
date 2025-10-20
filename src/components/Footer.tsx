@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo-optimized.webp";
 import isoLogo from "@/assets/certifications/iso.webp";
-import anvisaLogo from "@/assets/certifications/anvisa.webp";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -57,17 +56,6 @@ export const Footer = () => {
                   height="48"
                 />
                 <span className="text-sm font-medium text-foreground">ISO 13485:2016</span>
-              </div>
-              <div className="flex items-center gap-3 bg-card/50 p-3 rounded-lg border border-border/50">
-                <img 
-                  src={anvisaLogo} 
-                  alt="ANVISA Brazilian Health Regulatory Agency certification" 
-                  className="h-12 w-auto object-contain"
-                  loading="lazy"
-                  width="80"
-                  height="48"
-                />
-                <span className="text-sm font-medium text-foreground">ANVISA Certified</span>
               </div>
             </div>
           </div>

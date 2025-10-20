@@ -1,7 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Award, Shield, TrendingUp, Target, Zap, Sparkles } from "lucide-react";
 import isoLogo from "@/assets/certifications/iso.webp";
-import anvisaLogo from "@/assets/certifications/anvisa.webp";
 import cleanroom from "@/assets/facility/cleanroom.webp";
 import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
@@ -120,7 +119,7 @@ export default function Capabilities() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+          <div className="grid grid-cols-1 gap-8 max-w-2xl mx-auto mb-12">
             <div className="bg-card p-8 rounded-lg shadow-lg text-center border-l-4 border-primary hover:shadow-xl transition-shadow">
               <img
                 src={isoLogo}
@@ -129,16 +128,6 @@ export default function Capabilities() {
                 loading="lazy"
               />
               <h3 className="font-bold text-base">{t("capabilities.iso")}</h3>
-            </div>
-
-            <div className="bg-card p-8 rounded-lg shadow-lg text-center border-l-4 border-accent hover:shadow-xl transition-shadow">
-              <img
-                src={anvisaLogo}
-                alt="ANVISA certification"
-                className="h-24 object-contain mx-auto mb-4"
-                loading="lazy"
-              />
-              <h3 className="font-bold text-base">{t("capabilities.anvisa")}</h3>
             </div>
           </div>
         </div>

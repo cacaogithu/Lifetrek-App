@@ -264,7 +264,7 @@ export default function Admin() {
                   <h3 className="text-2xl font-semibold mt-6 mb-3">Who We Are</h3>
                   <p className="text-lg leading-relaxed mb-4">
                     Lifetrek Medical is a precision manufacturing company specializing in high-quality medical and dental components. 
-                    With 30+ years of experience, we are ISO 13485 certified and ANVISA approved, serving leading medical device companies worldwide.
+                    With 30+ years of experience, we are ISO 13485 certified, serving leading medical device companies worldwide.
                   </p>
 
                   <h3 className="text-2xl font-semibold mt-6 mb-3">Brand Positioning</h3>
