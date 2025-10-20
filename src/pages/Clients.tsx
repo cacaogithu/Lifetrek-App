@@ -110,7 +110,7 @@ export default function Clients() {
             ref={logosAnimation.elementRef}
             className={`text-center mb-12 sm:mb-16 scroll-reveal ${logosAnimation.isVisible ? 'visible' : ''}`}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">
               {t("clients.partners.title")}
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
@@ -143,7 +143,7 @@ export default function Clients() {
       {/* Client Types Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 text-primary">
             {t("clients.types.title")}
           </h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
@@ -169,7 +169,7 @@ export default function Clients() {
       {/* Industries Grid */}
       <section className="py-20 bg-gradient-to-b from-background to-secondary/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4">
+          <h2 className="text-3xl font-bold text-center mb-4 text-primary">
             {t("clients.industries.title")}
           </h2>
           <p className="text-center text-muted-foreground mb-12">
@@ -193,7 +193,7 @@ export default function Clients() {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-3xl font-bold mb-6 text-primary">
               {t("clients.reach.title")}
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
@@ -224,7 +224,7 @@ export default function Clients() {
       {/* CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-primary-foreground">
             {t("clients.cta.title")}
           </h2>
           <p className="text-xl mb-8 opacity-95 max-w-2xl mx-auto">

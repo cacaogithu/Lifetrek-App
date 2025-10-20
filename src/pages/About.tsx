@@ -171,7 +171,7 @@ export default function About() {
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`max-w-4xl mx-auto text-center scroll-reveal ${ctaAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary-foreground">
               {t("about.cta.title")}
             </h2>
             <p className="text-xl mb-8 opacity-95">

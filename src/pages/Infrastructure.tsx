@@ -98,7 +98,7 @@ export default function Infrastructure() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center mb-16 sm:mb-20 lg:mb-32">
             <div>
               <div className="h-1 w-16 bg-gradient-to-r from-accent to-accent/50 mb-8 rounded-full" />
-              <h2 className="text-3xl lg:text-4xl font-bold mb-6">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-primary">
                 {t("infrastructure.cleanrooms.title")}
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
@@ -131,7 +131,7 @@ export default function Infrastructure() {
             </div>
             <div className="order-1 lg:order-2">
               <div className="h-1 w-16 bg-gradient-to-r from-primary to-primary/50 mb-8 rounded-full" />
-              <h2 className="text-3xl lg:text-4xl font-bold mb-6">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-primary">
                 {t("infrastructure.equipment.title")}
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
@@ -172,7 +172,7 @@ export default function Infrastructure() {
       {/* CNC Machines */}
       <section className="py-32 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="font-bold text-center mb-6">
+          <h2 className="font-bold text-center mb-6 text-primary">
             {t("infrastructure.cnc.title")}
           </h2>
           <p className="text-center text-muted-foreground text-lg md:text-xl mb-20 max-w-3xl mx-auto leading-relaxed">

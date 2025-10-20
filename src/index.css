@@ -166,7 +166,6 @@ All colors MUST be HSL.
   }
   h2 { 
     @apply text-3xl md:text-4xl lg:text-5xl;
-    color: hsl(var(--primary));
     letter-spacing: -0.025em;
     font-weight: 700;
     line-height: 1.15;

@@ -76,7 +76,7 @@ export default function Assessment() {
           {step === 3 ? (
             <div className="max-w-2xl mx-auto text-center glass-card-strong p-12 rounded-2xl">
               <CheckCircle2 className="h-20 w-20 text-accent mx-auto mb-6" />
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">{t("assessment.success.title")}</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-primary">{t("assessment.success.title")}</h2>
               <p className="text-xl md:text-2xl text-muted-foreground mb-6">
                 {t("assessment.success.subtitle")}
               </p>
@@ -121,7 +121,7 @@ export default function Assessment() {
               <form onSubmit={handleSubmit} className="glass-card-strong p-8 sm:p-12 rounded-2xl space-y-6">
                 {step === 1 ? (
                   <>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">{t("assessment.form.step1Title")}</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6 text-primary">{t("assessment.form.step1Title")}</h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
@@ -234,7 +234,7 @@ export default function Assessment() {
                   </>
                 ) : (
                   <>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">{t("assessment.form.step2Title")}</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6 text-primary">{t("assessment.form.step2Title")}</h2>
                     
                     <div className="space-y-6">
                       <div className="space-y-2">

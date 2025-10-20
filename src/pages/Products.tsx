@@ -138,7 +138,7 @@ export default function Products() {
                     <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${category.iconBg} text-white mb-4 shadow-lg`}>
                       <category.icon className="h-7 w-7" />
                     </div>
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">{category.title}</h2>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-primary">{category.title}</h2>
                     <p className={`text-lg sm:text-xl font-semibold bg-gradient-to-r ${category.color} bg-clip-text text-transparent mb-4`}>
                       {category.benefit}
                     </p>
@@ -181,7 +181,7 @@ export default function Products() {
       {/* CTA Section */}
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-primary via-accent to-primary text-white">
         <div className="container mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-white">
             {t("products.cta.title")}
           </h2>
           <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 max-w-3xl mx-auto opacity-95">

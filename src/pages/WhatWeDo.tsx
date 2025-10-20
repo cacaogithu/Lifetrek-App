@@ -98,7 +98,7 @@ export default function WhatWeDo() {
       <section ref={servicesAnimation.elementRef} className="py-20 sm:py-32 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${servicesAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="font-bold mb-6">
+            <h2 className="font-bold mb-6 text-primary">
               {t("whatWeDo.services.title")}
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -149,7 +149,7 @@ export default function WhatWeDo() {
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${capabilitiesAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="font-bold mb-6">
+            <h2 className="font-bold mb-6 text-primary">
               {t("whatWeDo.capabilities.title")}
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -178,7 +178,7 @@ export default function WhatWeDo() {
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary-foreground">
               {t("whatWeDo.cta.title")}
             </h2>
             <p className="text-xl mb-8 opacity-95">

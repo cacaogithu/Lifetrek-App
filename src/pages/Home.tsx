@@ -258,7 +258,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 md:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={clientsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${clientsAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.clients.title")}</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("home.clients.title")}</h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("home.clients.subtitle")}
             </p>
@@ -280,7 +280,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/20 to-secondary/30 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div ref={benefitsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("home.whyChoose.title")}</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("home.whyChoose.title")}</h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("home.whyChoose.subtitle")}
             </p>
@@ -311,7 +311,7 @@ export default function Home() {
       <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/30 to-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={productsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("products.title")}</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("products.title")}</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto animate-float"></div>
           </div>
 
@@ -370,7 +370,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             <div className="text-center lg:text-left">
               <div className="w-24 h-1 bg-gradient-to-r from-accent-orange via-primary-foreground to-accent mb-6 mx-auto lg:mx-0"></div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-primary-foreground">
                 {t("home.finalCta.title")}
               </h2>
               <p className="text-lg sm:text-xl mb-8 opacity-95">

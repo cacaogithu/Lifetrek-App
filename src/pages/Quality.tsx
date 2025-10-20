@@ -90,7 +90,7 @@ export default function Quality() {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-8 sm:mb-12">
             <Award className="h-12 w-12 sm:h-16 sm:w-16 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t("quality.certifications")}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-primary">{t("quality.certifications")}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
@@ -196,7 +196,7 @@ export default function Quality() {
             </div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 text-primary">
             Metrology Laboratory Equipment
           </h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">

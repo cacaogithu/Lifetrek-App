@@ -114,7 +114,7 @@ export default function Capabilities() {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <Award className="h-12 w-12 sm:h-16 sm:w-16 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("capabilities.certifications")}</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("capabilities.certifications")}</h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               {t("capabilities.subtitle")}
             </p>
@@ -156,7 +156,7 @@ export default function Capabilities() {
                 }`}
               >
                 <div className={index % 2 === 1 ? "lg:order-2" : ""}>
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">{capability.title}</h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-primary">{capability.title}</h2>
                   <p className="text-lg sm:text-xl font-semibold text-primary mb-4">{capability.benefit}</p>
                   <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
                     {capability.description}
@@ -184,7 +184,7 @@ export default function Capabilities() {
         <div className="container mx-auto px-4 sm:px-6">
           {/* CNC Machines */}
           <div className="mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12 text-primary">
               {t("capabilities.equipment.cnc.title")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -209,7 +209,7 @@ export default function Capabilities() {
 
           {/* Metrology Equipment */}
           <div className="mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-12 text-primary">
               {t("capabilities.equipment.metrology.title")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -234,7 +234,7 @@ export default function Capabilities() {
 
           {/* Sample Prep Equipment */}
           <div className="mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-primary">
               {t("capabilities.equipment.sample.title")}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -259,7 +259,7 @@ export default function Capabilities() {
 
           {/* Finishing Equipment */}
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-primary">
               {t("capabilities.equipment.finishing.title")}
             </h2>
             <div className="grid grid-cols-2 gap-6 max-w-3xl mx-auto">
