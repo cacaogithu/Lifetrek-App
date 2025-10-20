@@ -19,7 +19,7 @@ export default function About() {
       description: t("about.values.excellence.text"),
       borderColor: "border-primary",
       iconBg: "bg-primary",
-      textColor: "bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent",
+      textColor: "text-primary",
     },
     {
       title: t("about.values.innovation"),
@@ -40,7 +40,7 @@ export default function About() {
       description: t("about.values.respect.text"),
       borderColor: "border-primary",
       iconBg: "bg-primary",
-      textColor: "bg-gradient-to-r from-primary via-accent to-primary-hover bg-clip-text text-transparent",
+      textColor: "text-primary",
     },
   ];
 
@@ -75,7 +75,7 @@ export default function About() {
           {/* Mission */}
           <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-32 scroll-reveal ${missionAnimation.isVisible ? 'visible' : ''}`}>
             <div>
-              <h2 className="text-4xl font-bold mb-6">{t("about.mission.title")}</h2>
+              <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">{t("about.mission.title")}</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 {t("about.mission.text")}
               </p>
@@ -111,7 +111,7 @@ export default function About() {
               />
             </div>
             <div className="order-1 lg:order-2">
-              <h2 className="text-4xl font-bold mb-6">{t("about.vision.title")}</h2>
+              <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">{t("about.vision.title")}</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 {t("about.vision.text")}
               </p>
@@ -144,7 +144,7 @@ export default function About() {
       <section ref={valuesAnimation.elementRef} className="py-20 sm:py-32 bg-background relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="font-bold mb-6">
+            <h2 className="font-bold mb-6 bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">
               {t("about.values.title")}
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -158,9 +158,6 @@ export default function About() {
                 className={`glass-card p-10 rounded-xl hover:scale-105 transition-all duration-500 border-l-4 ${value.borderColor} scroll-reveal ${valuesAnimation.isVisible ? 'visible' : ''}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${value.iconBg} text-white mb-4`}>
-                  <div className="w-6 h-6 rounded-full bg-white/20" />
-                </div>
                 <h3 className={`text-2xl font-bold mb-4 ${value.textColor}`}>{value.title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">{value.description}</p>
               </div>
