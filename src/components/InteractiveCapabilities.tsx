@@ -84,11 +84,7 @@ export const InteractiveCapabilities = () => {
                 onMouseEnter={() => setActiveId(capability.id)}
                 onMouseLeave={() => setActiveId(null)}
               >
-                <div className={`text-4xl font-bold mb-4 ${capability.color} transition-all duration-300 ${isActive ? 'scale-110' : ''}`}>
-                  {capability.stat}
-                </div>
-                
-                <h3 className="text-xl font-bold mb-3">{capability.title}</h3>
+                <h3 className={`text-xl font-bold mb-3 ${capability.color}`}>{capability.title}</h3>
                 
                 <div 
                   className="overflow-hidden transition-all duration-500"
