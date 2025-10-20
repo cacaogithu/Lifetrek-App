@@ -58,7 +58,7 @@ export default function WhatWeDo() {
       title: t("whatWeDo.service4.title"),
       description: t("whatWeDo.service4.description"),
       image: cleanroom,
-      stats: ["ISO 7", "Class 10,000", "Validated"],
+      stats: ["ISO 7", "Certificated"],
       color: "text-primary",
       bg: "bg-primary/10",
     },
