@@ -64,7 +64,7 @@ export const ManufacturingTimeline = () => {
     <section ref={elementRef} className="py-20 sm:py-32 bg-gradient-to-b from-background to-secondary/20 relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-primary transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {t("timeline.title")}
           </h2>
           <p className={`text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto transition-all duration-1000 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
