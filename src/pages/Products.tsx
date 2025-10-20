@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ImageEnhancer } from "@/components/ImageEnhancer";
 import { useState } from "react";
-import surgicalInstrumentsWhiteBg from "@/assets/products/surgical-instruments-white-bg.webp";
-import orthopedicImplantsWhiteBg from "@/assets/products/orthopedic-implants-white-bg.webp";
-import dentalInstrumentsWhiteBg from "@/assets/products/dental-instruments-white-bg.webp";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
+import orthopedicImplants from "@/assets/products/orthopedic-implants-new.webp";
+import dentalComponents from "@/assets/products/dental-components.jpg";
 import medicalScrew from "@/assets/products/medical-screw-hero.webp";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
 export default function Products() {
@@ -17,7 +17,7 @@ export default function Products() {
   const [openCatalog, setOpenCatalog] = useState<number | null>(null);
   const productCategories = [{
     icon: Target,
-    image: orthopedicImplantsWhiteBg,
+    image: orthopedicImplants,
     title: t("products.medical.title"),
     benefit: t("products.medical.benefit"),
     description: t("products.medical.text"),
@@ -25,12 +25,12 @@ export default function Products() {
     color: "from-blue-600 to-blue-400",
     iconBg: "bg-blue-600",
     catalogImages: [{
-      src: orthopedicImplantsWhiteBg,
+      src: orthopedicImplants,
       alt: "Orthopedic implants and fixation systems"
     }]
   }, {
     icon: Sparkles,
-    image: surgicalInstrumentsWhiteBg,
+    image: surgicalInstruments,
     title: t("products.instruments.title"),
     benefit: t("products.instruments.benefit"),
     description: t("products.instruments.text"),
@@ -38,12 +38,12 @@ export default function Products() {
     color: "from-blue-500 to-blue-300",
     iconBg: "bg-blue-500",
     catalogImages: [{
-      src: surgicalInstrumentsWhiteBg,
+      src: surgicalInstruments,
       alt: "Surgical instruments and precision tools"
     }]
   }, {
     icon: Heart,
-    image: dentalInstrumentsWhiteBg,
+    image: dentalComponents,
     title: t("products.dental.title"),
     benefit: t("products.dental.benefit"),
     description: t("products.dental.text"),
@@ -51,7 +51,7 @@ export default function Products() {
     color: "from-green-600 to-green-400",
     iconBg: "bg-green-600",
     catalogImages: [{
-      src: dentalInstrumentsWhiteBg,
+      src: dentalComponents,
       alt: "Dental implants and surgical instruments"
     }]
   }, {

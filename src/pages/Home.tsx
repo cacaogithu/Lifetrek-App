@@ -10,9 +10,9 @@ import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.web
 import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
-import surgicalInstruments from "@/assets/products/surgical-instruments-white-bg.webp";
-import orthopedicScrews from "@/assets/products/orthopedic-implants-white-bg.webp";
-import dentalInstruments from "@/assets/products/dental-instruments-white-bg.webp";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
+import orthopedicScrews from "@/assets/products/orthopedic-implants-new.webp";
+import dentalInstruments from "@/assets/products/dental-components.jpg";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";
 import olympusMicroscope from "@/assets/metrology/olympus-microscope.webp";
