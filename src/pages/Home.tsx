@@ -206,7 +206,7 @@ export default function Home() {
         </div>
         
         {/* Blue Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))]/85 via-[hsl(var(--primary))]/75 to-[hsl(var(--accent))]/70" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))]/30 via-[hsl(var(--primary))]/25 to-[hsl(var(--accent))]/25" />
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl text-primary-foreground z-10 text-center sm:text-left">
