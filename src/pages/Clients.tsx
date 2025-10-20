@@ -12,6 +12,15 @@ import impol from "@/assets/clients/impol-new.png";
 import implanfix from "@/assets/clients/implanfix-new.png";
 import iol from "@/assets/clients/iol-new.png";
 import plenum from "@/assets/clients/plenum-new.png";
+import medens from "@/assets/clients/medens-new.png";
+import neoortho from "@/assets/clients/neoortho-new.jpg";
+import oblDental from "@/assets/clients/obl-dental-new.jpg";
+import orthometric from "@/assets/clients/orthometric-new.png";
+import ossea from "@/assets/clients/ossea-new.jpg";
+import traumec from "@/assets/clients/traumec-new.png";
+import razek from "@/assets/clients/razek-new.png";
+import react from "@/assets/clients/react-new.png";
+import russer from "@/assets/clients/russer-new.png";
 
 export default function Clients() {
   const { t } = useLanguage();
@@ -27,6 +36,15 @@ export default function Clients() {
     { src: implanfix, alt: "Implanfix - Surgical materials provider" },
     { src: iol, alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer" },
     { src: plenum, alt: "Plenum - Medical device technology" },
+    { src: medens, alt: "Medens - Medical device manufacturer" },
+    { src: neoortho, alt: "Neoortho - Orthopedic solutions" },
+    { src: oblDental, alt: "OBL Dental - Dental device manufacturer" },
+    { src: orthometric, alt: "Orthometric - Medical orthopedic systems" },
+    { src: ossea, alt: "Óssea Medical Technology - Orthopedic implant manufacturer" },
+    { src: traumec, alt: "Traumec Health Technology - Medical equipment client" },
+    { src: razek, alt: "Razek - Medical device solutions client" },
+    { src: react, alt: "React - Creation in health medical technology" },
+    { src: russer, alt: "Russer - Medical equipment manufacturer" },
   ];
 
   const clientTypes = [
