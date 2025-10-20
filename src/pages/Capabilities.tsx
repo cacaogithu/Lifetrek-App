@@ -7,6 +7,7 @@ import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import hardnessVickers from "@/assets/metrology/hardness-vickers.webp";
 import labOverview from "@/assets/metrology/lab-overview.webp";
 import olympusMicroscope from "@/assets/metrology/olympus-microscope.webp";
+import zeissContura from "@/assets/metrology/zeiss-contura.png";
 import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
@@ -76,7 +77,7 @@ export default function Capabilities() {
   ];
 
   const metrologyEquipment = [
-    { image: surgicalInstruments, name: t("equipment.name.surgical"), category: t("equipment.category.measurement") },
+    { image: zeissContura, name: "Zeiss Contura", category: t("equipment.category.measurement") },
     { image: opticalCnc, name: t("equipment.name.optical"), category: t("equipment.category.measurement") },
     { image: hardnessVickers, name: t("equipment.name.hardness"), category: t("equipment.category.testing") },
     { image: olympusMicroscope, name: t("equipment.name.microscope"), category: t("equipment.category.analysis") },
