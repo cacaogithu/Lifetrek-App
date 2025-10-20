@@ -13,7 +13,7 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    quote: "Exceptional precision and quality in every component. Their Swiss CNC capabilities have significantly improved our product reliability.",
+    quote: "Exceptional precision and quality in every component. Their state-of-the-art CNC capabilities have significantly improved our product reliability.",
     author: "Dr. Carlos Silva",
     company: "Leading Medical Device Manufacturer",
     rating: 5,

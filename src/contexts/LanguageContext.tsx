@@ -111,7 +111,7 @@ const translations = {
     "capabilities.finishing.text": "In-house electropolishing and passivation deliver smooth, corrosion-resistant surfaces that meet ASTM standards for implantable devices.",
     
     // Equipment sections
-    "capabilities.equipment.cnc.title": "Swiss CNC Manufacturing Equipment",
+    "capabilities.equipment.cnc.title": "State-of-the-Art CNC Manufacturing Equipment",
     "capabilities.equipment.metrology.title": "Advanced Metrology Laboratory",
     "capabilities.equipment.sample.title": "Sample Preparation Equipment",
     "capabilities.equipment.finishing.title": "Surface Finishing & Marking",
@@ -317,7 +317,7 @@ const translations = {
     "infrastructure.cleanrooms.title": "ISO 7 Cleanroom Manufacturing",
     "infrastructure.cleanrooms.text": "Two 60m² cleanrooms among Brazil's most advanced—ensuring sterile component production for implants and critical instruments.",
     "infrastructure.equipment.title": "Advanced Manufacturing Equipment",
-    "infrastructure.equipment.text": "State-of-the-art Swiss CNC technology, multi-axis machining centers, and precision grinding equipment for complex medical components.",
+    "infrastructure.equipment.text": "State-of-the-art CNC technology, multi-axis machining centers, and precision grinding equipment for complex medical components.",
     "infrastructure.technology": "Latest Generation Technology",
     "infrastructure.technology.text": "Latest generation CNC equipment and advanced manufacturing systems",
     "infrastructure.team": "Expert Team",
@@ -348,7 +348,7 @@ const translations = {
 
     // Sticky CTA
     "stickyCta.message": "Ready to accelerate your medical device manufacturing?",
-    "stickyCta.features": "ISO 13485 certified • Swiss CNC precision • Fast turnaround",
+    "stickyCta.features": "ISO 13485 certified • State-of-the-art CNC precision • Fast turnaround",
 
     // Products - Additional features
     "products.medical.feature1": "Trauma fixation plates & screws",
@@ -581,7 +581,7 @@ const translations = {
     "capabilities.metrology.benefit": "Precisão Dimensional Garantida",
     "capabilities.metrology.text": "Equipamentos de última geração, Hardness Vickers e sistemas de medição óptica verificam cada dimensão crítica antes do envio.",
     
-    "capabilities.equipment.title": "Tecnologia CNC Tipo Suíço",
+    "capabilities.equipment.title": "Tecnologia CNC de Última Linha",
     "capabilities.equipment.benefit": "Geometrias Complexas Simplificadas",
     "capabilities.equipment.text": "Máquinas multi-eixos Citizen, Tornos e Walter produzem componentes médicos intrincados com precisão em nível de mícron em uma única configuração.",
     
@@ -590,7 +590,7 @@ const translations = {
     "capabilities.finishing.text": "Eletropolimento e passivação internos entregam superfícies lisas e resistentes à corrosão que atendem aos padrões ASTM para dispositivos implantáveis.",
     
     // Equipment sections
-    "capabilities.equipment.cnc.title": "Equipamento de Fabricação CNC Suíço",
+    "capabilities.equipment.cnc.title": "Equipamento de Fabricação CNC de Última Linha",
     "capabilities.equipment.metrology.title": "Laboratório de Metrologia Avançado",
     "capabilities.equipment.sample.title": "Equipamento de Preparação de Amostras",
     "capabilities.equipment.finishing.title": "Acabamento de Superfície e Marcação",
@@ -636,7 +636,7 @@ const translations = {
     "equipment.subtitle.polishing": "Preparação de Superfície de Amostras",
     "equipment.subtitle.cutting": "Corte de Precisão de Amostras",
     "equipment.subtitle.mounting": "Sistema de Embutimento de Amostras",
-    "equipment.subtitle.citizenl32": "Torno CNC Tipo Suíço",
+    "equipment.subtitle.citizenl32": "Torno CNC de Última Linha",
     "equipment.subtitle.tornos": "Centro de Torneamento Multi-Eixos",
     "equipment.subtitle.walter": "Sistema de Retificação de Ferramentas",
     "equipment.subtitle.robodrill": "Centro de Usinagem de Alta Velocidade",

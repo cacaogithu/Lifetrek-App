@@ -126,7 +126,7 @@ export default function Calculator() {
       recommendations.push("Consider aluminum alloy for prototyping to reduce initial costs");
     }
     if (data.tolerances === "ultra-precision") {
-      recommendations.push("Ultra-precision requires Swiss CNC machining - our specialty");
+      recommendations.push("Ultra-precision requires state-of-the-art CNC machining - our specialty");
     }
     if (data.certifications.length > 0) {
       recommendations.push("ISO 13485 certified facility - compliant with all required standards");
@@ -194,7 +194,7 @@ export default function Calculator() {
             
             <p className="text-xl sm:text-2xl opacity-90 leading-relaxed max-w-3xl mx-auto">
               Get instant cost estimates and feasibility analysis for your medical device manufacturing project. 
-              Industry-leading precision from Brazil's premier Swiss CNC facility.
+              Industry-leading precision from Brazil's premier state-of-the-art CNC facility.
             </p>
 
             {/* Value Props */}
