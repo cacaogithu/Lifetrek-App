@@ -5,11 +5,25 @@ import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ImageEnhancer } from "@/components/ImageEnhancer";
 import { useState } from "react";
-import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
-import orthopedicImplants from "@/assets/products/orthopedic-implants-new.webp";
-import dentalComponents from "@/assets/products/dental-components.jpg";
+import medicalScrewRaw from "@/assets/products/medical-screw-raw.png";
+import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram-enhanced.webp";
+import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import medicalScrew from "@/assets/products/medical-screw-hero.webp";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
+import surgicalParts from "@/assets/products/surgical-parts-1.jpg";
+import precisionComponents from "@/assets/products/precision-components.png";
+import surgicalDrills from "@/assets/products/surgical-drills.png";
+import surgicalPins from "@/assets/products/surgical-pins.jpg";
+import orthopedicScrews from "@/assets/products/orthopedic-screws.png";
+import microInstruments from "@/assets/products/micro-instruments.png";
+import surgicalHandles from "@/assets/products/surgical-handles.png";
+import spinalImplants from "@/assets/products/spinal-implants.png";
+import measuringTools from "@/assets/products/measuring-tools.jpg";
+import dentalComponents from "@/assets/products/dental-components.jpg";
+import dentalAngulados from "@/assets/products/dental-angulados.png";
+import dentalImplanteOptimized from "@/assets/products/dental-implante-optimized.png";
+import dentalFresasOptimized from "@/assets/products/dental-fresas-optimized.png";
+import dentalInstrumentosOptimized from "@/assets/products/dental-instrumentos-optimized.png";
 export default function Products() {
   const {
     t
@@ -17,7 +31,7 @@ export default function Products() {
   const [openCatalog, setOpenCatalog] = useState<number | null>(null);
   const productCategories = [{
     icon: Target,
-    image: orthopedicImplants,
+    image: medicalImplantsDiagram,
     title: t("products.medical.title"),
     benefit: t("products.medical.benefit"),
     description: t("products.medical.text"),
@@ -25,12 +39,18 @@ export default function Products() {
     color: "from-blue-600 to-blue-400",
     iconBg: "bg-blue-600",
     catalogImages: [{
-      src: orthopedicImplants,
-      alt: "Orthopedic implants and fixation systems"
+      src: spinalImplants,
+      alt: "Spinal implant systems for fusion procedures"
+    }, {
+      src: orthopedicScrews,
+      alt: "Orthopedic fixation screws"
+    }, {
+      src: surgicalPins,
+      alt: "Surgical pins for bone fixation"
     }]
   }, {
     icon: Sparkles,
-    image: surgicalInstruments,
+    image: medicalScrew,
     title: t("products.instruments.title"),
     benefit: t("products.instruments.benefit"),
     description: t("products.instruments.text"),
@@ -38,12 +58,24 @@ export default function Products() {
     color: "from-blue-500 to-blue-300",
     iconBg: "bg-blue-500",
     catalogImages: [{
-      src: surgicalInstruments,
-      alt: "Surgical instruments and precision tools"
+      src: surgicalDrills,
+      alt: "Powered surgical drills"
+    }, {
+      src: surgicalHandles,
+      alt: "Surgical instrument handles"
+    }, {
+      src: microInstruments,
+      alt: "Micro surgical instruments"
+    }, {
+      src: measuringTools,
+      alt: "Precision measuring tools"
+    }, {
+      src: surgicalParts,
+      alt: "Surgical instrument components"
     }]
   }, {
     icon: Heart,
-    image: dentalComponents,
+    image: dentalImplantsDiagram,
     title: t("products.dental.title"),
     benefit: t("products.dental.benefit"),
     description: t("products.dental.text"),
@@ -51,8 +83,23 @@ export default function Products() {
     color: "from-green-600 to-green-400",
     iconBg: "bg-green-600",
     catalogImages: [{
+      src: dentalImplanteOptimized,
+      alt: "Implante Dentário em Titânio - Sistema completo de implante com conexão hexagonal"
+    }, {
+      src: dentalAngulados,
+      alt: "Pilares Protéticos Angulados - Componentes protéticos multi-angulados para implantes dentários"
+    }, {
+      src: dentalFresasOptimized,
+      alt: "Fresas Cirúrgicas para Implantodontia - Kit completo de brocas para preparação óssea"
+    }, {
+      src: dentalInstrumentosOptimized,
+      alt: "Instrumentos Cirúrgicos Dentários - Ferramentas de precisão para cirurgia de implantes"
+    }, {
       src: dentalComponents,
-      alt: "Dental implants and surgical instruments"
+      alt: "Componentes Protéticos Dentários - Conectores e parafusos protéticos em titânio"
+    }, {
+      src: precisionComponents,
+      alt: "Componentes de Precisão em Titânio - Peças usinadas de alta precisão para aplicações médicas"
     }]
   }, {
     icon: PawPrint,
