@@ -19,24 +19,28 @@ export default function About() {
       description: t("about.values.excellence.text"),
       borderColor: "border-primary",
       iconBg: "bg-primary",
+      textColor: "bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent",
     },
     {
       title: t("about.values.innovation"),
       description: t("about.values.innovation.text"),
       borderColor: "border-accent-orange",
       iconBg: "bg-accent-orange",
+      textColor: "bg-gradient-to-r from-accent-orange to-orange-500 bg-clip-text text-transparent",
     },
     {
       title: t("about.values.ethics"),
       description: t("about.values.ethics.text"),
       borderColor: "border-green-600",
       iconBg: "bg-green-600",
+      textColor: "bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent",
     },
     {
       title: t("about.values.respect"),
       description: t("about.values.respect.text"),
       borderColor: "border-primary",
       iconBg: "bg-primary",
+      textColor: "bg-gradient-to-r from-primary via-accent to-primary-hover bg-clip-text text-transparent",
     },
   ];
 
@@ -157,7 +161,7 @@ export default function About() {
                 <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${value.iconBg} text-white mb-4`}>
                   <div className="w-6 h-6 rounded-full bg-white/20" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
+                <h3 className={`text-2xl font-bold mb-4 ${value.textColor}`}>{value.title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">{value.description}</p>
               </div>
             ))}
