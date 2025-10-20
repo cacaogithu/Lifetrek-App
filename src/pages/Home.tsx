@@ -206,14 +206,14 @@ export default function Home() {
         </div>
         
         {/* Blue Gradient Overlay - Left to Right */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--primary))]/80 via-[hsl(var(--primary))]/35 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--primary))]/90 via-[hsl(var(--primary))]/40 to-transparent" />
         
         <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
           <div className="max-w-2xl z-10 text-center sm:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-[#003366] drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-primary-foreground drop-shadow-lg">
               {t("home.hero.title")}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-[#003366]/90 drop-shadow-md">
+            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-primary-foreground drop-shadow-md">
               {t("home.hero.subtitle")}
             </p>
             <Link to="/about">
