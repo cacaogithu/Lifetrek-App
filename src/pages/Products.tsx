@@ -135,10 +135,7 @@ export default function Products() {
             {productCategories.map((category, index) => <div key={index}>
                 <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center ${index % 2 === 1 ? "lg:flex-row-reverse" : ""}`}>
                   <div className={index % 2 === 1 ? "lg:order-2" : ""}>
-                    <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full ${category.iconBg} text-white mb-4 shadow-lg`}>
-                      <category.icon className="h-7 w-7" />
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-primary">{category.title}</h2>
+                    <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r ${category.color} bg-clip-text text-transparent`}>{category.title}</h2>
                     <p className={`text-lg sm:text-xl font-semibold bg-gradient-to-r ${category.color} bg-clip-text text-transparent mb-4`}>
                       {category.benefit}
                     </p>
