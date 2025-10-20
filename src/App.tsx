@@ -65,7 +65,7 @@ const App = () => (
             <StickyCTA />
             <MobileNav />
             <ScrollToTop />
-            <AIChatbot />
+            {/* <AIChatbot /> */}
           </div>
         </BrowserRouter>
       </LanguageProvider>
