@@ -146,6 +146,7 @@ const translations = {
     "equipment.name.walter": "Walter Helitronic",
     "equipment.name.robodrill": "FANUC Robodrill",
     "equipment.name.lab": "Laboratory Overview",
+    "equipment.name.zeiss": "ZEISS Contura",
     
     "equipment.subtitle.surgical": "Precision Medical Instruments",
     "equipment.subtitle.citizen": "Citizen Precision Lathe",
@@ -162,6 +163,7 @@ const translations = {
     "equipment.subtitle.robodrill": "High-Speed Machining Center",
     "equipment.subtitle.electropolish": "Surface Finishing System",
     "equipment.subtitle.lab": "Complete Metrology Lab",
+    "equipment.subtitle.zeiss": "3D Coordinate Measuring Machine",
     
     "equipment.specs.surgical.precision": "High precision manufacturing",
     "equipment.specs.surgical.quality": "Quality control validated",
@@ -208,6 +210,9 @@ const translations = {
     "equipment.specs.lab.climate": "Climate controlled",
     "equipment.specs.lab.iso": "Clean Room",
     "equipment.specs.lab.comprehensive": "Comprehensive testing",
+    "equipment.specs.zeiss.accuracy": "Accuracy: 1.9 + L/300 μm",
+    "equipment.specs.zeiss.measuring": "Measuring range: 700 x 1000 x 600mm",
+    "equipment.specs.zeiss.automated": "Fully automated inspection",
     
     // Quality
     "quality.title": "Quality & Compliance",
@@ -620,6 +625,7 @@ const translations = {
     "equipment.name.walter": "Walter Helitronic",
     "equipment.name.robodrill": "FANUC Robodrill",
     "equipment.name.lab": "Visão Geral do Laboratório",
+    "equipment.name.zeiss": "ZEISS Contura",
     
     "equipment.subtitle.surgical": "Instrumentos Médicos de Precisão",
     "equipment.subtitle.citizen": "Torno de Precisão Citizen",
@@ -636,6 +642,7 @@ const translations = {
     "equipment.subtitle.robodrill": "Centro de Usinagem de Alta Velocidade",
     "equipment.subtitle.electropolish": "Sistema de Acabamento Superficial",
     "equipment.subtitle.lab": "Laboratório de Metrologia Completo",
+    "equipment.subtitle.zeiss": "Máquina de Medição por Coordenadas 3D",
     
     "equipment.specs.surgical.precision": "Fabricação de alta precisão",
     "equipment.specs.surgical.quality": "Controle de qualidade validado",
@@ -682,6 +689,9 @@ const translations = {
     "equipment.specs.lab.climate": "Controle climático",
     "equipment.specs.lab.iso": "Clean Room",
     "equipment.specs.lab.comprehensive": "Testes abrangentes",
+    "equipment.specs.zeiss.accuracy": "Precisão: 1.9 + L/300 μm",
+    "equipment.specs.zeiss.measuring": "Faixa de medição: 700 x 1000 x 600mm",
+    "equipment.specs.zeiss.automated": "Inspeção totalmente automatizada",
     
     // Quality
     "quality.title": "Qualidade e Conformidade",

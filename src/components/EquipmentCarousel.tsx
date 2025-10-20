@@ -17,8 +17,9 @@ import walter from "@/assets/equipment/walter.webp";
 import robodrill from "@/assets/equipment/robodrill.webp";
 import electropolishLine from "@/assets/equipment/electropolish-line.webp";
 import laserMarking from "@/assets/equipment/laser-marking.webp";
+import zeissContura from "@/assets/metrology/zeiss-contura-new.png";
 
-type EquipmentCategory = "All" | "Metrology" | "CNC" | "Sample Prep" | "Finishing";
+type EquipmentCategory = "Metrology" | "CNC" | "Sample Prep" | "Finishing";
 
 interface EquipmentItem {
   image: string;
@@ -29,6 +30,17 @@ interface EquipmentItem {
 }
 
 const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
+  { 
+    image: zeissContura, 
+    title: t("equipment.name.zeiss"), 
+    subtitle: t("equipment.subtitle.zeiss"),
+    category: "Metrology",
+    specs: [
+      t("equipment.specs.zeiss.accuracy"),
+      t("equipment.specs.zeiss.measuring"),
+      t("equipment.specs.zeiss.automated")
+    ]
+  },
   { 
     image: surgicalInstruments, 
     title: t("equipment.name.surgical"), 
@@ -198,18 +210,15 @@ const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
 
 export const EquipmentCarousel = () => {
   const { t } = useLanguage();
-  const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory>("All");
+  const [selectedCategory, setSelectedCategory] = useState<EquipmentCategory>("CNC");
 
-  const categories: EquipmentCategory[] = ["All", "Metrology", "CNC", "Sample Prep", "Finishing"];
+  const categories: EquipmentCategory[] = ["CNC", "Metrology", "Sample Prep", "Finishing"];
   const equipmentItems = getEquipmentItems(t);
 
-  const filteredItems = selectedCategory === "All" 
-    ? equipmentItems 
-    : equipmentItems.filter(item => item.category === selectedCategory);
+  const filteredItems = equipmentItems.filter(item => item.category === selectedCategory);
 
   const getCategoryLabel = (category: EquipmentCategory) => {
     const labels: Record<EquipmentCategory, string> = {
-      "All": t("equipment.category.all"),
       "Metrology": t("equipment.category.metrology"),
       "CNC": t("equipment.category.cnc"),
       "Sample Prep": t("equipment.category.sampleprep"),
