@@ -3,7 +3,9 @@ import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint, ChevronDow
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
+import { ImageEnhancer } from "@/components/ImageEnhancer";
 import { useState } from "react";
+import medicalScrewRaw from "@/assets/products/medical-screw-raw.png";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram-enhanced.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import medicalScrew from "@/assets/products/medical-screw-optimized.webp";
@@ -122,6 +124,24 @@ export default function Products() {
           <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed opacity-95">
             {t("products.hero.subtitle")}
           </p>
+        </div>
+      </section>
+
+      {/* Image Enhancement Demo */}
+      <section className="py-16 sm:py-20 border-b">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                <Sparkles className="inline-block mr-2 h-8 w-8 text-primary" />
+                Melhoramento de Imagem com IA
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                Transforme suas fotos de produtos em imagens profissionais com fundo transparente e qualidade aprimorada
+              </p>
+            </div>
+            <ImageEnhancer imageUrl={medicalScrewRaw} />
+          </div>
         </div>
       </section>
 
