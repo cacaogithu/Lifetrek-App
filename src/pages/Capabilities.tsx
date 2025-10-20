@@ -98,7 +98,7 @@ export default function Capabilities() {
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16 sm:py-20 md:py-24">
+      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4 sm:px-6 text-center">
           <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 animate-fade-in max-w-4xl mx-auto">
             {t("capabilities.title")}
