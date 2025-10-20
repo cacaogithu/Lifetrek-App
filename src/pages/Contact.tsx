@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import exterior from "@/assets/facility/exterior.webp";
+import contactHero from "@/assets/facility/contact-hero.svg";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
 
 export default function Contact() {
@@ -255,7 +255,7 @@ export default function Contact() {
             <div className="space-y-6 sm:space-y-10">
               <div>
                 <img
-                  src={exterior}
+                  src={contactHero}
                   alt="Lifetrek Medical facility exterior building"
                   className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
                   loading="lazy"
