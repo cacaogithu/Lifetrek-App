@@ -233,7 +233,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105">
               <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent animate-pulse-glow">
-                30+
+                30
               </div>
               <div className="text-base md:text-lg font-semibold text-foreground">
                 {t("home.stats.experience")}
@@ -258,6 +258,14 @@ export default function Home() {
                 100%
               </div>
               <div className="text-base md:text-lg font-semibold text-foreground">
+                {t("home.stats.quality")}
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-6 max-w-3xl mx-auto">
+            <div className="glass-card-strong p-6 rounded-xl text-center">
+              <div className="text-sm md:text-base font-medium text-foreground">
                 {t("home.stats.certified")}
               </div>
             </div>
