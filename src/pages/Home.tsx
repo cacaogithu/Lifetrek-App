@@ -7,6 +7,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
+import factoryExteriorHero from "@/assets/facility/factory-exterior-hero.webp";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
 import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
@@ -193,13 +194,22 @@ export default function Home() {
   }, []);
   
   return <div className="min-h-screen">
-      {/* Hero Section - Clean Gradient Background */}
+      {/* Hero Section - Factory Exterior Background */}
       <section className="relative h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-        {/* Beautiful Blue Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--primary))]/90 to-[hsl(var(--accent))]" />
+        {/* Factory Photo Background */}
+        <div className="absolute inset-0">
+          <img 
+            src={factoryExteriorHero} 
+            alt="Lifetrek Medical factory exterior - Modern industrial facility" 
+            className="w-full h-full object-cover"
+          />
+        </div>
         
-        <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center justify-center">
-          <div className="max-w-2xl text-primary-foreground z-10 text-center">
+        {/* Blue Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))]/85 via-[hsl(var(--primary))]/75 to-[hsl(var(--accent))]/70" />
+        
+        <div className="relative container mx-auto px-4 sm:px-6 h-full flex items-center">
+          <div className="max-w-2xl text-primary-foreground z-10 text-center sm:text-left">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
               {t("home.hero.title")}
             </h1>
@@ -207,7 +217,7 @@ export default function Home() {
               {t("home.hero.subtitle")}
             </p>
             <Link to="/about">
-              <div className="flex justify-center">
+              <div className="flex justify-center sm:justify-start">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl">
                   {t("home.hero.cta")}
                 </MagneticButton>
