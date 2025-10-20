@@ -47,7 +47,7 @@ export default function About() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-20 sm:py-32 md:py-40">
+      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-14 sm:py-21 md:py-27">
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">

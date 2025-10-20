@@ -40,7 +40,7 @@ export default function Products() {
     iconBg: "bg-blue-600",
     catalogImages: [{
       src: spinalImplants,
-      alt: "Spinal implant systems for fusion procedures"
+      alt: "Spine implant systems for fusion procedures"
     }, {
       src: orthopedicScrews,
       alt: "Orthopedic fixation screws"
@@ -114,7 +114,7 @@ export default function Products() {
   }];
   return <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16 sm:py-20 md:py-24">
+      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-11 sm:py-13 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in max-w-4xl mx-auto">
             {t("products.title")}

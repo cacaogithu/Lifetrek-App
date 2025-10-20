@@ -73,7 +73,7 @@ export default function Quality() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-12 sm:py-16 md:py-20">
+      <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-8 sm:py-11 md:py-13">
         <div className="container mx-auto px-4 sm:px-6">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">
             {t("quality.title")}
