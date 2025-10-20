@@ -1,9 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Cog, Sparkles, CheckCircle2, Microscope, Shield } from "lucide-react";
 import productApplications from "@/assets/products/product-applications.png";
-import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import cleanroom from "@/assets/facility/cleanroom.webp";
 import electropolishLine from "@/assets/equipment/electropolish-line.webp";
+import zeissDisplay from "@/assets/metrology/zeiss-contura-display.png";
+import olympusDisplay from "@/assets/metrology/olympus-display.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BlobBackground } from "@/components/BlobBackground";
 import { MagneticButton } from "@/components/MagneticButton";
@@ -39,7 +40,7 @@ export default function WhatWeDo() {
       icon: Microscope,
       title: t("whatWeDo.service2.title"),
       description: t("whatWeDo.service2.description"),
-      image: surgicalInstruments,
+      images: [zeissDisplay, olympusDisplay],
       stats: ["Clean Room", "3D CMM", "DSX-1000"],
       color: "text-accent",
       bg: "bg-accent/10",
@@ -130,12 +131,26 @@ export default function WhatWeDo() {
                   </div>
                 </div>
                 <div className={index % 2 === 1 ? "lg:order-1" : ""}>
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
+                  {service.images ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      {service.images.map((img, imgIndex) => (
+                        <img
+                          key={imgIndex}
+                          src={img}
+                          alt={`${service.title} - ${imgIndex + 1}`}
+                          className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500 w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  )}
                 </div>
               </div>
             ))}
