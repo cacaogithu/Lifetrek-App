@@ -102,7 +102,7 @@ const translations = {
     "capabilities.metrology.benefit": "Guaranteed Dimensional Accuracy",
     "capabilities.metrology.text": "State-of-the-art equipment, Hardness Vickers, and optical measurement systems verify every critical dimension before shipping.",
     
-    "capabilities.equipment.title": "Swiss CNC Technology",
+    "capabilities.equipment.title": "Swiss-Type CNC Technology",
     "capabilities.equipment.benefit": "Complex Geometries Made Simple",
     "capabilities.equipment.text": "Citizen, Tornos, and Walter multi-axis machines produce intricate medical components with micron-level precision in a single setup.",
     
@@ -581,7 +581,7 @@ const translations = {
     "capabilities.metrology.benefit": "Precisão Dimensional Garantida",
     "capabilities.metrology.text": "Equipamentos de última geração, Hardness Vickers e sistemas de medição óptica verificam cada dimensão crítica antes do envio.",
     
-    "capabilities.equipment.title": "Tecnologia CNC de Última Geração",
+    "capabilities.equipment.title": "Tecnologia CNC Tipo Suíço",
     "capabilities.equipment.benefit": "Geometrias Complexas Simplificadas",
     "capabilities.equipment.text": "Máquinas multi-eixos Citizen, Tornos e Walter produzem componentes médicos intrincados com precisão em nível de mícron em uma única configuração.",
     
