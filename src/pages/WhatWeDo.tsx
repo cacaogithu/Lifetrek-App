@@ -50,14 +50,14 @@ export default function WhatWeDo() {
   }];
   return <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-10 sm:py-16 md:py-20">
+      <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-5 sm:py-8 md:py-10">
         <BlobBackground />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="font-bold mb-6 animate-fade-in">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 animate-fade-in">
               {t("whatWeDo.title")}
             </h1>
-            <p className="text-xl md:text-2xl leading-relaxed animate-fade-in animate-delay-200 opacity-95 mb-8">
+            <p className="text-base md:text-lg leading-relaxed animate-fade-in animate-delay-200 opacity-95 mb-6">
               {t("whatWeDo.text")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animate-delay-400 justify-center">
