@@ -33,29 +33,28 @@ import { InteractiveCapabilities } from "@/components/InteractiveCapabilities";
 import { MagneticButton } from "@/components/MagneticButton";
 import { BlobBackground } from "@/components/BlobBackground";
 import { ClientCarousel } from "@/components/ClientCarousel";
-import vincula from "@/assets/clients/vincula.webp";
-import techimport from "@/assets/clients/techimport.webp";
-import traumec from "@/assets/clients/traumec.webp";
-import ultradent from "@/assets/clients/ultradent.webp";
-import toride from "@/assets/clients/toride.webp";
-import react from "@/assets/clients/react.webp";
-import razek from "@/assets/clients/razek.webp";
-import russer from "@/assets/clients/russer.webp";
-import ossea from "@/assets/clients/ossea.webp";
-import orthometric from "@/assets/clients/orthometric.webp";
-import cpmh from "@/assets/clients/cpmh.webp";
-import evolve from "@/assets/clients/evolve.webp";
-import fgm from "@/assets/clients/fgm.webp";
-import iol from "@/assets/clients/iol.webp";
-import implanfix from "@/assets/clients/implanfix.webp";
-import impol from "@/assets/clients/impol.webp";
-import hcs from "@/assets/clients/hcs.webp";
-import gmi from "@/assets/clients/gmi.webp";
-import plenum from "@/assets/clients/plenum.webp";
-import medens from "@/assets/clients/medens.webp";
-import neoortho from "@/assets/clients/neoortho.webp";
-import oblDental from "@/assets/clients/obl-dental.webp";
-import orthometric2 from "@/assets/clients/orthometric-2.webp";
+import cpmh from "@/assets/clients/cpmh-new.png";
+import evolve from "@/assets/clients/evolve-new.png";
+import fgm from "@/assets/clients/fgm-new.png";
+import gmi from "@/assets/clients/gmi-new.png";
+import hcs from "@/assets/clients/hcs-new.png";
+import impol from "@/assets/clients/impol-new.png";
+import implanfix from "@/assets/clients/implanfix-new.png";
+import iol from "@/assets/clients/iol-new.png";
+import plenum from "@/assets/clients/plenum-new.png";
+import medens from "@/assets/clients/medens-new.png";
+import neoortho from "@/assets/clients/neoortho-new.jpg";
+import oblDental from "@/assets/clients/obl-dental-new.jpg";
+import orthometric from "@/assets/clients/orthometric-new.png";
+import ossea from "@/assets/clients/ossea-new.jpg";
+import traumec from "@/assets/clients/traumec-new.png";
+import razek from "@/assets/clients/razek-new.png";
+import react from "@/assets/clients/react-new.png";
+import russer from "@/assets/clients/russer-new.png";
+import techimport from "@/assets/clients/techimport-new.png";
+import toride from "@/assets/clients/toride-new.png";
+import ultradent from "@/assets/clients/ultradent-new.png";
+import vincula from "@/assets/clients/vincula-new.png";
 
 export default function Home() {
   const {
@@ -69,60 +68,10 @@ export default function Home() {
     staggerDelay: 150
   });
   const clientLogos = [{
-    src: vincula,
-    alt: "Vincula - Medical device manufacturer client",
-    width: 128,
-    height: 32
-  }, {
-    src: techimport,
-    alt: "TechImport - Medical technology client",
-    width: 119,
-    height: 64
-  }, {
-    src: traumec,
-    alt: "Traumec Health Technology - Medical equipment client",
-    width: 128,
-    height: 31
-  }, {
-    src: ultradent,
-    alt: "Ultradent Products - Dental device manufacturer",
-    width: 105,
-    height: 64
-  }, {
-    src: toride,
-    alt: "Toride - Medical manufacturing client",
-    width: 114,
-    height: 64
-  }, {
-    src: react,
-    alt: "React - Creation in health medical technology",
-    width: 128,
-    height: 47
-  }, {
-    src: razek,
-    alt: "Razek - Medical device solutions client",
-    width: 64,
-    height: 64
-  }, {
-    src: russer,
-    alt: "Russer - Medical equipment manufacturer",
-    width: 128,
-    height: 37
-  }, {
-    src: ossea,
-    alt: "Óssea Medical Technology - Orthopedic implant manufacturer",
-    width: 64,
-    height: 64
-  }, {
-    src: orthometric,
-    alt: "Orthometric - Orthopedic solutions provider",
-    width: 128,
-    height: 34
-  }, {
     src: cpmh,
     alt: "CPMH - Medical device solutions",
     width: 128,
-    height: 39
+    height: 64
   }, {
     src: evolve,
     alt: "Evolve - Medical technology innovation",
@@ -134,18 +83,8 @@ export default function Home() {
     width: 128,
     height: 64
   }, {
-    src: iol,
-    alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer",
-    width: 128,
-    height: 64
-  }, {
-    src: implanfix,
-    alt: "Implanfix - Surgical materials provider",
-    width: 128,
-    height: 64
-  }, {
-    src: impol,
-    alt: "Impol - Medical instruments manufacturer",
+    src: gmi,
+    alt: "GMI - Global medical innovation",
     width: 128,
     height: 64
   }, {
@@ -154,8 +93,18 @@ export default function Home() {
     width: 128,
     height: 64
   }, {
-    src: gmi,
-    alt: "GMI - Global medical innovation",
+    src: impol,
+    alt: "Impol - Medical instruments manufacturer",
+    width: 128,
+    height: 64
+  }, {
+    src: implanfix,
+    alt: "Implanfix - Surgical materials provider",
+    width: 128,
+    height: 64
+  }, {
+    src: iol,
+    alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer",
     width: 128,
     height: 64
   }, {
@@ -179,10 +128,55 @@ export default function Home() {
     width: 128,
     height: 64
   }, {
-    src: orthometric2,
+    src: orthometric,
     alt: "Orthometric - Medical orthopedic systems",
     width: 128,
-    height: 34
+    height: 64
+  }, {
+    src: ossea,
+    alt: "Óssea Medical Technology - Orthopedic implant manufacturer",
+    width: 128,
+    height: 64
+  }, {
+    src: traumec,
+    alt: "Traumec Health Technology - Medical equipment client",
+    width: 128,
+    height: 64
+  }, {
+    src: razek,
+    alt: "Razek - Medical device solutions client",
+    width: 128,
+    height: 64
+  }, {
+    src: react,
+    alt: "React - Creation in health medical technology",
+    width: 128,
+    height: 64
+  }, {
+    src: russer,
+    alt: "Russer - Medical equipment manufacturer",
+    width: 128,
+    height: 64
+  }, {
+    src: techimport,
+    alt: "TechImport - Medical technology client",
+    width: 128,
+    height: 64
+  }, {
+    src: toride,
+    alt: "Toride - Medical manufacturing client",
+    width: 128,
+    height: 64
+  }, {
+    src: ultradent,
+    alt: "Ultradent Products - Dental device manufacturer",
+    width: 128,
+    height: 64
+  }, {
+    src: vincula,
+    alt: "Vincula - Medical device manufacturer client",
+    width: 128,
+    height: 64
   }];
   
   useEffect(() => {
