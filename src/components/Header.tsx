@@ -21,14 +21,15 @@ export const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#e5e7eb] bg-white">
-      <nav className="container mx-auto flex h-[80px] items-center justify-between px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="container mx-auto flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center flex-shrink-0">
-          <img 
-            src={logo} 
-            alt="Lifetrek Medical - ISO 13485 Certified Medical Device Manufacturer" 
-            className="h-[56px]"
-            style={{ width: '168px', height: '56px' }}
+          <img
+            src={logo}
+            alt="Lifetrek Medical - ISO 13485 Certified Medical Device Manufacturer"
+            className="h-10 sm:h-12"
+            width="135"
+            height="55"
           />
         </Link>
 
@@ -38,10 +39,8 @@ export const Header = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`text-sm font-medium transition-colors hover:text-[#003366] ${
-                location.pathname === item.path
-                  ? "text-[#003366]"
-                  : "text-[#003366]/70"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                location.pathname === item.path ? "text-primary" : "text-foreground/80"
               }`}
             >
               {item.label}
@@ -51,13 +50,11 @@ export const Header = () => {
 
         <div className="flex items-center gap-4">
           {/* Language Toggle */}
-          <div className="flex items-center gap-2 bg-[#f5f7fa] rounded-full p-1">
+          <div className="flex items-center gap-2 bg-secondary rounded-full p-1">
             <button
               onClick={() => setLanguage("en")}
               className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                language === "en"
-                  ? "bg-[#003366] text-white"
-                  : "text-[#003366]/60 hover:text-[#003366]"
+                language === "en" ? "bg-primary text-primary-foreground" : "text-foreground/60 hover:text-foreground"
               }`}
             >
               🇺🇸 EN
@@ -65,9 +62,7 @@ export const Header = () => {
             <button
               onClick={() => setLanguage("pt")}
               className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                language === "pt"
-                  ? "bg-[#003366] text-white"
-                  : "text-[#003366]/60 hover:text-[#003366]"
+                language === "pt" ? "bg-primary text-primary-foreground" : "text-foreground/60 hover:text-foreground"
               }`}
             >
               🇧🇷 PT
@@ -75,12 +70,7 @@ export const Header = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
@@ -88,8 +78,8 @@ export const Header = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="lg:hidden border-t border-[#e5e7eb] bg-white">
-          <div className="container mx-auto px-8 py-4 flex flex-col gap-2">
+        <div className="lg:hidden border-t border-border bg-background">
+          <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -97,8 +87,8 @@ export const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
                 className={`px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                   location.pathname === item.path
-                    ? "bg-[#003366] text-white"
-                    : "text-[#003366] hover:bg-[#f5f7fa]"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-secondary"
                 }`}
               >
                 {item.label}
