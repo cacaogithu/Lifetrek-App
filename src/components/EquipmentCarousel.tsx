@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import zeissContura from "@/assets/metrology/zeiss-contura.webp";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";
 import hardnessVickers from "@/assets/metrology/hardness-vickers.webp";
@@ -30,14 +30,14 @@ interface EquipmentItem {
 
 const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
   { 
-    image: zeissContura, 
-    title: t("equipment.name.zeiss"), 
-    subtitle: t("equipment.subtitle.zeiss"),
+    image: surgicalInstruments, 
+    title: t("equipment.name.surgical"), 
+    subtitle: t("equipment.subtitle.surgical"),
     category: "Metrology",
     specs: [
-      t("equipment.specs.zeiss.accuracy"),
-      t("equipment.specs.zeiss.range"),
-      t("equipment.specs.zeiss.temperature")
+      t("equipment.specs.surgical.precision"),
+      t("equipment.specs.surgical.quality"),
+      t("equipment.specs.surgical.control")
     ]
   },
   { 

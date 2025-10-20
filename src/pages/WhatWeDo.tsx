@@ -1,8 +1,8 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Cog, Sparkles, CheckCircle2, Microscope, Shield } from "lucide-react";
 import productApplications from "@/assets/products/product-applications.png";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import cleanroom from "@/assets/facility/cleanroom.webp";
-import zeissContura from "@/assets/metrology/zeiss-contura.webp";
 import electropolishLine from "@/assets/equipment/electropolish-line.webp";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { BlobBackground } from "@/components/BlobBackground";
@@ -39,8 +39,8 @@ export default function WhatWeDo() {
       icon: Microscope,
       title: t("whatWeDo.service2.title"),
       description: t("whatWeDo.service2.description"),
-      image: zeissContura,
-      stats: ["ISO 17025", "3D CMM", "Ra < 0.05μm"],
+      image: surgicalInstruments,
+      stats: ["Clean Room", "3D CMM", "Ra < 0.05μm"],
       color: "text-accent",
       bg: "bg-accent/10",
     },

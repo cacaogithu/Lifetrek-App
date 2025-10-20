@@ -3,7 +3,7 @@ import { Award, Shield, TrendingUp, Target, Zap, Sparkles } from "lucide-react";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
 import cleanroom from "@/assets/facility/cleanroom.webp";
-import zeissContura from "@/assets/metrology/zeiss-contura.webp";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import hardnessVickers from "@/assets/metrology/hardness-vickers.webp";
 import labOverview from "@/assets/metrology/lab-overview.webp";
@@ -77,7 +77,7 @@ export default function Capabilities() {
   ];
 
   const metrologyEquipment = [
-    { image: zeissContura, name: t("equipment.name.zeiss"), category: t("equipment.category.cmm") },
+    { image: surgicalInstruments, name: t("equipment.name.surgical"), category: t("equipment.category.measurement") },
     { image: opticalCnc, name: t("equipment.name.optical"), category: t("equipment.category.measurement") },
     { image: hardnessVickers, name: t("equipment.name.hardness"), category: t("equipment.category.testing") },
     { image: olympusMicroscope, name: t("equipment.name.microscope"), category: t("equipment.category.analysis") },

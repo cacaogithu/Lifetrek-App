@@ -9,7 +9,8 @@ import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.w
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
-import zeissContura from "@/assets/metrology/zeiss-contura.webp";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
+import orthopedicScrews from "@/assets/products/orthopedic-screws.png";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";
 import olympusMicroscope from "@/assets/metrology/olympus-microscope.webp";
@@ -317,7 +318,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 max-w-6xl mx-auto mb-12 sm:mb-16">
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-primary/20 transition-all hover:-translate-y-2">
-              <img src={zeissContura} alt="Precision medical implant screws manufactured with Swiss CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
+              <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.instruments.title")}</h3>
               </div>

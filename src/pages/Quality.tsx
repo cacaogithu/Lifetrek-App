@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Award, TrendingUp, FileCheck, Zap } from "lucide-react";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
-import zeissContura from "@/assets/metrology/zeiss-contura.webp";
+import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";
 import polimento from "@/assets/metrology/polimento.webp";
@@ -32,8 +32,8 @@ export default function Quality() {
 
   const metrologyEquipment = [
     {
-      image: zeissContura,
-      name: "ZEISS Contura",
+      image: surgicalInstruments,
+      name: "Surgical Instruments",
       description: "Coordinate Measuring Machine",
     },
     {
