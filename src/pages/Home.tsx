@@ -10,8 +10,9 @@ import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.web
 import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
 import isoLogo from "@/assets/certifications/iso.webp";
 import anvisaLogo from "@/assets/certifications/anvisa.webp";
-import surgicalInstruments from "@/assets/products/surgical-instruments.jpg";
-import orthopedicScrews from "@/assets/products/orthopedic-screws.png";
+import surgicalInstruments from "@/assets/products/surgical-instruments-white-bg.webp";
+import orthopedicScrews from "@/assets/products/orthopedic-implants-white-bg.webp";
+import dentalInstruments from "@/assets/products/dental-instruments-white-bg.webp";
 import opticalCnc from "@/assets/metrology/optical-cnc.webp";
 import opticalManual from "@/assets/metrology/optical-manual.webp";
 import olympusMicroscope from "@/assets/metrology/olympus-microscope.webp";
@@ -343,14 +344,14 @@ export default function Home() {
             </div>
 
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent/20 transition-all hover:-translate-y-2">
-              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
+              <img src={orthopedicScrews} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
               <div className="absolute inset-0 bg-gradient-to-t from-accent via-accent/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.medical.title")}</h3>
               </div>
             </div>
 
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent-orange/20 transition-all hover:-translate-y-2">
-              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
+              <img src={dentalInstruments} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
               <div className="absolute inset-0 bg-gradient-to-t from-accent-orange via-accent-orange/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
               </div>
