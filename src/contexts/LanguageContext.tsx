@@ -502,7 +502,7 @@ const translations = {
     
     // Home
     "home.hero.title": "Acelere o Desenvolvimento do Seu Produto",
-    "home.hero.subtitle": "Leve componentes médicos de precisão ao mercado mais rapidamente com nossa fabricação certificada ISO 13485, tecnologia CNC de última geração e instalações de sala limpa.",
+    "home.hero.subtitle": "Desenvolva componentes medicos de precisão com nossa fabricação certificada ISO 13485, tecnologia CNC de última geração e instalações de sala limpa.",
     "home.hero.cta": "Seja Nosso Parceiro",
     "home.benefits.speed": "Tempo de Mercado Mais Rápido",
     "home.benefits.speed.text": "Tempo de mercado mais rápido: do protótipo à produção, com processos simplificados.",
