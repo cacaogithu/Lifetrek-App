@@ -5,7 +5,7 @@ import { BlobBackground } from "@/components/BlobBackground";
 import { MagneticButton } from "@/components/MagneticButton";
 import { Link } from "react-router-dom";
 import reception from "@/assets/facility/reception.webp";
-import exterior from "@/assets/facility/exterior.webp";
+import factoryHero from "@/assets/facility/factory-hero-full.svg";
 export default function About() {
   const {
     t
@@ -85,7 +85,7 @@ export default function About() {
           {/* Vision */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="order-2 lg:order-1 relative">
-              <img src={exterior} alt="Lifetrek Medical manufacturing facility exterior" className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500" loading="lazy" />
+              <img src={factoryHero} alt="Lifetrek Medical manufacturing facility exterior" className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
             <div className="order-1 lg:order-2">
               <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">{t("about.vision.title")}</h2>
