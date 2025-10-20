@@ -60,14 +60,7 @@ export default function WhatWeDo() {
             <p className="text-base md:text-lg leading-relaxed animate-fade-in animate-delay-200 opacity-95 mb-6">
               {t("whatWeDo.text")}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animate-delay-400 justify-center">
-              
-              <Link to="/capabilities">
-                <MagneticButton size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 border-white text-white shadow-xl">
-                  {t("whatWeDo.cta.viewAll")}
-                </MagneticButton>
-              </Link>
-            </div>
+            
           </div>
         </div>
       </section>
