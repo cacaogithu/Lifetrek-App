@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen } from "lucide-react";
+import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 type AnalyticsData = {
@@ -193,6 +193,28 @@ export default function Admin() {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-8">
+            {/* AI Image Processor Card */}
+            <Card className="p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    Otimizador de Imagens de Produtos com IA
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Transforme suas fotos de produtos em imagens profissionais usando IA avançada
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => navigate('/admin/image-processor')}
+                  className="ml-4"
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Acessar
+                </Button>
+              </div>
+            </Card>
+
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {stats.map((stat, index) => (

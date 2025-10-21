@@ -2,22 +2,29 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Download, Sparkles } from "lucide-react";
+import { Loader2, Download, Sparkles, RefreshCw } from "lucide-react";
+import { Progress } from "./ui/progress";
 
 interface ImageEnhancerProps {
   imageUrl: string;
   onEnhanced?: (enhancedUrl: string) => void;
+  customPrompt?: string;
 }
 
-export const ImageEnhancer = ({ imageUrl, onEnhanced }: ImageEnhancerProps) => {
+export const ImageEnhancer = ({ imageUrl, onEnhanced, customPrompt }: ImageEnhancerProps) => {
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [enhancedImage, setEnhancedImage] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
 
   const enhanceImage = async () => {
     setIsEnhancing(true);
+    setProgress(10);
+    
     try {
       // Convert image URL to base64
       const response = await fetch(imageUrl);
+      setProgress(30);
+      
       const blob = await response.blob();
       const reader = new FileReader();
       
@@ -27,23 +34,37 @@ export const ImageEnhancer = ({ imageUrl, onEnhanced }: ImageEnhancerProps) => {
       });
       
       const imageData = await base64Promise;
+      setProgress(50);
 
-      // Call edge function to enhance
+      // Call edge function to enhance with Lovable AI
       const { data, error } = await supabase.functions.invoke('enhance-product-image', {
-        body: { imageData }
+        body: { 
+          imageData,
+          prompt: customPrompt 
+        }
       });
 
       if (error) throw error;
 
+      setProgress(90);
       setEnhancedImage(data.enhancedImage);
       if (onEnhanced) onEnhanced(data.enhancedImage);
-      toast.success('Imagem melhorada com sucesso!');
+      setProgress(100);
+      
+      toast.success('Imagem otimizada com IA profissional!');
     } catch (error) {
       console.error('Error enhancing image:', error);
-      toast.error('Erro ao melhorar imagem');
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao melhorar imagem';
+      toast.error(errorMessage);
     } finally {
       setIsEnhancing(false);
+      setProgress(0);
     }
+  };
+
+  const resetEnhancement = () => {
+    setEnhancedImage(null);
+    toast.info('Resetado para imagem original');
   };
 
   const downloadImage = () => {
@@ -57,23 +78,37 @@ export const ImageEnhancer = ({ imageUrl, onEnhanced }: ImageEnhancerProps) => {
 
   return (
     <div className="space-y-4">
+      {isEnhancing && (
+        <div className="space-y-2">
+          <Progress value={progress} className="h-2" />
+          <p className="text-sm text-muted-foreground text-center">
+            Processando com IA... {progress}%
+          </p>
+        </div>
+      )}
+
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <p className="text-sm font-medium">Imagem Original</p>
           <img 
             src={imageUrl} 
             alt="Original" 
-            className="w-full rounded-lg border"
+            className="w-full rounded-lg border bg-muted object-contain"
+            style={{ minHeight: '300px' }}
           />
         </div>
         
         {enhancedImage && (
           <div className="space-y-2">
-            <p className="text-sm font-medium">Imagem Melhorada</p>
+            <p className="text-sm font-medium flex items-center gap-2">
+              Imagem Otimizada
+              <Sparkles className="h-4 w-4 text-primary" />
+            </p>
             <img 
               src={enhancedImage} 
               alt="Enhanced" 
-              className="w-full rounded-lg border"
+              className="w-full rounded-lg border bg-muted object-contain"
+              style={{ minHeight: '300px' }}
             />
           </div>
         )}
@@ -88,26 +123,42 @@ export const ImageEnhancer = ({ imageUrl, onEnhanced }: ImageEnhancerProps) => {
           {isEnhancing ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Melhorando...
+              Otimizando com IA...
             </>
           ) : (
             <>
               <Sparkles className="mr-2 h-4 w-4" />
-              Melhorar com IA
+              Otimizar com IA
             </>
           )}
         </Button>
 
         {enhancedImage && (
-          <Button
-            onClick={downloadImage}
-            variant="outline"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Baixar
-          </Button>
+          <>
+            <Button
+              onClick={downloadImage}
+              variant="outline"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Baixar
+            </Button>
+            
+            <Button
+              onClick={resetEnhancement}
+              variant="ghost"
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Resetar
+            </Button>
+          </>
         )}
       </div>
+
+      {customPrompt && (
+        <p className="text-xs text-muted-foreground">
+          Usando prompt personalizado para otimização
+        </p>
+      )}
     </div>
   );
 };
