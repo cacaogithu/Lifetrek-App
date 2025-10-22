@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint } from "lucide-react";
+import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
@@ -28,7 +28,7 @@ export default function Products() {
   const {
     t
   } = useLanguage();
-  const [openCatalog, setOpenCatalog] = useState<number | null>(0);
+  const [openCatalog, setOpenCatalog] = useState<number | null>(null);
   const productCategories = [{
     icon: Target,
     image: medicalImplantsDiagram,
@@ -160,9 +160,13 @@ export default function Products() {
                 
                 {/* Minimalist Catalog */}
                 {category.catalogImages && category.catalogImages.length > 0 && <div className="mt-8">
-                    <div className="mt-6 animate-fade-in">
-                      <ImageGallery images={category.catalogImages} columns={category.catalogImages.length > 4 ? 4 : 3} />
-                    </div>
+                    <Button variant="outline" onClick={() => setOpenCatalog(openCatalog === index ? null : index)} className="w-full sm:w-auto flex items-center gap-2 group">
+                      {openCatalog === index ? t("products.catalog.hide") : t("products.catalog.view")}
+                      <ChevronDown className={`h-4 w-4 transition-transform ${openCatalog === index ? "rotate-180" : ""}`} />
+                    </Button>
+                    {openCatalog === index && <div className="mt-6 animate-fade-in">
+                        <ImageGallery images={category.catalogImages} columns={category.catalogImages.length > 4 ? 4 : 3} />
+                      </div>}
                   </div>}
               </div>)}
           </div>
