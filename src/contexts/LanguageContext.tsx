@@ -529,7 +529,7 @@ const translations = {
     "about.mission.title": "Missão",
     "about.mission.text": "Ser líder na manufatura de produtos de alta performance e qualidade, com tecnologia de ponta, aliados à inovação constante, confiabilidade, ética e compromisso absoluto com a vida. Superando as expectativas de nossos clientes e atendendo com excelência às demandas da área médica.",
     "about.vision.title": "Visão",
-    "about.vision.text": "Ser reconhecida como referência global em inovação, precisão e ética na manufatura de produtos e soluções para a área médica, contribuindo para a evolução contínua da saúde e para a melhoria da qualidade de vida das pessoas.",
+    "about.vision.text": "Ser reconhecida como referência global em inovação, precisão e ética na manufatura de produtos e soluções para a área médica, com Padrões de Qualidade com o comprometimento de todos na organização, contribuindo para a evolução contínua da saúde e para a melhoria da qualidade de vida das pessoas.",
     "about.values.title": "Valores",
     "about.values.excellence": "Excelência",
     "about.values.excellence.text": "Qualidade e responsabilidade em tudo o que fazemos.",
@@ -581,7 +581,7 @@ const translations = {
     "capabilities.metrology.benefit": "Precisão Dimensional Garantida",
     "capabilities.metrology.text": "Equipamentos de última geração, Hardness Vickers e sistemas de medição óptica verificam cada dimensão crítica antes do envio.",
     
-    "capabilities.equipment.title": "Tecnologia CNC de Última Linha",
+    "capabilities.equipment.title": "Tecnologia CNC de Última Geração",
     "capabilities.equipment.benefit": "Geometrias Complexas Simplificadas",
     "capabilities.equipment.text": "Máquinas multi-eixos Citizen, Tornos e Walter produzem componentes médicos intrincados com precisão em nível de mícron em uma única configuração.",
     
@@ -590,7 +590,7 @@ const translations = {
     "capabilities.finishing.text": "Eletropolimento e passivação internos entregam superfícies lisas e resistentes à corrosão que atendem aos padrões ASTM para dispositivos implantáveis.",
     
     // Equipment sections
-    "capabilities.equipment.cnc.title": "Equipamento de Fabricação CNC de Última Linha",
+    "capabilities.equipment.cnc.title": "Equipamento de Fabricação CNC de Última Geração",
     "capabilities.equipment.metrology.title": "Laboratório de Metrologia Avançado",
     "capabilities.equipment.sample.title": "Equipamento de Preparação de Amostras",
     "capabilities.equipment.finishing.title": "Acabamento de Superfície e Marcação",
@@ -636,7 +636,7 @@ const translations = {
     "equipment.subtitle.polishing": "Preparação de Superfície de Amostras",
     "equipment.subtitle.cutting": "Corte de Precisão de Amostras",
     "equipment.subtitle.mounting": "Sistema de Embutimento de Amostras",
-    "equipment.subtitle.citizenl32": "Torno CNC de Última Linha",
+    "equipment.subtitle.citizenl32": "Torno CNC de Última Geração",
     "equipment.subtitle.tornos": "Centro de Torneamento Multi-Eixos",
     "equipment.subtitle.walter": "Sistema de Retificação de Ferramentas",
     "equipment.subtitle.robodrill": "Centro de Usinagem de Alta Velocidade",
@@ -645,7 +645,7 @@ const translations = {
     "equipment.subtitle.zeiss": "Máquina de Medição por Coordenadas 3D",
     
     "equipment.specs.surgical.precision": "Fabricação de alta precisão",
-    "equipment.specs.surgical.quality": "Controle de qualidade validado",
+    "equipment.specs.surgical.quality": "Controle de qualidade certificado",
     "equipment.specs.surgical.control": "Precisão dimensional garantida",
     "equipment.specs.citizen.diameter": "Diâmetro máximo: 32mm",
     "equipment.specs.citizen.length": "Comprimento: 150mm",
@@ -781,7 +781,7 @@ const translations = {
     // About - Additional (PT)
     "about.stats.years": "Anos de Experiência",
     "about.stats.iso": "Certificado ISO 13485",
-    "about.vision.quality": "Padrões de qualidade sem compromissos",
+    "about.vision.quality": "Padrões de Qualidade com o comprometimento de todos na organização",
     "about.vision.innovation": "Inovação tecnológica contínua",
     "about.vision.partnerships": "Parcerias estratégicas de longo prazo",
     "about.values.intro": "Os princípios que guiam cada decisão que tomamos e cada componente que fabricamos",
@@ -831,7 +831,7 @@ const translations = {
 
     // Products - Additional features (PT)
     "products.medical.feature1": "Placas e parafusos de fixação de trauma",
-    "products.medical.feature2": "Sistemas de fusão espinhal",
+    "products.medical.feature2": "Sistema de Fusão – Coluna",
     "products.medical.feature3": "Implantes de extremidades superiores e inferiores",
     "products.medical.feature4": "Dispositivos de fixação craniana",
     "products.instruments.feature1": "Brocas cirúrgicas elétricas",

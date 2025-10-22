@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint, ChevronDown } from "lucide-react";
+import { CheckCircle2, ArrowRight, Target, Heart, Sparkles, PawPrint } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageGallery } from "@/components/ImageGallery";
@@ -28,7 +28,7 @@ export default function Products() {
   const {
     t
   } = useLanguage();
-  const [openCatalog, setOpenCatalog] = useState<number | null>(null);
+  const [openCatalog, setOpenCatalog] = useState<number | null>(0);
   const productCategories = [{
     icon: Target,
     image: medicalImplantsDiagram,
@@ -160,15 +160,9 @@ export default function Products() {
                 
                 {/* Minimalist Catalog */}
                 {category.catalogImages && category.catalogImages.length > 0 && <div className="mt-8">
-                    <Button variant="ghost" onClick={() => setOpenCatalog(openCatalog === index ? null : index)} className="w-full flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                      <span className="text-sm font-medium">
-                        {openCatalog === index ? t("products.catalog.hide") : t("products.catalog.view")} {t("products.catalog.items")} ({category.catalogImages.length} items)
-                      </span>
-                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${openCatalog === index ? 'rotate-180' : ''}`} />
-                    </Button>
-                    {openCatalog === index && <div className="mt-6 animate-fade-in">
-                        <ImageGallery images={category.catalogImages} columns={category.catalogImages.length > 4 ? 4 : 3} />
-                      </div>}
+                    <div className="mt-6 animate-fade-in">
+                      <ImageGallery images={category.catalogImages} columns={category.catalogImages.length > 4 ? 4 : 3} />
+                    </div>
                   </div>}
               </div>)}
           </div>
@@ -184,12 +178,6 @@ export default function Products() {
           <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 max-w-3xl mx-auto opacity-95">
             {t("products.cta.text")}
           </p>
-          <Link to="/assessment">
-            <Button size="lg" variant="secondary" className="group">
-              {t("products.cta.button")}
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
         </div>
       </section>
     </div>;

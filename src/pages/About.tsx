@@ -151,11 +151,6 @@ export default function About() {
               {t("about.cta.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/assessment">
-                <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
-                  {t("about.cta.consultation")}
-                </MagneticButton>
-              </Link>
               <Link to="/capabilities">
                 <MagneticButton size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 border-white text-white shadow-xl">
                   {t("about.cta.explore")}

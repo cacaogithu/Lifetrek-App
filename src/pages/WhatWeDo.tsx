@@ -14,13 +14,13 @@ export default function WhatWeDo() {
   } = useLanguage();
   const servicesAnimation = useScrollAnimation();
   const capabilitiesAnimation = useScrollAnimation();
-  const capabilities = ["Swiss-Type CNC Lathes", "Multi-Axis Machining", "Precision Tool Grinding", "CAD/CAM Programming", "ISO 7 Cleanrooms", "Electropolishing", "Laser Marking", "3D CMM Inspection"];
+  const capabilities = ["Swiss-type Multi-Axis Equipment", "Precision Tool Grinding", "CAD/CAM Programming", "ISO 7 Cleanrooms", "Electropolishing", "Laser Marking", "3D CMM Inspection"];
   const services = [{
     icon: Cog,
     title: t("whatWeDo.service1.title"),
     description: t("whatWeDo.service1.description"),
     image: productApplications,
-    stats: ["±0.001mm", "12-Axis", "Ø0.5-32mm"],
+    stats: ["12-Axis", "Ø0.5-32mm"],
     color: "text-primary",
     bg: "bg-primary/10"
   }, {
@@ -28,7 +28,7 @@ export default function WhatWeDo() {
     title: t("whatWeDo.service2.title"),
     description: t("whatWeDo.service2.description"),
     image: surgicalInstruments,
-    stats: ["Clean Room", "3D CMM", "Ra < 0.05μm"],
+    stats: ["Clean Room", "3D CMM"],
     color: "text-accent",
     bg: "bg-accent/10"
   }, {
@@ -36,7 +36,7 @@ export default function WhatWeDo() {
     title: t("whatWeDo.service3.title"),
     description: t("whatWeDo.service3.description"),
     image: electropolishLine,
-    stats: ["Ra < 0.1μm", "Mirror Finish", "Biocompatible"],
+    stats: ["Mirror Finish", "Biocompatible"],
     color: "text-accent-orange",
     bg: "bg-accent-orange/10"
   }, {
@@ -44,7 +44,7 @@ export default function WhatWeDo() {
     title: t("whatWeDo.service4.title"),
     description: t("whatWeDo.service4.description"),
     image: cleanroom,
-    stats: ["ISO 7", "Class 10,000", "Validated"],
+    stats: ["ISO 7", "Certificada"],
     color: "text-primary",
     bg: "bg-primary/10"
   }];
@@ -137,11 +137,6 @@ export default function WhatWeDo() {
             <p className="text-xl mb-8 opacity-95">
               {t("whatWeDo.cta.subtitle")}
             </p>
-            <Link to="/assessment">
-              <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
-                {t("whatWeDo.cta.assessment")}
-              </MagneticButton>
-            </Link>
           </div>
         </div>
       </section>
