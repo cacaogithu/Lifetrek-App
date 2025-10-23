@@ -61,15 +61,6 @@ export default function Products() {
       src: surgicalDrills,
       alt: "Powered surgical drills"
     }, {
-      src: surgicalHandles,
-      alt: "Surgical instrument handles"
-    }, {
-      src: microInstruments,
-      alt: "Micro surgical instruments"
-    }, {
-      src: measuringTools,
-      alt: "Precision measuring tools"
-    }, {
       src: surgicalParts,
       alt: "Surgical instrument components"
     }]

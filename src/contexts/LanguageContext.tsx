@@ -798,7 +798,7 @@ const translations = {
     "infrastructure.equipment.title": "Equipamentos de Fabricação Avançados",
     "infrastructure.equipment.text": "Tecnologia CNC de última geração, centros de usinagem multi-eixos e equipamentos de retificação de precisão para componentes médicos complexos.",
     "infrastructure.technology": "Tecnologia de Última Geração",
-    "infrastructure.technology.text": "Equipamentos CNC de última geração e sistemas de fabricação avançados",
+    "infrastructure.technology.text": "que tem capacidade de produzir componentes medicos complexos com precisao micrometrica",
     "infrastructure.team": "Equipe de Especialistas",
     "infrastructure.team.text": "Profissionais especializados dedicados à excelência e precisão",
     "infrastructure.cnc.title": "Equipamentos de Fabricação CNC",
