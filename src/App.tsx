@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
-import { StickyCTA } from "./components/StickyCTA";
 import { MobileNav } from "./components/MobileNav";
 import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
@@ -64,7 +63,6 @@ const App = () => (
               </PageTransition>
             </main>
             <Footer />
-            <StickyCTA />
             <MobileNav />
             <ScrollToTop />
             {/* <AIChatbot /> */}
