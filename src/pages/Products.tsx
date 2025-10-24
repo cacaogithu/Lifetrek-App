@@ -61,8 +61,8 @@ export default function Products() {
       src: surgicalDrills,
       alt: "Powered surgical drills"
     }, {
-      src: surgicalParts,
-      alt: "Surgical instrument components"
+      src: surgicalHandles,
+      alt: "Surgical handles and instrument components"
     }]
   }, {
     icon: Heart,

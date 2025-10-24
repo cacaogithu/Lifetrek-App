@@ -582,8 +582,8 @@ const translations = {
     "capabilities.metrology.text": "Equipamentos de última geração, Hardness Vickers e sistemas de medição óptica verificam cada dimensão crítica antes do envio.",
     
     "capabilities.equipment.title": "Tecnologia CNC de Última Geração",
-    "capabilities.equipment.benefit": "Geometrias Complexas Simplificadas",
-    "capabilities.equipment.text": "Máquinas multi-eixos Citizen, Tornos e Walter produzem componentes médicos intrincados com precisão em nível de mícron em uma única configuração.",
+    "capabilities.equipment.benefit": "Geometrias Complexas",
+    "capabilities.equipment.text": "Maquinas multi-eixos Citizen Tornos e Walter que tem capacidade de produzir componentes medicos complexos comprecisao micrometria.",
     
     "capabilities.finishing.title": "Tratamento de Superfície de Grau Médico",
     "capabilities.finishing.benefit": "Biocompatibilidade Aprimorada",
@@ -796,7 +796,7 @@ const translations = {
     "infrastructure.cleanrooms.title": "Fabricação em Sala Limpa ISO 7",
     "infrastructure.cleanrooms.text": "Duas salas limpas de 60m² entre as mais avançadas do Brasil—garantindo produção de componentes estéreis para implantes e instrumentos críticos.",
     "infrastructure.equipment.title": "Equipamentos de Fabricação Avançados",
-    "infrastructure.equipment.text": "Tecnologia CNC de última geração, centros de usinagem multi-eixos e equipamentos de retificação de precisão para componentes médicos complexos.",
+    "infrastructure.equipment.text": "que tem capacidade de produzir componentes medicos complexos com precisao micrometrica",
     "infrastructure.technology": "Tecnologia de Última Geração",
     "infrastructure.technology.text": "que tem capacidade de produzir componentes medicos complexos com precisao micrometrica",
     "infrastructure.team": "Equipe de Especialistas",
