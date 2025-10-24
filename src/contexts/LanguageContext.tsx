@@ -583,7 +583,7 @@ const translations = {
     
     "capabilities.equipment.title": "Tecnologia CNC de Última Geração",
     "capabilities.equipment.benefit": "Geometrias Complexas",
-    "capabilities.equipment.text": "Maquinas multi-eixos Citizen Tornos e Walter que tem capacidade de produzir componentes medicos complexos com precisão micrometria.",
+    "capabilities.equipment.text": "Maquinas multi-eixos Citizen Tornos e Walter que tem capacidade de produzir componentes medicos complexos com precisão micrometrica.",
     
     "capabilities.finishing.title": "Tratamento de Superfície de Grau Médico",
     "capabilities.finishing.benefit": "Biocompatibilidade Aprimorada",
