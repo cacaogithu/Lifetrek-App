@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
-// DNA3D removed - not being used on Home page
+const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
@@ -20,11 +20,10 @@ import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
 import { useEffect } from "react";
-// Lazy load carousel to defer until after TTI
-const EquipmentCarouselLazy = lazy(() => import("@/components/EquipmentCarousel").then(m => ({ default: m.EquipmentCarousel })));
+// DNA3D now lazy loaded at top of file
 // Lazy load 3D components for better mobile performance
 const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({ default: module.MedicalGlobe })));
-// EquipmentCarousel now lazy loaded above
+import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
@@ -196,9 +195,6 @@ export default function Home() {
             src={factoryHeroFull} 
             alt="Lifetrek Medical factory exterior - Modern industrial facility" 
             className="w-full h-full object-cover object-center"
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
           />
         </div>
         
@@ -357,10 +353,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Equipment Carousel Section - Lazy loaded for better TTI */}
-      <Suspense fallback={<div className="py-20 bg-secondary/20"><div className="container mx-auto px-4"><div className="h-96 bg-muted/50 animate-pulse rounded-lg" /></div></div>}>
-        <EquipmentCarouselLazy />
-      </Suspense>
+      {/* Equipment Carousel Section */}
+      <EquipmentCarousel />
 
       {/* Capabilities Preview Section */}
       
