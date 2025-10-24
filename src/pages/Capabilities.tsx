@@ -147,7 +147,6 @@ export default function Capabilities() {
               >
                 <div className={index % 2 === 1 ? "lg:order-2" : ""}>
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-primary">{capability.title}</h2>
-                  <p className="text-lg sm:text-xl font-semibold text-primary mb-4">{capability.benefit}</p>
                   <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
                     {capability.description}
                   </p>

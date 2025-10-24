@@ -582,8 +582,8 @@ const translations = {
     "capabilities.metrology.text": "Equipamentos de última geração, Hardness Vickers e sistemas de medição óptica verificam cada dimensão crítica antes do envio.",
     
     "capabilities.equipment.title": "Tecnologia CNC de Última Geração",
-    "capabilities.equipment.benefit": "Geometrias Complexas",
-    "capabilities.equipment.text": "Maquinas multi-eixos Citizen Tornos e Walter que tem capacidade de produzir componentes medicos complexos comprecisao micrometria.",
+    "capabilities.equipment.benefit": "Geometrias Complexas Simplificadas",
+    "capabilities.equipment.text": "Máquinas multi-eixos Citizen, Tornos e Walter produzem componentes médicos intrincados com precisão em nível de mícron em uma única configuração.",
     
     "capabilities.finishing.title": "Tratamento de Superfície de Grau Médico",
     "capabilities.finishing.benefit": "Biocompatibilidade Aprimorada",

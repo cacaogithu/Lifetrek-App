@@ -12,7 +12,6 @@ import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { AIChatbot } from "./components/AIChatbot";
 import { LoadingSpinner } from "./components/LoadingSpinner";
-import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Lazy load route components for better code splitting
 const Home = lazy(() => import("./pages/Home"));
@@ -42,28 +41,26 @@ const App = () => (
           <div className="flex flex-col min-h-screen overflow-x-hidden">
             <Header />
             <main className="flex-1 w-full">
-              <ErrorBoundary>
-                <PageTransition>
-                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><LoadingSpinner /></div>}>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/what-we-do" element={<WhatWeDo />} />
-                      <Route path="/products" element={<Products />} />
-                      <Route path="/capabilities" element={<Capabilities />} />
-                      <Route path="/clients" element={<Clients />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/assessment" element={<Assessment />} />
-                      <Route path="/calculator" element={<Calculator />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/admin/login" element={<AdminLogin />} />
-                      <Route path="/product-catalog" element={<ProductCatalog />} />
-                      <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </PageTransition>
-              </ErrorBoundary>
+              <PageTransition>
+                <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><LoadingSpinner /></div>}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/what-we-do" element={<WhatWeDo />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/capabilities" element={<Capabilities />} />
+                    <Route path="/clients" element={<Clients />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/assessment" element={<Assessment />} />
+                    <Route path="/calculator" element={<Calculator />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/product-catalog" element={<ProductCatalog />} />
+                    <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </PageTransition>
             </main>
             <Footer />
             <MobileNav />
