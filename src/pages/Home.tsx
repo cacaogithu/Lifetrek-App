@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
-const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
+// DNA3D removed - not being used on Home page
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
@@ -20,10 +20,11 @@ import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
 import { useEffect } from "react";
-// DNA3D now lazy loaded at top of file
+// Lazy load carousel to defer until after TTI
+const EquipmentCarouselLazy = lazy(() => import("@/components/EquipmentCarousel").then(m => ({ default: m.EquipmentCarousel })));
 // Lazy load 3D components for better mobile performance
 const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({ default: module.MedicalGlobe })));
-import { EquipmentCarousel } from "@/components/EquipmentCarousel";
+// EquipmentCarousel now lazy loaded above
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useStaggerAnimation } from "@/hooks/useStaggerAnimation";
@@ -356,8 +357,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Equipment Carousel Section */}
-      <EquipmentCarousel />
+      {/* Equipment Carousel Section - Lazy loaded for better TTI */}
+      <Suspense fallback={<div className="py-20 bg-secondary/20"><div className="container mx-auto px-4"><div className="h-96 bg-muted/50 animate-pulse rounded-lg" /></div></div>}>
+        <EquipmentCarouselLazy />
+      </Suspense>
 
       {/* Capabilities Preview Section */}
       

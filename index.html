@@ -56,30 +56,35 @@
     }
     </script>
     
-    <!-- Fonts -->
+    <!-- Fonts - defer non-critical fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Critical CSS for above-the-fold content -->
+    <!-- Preconnect to critical origins -->
+    <link rel="dns-prefetch" href="https://storage.googleapis.com">
+    <link rel="preconnect" href="https://storage.googleapis.com">
+    
+    <!-- Critical CSS for above-the-fold content - Optimized -->
     <style>
       *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:currentColor}
       html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;font-feature-settings:normal;font-variation-settings:normal;tab-size:4}
-      body{margin:0;line-height:inherit;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:hsl(0 0% 100%)}
+      body{margin:0;line-height:inherit;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:hsl(0 0% 100%);will-change:contents}
       h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
       h1{font-size:1.875rem;line-height:2.25rem;font-weight:700;margin-bottom:1rem}
       img,svg,video,canvas{display:block;vertical-align:middle}
-      img{max-width:100%;height:auto}
-      .container{width:100%;margin-right:auto;margin-left:auto;padding-right:1rem;padding-left:1rem}
+      img{max-width:100%;height:auto;content-visibility:auto}
+      .container{width:100%;margin-right:auto;margin-left:auto;padding-right:1rem;padding-left:1rem;contain:layout style paint}
       @media(min-width:640px){.container{max-width:640px};h1{font-size:2.25rem;line-height:2.5rem}}
       @media(min-width:768px){.container{max-width:768px};h1{font-size:3rem;line-height:1}}
       @media(min-width:1024px){.container{max-width:1024px}}
       @media(min-width:1280px){.container{max-width:1280px}}
       @media(min-width:1536px){.container{max-width:1536px}}
-      header{position:sticky;top:0;z-index:50;width:100%;border-bottom:1px solid hsl(214 32% 91%);background:hsl(0 0% 100% / 0.95);backdrop-filter:blur(8px)}
+      header{position:sticky;top:0;z-index:50;width:100%;border-bottom:1px solid hsl(214 32% 91%);background:hsl(0 0% 100% / 0.95);backdrop-filter:blur(8px);contain:layout style}
       nav{display:flex;height:4rem;align-items:center;justify-content:space-between}
-      .hero-section{position:relative;height:500px;overflow:hidden;background:linear-gradient(to bottom right,hsl(210 100% 45%),hsl(210 100% 40%),hsl(210 100% 35%))}
+      .hero-section{position:relative;height:500px;overflow:hidden;background:linear-gradient(to bottom right,hsl(210 100% 45%),hsl(210 100% 40%),hsl(210 100% 35%));contain:layout style paint}
       @media(min-width:640px){nav{height:5rem};.hero-section{height:600px}}
       @media(min-width:1024px){.hero-section{height:700px}}
       .hero-content{position:relative;height:100%;display:flex;align-items:center;color:hsl(0 0% 100%)}

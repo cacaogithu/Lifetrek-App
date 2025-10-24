@@ -59,12 +59,17 @@ export default defineConfig(({ mode }) => ({
               return `page-${match[1].toLowerCase()}`;
             }
           }
+          // Split 3D components separately for lazy loading
+          if (id.includes("/components/3d/")) {
+            return "3d-components";
+          }
         },
       },
     },
     cssCodeSplit: true,
     sourcemap: false,
     minify: "esbuild",
+    target: "es2015",
     chunkSizeWarningLimit: 1000,
     assetsInlineLimit: 4096,
   },
