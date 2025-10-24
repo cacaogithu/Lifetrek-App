@@ -22,16 +22,6 @@ export const ProgressiveImage = ({
   sizes
 }: ProgressiveImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState("");
-
-  useEffect(() => {
-    const img = new Image();
-    img.src = src;
-    img.onload = () => {
-      setCurrentSrc(src);
-      setIsLoaded(true);
-    };
-  }, [src]);
 
   return (
     <div className="relative overflow-hidden">
@@ -46,13 +36,14 @@ export const ProgressiveImage = ({
 
       {/* Actual image */}
       <img
-        src={currentSrc || src}
+        src={src}
         srcSet={srcSet}
         sizes={sizes}
         alt={alt}
         width={width}
         height={height}
         loading={loading}
+        decoding="async"
         className={`${className} transition-all duration-700 ${
           isLoaded ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-lg scale-105"
         }`}

@@ -195,6 +195,9 @@ export default function Home() {
             src={factoryHeroFull} 
             alt="Lifetrek Medical factory exterior - Modern industrial facility" 
             className="w-full h-full object-cover object-center"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
         
