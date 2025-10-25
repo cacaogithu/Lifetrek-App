@@ -502,7 +502,7 @@ const translations = {
     
     // Home
     "home.hero.title": "Acelere o Desenvolvimento do Seu Produto",
-    "home.hero.subtitle": "Desenvolva componentes medicos de precisão com nossa fabricação certificada ISO 13485, tecnologia CNC de última geração e instalações de sala limpa.",
+    "home.hero.subtitle": "Desenvolva componentes médicos de precisão com nossa fabricação certificada ISO 13485, tecnologia CNC de última geração e instalações de sala limpa.",
     "home.hero.cta": "Seja Nosso Parceiro",
     "home.benefits.speed": "Tempo de Mercado Mais Rápido",
     "home.benefits.speed.text": "Tempo de mercado mais rápido: do protótipo à produção, com processos simplificados.",
@@ -796,9 +796,9 @@ const translations = {
     "infrastructure.cleanrooms.title": "Fabricação em Sala Limpa ISO 7",
     "infrastructure.cleanrooms.text": "Duas salas limpas de 60m² entre as mais avançadas do Brasil—garantindo produção de componentes estéreis para implantes e instrumentos críticos.",
     "infrastructure.equipment.title": "Equipamentos de Fabricação Avançados",
-    "infrastructure.equipment.text": "que tem capacidade de produzir componentes medicos complexos com precisao micrometrica",
+    "infrastructure.equipment.text": "Máquinas que tem capacidade de produzir componentes médicos complexos com precisão micrométrica",
     "infrastructure.technology": "Tecnologia de Última Geração",
-    "infrastructure.technology.text": "que tem capacidade de produzir componentes medicos complexos com precisao micrometrica",
+    "infrastructure.technology.text": "Máquinas que tem capacidade de produzir componentes médicos complexos com precisão micrométrica",
     "infrastructure.team": "Equipe de Especialistas",
     "infrastructure.team.text": "Profissionais especializados dedicados à excelência e precisão",
     "infrastructure.cnc.title": "Equipamentos de Fabricação CNC",
