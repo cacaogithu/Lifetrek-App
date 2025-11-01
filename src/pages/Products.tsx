@@ -50,7 +50,7 @@ export default function Products() {
     }]
   }, {
     icon: Sparkles,
-    image: medicalScrew,
+    image: surgicalParts,
     title: t("products.instruments.title"),
     benefit: t("products.instruments.benefit"),
     description: t("products.instruments.text"),
@@ -58,11 +58,14 @@ export default function Products() {
     color: "from-blue-500 to-blue-300",
     iconBg: "bg-blue-500",
     catalogImages: [{
-      src: surgicalDrills,
-      alt: "Powered surgical drills"
+      src: microInstruments,
+      alt: "Componentes de precisão para instrumentos cirúrgicos"
     }, {
-      src: surgicalHandles,
-      alt: "Surgical handles and instrument components"
+      src: surgicalParts,
+      alt: "Peças e componentes cirúrgicos usinados"
+    }, {
+      src: measuringTools,
+      alt: "Componentes de medição e instrumentação médica"
     }]
   }, {
     icon: Heart,
