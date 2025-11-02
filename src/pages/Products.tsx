@@ -58,9 +58,6 @@ export default function Products() {
     color: "from-blue-500 to-blue-300",
     iconBg: "bg-blue-500",
     catalogImages: [{
-      src: microInstruments,
-      alt: "Componentes de precisão para instrumentos cirúrgicos"
-    }, {
       src: surgicalParts,
       alt: "Peças e componentes cirúrgicos usinados"
     }, {
