@@ -57,13 +57,7 @@ export default function Products() {
     features: [t("products.instruments.feature1"), t("products.instruments.feature2"), t("products.instruments.feature3"), t("products.instruments.feature4")],
     color: "from-blue-500 to-blue-300",
     iconBg: "bg-blue-500",
-    catalogImages: [{
-      src: surgicalParts,
-      alt: "Peças e componentes cirúrgicos usinados"
-    }, {
-      src: measuringTools,
-      alt: "Componentes de medição e instrumentação médica"
-    }]
+    catalogImages: []
   }, {
     icon: Heart,
     image: dentalImplantsDiagram,
