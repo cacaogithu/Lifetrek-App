@@ -12,7 +12,7 @@ import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
 import doosan from "@/assets/equipment/doosan.jpg";
 import citizenM32 from "@/assets/equipment/citizen-m32-new.png";
-import citizenL20 from "@/assets/equipment/citizen-l20.webp";
+import citizenL20 from "@/assets/equipment/citizen-l20-new.png";
 import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
 import walter from "@/assets/equipment/walter.webp";
 import robodrill from "@/assets/equipment/robodrill.webp";
