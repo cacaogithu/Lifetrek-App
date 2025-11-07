@@ -10,8 +10,8 @@ import labOverview from "@/assets/metrology/lab-overview.webp";
 import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
-import citizen from "@/assets/equipment/citizen.webp";
-import citizenL32 from "@/assets/equipment/citizen-l32.webp";
+import doosan from "@/assets/equipment/doosan.jpg";
+import citizenM32 from "@/assets/equipment/citizen-m32.jpg";
 import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
 import walter from "@/assets/equipment/walter.webp";
 import robodrill from "@/assets/equipment/robodrill.webp";
@@ -42,14 +42,14 @@ const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
     ]
   },
   { 
-    image: citizen, 
-    title: t("equipment.name.citizen"), 
-    subtitle: t("equipment.subtitle.citizen"),
+    image: doosan, 
+    title: t("equipment.name.doosan"), 
+    subtitle: t("equipment.subtitle.doosan"),
     category: "CNC",
     specs: [
-      t("equipment.specs.citizen.diameter"),
-      t("equipment.specs.citizen.length"),
-      t("equipment.specs.citizen.tooling")
+      t("equipment.specs.doosan.diameter"),
+      t("equipment.specs.doosan.length"),
+      t("equipment.specs.doosan.tooling")
     ]
   },
   { 
@@ -130,14 +130,14 @@ const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
     ]
   },
   { 
-    image: citizenL32, 
-    title: t("equipment.name.citizenl32"), 
-    subtitle: t("equipment.subtitle.citizenl32"),
+    image: citizenM32, 
+    title: t("equipment.name.citizenm32"), 
+    subtitle: t("equipment.subtitle.citizenm32"),
     category: "CNC",
     specs: [
-      t("equipment.specs.citizenl32.capacity"),
-      t("equipment.specs.citizenl32.axis"),
-      t("equipment.specs.citizenl32.machining")
+      t("equipment.specs.citizenm32.capacity"),
+      t("equipment.specs.citizenm32.axis"),
+      t("equipment.specs.citizenm32.machining")
     ]
   },
   { 
