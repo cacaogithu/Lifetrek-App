@@ -31,6 +31,10 @@ import trepanationDrills from "@/assets/products/trepanation-drills.webp";
 import drillGuide from "@/assets/products/drill-guide.webp";
 import dentalComponentsCorrect from "@/assets/products/dental-components-correct.webp";
 import orthopedicComponents from "@/assets/products/orthopedic-components.png";
+import orthopedicComponents2 from "@/assets/products/orthopedic-components-2.png";
+import surgicalInstrumentsDrillBits from "@/assets/products/surgical-instruments-drill-bits.png";
+import surgicalInstrumentsSet2 from "@/assets/products/surgical-instruments-set-2.png";
+import surgicalInstrumentsMeasuring from "@/assets/products/surgical-instruments-measuring.png";
 export default function Products() {
   const {
     t
@@ -60,6 +64,9 @@ export default function Products() {
     }, {
       src: orthopedicComponents,
       alt: "Orthopedic precision components and implants"
+    }, {
+      src: orthopedicComponents2,
+      alt: "Orthopedic implant components - screws, rings, and fixation devices"
     }]
   }, {
     icon: Sparkles,
@@ -82,6 +89,15 @@ export default function Products() {
     }, {
       src: drillGuide,
       alt: "Drill guide for surgical precision"
+    }, {
+      src: surgicalInstrumentsDrillBits,
+      alt: "Precision surgical drill bits and cutting instruments"
+    }, {
+      src: surgicalInstrumentsSet2,
+      alt: "Surgical instruments set with handle and precision tips"
+    }, {
+      src: surgicalInstrumentsMeasuring,
+      alt: "Surgical measuring and precision instruments"
     }]
   }, {
     icon: Heart,
