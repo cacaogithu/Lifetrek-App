@@ -30,6 +30,7 @@ import tulipImplants from "@/assets/products/tulip-implants.webp";
 import trepanationDrills from "@/assets/products/trepanation-drills.webp";
 import drillGuide from "@/assets/products/drill-guide.webp";
 import dentalComponentsCorrect from "@/assets/products/dental-components-correct.webp";
+import orthopedicComponents from "@/assets/products/orthopedic-components.png";
 export default function Products() {
   const {
     t
@@ -56,6 +57,9 @@ export default function Products() {
     }, {
       src: tulipImplants,
       alt: "Tulipa fixa e bipartida - Orthopedic spinal implants"
+    }, {
+      src: orthopedicComponents,
+      alt: "Orthopedic precision components and implants"
     }]
   }, {
     icon: Sparkles,
