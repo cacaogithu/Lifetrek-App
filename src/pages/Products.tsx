@@ -10,6 +10,8 @@ import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram-e
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import medicalScrew from "@/assets/products/medical-screw-hero.webp";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
+import veterinaryImplant1 from "@/assets/products/veterinary-implant-1.jpg";
+import veterinaryImplant2 from "@/assets/products/veterinary-implant-2.jpg";
 import surgicalParts from "@/assets/products/surgical-parts-optimized.webp";
 import precisionComponents from "@/assets/products/precision-components.png";
 import surgicalDrills from "@/assets/products/surgical-drills-optimized.webp";
@@ -73,18 +75,6 @@ export default function Products() {
     }, {
       src: dentalAngulados,
       alt: "Pilares Protéticos Angulados - Componentes protéticos multi-angulados para implantes dentários"
-    }, {
-      src: dentalFresasOptimized,
-      alt: "Fresas Cirúrgicas para Implantodontia - Kit completo de brocas para preparação óssea"
-    }, {
-      src: dentalInstrumentosOptimized,
-      alt: "Instrumentos Cirúrgicos Dentários - Ferramentas de precisão para cirurgia de implantes"
-    }, {
-      src: dentalComponents,
-      alt: "Componentes Protéticos Dentários - Conectores e parafusos protéticos em titânio"
-    }, {
-      src: precisionComponents,
-      alt: "Componentes de Precisão em Titânio - Peças usinadas de alta precisão para aplicações médicas"
     }]
   }, {
     icon: PawPrint,
@@ -95,7 +85,13 @@ export default function Products() {
     features: [t("products.veterinary.feature1"), t("products.veterinary.feature2"), t("products.veterinary.feature3"), t("products.veterinary.feature4")],
     color: "from-orange-600 to-orange-400",
     iconBg: "bg-orange-600",
-    catalogImages: []
+    catalogImages: [{
+      src: veterinaryImplant1,
+      alt: "Implantes Ortopédicos Veterinários - Placas e parafusos para cirurgia veterinária"
+    }, {
+      src: veterinaryImplant2,
+      alt: "Sistemas de Fixação Veterinária - Implantes de titânio para ortopedia animal"
+    }]
   }];
   return <div className="min-h-screen">
       {/* Hero Section */}
