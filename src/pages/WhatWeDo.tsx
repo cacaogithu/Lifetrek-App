@@ -70,7 +70,7 @@ export default function WhatWeDo() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className={`text-center mb-16 scroll-reveal ${servicesAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="font-bold mb-6 text-primary">
-              {t("whatWeDo.services.title")}
+              Nosso Core Business
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               {t("whatWeDo.services.subtitle")}

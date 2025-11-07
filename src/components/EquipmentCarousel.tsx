@@ -12,6 +12,7 @@ import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
 import doosan from "@/assets/equipment/doosan.jpg";
 import citizenM32 from "@/assets/equipment/citizen-m32.jpg";
+import citizenL20 from "@/assets/equipment/citizen-l20.webp";
 import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
 import walter from "@/assets/equipment/walter.webp";
 import robodrill from "@/assets/equipment/robodrill.webp";
@@ -138,6 +139,17 @@ const getEquipmentItems = (t: (key: string) => string): EquipmentItem[] => [
       t("equipment.specs.citizenm32.capacity"),
       t("equipment.specs.citizenm32.axis"),
       t("equipment.specs.citizenm32.machining")
+    ]
+  },
+  { 
+    image: citizenL20, 
+    title: "Citizen L20", 
+    subtitle: "Swiss-Type CNC Lathe",
+    category: "CNC",
+    specs: [
+      "Diâmetro máximo: 20mm",
+      "Controle de 9 eixos",
+      "Usinagem de alta velocidade"
     ]
   },
   { 

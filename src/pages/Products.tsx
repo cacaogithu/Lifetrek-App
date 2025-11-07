@@ -26,6 +26,10 @@ import dentalAngulados from "@/assets/products/dental-angulados.png";
 import dentalImplanteOptimized from "@/assets/products/dental-implante-optimized.png";
 import dentalFresasOptimized from "@/assets/products/dental-fresas-optimized.png";
 import dentalInstrumentosOptimized from "@/assets/products/dental-instrumentos-optimized.png";
+import tulipImplants from "@/assets/products/tulip-implants.webp";
+import trepanationDrills from "@/assets/products/trepanation-drills.webp";
+import drillGuide from "@/assets/products/drill-guide.webp";
+import dentalComponentsCorrect from "@/assets/products/dental-components-correct.webp";
 export default function Products() {
   const {
     t
@@ -49,6 +53,9 @@ export default function Products() {
     }, {
       src: surgicalPins,
       alt: "Surgical pins for bone fixation"
+    }, {
+      src: tulipImplants,
+      alt: "Tulipa fixa e bipartida - Orthopedic spinal implants"
     }]
   }, {
     icon: Sparkles,
@@ -59,7 +66,19 @@ export default function Products() {
     features: [t("products.instruments.feature1"), t("products.instruments.feature2"), t("products.instruments.feature3"), t("products.instruments.feature4")],
     color: "from-blue-500 to-blue-300",
     iconBg: "bg-blue-500",
-    catalogImages: []
+    catalogImages: [{
+      src: trepanationDrills,
+      alt: "Brocas de Trepanação - Cranial surgery drills"
+    }, {
+      src: dentalFresasOptimized,
+      alt: "Dental surgical drills"
+    }, {
+      src: dentalInstrumentosOptimized,
+      alt: "Dental surgical instruments"
+    }, {
+      src: drillGuide,
+      alt: "Drill guide for surgical precision"
+    }]
   }, {
     icon: Heart,
     image: dentalImplantsDiagram,
@@ -75,6 +94,9 @@ export default function Products() {
     }, {
       src: dentalAngulados,
       alt: "Pilares Protéticos Angulados - Componentes protéticos multi-angulados para implantes dentários"
+    }, {
+      src: dentalComponentsCorrect,
+      alt: "Dental orthodontic components - implant screws and abutments"
     }]
   }, {
     icon: PawPrint,

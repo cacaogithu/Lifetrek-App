@@ -272,7 +272,7 @@ export default function Home() {
           <ClientCarousel clients={clientLogos} />
           
           <div className="text-center mt-10">
-            <Link to="/clients">
+            <Link to="/clients#top">
               <MagneticButton variant="outline" size="lg">
                 {t("home.clients.cta")}
               </MagneticButton>
@@ -344,7 +344,7 @@ export default function Home() {
           </div>
 
           <div className="text-center">
-            <Link to="/products">
+            <Link to="/products#top">
               <Button size="lg" className="hover:scale-105 transition-transform shadow-xl">
                 {t("nav.products")}
               </Button>
@@ -381,7 +381,7 @@ export default function Home() {
               <p className="text-lg sm:text-xl mb-8 opacity-95">
                 {t("home.finalCta.subtitle")}
               </p>
-              <Link to="/contact">
+              <Link to="/contact#top">
                 <MagneticButton size="lg" variant="secondary" className="shadow-xl" strength={30}>
                   {t("contact.title")}
                 </MagneticButton>

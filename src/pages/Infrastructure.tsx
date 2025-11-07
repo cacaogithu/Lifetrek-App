@@ -7,7 +7,7 @@ import citizenL20X from "@/assets/equipment/citizen-l20x.png";
 import walter from "@/assets/equipment/walter.webp";
 import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
 import tornosGT13 from "@/assets/equipment/tornos-gt13.png";
-import doosan from "@/assets/equipment/doosan.png";
+import doosanImg from "@/assets/equipment/doosan.jpg";
 import espritCam from "@/assets/equipment/esprit-cam.png";
 import robodrill from "@/assets/equipment/robodrill.webp";
 import laserMarking from "@/assets/equipment/laser-marking.webp";
@@ -18,13 +18,13 @@ export default function Infrastructure() {
 
   const cncMachines = [
     {
-      image: citizenL20,
-      name: "Citizen L20-VIII LFV",
-      category: "Swiss-Type CNC Lathe",
+      image: doosanImg,
+      name: "Doosan Lynx 2100",
+      category: "CNC Turning Center",
     },
     {
       image: citizenL32,
-      name: "Citizen L32",
+      name: "Citizen M32",
       category: "Swiss-Type CNC Lathe",
     },
     {
@@ -41,11 +41,6 @@ export default function Infrastructure() {
       image: tornosGT13,
       name: "Tornos GT-13",
       category: "Swiss-Type CNC Lathe",
-    },
-    {
-      image: doosan,
-      name: "Doosan Lynx",
-      category: "CNC Turning Center",
     },
     {
       image: walter,
@@ -99,10 +94,10 @@ export default function Infrastructure() {
             <div>
               <div className="h-1 w-16 bg-gradient-to-r from-accent to-accent/50 mb-8 rounded-full" />
               <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-primary">
-                {t("infrastructure.cleanrooms.title")}
+                Fabricação em Sala Limpa ISO 7
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                {t("infrastructure.cleanrooms.text")}
+                Duas salas limpas de 60m² entre as mais avançadas do Brasil—garantindo produção de componentes para implantes e instrumentos críticos.
               </p>
             </div>
             <div>
