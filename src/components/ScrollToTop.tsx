@@ -11,17 +11,22 @@ export const ScrollToTop = () => {
   useEffect(() => {
     const hash = location.hash;
     
+    // Always scroll to top first, then to specific element if hash exists
+    window.scrollTo({ top: 0, behavior: "instant" });
+    
+    if (hash && hash === "#top") {
+      // If hash is #top, we're already at top
+      return;
+    }
+    
     if (hash) {
-      // If there's a hash, try to scroll to that element
+      // If there's a different hash, scroll to that element
       setTimeout(() => {
         const element = document.getElementById(hash.substring(1));
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-      }, 100);
-    } else {
-      // No hash, scroll to top
-      window.scrollTo({ top: 0, behavior: "instant" });
+      }, 150);
     }
   }, [location.pathname, location.hash]);
 
