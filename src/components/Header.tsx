@@ -11,19 +11,19 @@ export const Header = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: "/", label: t("nav.home") },
-    { path: "/about", label: t("nav.about") },
-    { path: "/what-we-do", label: t("nav.whatWeDo") },
-    { path: "/products", label: t("nav.products") },
-    { path: "/capabilities", label: t("nav.infrastructure") },
-    { path: "/clients", label: t("nav.clients") },
-    { path: "/contact", label: t("nav.contact") },
+    { path: "/#top", label: t("nav.home") },
+    { path: "/about#top", label: t("nav.about") },
+    { path: "/what-we-do#top", label: t("nav.whatWeDo") },
+    { path: "/products#top", label: t("nav.products") },
+    { path: "/capabilities#top", label: t("nav.infrastructure") },
+    { path: "/clients#top", label: t("nav.clients") },
+    { path: "/contact#top", label: t("nav.contact") },
   ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#e5e7eb] bg-white">
       <nav className="container mx-auto flex h-[80px] items-center justify-between px-8">
-        <Link to="/" className="flex items-center flex-shrink-0">
+        <Link to="/#top" className="flex items-center flex-shrink-0">
           <img 
             src={logo} 
             alt="Lifetrek Medical - ISO 13485 Certified Medical Device Manufacturer" 

@@ -895,7 +895,7 @@ const translations = {
 
     // Equipment Carousel (PT)
     "equipment.title": "Equipamentos de Fabricação Avançados",
-    "equipment.subtitle": "Tecnologia de ponta para fabricação da área médica de precisão",
+    "equipment.subtitle": "Tecnologia de ponta para a fabricação de produtos de alta precisão para a área médica",
     "equipment.category.all": "Todos os Equipamentos",
     "equipment.category.metrology": "Metrologia",
     "equipment.category.cnc": "Máquinas CNC",

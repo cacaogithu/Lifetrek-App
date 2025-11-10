@@ -16,10 +16,10 @@ export const MobileNav = () => {
   }, []);
 
   const navItems = [
-    { path: "/", icon: Home, label: "Home" },
-    { path: "/capabilities", icon: Building2, label: "Capabilities" },
-    { path: "/products", icon: Package, label: "Products" },
-    { path: "/contact", icon: Phone, label: "Contact" },
+    { path: "/#top", icon: Home, label: "Home" },
+    { path: "/capabilities#top", icon: Building2, label: "Capabilities" },
+    { path: "/products#top", icon: Package, label: "Products" },
+    { path: "/contact#top", icon: Phone, label: "Contact" },
   ];
 
   return (
