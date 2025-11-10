@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import cleanroom from "@/assets/facility/cleanroom.webp";
 import reception from "@/assets/facility/reception.webp";
 import citizenL20 from "@/assets/equipment/citizen.webp";
-import citizenL32 from "@/assets/equipment/citizen-l32.webp";
+import citizenM32 from "@/assets/equipment/citizen-m32.jpg";
 import citizenL20X from "@/assets/equipment/citizen-l20x.png";
 import walter from "@/assets/equipment/walter.webp";
 import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
@@ -23,7 +23,7 @@ export default function Infrastructure() {
       category: "CNC Turning Center",
     },
     {
-      image: citizenL32,
+      image: citizenM32,
       name: "Citizen M32",
       category: "Swiss-Type CNC Lathe",
     },
@@ -103,7 +103,7 @@ export default function Infrastructure() {
             <div>
               <img
                 src={cleanroom}
-                alt="ISO 7 certified cleanroom for sterile medical device manufacturing"
+                alt="ISO 7 certified cleanroom for medical device manufacturing"
                 className="rounded-2xl shadow-[var(--shadow-premium)] hover:scale-105 transition-transform duration-500"
                 loading="lazy"
                 width="600"
