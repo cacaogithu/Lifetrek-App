@@ -89,6 +89,7 @@ export default function Clients() {
 
   return (
     <div className="min-h-screen">
+      <div id="top" />
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-12 sm:py-16 md:py-20">
         <div className="container mx-auto px-4 sm:px-6 text-center">

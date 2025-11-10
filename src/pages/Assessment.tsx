@@ -54,6 +54,7 @@ export default function Assessment() {
 
   return (
     <div className="min-h-screen">
+      <div id="top" />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-20 sm:py-32">
         <BlobBackground />

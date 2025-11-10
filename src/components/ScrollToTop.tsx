@@ -1,9 +1,29 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
 import { Button } from "./ui/button";
 
 export const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const location = useLocation();
+
+  // Handle automatic scroll on route change
+  useEffect(() => {
+    const hash = location.hash;
+    
+    if (hash) {
+      // If there's a hash, try to scroll to that element
+      setTimeout(() => {
+        const element = document.getElementById(hash.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+    } else {
+      // No hash, scroll to top
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
     const toggleVisibility = () => {

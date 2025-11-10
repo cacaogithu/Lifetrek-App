@@ -136,6 +136,7 @@ export default function Products() {
     }]
   }];
   return <div className="min-h-screen">
+      <div id="top" />
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16 sm:py-20 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 text-center">

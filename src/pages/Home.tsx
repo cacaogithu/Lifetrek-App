@@ -187,6 +187,7 @@ export default function Home() {
   }, []);
   
   return <div className="min-h-screen">
+      <div id="top" />
       {/* Hero Section - Factory Exterior Background */}
       <section className="relative h-[600px] sm:h-[700px] lg:h-[800px] overflow-hidden">
         {/* Factory Photo Background */}

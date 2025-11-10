@@ -110,6 +110,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen">
+      <div id="top" />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-8 sm:py-10 md:py-16">
         <div className="absolute inset-0 bg-[image:var(--gradient-subtle)] opacity-30" />

@@ -39,6 +39,7 @@ export default function About() {
     textColor: "text-primary"
   }];
   return <div className="min-h-screen">
+      <div id="top" />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[image:var(--gradient-hero)] text-primary-foreground py-5 sm:py-8 md:py-10">
         <BlobBackground />
