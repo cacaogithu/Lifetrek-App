@@ -102,7 +102,7 @@ export default function Clients() {
       </section>
 
       {/* Client Logos Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
+      <section id="client-logos" className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
         <div className="container mx-auto px-4 sm:px-6">
           <div 
             ref={logosAnimation.elementRef}

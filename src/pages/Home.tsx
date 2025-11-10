@@ -272,7 +272,7 @@ export default function Home() {
           <ClientCarousel clients={clientLogos} />
           
           <div className="text-center mt-10">
-            <Link to="/clients#top">
+            <Link to="/clients#client-logos">
               <MagneticButton variant="outline" size="lg">
                 {t("home.clients.cta")}
               </MagneticButton>
