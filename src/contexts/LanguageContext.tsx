@@ -301,7 +301,7 @@ const translations = {
     "home.capabilities.iso.text": "Complete quality management system for medical device manufacturing with full regulatory compliance.",
     "home.capabilities.cta": "See All Capabilities",
     "home.finalCta.title": "Ready to Transform Your Product Development?",
-    "home.finalCta.subtitle": "Join the leading medical device companies that trust Lifetrek for mission-critical components.",
+    "home.finalCta.subtitle": "Join the leading medical device companies that trust Lifetrek for critical component manufacturing.",
     "home.finalCta.button": "Get Started Today",
 
     // About - Additional
@@ -342,7 +342,7 @@ const translations = {
     "whatWeDo.service3.title": "Surface Treatment Excellence",
     "whatWeDo.service3.description": "State-of-the-art electropolishing producing mirror finishes with enhanced biocompatibility and corrosion resistance",
     "whatWeDo.service4.title": "Cleanroom Manufacturing",
-    "whatWeDo.service4.description": "ISO 7 certified cleanroom environments for sterile assembly, packaging with complete batch traceability",
+    "whatWeDo.service4.description": "ISO 7 certified cleanroom environments for assembly, packaging with complete batch traceability",
     "whatWeDo.capabilities.title": "Advanced Manufacturing Equipment",
     "whatWeDo.capabilities.subtitle": "State-of-the-art equipment and expertise",
     "whatWeDo.cta.title": "Let's Discuss Your Manufacturing Needs",
@@ -381,7 +381,7 @@ const translations = {
     "interactive.capabilities.subtitle": "World-class manufacturing and quality assurance systems",
     "interactive.capabilities.precision.title": "CNC Precision",
     "interactive.capabilities.precision.stat": "±0.001mm",
-    "interactive.capabilities.precision.description": "Multi-axis CNC lathes with powered tooling. Capable of producing complex medical components with micron-level accuracy for implants and instruments.",
+    "interactive.capabilities.precision.description": "Multi-axis CNC lathes with driven tools. Capable of producing complex medical components with micron-level accuracy for implants and instruments.",
     "interactive.capabilities.metrology.title": "Advanced Metrology",
     "interactive.capabilities.metrology.stat": "Clean Room",
     "interactive.capabilities.metrology.description": "State-of-the-art equipment ensuring meticulous dimensional control. 3D CMM coordinate measuring, optical comparators, and metallographic analysis.",

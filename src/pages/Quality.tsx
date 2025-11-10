@@ -50,6 +50,16 @@ export default function Quality() {
       name: "Hardness Vickers",
       description: "Vickers Hardness Tester",
     },
+    {
+      image: olympusMicroscope,
+      name: "Olympus Microscope",
+      description: "Surface Roughness Analysis",
+    },
+    {
+      image: labOverview,
+      name: "Laboratory Overview",
+      description: "Complete Metrology Lab",
+    },
   ];
 
   const labEquipment = [
@@ -154,29 +164,6 @@ export default function Quality() {
       {/* Metrology Equipment */}
       <section className="py-12 sm:py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
-          {/* Lab Overview Images */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16 max-w-6xl mx-auto">
-            <div className="rounded-lg overflow-hidden shadow-2xl">
-              <img
-                src={labOverview}
-                alt="Advanced metrology laboratory with precision measurement equipment"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                width="600"
-                height="400"
-              />
-            </div>
-            <div className="rounded-lg overflow-hidden shadow-2xl">
-              <img
-                src={olympusMicroscope}
-                alt="Olympus microscope system for metallographic analysis"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                width="600"
-                height="400"
-              />
-            </div>
-          </div>
 
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 text-primary">
             Metrology Laboratory Equipment
@@ -185,7 +172,7 @@ export default function Quality() {
             State-of-the-art measurement and testing equipment ensuring the highest precision standards
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {metrologyEquipment.map((equipment, index) => (
               <div
                 key={index}
