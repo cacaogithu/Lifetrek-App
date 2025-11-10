@@ -8,6 +8,7 @@ import { useState } from "react";
 import medicalScrewRaw from "@/assets/products/medical-screw-raw.png";
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram-enhanced.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
+import dentalInstrumentsHero from "@/assets/products/dental-instruments-hero.webp";
 import medicalScrew from "@/assets/products/medical-screw-hero.webp";
 import veterinaryImplants from "@/assets/products/veterinary-implants.jpg";
 import veterinaryImplant1 from "@/assets/products/veterinary-implant-1.jpg";
@@ -101,7 +102,7 @@ export default function Products() {
     }]
   }, {
     icon: Heart,
-    image: dentalImplantsDiagram,
+    image: dentalInstrumentsHero,
     title: t("products.dental.title"),
     benefit: t("products.dental.benefit"),
     description: t("products.dental.text"),
