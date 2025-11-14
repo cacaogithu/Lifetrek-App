@@ -21,9 +21,12 @@ export default function Contact() {
     technicalRequirements: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isSubmitting) return;
     
     // Basic validation
     if (!formData.name || !formData.email || !formData.phone || !formData.projectType || !formData.technicalRequirements) {
@@ -46,9 +49,11 @@ export default function Contact() {
       return;
     }
 
+    setIsSubmitting(true);
+    
     try {
       // Send email via edge function
-      const { error } = await supabase.functions.invoke('send-contact-email', {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
         body: {
           name: formData.name,
           email: formData.email,
@@ -63,10 +68,32 @@ export default function Contact() {
 
       if (error) {
         console.error('Error sending email:', error);
+        
+        // Check for rate limit error
+        const errorMessage = error.message || '';
+        if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
+          toast({
+            variant: "destructive",
+            title: "Muitas tentativas",
+            description: "Por favor, aguarde alguns segundos antes de tentar novamente.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Erro ao enviar",
+            description: "Falha ao enviar mensagem. Por favor, tente novamente ou entre em contato diretamente.",
+          });
+        }
+        return;
+      }
+      
+      // Check if the response indicates success
+      if (!data || (data as any).error) {
+        console.error('Email function returned error:', data);
         toast({
           variant: "destructive",
-          title: "Error",
-          description: "Failed to send message. Please try again or contact us directly.",
+          title: "Erro ao enviar",
+          description: "Falha ao enviar mensagem. Por favor, tente novamente.",
         });
         return;
       }
@@ -84,8 +111,8 @@ export default function Contact() {
       });
 
       toast({
-        title: "Message Sent!",
-        description: "We'll get back to you as soon as possible with a personalized quote.",
+        title: "Mensagem Enviada!",
+        description: "Entraremos em contato em breve com uma proposta personalizada.",
       });
 
       setFormData({ 
@@ -102,9 +129,11 @@ export default function Contact() {
       console.error('Error:', error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: "Erro",
+        description: "Ocorreu um erro inesperado. Por favor, tente novamente.",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -246,8 +275,8 @@ export default function Contact() {
                   />
                 </div>
 
-                <Button type="submit" size="lg" className="w-full">
-                  {t("contact.form.submit")}
+                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Enviando..." : t("contact.form.submit")}
                 </Button>
               </form>
             </div>
