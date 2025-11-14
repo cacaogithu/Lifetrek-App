@@ -69,8 +69,8 @@ export default function Capabilities() {
   ];
 
   const cncMachines = [
-    { image: citizenL20, name: "Citizen L20-VIII LFV", category: t("equipment.category.swiss") },
-    { image: citizenM32, name: "Citizen M32", category: t("equipment.category.swiss") },
+    { image: citizenL20, name: "Citizen M32", category: t("equipment.category.swiss") },
+    { image: citizenM32, name: "Citizen L20-VIII LFV", category: t("equipment.category.swiss") },
     { image: tornosGT26, name: "Tornos GT-26", category: t("equipment.category.swiss") },
     { image: walter, name: "Walter Helitronic", category: t("equipment.category.grinder") },
     { image: robodrill, name: "FANUC Robodrill", category: t("equipment.category.machining") },
