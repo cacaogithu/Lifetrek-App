@@ -32,7 +32,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send confirmation email to customer
     const customerEmailResponse = await resend.emails.send({
-      from: "Lifetrek Medical <onboarding@resend.dev>",
+      from: "Lifetrek Medical <noreply@lifetrek-medical.com>",
       to: [email],
       subject: "Recebemos sua solicitação de cotação - We received your quote request",
       html: `
@@ -70,7 +70,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification email to Lifetrek
     const notificationEmailResponse = await resend.emails.send({
-      from: "Contact Form <onboarding@resend.dev>",
+      from: "Formulário de Contato <noreply@lifetrek-medical.com>",
       to: ["contato@lifetrek-medical.com"],
       subject: `Nova Cotação: ${projectType} - ${name}`,
       html: `
