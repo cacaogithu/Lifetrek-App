@@ -12,7 +12,7 @@ import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
 import citizenL20 from "@/assets/equipment/citizen.webp";
-import citizenL32 from "@/assets/equipment/citizen-l32.webp";
+import citizenM32 from "@/assets/equipment/citizen-m32-new.png";
 import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
 import walter from "@/assets/equipment/walter.webp";
 import robodrill from "@/assets/equipment/robodrill.webp";
@@ -53,7 +53,7 @@ export default function Capabilities() {
       title: t("capabilities.equipment.title"),
       benefit: t("capabilities.equipment.benefit"),
       description: t("capabilities.equipment.text"),
-      image: citizenL32,
+      image: citizenM32,
       color: "text-accent-orange",
       bg: "bg-accent-orange/10",
     },
@@ -70,7 +70,7 @@ export default function Capabilities() {
 
   const cncMachines = [
     { image: citizenL20, name: "Citizen L20-VIII LFV", category: t("equipment.category.swiss") },
-    { image: citizenL32, name: "Citizen L32", category: t("equipment.category.swiss") },
+    { image: citizenM32, name: "Citizen M32", category: t("equipment.category.swiss") },
     { image: tornosGT26, name: "Tornos GT-26", category: t("equipment.category.swiss") },
     { image: walter, name: "Walter Helitronic", category: t("equipment.category.grinder") },
     { image: robodrill, name: "FANUC Robodrill", category: t("equipment.category.machining") },
