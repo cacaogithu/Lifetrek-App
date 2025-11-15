@@ -230,6 +230,57 @@ export type Database = {
           },
         ]
       }
+      linkedin_carousels: {
+        Row: {
+          admin_user_id: string
+          caption: string
+          created_at: string
+          cta_action: string | null
+          desired_outcome: string | null
+          id: string
+          is_favorite: boolean | null
+          pain_point: string | null
+          performance_metrics: Json | null
+          proof_points: string | null
+          slides: Json
+          target_audience: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          admin_user_id: string
+          caption: string
+          created_at?: string
+          cta_action?: string | null
+          desired_outcome?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          pain_point?: string | null
+          performance_metrics?: Json | null
+          proof_points?: string | null
+          slides: Json
+          target_audience: string
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          admin_user_id?: string
+          caption?: string
+          created_at?: string
+          cta_action?: string | null
+          desired_outcome?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          pain_point?: string | null
+          performance_metrics?: Json | null
+          proof_points?: string | null
+          slides?: Json
+          target_audience?: string
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_catalog: {
         Row: {
           category: string
