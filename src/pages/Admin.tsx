@@ -11,7 +11,11 @@ import { LeadsTable } from "@/components/admin/LeadsTable";
 import { LeadDetailsModal } from "@/components/admin/LeadDetailsModal";
 import { LeadFilters } from "@/components/admin/LeadFilters";
 import { LeadsStats } from "@/components/admin/LeadsStats";
+import { ProjectTypeDistribution } from "@/components/admin/ProjectTypeDistribution";
+import { LeadAnalyticsTable } from "@/components/admin/LeadAnalyticsTable";
+import { AnalyticsFilters } from "@/components/admin/AnalyticsFilters";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { DateRange } from "react-day-picker";
 
 type AnalyticsData = {
   chatbot_interactions: number;
@@ -48,6 +52,14 @@ export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  
+  // Enhanced analytics state
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [projectTypeFilter, setProjectTypeFilter] = useState("all");
+  const [analyticsStatusFilter, setAnalyticsStatusFilter] = useState("all");
+  const [analyticsPriorityFilter, setAnalyticsPriorityFilter] = useState("all");
+  const [projectTypeData, setProjectTypeData] = useState<any[]>([]);
+  const [leadAnalyticsData, setLeadAnalyticsData] = useState<any[]>([]);
 
   useEffect(() => {
     checkAdminAccess();
@@ -57,8 +69,15 @@ export default function Admin() {
     if (isAdmin) {
       fetchAnalytics();
       fetchLeads();
+      fetchEnhancedAnalytics();
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchEnhancedAnalytics();
+    }
+  }, [dateRange, projectTypeFilter, analyticsStatusFilter, analyticsPriorityFilter, isAdmin]);
 
   useEffect(() => {
     let filtered = [...leads];
@@ -160,6 +179,55 @@ export default function Admin() {
     } catch (error) {
       console.error("Error fetching leads:", error);
       toast.error("Failed to load leads");
+    }
+  };
+
+  const fetchEnhancedAnalytics = async () => {
+    try {
+      // Fetch project type distribution
+      const { data: projectData, error: projectError } = await supabase
+        .from("project_type_distribution")
+        .select("*");
+
+      if (projectError) throw projectError;
+
+      setProjectTypeData(projectData || []);
+
+      // Fetch detailed lead analytics with filters
+      let query = supabase
+        .from("lead_analytics_detailed")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (dateRange?.from) {
+        query = query.gte("created_at", dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        query = query.lte("created_at", dateRange.to.toISOString());
+      }
+      if (analyticsStatusFilter !== "all") {
+        query = query.eq("status", analyticsStatusFilter as 'new' | 'contacted' | 'in_progress' | 'quoted' | 'closed' | 'rejected');
+      }
+      if (analyticsPriorityFilter !== "all") {
+        query = query.eq("priority", analyticsPriorityFilter as 'low' | 'medium' | 'high');
+      }
+
+      const { data: analyticsData, error: analyticsError } = await query;
+
+      if (analyticsError) throw analyticsError;
+
+      // Filter by project type if specified
+      let filteredData = analyticsData || [];
+      if (projectTypeFilter !== "all") {
+        filteredData = filteredData.filter(lead =>
+          lead.project_types && lead.project_types.includes(projectTypeFilter as any)
+        );
+      }
+
+      setLeadAnalyticsData(filteredData);
+    } catch (error) {
+      console.error("Error fetching enhanced analytics:", error);
+      toast.error("Failed to load enhanced analytics");
     }
   };
 
@@ -381,6 +449,35 @@ export default function Admin() {
                 </table>
               </div>
             </Card>
+
+            {/* Enhanced Analytics Section */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-primary" />
+                <h2 className="text-2xl font-bold">Análise Avançada de Leads</h2>
+              </div>
+
+              {/* Analytics Filters */}
+              <AnalyticsFilters
+                dateRange={dateRange}
+                onDateRangeChange={setDateRange}
+                projectType={projectTypeFilter}
+                onProjectTypeChange={setProjectTypeFilter}
+                status={analyticsStatusFilter}
+                onStatusChange={setAnalyticsStatusFilter}
+                priority={analyticsPriorityFilter}
+                onPriorityChange={setAnalyticsPriorityFilter}
+              />
+
+              {/* Project Type Distribution Chart */}
+              <ProjectTypeDistribution data={projectTypeData} />
+
+              {/* Detailed Lead Analytics Table */}
+              <LeadAnalyticsTable 
+                data={leadAnalyticsData} 
+                onViewDetails={handleViewDetails}
+              />
+            </div>
           </TabsContent>
 
           {/* Leads Tab */}

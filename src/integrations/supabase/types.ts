@@ -73,6 +73,9 @@ export type Database = {
           phone: string
           priority: Database["public"]["Enums"]["lead_priority"]
           project_type: string
+          project_types:
+            | Database["public"]["Enums"]["project_type_option"][]
+            | null
           status: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at: string
@@ -90,6 +93,9 @@ export type Database = {
           phone: string
           priority?: Database["public"]["Enums"]["lead_priority"]
           project_type: string
+          project_types?:
+            | Database["public"]["Enums"]["project_type_option"][]
+            | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at?: string
@@ -107,6 +113,9 @@ export type Database = {
           phone?: string
           priority?: Database["public"]["Enums"]["lead_priority"]
           project_type?: string
+          project_types?:
+            | Database["public"]["Enums"]["project_type_option"][]
+            | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements?: string
           updated_at?: string
@@ -171,7 +180,86 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      lead_analytics_detailed: {
+        Row: {
+          annual_volume: string | null
+          company: string | null
+          created_at: string | null
+          email: string | null
+          id: string | null
+          is_converted: boolean | null
+          lead_date: string | null
+          name: string | null
+          phone: string | null
+          priority: Database["public"]["Enums"]["lead_priority"] | null
+          project_types:
+            | Database["public"]["Enums"]["project_type_option"][]
+            | null
+          status: Database["public"]["Enums"]["lead_status"] | null
+          time_bucket: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          annual_volume?: string | null
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          is_converted?: never
+          lead_date?: never
+          name?: string | null
+          phone?: string | null
+          priority?: Database["public"]["Enums"]["lead_priority"] | null
+          project_types?:
+            | Database["public"]["Enums"]["project_type_option"][]
+            | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          time_bucket?: never
+          updated_at?: string | null
+        }
+        Update: {
+          annual_volume?: string | null
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          is_converted?: never
+          lead_date?: never
+          name?: string | null
+          phone?: string | null
+          priority?: Database["public"]["Enums"]["lead_priority"] | null
+          project_types?:
+            | Database["public"]["Enums"]["project_type_option"][]
+            | null
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          time_bucket?: never
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      lead_metrics_by_period: {
+        Row: {
+          active_leads: number | null
+          closed_leads: number | null
+          conversion_rate: number | null
+          new_leads: number | null
+          period: string | null
+          rejected_leads: number | null
+          total_leads: number | null
+        }
+        Relationships: []
+      }
+      project_type_distribution: {
+        Row: {
+          conversion_rate: number | null
+          converted_count: number | null
+          count: number | null
+          project_type:
+            | Database["public"]["Enums"]["project_type_option"]
+            | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
@@ -192,6 +280,17 @@ export type Database = {
         | "quoted"
         | "closed"
         | "rejected"
+      project_type_option:
+        | "dental_implants"
+        | "orthopedic_implants"
+        | "spinal_implants"
+        | "veterinary_implants"
+        | "surgical_instruments"
+        | "micro_precision_parts"
+        | "custom_tooling"
+        | "medical_devices"
+        | "measurement_tools"
+        | "other_medical"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -328,6 +427,18 @@ export const Constants = {
         "quoted",
         "closed",
         "rejected",
+      ],
+      project_type_option: [
+        "dental_implants",
+        "orthopedic_implants",
+        "spinal_implants",
+        "veterinary_implants",
+        "surgical_instruments",
+        "micro_precision_parts",
+        "custom_tooling",
+        "medical_devices",
+        "measurement_tools",
+        "other_medical",
       ],
     },
   },
