@@ -32,6 +32,64 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_response_suggestions: {
+        Row: {
+          company_research_id: string | null
+          created_at: string | null
+          email_body: string
+          follow_up_date: string | null
+          id: string
+          key_points: string[] | null
+          lead_id: string | null
+          priority_level: string | null
+          subject_line: string
+        }
+        Insert: {
+          company_research_id?: string | null
+          created_at?: string | null
+          email_body: string
+          follow_up_date?: string | null
+          id?: string
+          key_points?: string[] | null
+          lead_id?: string | null
+          priority_level?: string | null
+          subject_line: string
+        }
+        Update: {
+          company_research_id?: string | null
+          created_at?: string | null
+          email_body?: string
+          follow_up_date?: string | null
+          id?: string
+          key_points?: string[] | null
+          lead_id?: string | null
+          priority_level?: string | null
+          subject_line?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_response_suggestions_company_research_id_fkey"
+            columns: ["company_research_id"]
+            isOneToOne: false
+            referencedRelation: "company_research"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_response_suggestions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "contact_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_response_suggestions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "lead_analytics_detailed"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_events: {
         Row: {
           company_email: string | null
@@ -56,6 +114,48 @@ export type Database = {
           event_type?: string
           id?: string
           metadata?: Json | null
+        }
+        Relationships: []
+      }
+      company_research: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          domain: string
+          expires_at: string | null
+          id: string
+          industry: string | null
+          key_products: string[] | null
+          linkedin_info: string | null
+          recent_news: string | null
+          researched_at: string | null
+          website_summary: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string | null
+          domain: string
+          expires_at?: string | null
+          id?: string
+          industry?: string | null
+          key_products?: string[] | null
+          linkedin_info?: string | null
+          recent_news?: string | null
+          researched_at?: string | null
+          website_summary?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string | null
+          domain?: string
+          expires_at?: string | null
+          id?: string
+          industry?: string | null
+          key_products?: string[] | null
+          linkedin_info?: string | null
+          recent_news?: string | null
+          researched_at?: string | null
+          website_summary?: string | null
         }
         Relationships: []
       }
