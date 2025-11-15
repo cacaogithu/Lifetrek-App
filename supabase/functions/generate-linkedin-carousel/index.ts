@@ -11,9 +11,9 @@ serve(async (req) => {
   }
 
   try {
-    const { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction } = await req.json();
+    const { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format = "carousel" } = await req.json();
 
-    console.log("Generating LinkedIn carousel for:", { topic, targetAudience });
+    console.log("Generating LinkedIn content:", { topic, targetAudience, format });
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -146,10 +146,125 @@ Also create an engaging LinkedIn caption (150-200 words) that:
 
     const carousel = JSON.parse(toolCall.function.arguments);
 
-    console.log("Carousel generated successfully");
+    console.log("Text content generated, now generating images...");
+
+    // Brand-specific image generation system prompt
+    const imageSystemPrompt = `You are a professional graphic designer for Lifetrek Medical, a precision medical device manufacturer.
+
+BRAND COLORS:
+- Corporate Blue: #004F8F (primary - trust, precision)
+- Innovation Green: #1A7A3E (accents - innovation)
+- Energy Orange: #F07818 (highlights - use sparingly)
+
+DESIGN PRINCIPLES:
+- Clean, modern, minimalist
+- Professional medical device aesthetic
+- High contrast for readability
+- Inter font for text overlays
+- Technical excellence without overwhelming
+
+VISUAL STYLE:
+- Professional medical device imagery
+- Technical precision (CNC machines, implants, quality)
+- Clean backgrounds with subtle blue tinting
+- B2B professional, not consumer-facing
+
+TARGET: Medical device OEMs, orthopedic/dental manufacturers, quality engineers
+
+Generate LinkedIn-ready images (1080x1080px) that command attention while maintaining technical credibility.`;
+
+    // Generate images for each slide
+    const imageUrls: string[] = [];
+    const slidesToGenerate = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
+
+    for (const slide of slidesToGenerate) {
+      const imagePrompt = format === "single-image" 
+        ? `Create a professional LinkedIn single-image post for Lifetrek Medical.
+
+CONTENT:
+Topic: ${carousel.topic}
+Headline: ${slide.headline}
+Key Points: ${slide.body}
+
+LAYOUT:
+- Bold headline at top using Corporate Blue (#004F8F)
+- Clean background with subtle medical device imagery
+- Key text overlays in white/high contrast
+- Lifetrek Medical branding subtle but present
+- 1080x1080px square format
+- Modern, professional, attention-grabbing
+- Include relevant icons or visual elements that represent precision manufacturing
+
+Style: Professional B2B LinkedIn post, medical device industry`
+        : `Create a LinkedIn carousel slide image for Lifetrek Medical.
+
+SLIDE TYPE: ${slide.type}
+HEADLINE: ${slide.headline}
+BODY: ${slide.body}
+
+LAYOUT RULES:
+${slide.type === "hook" ? "- Bold headline, large text, minimal content\n- Eye-catching visual hook\n- Use Corporate Blue (#004F8F) prominently" : ""}
+${slide.type === "content" ? "- Clear numbered point or bullet\n- Supporting visual element\n- Innovation Green (#1A7A3E) for accents" : ""}
+${slide.type === "cta" ? "- Clear call-to-action text\n- Contact information visible\n- Energy Orange (#F07818) for CTA button/highlight" : ""}
+
+REQUIREMENTS:
+- 1080x1080px square
+- High contrast text
+- Professional medical device aesthetic
+- Clean, modern design
+- Readable from thumbnail size
+
+Style: Professional B2B carousel slide, technical precision focus`;
+
+      try {
+        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-image",
+            messages: [
+              { role: "system", content: imageSystemPrompt },
+              { role: "user", content: imagePrompt }
+            ],
+            modalities: ["image", "text"]
+          }),
+        });
+
+        if (!imageResponse.ok) {
+          console.error("Image generation error:", imageResponse.status);
+          imageUrls.push(""); // Push empty string on error
+          continue;
+        }
+
+        const imageData = await imageResponse.json();
+        const imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+        
+        if (imageUrl) {
+          imageUrls.push(imageUrl);
+          console.log(`Generated image ${imageUrls.length}/${slidesToGenerate.length}`);
+        } else {
+          console.error("No image URL in response");
+          imageUrls.push("");
+        }
+      } catch (imageError) {
+        console.error("Error generating image:", imageError);
+        imageUrls.push("");
+      }
+    }
+
+    console.log(`Content generation complete: ${imageUrls.length} images generated`);
 
     return new Response(
-      JSON.stringify({ carousel }),
+      JSON.stringify({ 
+        carousel: {
+          ...carousel,
+          format,
+          imageUrls
+        }
+      }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,

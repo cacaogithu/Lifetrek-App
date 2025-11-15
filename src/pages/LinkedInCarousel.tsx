@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Loader2, ChevronLeft, ChevronRight, Download, Star, Trash2, History } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Download, Star, Trash2, History, Image as ImageIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,8 @@ interface CarouselResult {
   targetAudience: string;
   slides: CarouselSlide[];
   caption: string;
+  format?: string;
+  imageUrls?: string[];
 }
 
 export default function LinkedInCarousel() {
@@ -36,6 +38,7 @@ export default function LinkedInCarousel() {
   const [desiredOutcome, setDesiredOutcome] = useState("");
   const [proofPoints, setProofPoints] = useState("");
   const [ctaAction, setCtaAction] = useState("");
+  const [format, setFormat] = useState<"carousel" | "single-image">("carousel");
   const [isGenerating, setIsGenerating] = useState(false);
   const [carouselResult, setCarouselResult] = useState<CarouselResult | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -115,6 +118,12 @@ export default function LinkedInCarousel() {
           cta_action: ctaAction,
           slides: result.slides as any,
           caption: result.caption,
+          format: result.format || format,
+          image_urls: result.imageUrls || [],
+          generation_settings: {
+            model: "google/gemini-2.5-flash-image",
+            timestamp: new Date().toISOString()
+          }
         }])
         .select()
         .single();
@@ -211,6 +220,7 @@ export default function LinkedInCarousel() {
           desiredOutcome,
           proofPoints,
           ctaAction,
+          format,
         },
       });
 
@@ -224,7 +234,7 @@ export default function LinkedInCarousel() {
       setCarouselResult(data);
       setCurrentSlide(0);
       await saveCarousel(data);
-      toast.success("Carousel generated successfully!");
+      toast.success(format === "single-image" ? "LinkedIn post generated!" : "Carousel generated successfully!");
     } catch (error: any) {
       console.error("Error generating carousel:", error);
       toast.error(error.message || "Failed to generate carousel");
@@ -372,6 +382,24 @@ ${carouselResult.caption}
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <Label htmlFor="format">Content Format</Label>
+                    <Select value={format} onValueChange={(value: "carousel" | "single-image") => setFormat(value)}>
+                      <SelectTrigger id="format">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="carousel">Carousel (5-7 slides with images)</SelectItem>
+                        <SelectItem value="single-image">Single Image Post</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      {format === "carousel" 
+                        ? "Generate multiple slides with professional images for each" 
+                        : "Generate one comprehensive image with all key points"}
+                    </p>
+                  </div>
+
                   <Button
                     onClick={handleGenerate}
                     disabled={isGenerating || !topic || !targetAudience || !painPoint}
@@ -415,6 +443,15 @@ ${carouselResult.caption}
                     <>
                       {/* Slide Display */}
                       <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-8 min-h-[400px] flex flex-col justify-center">
+                        {carouselResult.imageUrls && carouselResult.imageUrls[currentSlide] && (
+                          <div className="mb-6 rounded-lg overflow-hidden border-2 border-primary/20">
+                            <img 
+                              src={carouselResult.imageUrls[currentSlide]} 
+                              alt={`Slide ${currentSlide + 1}`}
+                              className="w-full h-auto"
+                            />
+                          </div>
+                        )}
                         <div className="space-y-4">
                           <Badge variant="outline" className="w-fit">
                             {carouselResult.slides[currentSlide].type.toUpperCase()}
@@ -425,6 +462,21 @@ ${carouselResult.caption}
                           <p className="text-muted-foreground whitespace-pre-line">
                             {carouselResult.slides[currentSlide].body}
                           </p>
+                          {carouselResult.imageUrls && carouselResult.imageUrls[currentSlide] && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = carouselResult.imageUrls![currentSlide];
+                                link.download = `slide-${currentSlide + 1}.png`;
+                                link.click();
+                              }}
+                            >
+                              <Download className="h-4 w-4 mr-2" />
+                              Download Image
+                            </Button>
+                          )}
                         </div>
                       </div>
 
@@ -506,7 +558,15 @@ ${carouselResult.caption}
                             </div>
                             <div className="flex flex-wrap gap-2 mb-2">
                               <Badge variant="outline">{carousel.target_audience}</Badge>
-                              <Badge variant="secondary">{carousel.slides?.length || 0} slides</Badge>
+                              <Badge variant="secondary">
+                                {carousel.format === "single-image" ? "Single Image" : `${carousel.slides?.length || 0} slides`}
+                              </Badge>
+                              {carousel.image_urls && carousel.image_urls.length > 0 && (
+                                <Badge variant="outline" className="gap-1">
+                                  <ImageIcon className="h-3 w-3" />
+                                  {carousel.image_urls.length} images
+                                </Badge>
+                              )}
                             </div>
                             <p className="text-sm text-muted-foreground">
                               Created {new Date(carousel.created_at).toLocaleDateString()}
