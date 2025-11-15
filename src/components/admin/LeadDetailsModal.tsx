@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadPriorityIndicator } from "./LeadPriorityIndicator";
 import { Badge } from "@/components/ui/badge";
+import { AISuggestionCard } from "./AISuggestionCard";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,7 +57,42 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
   const [priority, setPriority] = useState(lead?.priority || 'medium');
   const [adminNotes, setAdminNotes] = useState(lead?.admin_notes || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState<any>(null);
+  const [companyResearch, setCompanyResearch] = useState<any>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(true);
   const { toast } = useToast();
+
+  // Fetch AI suggestion and company research when lead changes
+  useEffect(() => {
+    const fetchAIData = async () => {
+      if (!lead?.id) return;
+      
+      setIsLoadingAI(true);
+      try {
+        // Fetch AI suggestion
+        const { data: suggestion } = await supabase
+          .from('ai_response_suggestions')
+          .select('*, company_research:company_research_id(*)')
+          .eq('lead_id', lead.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (suggestion) {
+          setAiSuggestion(suggestion);
+          setCompanyResearch(suggestion.company_research);
+        }
+      } catch (error) {
+        console.error('Error fetching AI data:', error);
+      } finally {
+        setIsLoadingAI(false);
+      }
+    };
+
+    if (open && lead) {
+      fetchAIData();
+    }
+  }, [lead?.id, open]);
 
   if (!lead) return null;
 
@@ -195,6 +231,18 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               </div>
             </div>
           </div>
+
+          {/* AI Suggestions and Research */}
+          {!isLoadingAI && (aiSuggestion || companyResearch) && (
+            <div className="space-y-4 border-t pt-4">
+              <h3 className="font-semibold text-lg">Inteligência Artificial</h3>
+              <AISuggestionCard 
+                suggestion={aiSuggestion}
+                research={companyResearch}
+                leadEmail={lead.email}
+              />
+            </div>
+          )}
 
           {/* Management */}
           <div className="space-y-4 border-t pt-4">
