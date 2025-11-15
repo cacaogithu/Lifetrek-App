@@ -59,6 +59,68 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_leads: {
+        Row: {
+          admin_notes: string | null
+          annual_volume: string | null
+          assigned_to: string | null
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string
+          priority: Database["public"]["Enums"]["lead_priority"]
+          project_type: string
+          status: Database["public"]["Enums"]["lead_status"]
+          technical_requirements: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          annual_volume?: string | null
+          assigned_to?: string | null
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone: string
+          priority?: Database["public"]["Enums"]["lead_priority"]
+          project_type: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          technical_requirements: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          annual_volume?: string | null
+          assigned_to?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string
+          priority?: Database["public"]["Enums"]["lead_priority"]
+          project_type?: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          technical_requirements?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       product_catalog: {
         Row: {
           category: string
@@ -122,6 +184,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      lead_priority: "low" | "medium" | "high"
+      lead_status:
+        | "new"
+        | "contacted"
+        | "in_progress"
+        | "quoted"
+        | "closed"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -250,6 +320,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      lead_priority: ["low", "medium", "high"],
+      lead_status: [
+        "new",
+        "contacted",
+        "in_progress",
+        "quoted",
+        "closed",
+        "rejected",
+      ],
     },
   },
 } as const

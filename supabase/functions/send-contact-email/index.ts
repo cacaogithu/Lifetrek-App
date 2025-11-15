@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -8,6 +9,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface ContactEmailRequest {
   name: string;
@@ -97,10 +102,36 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Notification email sent successfully:", notificationEmailResponse);
 
+    // Save lead to database
+    const { data: leadData, error: leadError } = await supabase
+      .from('contact_leads')
+      .insert({
+        name,
+        email,
+        company,
+        phone,
+        project_type: projectType,
+        annual_volume: annualVolume,
+        technical_requirements: technicalRequirements,
+        message,
+        status: 'new',
+        priority: 'medium'
+      })
+      .select()
+      .single();
+
+    if (leadError) {
+      console.error('Error saving lead to database:', leadError);
+      // Don't fail the request if lead save fails, emails were already sent
+    } else {
+      console.log('Lead saved successfully:', leadData.id);
+    }
+
     return new Response(JSON.stringify({ 
       success: true, 
       customerEmail: customerEmailResponse,
-      notificationEmail: notificationEmailResponse 
+      notificationEmail: notificationEmailResponse,
+      leadId: leadData?.id 
     }), {
       status: 200,
       headers: {
