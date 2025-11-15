@@ -237,7 +237,10 @@ export type Database = {
           created_at: string
           cta_action: string | null
           desired_outcome: string | null
+          format: string | null
+          generation_settings: Json | null
           id: string
+          image_urls: Json | null
           is_favorite: boolean | null
           pain_point: string | null
           performance_metrics: Json | null
@@ -253,7 +256,10 @@ export type Database = {
           created_at?: string
           cta_action?: string | null
           desired_outcome?: string | null
+          format?: string | null
+          generation_settings?: Json | null
           id?: string
+          image_urls?: Json | null
           is_favorite?: boolean | null
           pain_point?: string | null
           performance_metrics?: Json | null
@@ -269,7 +275,10 @@ export type Database = {
           created_at?: string
           cta_action?: string | null
           desired_outcome?: string | null
+          format?: string | null
+          generation_settings?: Json | null
           id?: string
+          image_urls?: Json | null
           is_favorite?: boolean | null
           pain_point?: string | null
           performance_metrics?: Json | null
