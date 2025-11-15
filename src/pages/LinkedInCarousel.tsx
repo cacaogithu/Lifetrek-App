@@ -131,6 +131,11 @@ export default function LinkedInCarousel() {
   };
 
   const loadCarousel = (carousel: any) => {
+    if (!carousel.slides || !Array.isArray(carousel.slides)) {
+      toast.error("Invalid carousel data");
+      return;
+    }
+    
     setTopic(carousel.topic);
     setTargetAudience(carousel.target_audience);
     setPainPoint(carousel.pain_point || "");
@@ -501,7 +506,7 @@ ${carouselResult.caption}
                             </div>
                             <div className="flex flex-wrap gap-2 mb-2">
                               <Badge variant="outline">{carousel.target_audience}</Badge>
-                              <Badge variant="secondary">{carousel.slides.length} slides</Badge>
+                              <Badge variant="secondary">{carousel.slides?.length || 0} slides</Badge>
                             </div>
                             <p className="text-sm text-muted-foreground">
                               Created {new Date(carousel.created_at).toLocaleDateString()}
