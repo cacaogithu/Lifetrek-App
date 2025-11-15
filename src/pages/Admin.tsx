@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen, Sparkles } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen, Sparkles, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import { LeadsTable } from "@/components/admin/LeadsTable";
+import { LeadDetailsModal } from "@/components/admin/LeadDetailsModal";
+import { LeadFilters } from "@/components/admin/LeadFilters";
+import { LeadsStats } from "@/components/admin/LeadsStats";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 type AnalyticsData = {
   chatbot_interactions: number;
@@ -34,10 +40,50 @@ export default function Admin() {
     total_companies: 0,
     recent_events: [],
   });
+  const [leads, setLeads] = useState<any[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<any[]>([]);
+  const [selectedLead, setSelectedLead] = useState<any | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
 
   useEffect(() => {
     checkAdminAccess();
   }, []);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchAnalytics();
+      fetchLeads();
+    }
+  }, [isAdmin]);
+
+  useEffect(() => {
+    let filtered = [...leads];
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(lead =>
+        lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (lead.company && lead.company.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(lead => lead.status === statusFilter);
+    }
+
+    // Apply priority filter
+    if (priorityFilter !== "all") {
+      filtered = filtered.filter(lead => lead.priority === priorityFilter);
+    }
+
+    setFilteredLeads(filtered);
+  }, [leads, searchTerm, statusFilter, priorityFilter]);
 
   const checkAdminAccess = async () => {
     try {
@@ -98,6 +144,67 @@ export default function Admin() {
       console.error("Error fetching analytics:", error);
       toast.error("Failed to load analytics");
     }
+  };
+
+  const fetchLeads = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("contact_leads")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setLeads(data || []);
+      setFilteredLeads(data || []);
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+      toast.error("Failed to load leads");
+    }
+  };
+
+  const handleDeleteLead = async () => {
+    if (!leadToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("contact_leads")
+        .delete()
+        .eq("id", leadToDelete);
+
+      if (error) throw error;
+
+      toast.success("Lead deleted successfully");
+      await fetchLeads();
+      setLeadToDelete(null);
+    } catch (error) {
+      console.error("Error deleting lead:", error);
+      toast.error("Failed to delete lead");
+    }
+  };
+
+  const handleViewDetails = (lead: any) => {
+    setSelectedLead(lead);
+    setIsDetailsModalOpen(true);
+  };
+
+  const calculateLeadStats = () => {
+    const now = new Date();
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    const newLeads = leads.filter(lead => new Date(lead.created_at) >= yesterday).length;
+    const pendingLeads = leads.filter(lead => 
+      lead.status === 'new' || lead.status === 'contacted' || lead.status === 'in_progress'
+    ).length;
+    const closedLeads = leads.filter(lead => lead.status === 'closed').length;
+    const conversionRate = leads.length > 0 ? (closedLeads / leads.length) * 100 : 0;
+
+    return {
+      totalLeads: leads.length,
+      newLeads,
+      pendingLeads,
+      conversionRate
+    };
   };
 
   const handleLogout = async () => {
@@ -180,10 +287,14 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+          <TabsList className="grid w-full max-w-2xl grid-cols-3 mb-8">
             <TabsTrigger value="analytics">
               <TrendingUp className="mr-2 h-4 w-4" />
               Analytics
+            </TabsTrigger>
+            <TabsTrigger value="leads">
+              <Users className="mr-2 h-4 w-4" />
+              Leads
             </TabsTrigger>
             <TabsTrigger value="brand">
               <BookOpen className="mr-2 h-4 w-4" />
@@ -269,6 +380,43 @@ export default function Admin() {
                   </tbody>
                 </table>
               </div>
+            </Card>
+          </TabsContent>
+
+          {/* Leads Tab */}
+<TabsContent value="leads" className="space-y-6">
+            <LeadsStats {...calculateLeadStats()} />
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Filtros</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <LeadFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  statusFilter={statusFilter}
+                  onStatusChange={setStatusFilter}
+                  priorityFilter={priorityFilter}
+                  onPriorityChange={setPriorityFilter}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Todos os Leads ({filteredLeads.length})</CardTitle>
+                <CardDescription>
+                  Gerencie e acompanhe todos os leads recebidos pelo formulário de contato
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <LeadsTable
+                  leads={filteredLeads}
+                  onViewDetails={handleViewDetails}
+                  onDelete={(id) => setLeadToDelete(id)}
+                />
+              </CardContent>
             </Card>
           </TabsContent>
 
@@ -485,6 +633,28 @@ export default function Admin() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <LeadDetailsModal
+          lead={selectedLead}
+          open={isDetailsModalOpen}
+          onOpenChange={setIsDetailsModalOpen}
+          onUpdate={fetchLeads}
+        />
+
+        <AlertDialog open={!!leadToDelete} onOpenChange={() => setLeadToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir este lead? Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteLead}>Excluir</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
