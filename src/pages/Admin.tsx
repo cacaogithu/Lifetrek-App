@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen, Sparkles, BarChart3 } from "lucide-react";
+import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen, Sparkles, BarChart3, Presentation } from "lucide-react";
 import { toast } from "sonner";
 import { LeadsTable } from "@/components/admin/LeadsTable";
 import { LeadDetailsModal } from "@/components/admin/LeadDetailsModal";
@@ -355,7 +355,7 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full max-w-2xl grid-cols-3 mb-8">
+          <TabsList className="grid w-full max-w-2xl grid-cols-4 mb-8">
             <TabsTrigger value="analytics">
               <TrendingUp className="mr-2 h-4 w-4" />
               Analytics
@@ -363,6 +363,10 @@ export default function Admin() {
             <TabsTrigger value="leads">
               <Users className="mr-2 h-4 w-4" />
               Leads
+            </TabsTrigger>
+            <TabsTrigger value="linkedin">
+              <Presentation className="mr-2 h-4 w-4" />
+              LinkedIn
             </TabsTrigger>
             <TabsTrigger value="brand">
               <BookOpen className="mr-2 h-4 w-4" />
@@ -513,6 +517,24 @@ export default function Admin() {
                   onViewDetails={handleViewDetails}
                   onDelete={(id) => setLeadToDelete(id)}
                 />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* LinkedIn Carousels Tab */}
+          <TabsContent value="linkedin">
+            <Card>
+              <CardHeader>
+                <CardTitle>LinkedIn Carousel Generator</CardTitle>
+                <CardDescription>
+                  Create high-converting LinkedIn carousels using Hormozi's proven frameworks
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button onClick={() => navigate("/admin/linkedin-carousel")} className="w-full">
+                  <Presentation className="h-4 w-4 mr-2" />
+                  Open Carousel Generator
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
