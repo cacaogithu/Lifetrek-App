@@ -50,9 +50,25 @@ export default function AdminLogin() {
     }
   };
 
-  const handleDevLogin = () => {
-    setEmail("admin@precisionparts.com");
-    setPassword("admin123");
+  const handlePasswordReset = async () => {
+    if (!email) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/admin/login`,
+      });
+      
+      if (error) throw error;
+      toast.success("Password reset email sent! Check your inbox.");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send reset email");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,17 +123,16 @@ export default function AdminLogin() {
           </Button>
         </form>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <Button 
             type="button" 
-            variant="outline" 
-            className="w-full h-12 text-base" 
-            onClick={handleDevLogin}
+            variant="link" 
+            className="w-full text-base" 
+            onClick={handlePasswordReset}
             disabled={loading}
-            aria-label="Development login with pre-filled credentials"
+            aria-label="Reset password"
           >
-            <span className="mr-2" aria-hidden="true">🔧</span>
-            Dev Login (Development)
+            Forgot password?
           </Button>
         </div>
 
