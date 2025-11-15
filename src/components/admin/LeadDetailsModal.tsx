@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadPriorityIndicator } from "./LeadPriorityIndicator";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,7 +19,7 @@ interface Lead {
   email: string;
   company: string | null;
   phone: string;
-  project_type: string;
+  project_types: string[];
   annual_volume: string | null;
   technical_requirements: string;
   message: string | null;
@@ -29,6 +30,19 @@ interface Lead {
   created_at: string;
   updated_at: string;
 }
+
+const PROJECT_TYPE_LABELS: Record<string, string> = {
+  dental_implants: "Implantes Dentários",
+  orthopedic_implants: "Implantes Ortopédicos",
+  spinal_implants: "Implantes Espinhais",
+  veterinary_implants: "Implantes Veterinários",
+  surgical_instruments: "Instrumentos Cirúrgicos",
+  micro_precision_parts: "Peças de Micro Precisão",
+  custom_tooling: "Ferramental Customizado",
+  medical_devices: "Dispositivos Médicos",
+  measurement_tools: "Ferramentas de Medição",
+  other_medical: "Outros Médicos",
+};
 
 interface LeadDetailsModalProps {
   lead: Lead | null;
@@ -131,9 +145,15 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Detalhes do Projeto</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-muted-foreground">Tipo de Projeto</Label>
-                <p className="font-medium">{lead.project_type}</p>
+              <div className="col-span-2 space-y-2">
+                <Label className="text-muted-foreground">Tipos de Projeto</Label>
+                <div className="flex flex-wrap gap-2">
+                  {lead.project_types.map((type) => (
+                    <Badge key={type} variant="secondary">
+                      {PROJECT_TYPE_LABELS[type] || type}
+                    </Badge>
+                  ))}
+                </div>
               </div>
               <div className="space-y-2">
                 <Label className="text-muted-foreground">Volume Anual</Label>

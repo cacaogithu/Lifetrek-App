@@ -19,11 +19,28 @@ interface ContactEmailRequest {
   email: string;
   company?: string;
   phone: string;
-  projectType: string;
+  projectTypes: string[];
   annualVolume?: string;
   technicalRequirements: string;
   message?: string;
 }
+
+const PROJECT_TYPE_LABELS: Record<string, string> = {
+  dental_implants: "Implantes Dentários",
+  orthopedic_implants: "Implantes Ortopédicos",
+  spinal_implants: "Implantes Espinhais",
+  veterinary_implants: "Implantes Veterinários",
+  surgical_instruments: "Instrumentos Cirúrgicos",
+  micro_precision_parts: "Peças de Micro Precisão",
+  custom_tooling: "Ferramental Customizado",
+  medical_devices: "Dispositivos Médicos",
+  measurement_tools: "Ferramentas de Medição",
+  other_medical: "Outros Médicos",
+};
+
+const formatProjectTypes = (types: string[]): string => {
+  return types.map(type => PROJECT_TYPE_LABELS[type] || type).join(", ");
+};
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
@@ -31,9 +48,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, company, phone, projectType, annualVolume, technicalRequirements, message }: ContactEmailRequest = await req.json();
+    const { name, email, company, phone, projectTypes, annualVolume, technicalRequirements, message }: ContactEmailRequest = await req.json();
 
-    console.log("Sending contact email for:", { name, email, company, projectType });
+    console.log("Sending contact email for:", { name, email, company, projectTypes });
 
     // Send confirmation email to customer
     const customerEmailResponse = await resend.emails.send({
@@ -56,7 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
             <p style="color: #666;"><strong>E-mail / Email:</strong> ${email}</p>
             ${company ? `<p style="color: #666;"><strong>Empresa / Company:</strong> ${company}</p>` : ''}
             <p style="color: #666;"><strong>Telefone / Phone:</strong> ${phone}</p>
-            <p style="color: #666;"><strong>Tipo de Projeto / Project Type:</strong> ${projectType}</p>
+            <p style="color: #666;"><strong>Tipos de Projeto / Project Types:</strong> ${formatProjectTypes(projectTypes)}</p>
             ${annualVolume ? `<p style="color: #666;"><strong>Volume Anual / Annual Volume:</strong> ${annualVolume}</p>` : ''}
             <p style="color: #666;"><strong>Requisitos Técnicos / Technical Requirements:</strong><br>${technicalRequirements}</p>
             ${message ? `<p style="color: #666;"><strong>Mensagem Adicional / Additional Message:</strong><br>${message}</p>` : ''}
@@ -77,7 +94,7 @@ const handler = async (req: Request): Promise<Response> => {
     const notificationEmailResponse = await resend.emails.send({
       from: "Formulário de Contato <noreply@lifetrek-medical.com>",
       to: ["contato@lifetrek-medical.com"],
-      subject: `Nova Cotação: ${projectType} - ${name}`,
+      subject: `Nova Cotação: ${formatProjectTypes(projectTypes)} - ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #003366;">Nova Solicitação de Cotação</h1>
@@ -88,7 +105,7 @@ const handler = async (req: Request): Promise<Response> => {
             <p style="color: #666;"><strong>E-mail:</strong> ${email}</p>
             ${company ? `<p style="color: #666;"><strong>Empresa:</strong> ${company}</p>` : ''}
             <p style="color: #666;"><strong>Telefone:</strong> ${phone}</p>
-            <p style="color: #666;"><strong>Tipo de Projeto:</strong> ${projectType}</p>
+            <p style="color: #666;"><strong>Tipos de Projeto:</strong> ${formatProjectTypes(projectTypes)}</p>
             ${annualVolume ? `<p style="color: #666;"><strong>Volume Anual Esperado:</strong> ${annualVolume}</p>` : ''}
             
             <h3 style="color: #003366; margin-top: 20px;">Requisitos Técnicos:</h3>
@@ -110,7 +127,7 @@ const handler = async (req: Request): Promise<Response> => {
         email,
         company,
         phone,
-        project_type: projectType,
+        project_types: projectTypes,
         annual_volume: annualVolume,
         technical_requirements: technicalRequirements,
         message,

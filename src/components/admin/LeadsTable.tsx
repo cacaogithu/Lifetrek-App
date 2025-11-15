@@ -1,11 +1,24 @@
-import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2 } from "lucide-react";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadPriorityIndicator } from "./LeadPriorityIndicator";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+const PROJECT_TYPE_LABELS: Record<string, string> = {
+  dental_implants: "Implantes Dentários",
+  orthopedic_implants: "Implantes Ortopédicos",
+  spinal_implants: "Implantes Espinhais",
+  veterinary_implants: "Implantes Veterinários",
+  surgical_instruments: "Instrumentos Cirúrgicos",
+  micro_precision_parts: "Micro Precisão",
+  custom_tooling: "Ferramental",
+  medical_devices: "Dispositivos",
+  measurement_tools: "Medição",
+  other_medical: "Outros",
+};
 
 interface Lead {
   id: string;
@@ -13,7 +26,7 @@ interface Lead {
   email: string;
   company: string | null;
   phone: string;
-  project_type: string;
+  project_types: string[];
   annual_volume: string | null;
   technical_requirements: string;
   message: string | null;
@@ -39,11 +52,11 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
           <TableRow>
             <TableHead>Prioridade</TableHead>
             <TableHead>Nome</TableHead>
-            <TableHead>Empresa</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Telefone</TableHead>
-            <TableHead>Tipo de Projeto</TableHead>
-            <TableHead>Status</TableHead>
+        <TableHead>Empresa</TableHead>
+        <TableHead>Email</TableHead>
+        <TableHead>Telefone</TableHead>
+        <TableHead>Tipos de Projeto</TableHead>
+        <TableHead>Status</TableHead>
             <TableHead>Data</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
@@ -65,7 +78,15 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
                 <TableCell>{lead.company || '-'}</TableCell>
                 <TableCell>{lead.email}</TableCell>
                 <TableCell>{lead.phone}</TableCell>
-                <TableCell>{lead.project_type}</TableCell>
+                <TableCell>
+                  <div className="flex flex-wrap gap-1 max-w-xs">
+                    {lead.project_types?.map((type) => (
+                      <Badge key={type} variant="outline" className="text-xs">
+                        {PROJECT_TYPE_LABELS[type] || type}
+                      </Badge>
+                    )) || <span className="text-muted-foreground">-</span>}
+                  </div>
+                </TableCell>
                 <TableCell>
                   <LeadStatusBadge status={lead.status} />
                 </TableCell>

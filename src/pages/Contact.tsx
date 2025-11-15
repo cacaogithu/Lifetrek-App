@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import contactHero from "@/assets/facility/contact-hero.svg";
 import { trackAnalyticsEvent } from "@/utils/trackAnalytics";
+import { MultiSelect, Option } from "@/components/ui/multi-select";
 
 export default function Contact() {
   const { t } = useLanguage();
@@ -16,11 +18,24 @@ export default function Contact() {
     email: "",
     company: "",
     phone: "",
-    projectType: "",
+    projectTypes: [] as string[],
     annualVolume: "",
     technicalRequirements: "",
     message: "",
   });
+
+  const PROJECT_TYPE_OPTIONS: Option[] = [
+    { value: "dental_implants", label: "Implantes Dentários" },
+    { value: "orthopedic_implants", label: "Implantes Ortopédicos" },
+    { value: "spinal_implants", label: "Implantes Espinhais" },
+    { value: "veterinary_implants", label: "Implantes Veterinários" },
+    { value: "surgical_instruments", label: "Instrumentos Cirúrgicos" },
+    { value: "micro_precision_parts", label: "Peças de Micro Precisão" },
+    { value: "custom_tooling", label: "Ferramental Customizado" },
+    { value: "medical_devices", label: "Dispositivos Médicos" },
+    { value: "measurement_tools", label: "Ferramentas de Medição" },
+    { value: "other_medical", label: "Outros Médicos" },
+  ];
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,11 +44,11 @@ export default function Contact() {
     if (isSubmitting) return;
     
     // Basic validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.projectType || !formData.technicalRequirements) {
+    if (!formData.name || !formData.email || !formData.phone || formData.projectTypes.length === 0 || !formData.technicalRequirements) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please fill in all required fields.",
+        title: "Erro",
+        description: "Por favor, preencha todos os campos obrigatórios.",
       });
       return;
     }
@@ -59,7 +74,7 @@ export default function Contact() {
           email: formData.email,
           company: formData.company,
           phone: formData.phone,
-          projectType: formData.projectType,
+          projectTypes: formData.projectTypes,
           annualVolume: formData.annualVolume,
           technicalRequirements: formData.technicalRequirements,
           message: formData.message,
@@ -106,7 +121,7 @@ export default function Contact() {
         metadata: { 
           formType: "contact_quote", 
           name: formData.name,
-          projectType: formData.projectType
+          projectTypes: formData.projectTypes
         }
       });
 
@@ -120,8 +135,8 @@ export default function Contact() {
         email: "", 
         company: "", 
         phone: "", 
-        projectType: "", 
-        annualVolume: "", 
+        projectTypes: [], 
+        annualVolume: "",
         technicalRequirements: "", 
         message: "" 
       });
@@ -220,16 +235,16 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor="projectType" className="block text-sm font-medium mb-2">
-                    {t("contact.form.projectType")} *
-                  </label>
-                  <Input
-                    id="projectType"
-                    value={formData.projectType}
-                    onChange={(e) =>
-                      setFormData({ ...formData, projectType: e.target.value })
+                  <Label htmlFor="projectTypes" className="block text-sm font-medium mb-2">
+                    Tipos de Projeto *
+                  </Label>
+                  <MultiSelect
+                    options={PROJECT_TYPE_OPTIONS}
+                    selected={formData.projectTypes}
+                    onChange={(values) =>
+                      setFormData({ ...formData, projectTypes: values })
                     }
-                    required
+                    placeholder="Selecione os tipos de projeto..."
                   />
                 </div>
 
