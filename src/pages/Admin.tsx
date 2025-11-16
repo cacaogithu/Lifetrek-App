@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen, Sparkles, BarChart3, Presentation } from "lucide-react";
+import { Users, MessageSquare, FileText, Calendar, TrendingUp, LogOut, BookOpen, Sparkles, BarChart3, Presentation, Images } from "lucide-react";
 import { toast } from "sonner";
 import { LeadsTable } from "@/components/admin/LeadsTable";
 import { LeadDetailsModal } from "@/components/admin/LeadDetailsModal";
@@ -14,6 +14,7 @@ import { LeadsStats } from "@/components/admin/LeadsStats";
 import { ProjectTypeDistribution } from "@/components/admin/ProjectTypeDistribution";
 import { LeadAnalyticsTable } from "@/components/admin/LeadAnalyticsTable";
 import { AnalyticsFilters } from "@/components/admin/AnalyticsFilters";
+import { ProductGallery } from "@/components/admin/ProductGallery";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DateRange } from "react-day-picker";
 
@@ -355,7 +356,7 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full max-w-2xl grid-cols-4 mb-8">
+          <TabsList className="grid w-full max-w-3xl grid-cols-5 mb-8">
             <TabsTrigger value="analytics">
               <TrendingUp className="mr-2 h-4 w-4" />
               Analytics
@@ -363,6 +364,10 @@ export default function Admin() {
             <TabsTrigger value="leads">
               <Users className="mr-2 h-4 w-4" />
               Leads
+            </TabsTrigger>
+            <TabsTrigger value="gallery">
+              <Images className="mr-2 h-4 w-4" />
+              Galeria
             </TabsTrigger>
             <TabsTrigger value="linkedin">
               <Presentation className="mr-2 h-4 w-4" />
@@ -519,6 +524,24 @@ export default function Admin() {
                 />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Gallery Tab */}
+          <TabsContent value="gallery" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-3xl font-bold">Galeria de Produtos</h2>
+                <p className="text-muted-foreground">
+                  Todas as imagens processadas com IA
+                </p>
+              </div>
+              <Button onClick={() => navigate('/admin/image-processor')}>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Processar Novas Imagens
+              </Button>
+            </div>
+            
+            <ProductGallery />
           </TabsContent>
 
           {/* LinkedIn Carousels Tab */}
