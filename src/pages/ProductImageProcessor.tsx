@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Upload, Download, Sparkles, ArrowLeft, Check } from "lucide-react";
@@ -12,6 +13,11 @@ interface ProcessedImage {
   originalUrl: string;
   originalFile: File;
   enhancedUrl?: string;
+  analyzedName?: string;
+  analyzedDescription?: string;
+  analyzedCategory?: string;
+  brand?: string;
+  model?: string;
   isProcessing: boolean;
   error?: string;
 }
@@ -44,7 +50,7 @@ export default function ProductImageProcessor() {
     });
   };
 
-  const processImage = async (imageId: string) => {
+  const processImageWithAnalysis = async (imageId: string) => {
     const imageIndex = images.findIndex(img => img.id === imageId);
     if (imageIndex === -1) return;
 
@@ -56,19 +62,39 @@ export default function ProductImageProcessor() {
       const image = images[imageIndex];
       const imageData = await convertToBase64(image.originalFile);
 
-      const { data, error } = await supabase.functions.invoke('enhance-product-image', {
-        body: { imageData }
-      });
+      // Passo 1: Analisar produto (identificar nome/categoria)
+      const { data: analysisData, error: analysisError } = await supabase.functions.invoke(
+        'analyze-product-image',
+        { body: { imageUrl: imageData } }
+      );
 
-      if (error) throw error;
+      if (analysisError) throw analysisError;
 
+      // Passo 2: Otimizar imagem
+      const { data: enhancementData, error: enhancementError } = await supabase.functions.invoke(
+        'enhance-product-image',
+        { body: { imageData } }
+      );
+
+      if (enhancementError) throw enhancementError;
+
+      // Atualizar com todos os dados
       setImages(prev => prev.map(img => 
         img.id === imageId 
-          ? { ...img, enhancedUrl: data.enhancedImage, isProcessing: false }
+          ? { 
+              ...img, 
+              enhancedUrl: enhancementData.enhancedImage,
+              analyzedName: analysisData.name,
+              analyzedDescription: analysisData.description,
+              analyzedCategory: analysisData.category,
+              brand: analysisData.brand,
+              model: analysisData.model,
+              isProcessing: false 
+            }
           : img
       ));
       
-      toast.success('Imagem otimizada com sucesso!');
+      toast.success(`${analysisData.name} - Processado!`);
     } catch (error) {
       console.error('Error processing image:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erro ao processar imagem';
@@ -89,14 +115,29 @@ export default function ProductImageProcessor() {
     
     const unprocessedImages = images.filter(img => !img.enhancedUrl && !img.error);
     const total = unprocessedImages.length;
+    let completed = 0;
     
-    for (let i = 0; i < total; i++) {
-      await processImage(unprocessedImages[i].id);
-      setProgress(((i + 1) / total) * 100);
+    // Processar até 3 imagens em paralelo
+    const BATCH_SIZE = 3;
+    
+    for (let i = 0; i < total; i += BATCH_SIZE) {
+      const batch = unprocessedImages.slice(i, i + BATCH_SIZE);
+      
+      // Promise.all = processa todas do batch em paralelo
+      await Promise.all(
+        batch.map(img => 
+          processImageWithAnalysis(img.id)
+            .then(() => {
+              completed++;
+              setProgress((completed / total) * 100);
+            })
+            .catch(err => console.error('Batch error:', err))
+        )
+      );
     }
     
     setIsProcessingBatch(false);
-    toast.success('Processamento em lote concluído!');
+    toast.success(`${completed} imagens processadas em paralelo!`);
   };
 
   const downloadImage = (url: string, filename: string) => {
@@ -109,7 +150,10 @@ export default function ProductImageProcessor() {
   const downloadAll = () => {
     images.forEach((img, index) => {
       if (img.enhancedUrl) {
-        downloadImage(img.enhancedUrl, `product-enhanced-${index + 1}.png`);
+        const filename = img.analyzedName 
+          ? `${img.analyzedName.toLowerCase().replace(/\s+/g, '-')}.png`
+          : `product-enhanced-${index + 1}.png`;
+        downloadImage(img.enhancedUrl, filename);
       }
     });
     toast.success('Download iniciado para todas as imagens processadas');
@@ -243,22 +287,46 @@ export default function ProductImageProcessor() {
               </div>
             )}
 
+            {image.analyzedName && (
+              <div className="mb-4 p-4 bg-muted rounded-lg">
+                <h3 className="font-semibold text-lg mb-1">{image.analyzedName}</h3>
+                {(image.brand || image.model) && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {[image.brand, image.model].filter(Boolean).join(' • ')}
+                  </p>
+                )}
+                <p className="text-sm text-muted-foreground mb-2">
+                  {image.analyzedDescription}
+                </p>
+                {image.analyzedCategory && (
+                  <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary/10 text-primary">
+                    {image.analyzedCategory}
+                  </span>
+                )}
+              </div>
+            )}
+
             <div className="flex gap-2">
               {!image.enhancedUrl && !image.isProcessing && (
                 <Button
-                  onClick={() => processImage(image.id)}
+                  onClick={() => processImageWithAnalysis(image.id)}
                   size="sm"
                   className="flex-1"
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
-                  Processar
+                  Analisar & Processar
                 </Button>
               )}
               
               {image.enhancedUrl && (
                 <>
                   <Button
-                    onClick={() => downloadImage(image.enhancedUrl!, `product-enhanced-${image.id}.png`)}
+                    onClick={() => {
+                      const filename = image.analyzedName 
+                        ? `${image.analyzedName.toLowerCase().replace(/\s+/g, '-')}.png`
+                        : `product-enhanced-${image.id}.png`;
+                      downloadImage(image.enhancedUrl!, filename);
+                    }}
                     size="sm"
                     variant="outline"
                     className="flex-1"
