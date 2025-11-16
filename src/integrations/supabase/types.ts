@@ -290,6 +290,63 @@ export type Database = {
         }
         Relationships: []
       }
+      processed_product_images: {
+        Row: {
+          brand: string | null
+          category: string
+          created_at: string
+          custom_prompt: string | null
+          description: string | null
+          enhanced_url: string
+          file_size: number | null
+          id: string
+          is_featured: boolean | null
+          is_visible: boolean | null
+          model: string | null
+          name: string
+          original_filename: string
+          original_url: string
+          processed_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          brand?: string | null
+          category: string
+          created_at?: string
+          custom_prompt?: string | null
+          description?: string | null
+          enhanced_url: string
+          file_size?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_visible?: boolean | null
+          model?: string | null
+          name: string
+          original_filename: string
+          original_url: string
+          processed_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          brand?: string | null
+          category?: string
+          created_at?: string
+          custom_prompt?: string | null
+          description?: string | null
+          enhanced_url?: string
+          file_size?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_visible?: boolean | null
+          model?: string | null
+          name?: string
+          original_filename?: string
+          original_url?: string
+          processed_by?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_catalog: {
         Row: {
           category: string

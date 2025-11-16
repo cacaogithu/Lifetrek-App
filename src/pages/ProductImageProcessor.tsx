@@ -51,6 +51,80 @@ export default function ProductImageProcessor() {
     });
   };
 
+  const saveToStorage = async (
+    originalFile: File,
+    enhancedImageUrl: string,
+    analysis: {
+      name: string;
+      description: string;
+      category: string;
+      brand?: string;
+      model?: string;
+    },
+    customPrompt?: string
+  ) => {
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // 1. Upload original image
+      const originalPath = `originals/${Date.now()}-${originalFile.name}`;
+      const { error: uploadOriginalError } = await supabase.storage
+        .from('processed-products')
+        .upload(originalPath, originalFile);
+
+      if (uploadOriginalError) throw uploadOriginalError;
+
+      // 2. Convert enhanced image (base64) to Blob and upload
+      const enhancedBlob = await fetch(enhancedImageUrl).then(r => r.blob());
+      const enhancedPath = `enhanced/${Date.now()}-${analysis.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+      
+      const { error: uploadEnhancedError } = await supabase.storage
+        .from('processed-products')
+        .upload(enhancedPath, enhancedBlob, {
+          contentType: 'image/png',
+          cacheControl: '3600'
+        });
+
+      if (uploadEnhancedError) throw uploadEnhancedError;
+
+      // 3. Get public URLs
+      const { data: { publicUrl: originalPublicUrl } } = supabase.storage
+        .from('processed-products')
+        .getPublicUrl(originalPath);
+
+      const { data: { publicUrl: enhancedPublicUrl } } = supabase.storage
+        .from('processed-products')
+        .getPublicUrl(enhancedPath);
+
+      // 4. Save metadata to database
+      const { data: savedImage, error: dbError } = await supabase
+        .from('processed_product_images')
+        .insert({
+          original_url: originalPublicUrl,
+          enhanced_url: enhancedPublicUrl,
+          name: analysis.name,
+          description: analysis.description,
+          category: analysis.category,
+          brand: analysis.brand,
+          model: analysis.model,
+          original_filename: originalFile.name,
+          file_size: originalFile.size,
+          custom_prompt: customPrompt,
+          processed_by: user?.id
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      return savedImage;
+    } catch (error) {
+      console.error('Error saving to storage:', error);
+      throw error;
+    }
+  };
+
   const processImageWithAnalysis = async (imageId: string) => {
     const imageIndex = images.findIndex((img) => img.id === imageId);
     if (imageIndex === -1) return;
@@ -78,6 +152,20 @@ export default function ProductImageProcessor() {
 
       if (enhancementError) throw enhancementError;
 
+      // Passo 3: Salvar no Supabase Storage
+      await saveToStorage(
+        image.originalFile,
+        enhancementData.enhancedImage,
+        {
+          name: analysisData.name,
+          description: analysisData.description,
+          category: analysisData.category,
+          brand: analysisData.brand,
+          model: analysisData.model
+        },
+        customPrompt || undefined
+      );
+
       // Atualizar com todos os dados
       setImages((prev) =>
         prev.map((img) =>
@@ -96,7 +184,9 @@ export default function ProductImageProcessor() {
         ),
       );
 
-      toast.success(`${analysisData.name} - Processado!`);
+      toast.success(`${analysisData.name} - Processado e salvo!`, {
+        description: 'Imagem disponível na galeria'
+      });
     } catch (error) {
       console.error("Error processing image:", error);
       const errorMessage = error instanceof Error ? error.message : "Erro ao processar imagem";
