@@ -27,6 +27,7 @@ export default function ProductImageProcessor() {
   const [images, setImages] = useState<ProcessedImage[]>([]);
   const [isProcessingBatch, setIsProcessingBatch] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [customPrompt, setCustomPrompt] = useState<string>("");
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -72,7 +73,7 @@ export default function ProductImageProcessor() {
       // Passo 2: Otimizar imagem
       const { data: enhancementData, error: enhancementError } = await supabase.functions.invoke(
         "enhance-product-image",
-        { body: { imageData } },
+        { body: { imageData, prompt: customPrompt || undefined } },
       );
 
       if (enhancementError) throw enhancementError;
@@ -177,7 +178,7 @@ export default function ProductImageProcessor() {
         <p className="text-muted-foreground">Transforme suas fotos de produtos em imagens profissionais com IA</p>
       </div>
 
-      <Card className="p-6 mb-6">
+      <Card className="p-6 mb-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
           <div>
             <label htmlFor="file-upload" className="cursor-pointer">
@@ -223,6 +224,22 @@ export default function ProductImageProcessor() {
               </Button>
             )}
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="custom-prompt" className="text-sm font-medium">
+            Prompt Customizado (Opcional)
+          </label>
+          <textarea
+            id="custom-prompt"
+            value={customPrompt}
+            onChange={(e) => setCustomPrompt(e.target.value)}
+            placeholder="Deixe em branco para usar o prompt padrão de photoshoot profissional. Ou customize para necessidades específicas..."
+            className="w-full min-h-[100px] p-3 text-sm rounded-md border border-input bg-background resize-y"
+          />
+          <p className="text-xs text-muted-foreground">
+            💡 Prompt padrão: Photoshoot profissional com iluminação de estúdio, fundo branco, detalhes em alta resolução
+          </p>
         </div>
 
         {isProcessingBatch && (
