@@ -21,9 +21,34 @@ serve(async (req) => {
 
     console.log('Enhancing product image with Lovable AI...');
 
-    // Professional medical/dental product photography prompt
+    // Professional medical/dental product photography prompt - inspired by high-end medical equipment catalogs
     const enhancementPrompt = prompt || 
-      "Transform this into a professional medical/dental product photograph: studio lighting with soft shadows, clean white or transparent background, ultra-sharp focus on product details, high-resolution 4K quality, professional color grading, metallic surfaces with proper reflections, remove any imperfections while maintaining authentic product appearance";
+      `Transform this into a premium medical equipment photoshoot worthy of a high-end catalog:
+
+LIGHTING & STUDIO SETUP:
+- Professional 3-point studio lighting with soft diffused key light and subtle rim lighting
+- Dramatic yet clean shadows that emphasize product dimensionality
+- Perfectly balanced exposure highlighting metallic surfaces and precision details
+
+BACKGROUND & COMPOSITION:
+- Pure white seamless background (RGB 255,255,255) or subtle gradient for depth
+- Product positioned with optimal viewing angle showing key features
+- Clean, minimalist composition following rule of thirds
+- Slight depth of field to isolate subject while maintaining sharpness
+
+MATERIAL & SURFACE TREATMENT:
+- Crystal-clear rendering of metallic surfaces (titanium, stainless steel) with accurate reflections
+- Showcase precision machining marks and surface finish authenticity
+- Remove dust, fingerprints, and minor imperfections while preserving genuine texture
+- Enhance contrast and micro-details without over-processing
+
+TECHNICAL SPECS:
+- Ultra-high resolution 4K quality (minimum 3840×2160 equivalent sharpness)
+- Professional color grading with neutral white balance
+- Slight contrast boost for commercial appeal
+- Maintain product authenticity - no artificial effects or unrealistic enhancements
+
+OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment catalogs, websites, and marketing materials.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
