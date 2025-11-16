@@ -168,6 +168,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          lead_score: number | null
           message: string | null
           name: string
           phone: string
@@ -176,6 +177,7 @@ export type Database = {
           project_types:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          score_breakdown: Json | null
           status: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at: string
@@ -188,6 +190,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          lead_score?: number | null
           message?: string | null
           name: string
           phone: string
@@ -196,6 +199,7 @@ export type Database = {
           project_types?:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          score_breakdown?: Json | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at?: string
@@ -208,6 +212,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          lead_score?: number | null
           message?: string | null
           name?: string
           phone?: string
@@ -216,6 +221,7 @@ export type Database = {
           project_types?:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          score_breakdown?: Json | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements?: string
           updated_at?: string

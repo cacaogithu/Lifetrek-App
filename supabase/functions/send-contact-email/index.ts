@@ -119,7 +119,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Customer email sent successfully:", customerEmailResponse);
 
-    // Save lead to database
+    // Save lead to database (without score initially)
     const { data: leadData, error: leadError } = await supabase
       .from('contact_leads')
       .insert({
@@ -132,7 +132,8 @@ const handler = async (req: Request): Promise<Response> => {
         technical_requirements: technicalRequirements,
         message,
         status: 'new',
-        priority: 'medium'
+        priority: 'medium',
+        lead_score: 0
       })
       .select()
       .single();
@@ -148,6 +149,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Research company and generate AI suggestions (non-blocking)
     let companyResearch = null;
     let aiSuggestion = null;
+    let leadScore = null;
 
     if (leadId) {
       try {
@@ -165,6 +167,50 @@ const handler = async (req: Request): Promise<Response> => {
         if (researchResponse.ok) {
           companyResearch = await researchResponse.json();
           console.log('Company research completed');
+
+          // Calculate lead score
+          console.log('Calculating lead score...');
+          try {
+            const scoreResponse = await fetch(`${supabaseUrl}/functions/v1/calculate-lead-score`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${supabaseKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                lead: {
+                  project_types: projectTypes,
+                  annual_volume: annualVolume,
+                  technical_requirements: technicalRequirements,
+                  message,
+                  company,
+                  name,
+                  email,
+                  phone
+                },
+                companyResearch
+              })
+            });
+
+            if (scoreResponse.ok) {
+              leadScore = await scoreResponse.json();
+              console.log('Lead score calculated:', leadScore.score);
+
+              // Update lead with score
+              await supabase
+                .from('contact_leads')
+                .update({
+                  lead_score: leadScore.score,
+                  score_breakdown: leadScore.breakdown,
+                  priority: leadScore.score >= 80 ? 'high' : leadScore.score >= 60 ? 'medium' : 'low'
+                })
+                .eq('id', leadId);
+
+              console.log('Lead updated with score');
+            }
+          } catch (scoreError) {
+            console.error('Error calculating lead score:', scoreError);
+          }
 
           // Generate AI response suggestion using Lovable AI
           const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
@@ -304,6 +350,23 @@ Provide your suggestion in JSON format with these fields:
             ${message ? `<h3 style="color: #003366; margin-top: 20px;">Mensagem Adicional:</h3><p style="color: #666; white-space: pre-wrap;">${message}</p>` : ''}
           </div>
 
+          ${leadScore ? `
+          <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+            <h2 style="color: #92400e; margin-top: 0;">⭐ Lead Score: ${leadScore.score}/100 - ${leadScore.category.toUpperCase()}</h2>
+            <div style="color: #78350f; font-size: 14px;">
+              <p><strong>Company Size:</strong> ${leadScore.breakdown.companySize}/15</p>
+              <p><strong>Industry Match:</strong> ${leadScore.breakdown.industryMatch}/15</p>
+              <p><strong>Website Quality:</strong> ${leadScore.breakdown.websiteQuality}/20</p>
+              <p><strong>LinkedIn Presence:</strong> ${leadScore.breakdown.linkedinPresence}/20</p>
+              <p><strong>Project Complexity:</strong> ${leadScore.breakdown.projectComplexity}/15</p>
+              <p><strong>Annual Volume:</strong> ${leadScore.breakdown.annualVolume}/15</p>
+              <p><strong>Technical Detail:</strong> ${leadScore.breakdown.technicalDetail}/5</p>
+              <p><strong>Completeness:</strong> ${leadScore.breakdown.completeness}/3</p>
+              <p><strong>Urgency:</strong> ${leadScore.breakdown.urgency}/2</p>
+            </div>
+          </div>
+          ` : ''}
+
           ${companyResearch ? `
           <div style="background-color: #e0f2fe; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0284c7;">
             <h2 style="color: #0c4a6e; margin-top: 0;">📊 Company Research</h2>
@@ -374,6 +437,7 @@ Provide your suggestion in JSON format with these fields:
       customerEmail: customerEmailResponse,
       notificationEmail: enhancedNotificationEmail,
       leadId,
+      leadScore: leadScore || null,
       hasResearch: !!companyResearch,
       hasSuggestion: !!aiSuggestion
     }), {

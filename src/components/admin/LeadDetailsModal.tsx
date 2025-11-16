@@ -30,6 +30,8 @@ interface Lead {
   assigned_to: string | null;
   created_at: string;
   updated_at: string;
+  lead_score: number | null;
+  score_breakdown: any | null;
 }
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
@@ -176,6 +178,77 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               </div>
             </div>
           </div>
+
+          {/* Lead Score Section */}
+          {lead.lead_score !== null && (
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">Lead Score</h3>
+              <div className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-semibold">Score Total</span>
+                  <Badge 
+                    variant={
+                      lead.lead_score >= 80 ? "default" : 
+                      lead.lead_score >= 60 ? "secondary" : 
+                      "outline"
+                    }
+                    className={`text-lg px-4 py-2 ${
+                      lead.lead_score >= 80 ? "bg-red-500 hover:bg-red-600" : 
+                      lead.lead_score >= 60 ? "bg-amber-500 hover:bg-amber-600" : 
+                      ""
+                    }`}
+                  >
+                    {lead.lead_score >= 80 ? "🔥 HOT" : lead.lead_score >= 60 ? "⚡ WARM" : "❄️ COLD"} - {lead.lead_score}/100
+                  </Badge>
+                </div>
+                
+                {lead.score_breakdown && (
+                  <div className="grid grid-cols-2 gap-3 pt-3 border-t">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Company Size</span>
+                        <span className="font-medium">{lead.score_breakdown.companySize}/15</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Industry Match</span>
+                        <span className="font-medium">{lead.score_breakdown.industryMatch}/15</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Website Quality</span>
+                        <span className="font-medium">{lead.score_breakdown.websiteQuality}/20</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">LinkedIn Presence</span>
+                        <span className="font-medium">{lead.score_breakdown.linkedinPresence}/20</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Urgency</span>
+                        <span className="font-medium">{lead.score_breakdown.urgency}/2</span>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Project Complexity</span>
+                        <span className="font-medium">{lead.score_breakdown.projectComplexity}/15</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Annual Volume</span>
+                        <span className="font-medium">{lead.score_breakdown.annualVolume}/15</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Technical Detail</span>
+                        <span className="font-medium">{lead.score_breakdown.technicalDetail}/5</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Form Completeness</span>
+                        <span className="font-medium">{lead.score_breakdown.completeness}/3</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Project Details */}
           <div className="space-y-4">

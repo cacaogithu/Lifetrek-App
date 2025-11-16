@@ -58,11 +58,11 @@ export function LeadCaptureForm({ inputs, results, onBack }: LeadCaptureFormProp
 
       if (error) throw error;
 
-      setIsSubmitted(true);
-      toast({
-        title: t("leadCapture.toast.successTitle"),
-        description: t("leadCapture.toast.successDescription"),
-      });
+    setIsSubmitted(true);
+    toast({
+      title: t("leadCapture.toast.successTitle"),
+      description: t("leadCapture.toast.successDescription"),
+    });
     } catch (error) {
       console.error('Error sending report:', error);
       toast({

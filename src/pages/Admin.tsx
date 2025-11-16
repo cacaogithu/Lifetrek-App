@@ -171,6 +171,7 @@ export default function Admin() {
       const { data, error } = await supabase
         .from("contact_leads")
         .select("*")
+        .order("lead_score", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false });
 
       if (error) throw error;
