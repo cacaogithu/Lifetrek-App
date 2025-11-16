@@ -10,13 +10,13 @@ import labOverview from "@/assets/metrology/lab-overview.webp";
 import polimento from "@/assets/metrology/polimento.webp";
 import cortadora from "@/assets/metrology/cortadora.webp";
 import embutidora from "@/assets/metrology/embutidora.webp";
-import doosan from "@/assets/equipment/doosan.jpg";
-import citizenM32 from "@/assets/equipment/citizen-m32-new.png";
+import doosan from "@/assets/equipment/doosan-new.png";
+import citizenM32 from "@/assets/equipment/citizen-new.png";
 import citizenL20 from "@/assets/equipment/citizen-l20-new.png";
 import tornosGT26 from "@/assets/equipment/tornos-gt26.webp";
 import walter from "@/assets/equipment/walter.webp";
 import robodrill from "@/assets/equipment/robodrill.webp";
-import electropolishLine from "@/assets/equipment/electropolish-line.webp";
+import electropolishLine from "@/assets/equipment/electropolish-line-new.png";
 import laserMarking from "@/assets/equipment/laser-marking.webp";
 import zeissContura from "@/assets/metrology/zeiss-contura-new.png";
 
