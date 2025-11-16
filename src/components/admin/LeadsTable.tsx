@@ -36,6 +36,8 @@ interface Lead {
   assigned_to: string | null;
   created_at: string;
   updated_at: string;
+  lead_score: number | null;
+  score_breakdown: any | null;
 }
 
 interface LeadsTableProps {
@@ -50,6 +52,7 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Score</TableHead>
             <TableHead>Prioridade</TableHead>
             <TableHead>Nome</TableHead>
         <TableHead>Empresa</TableHead>
@@ -71,6 +74,28 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
           ) : (
             leads.map((lead) => (
               <TableRow key={lead.id}>
+                <TableCell>
+                  {lead.lead_score !== null ? (
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        variant={
+                          lead.lead_score >= 80 ? "default" : 
+                          lead.lead_score >= 60 ? "secondary" : 
+                          "outline"
+                        }
+                        className={
+                          lead.lead_score >= 80 ? "bg-red-500 hover:bg-red-600" : 
+                          lead.lead_score >= 60 ? "bg-amber-500 hover:bg-amber-600" : 
+                          ""
+                        }
+                      >
+                        {lead.lead_score >= 80 ? "🔥" : lead.lead_score >= 60 ? "⚡" : "❄️"} {lead.lead_score}
+                      </Badge>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">-</span>
+                  )}
+                </TableCell>
                 <TableCell>
                   <LeadPriorityIndicator priority={lead.priority} />
                 </TableCell>
