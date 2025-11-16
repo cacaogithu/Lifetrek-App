@@ -20,57 +20,55 @@ export const ImageComparisonSlider = ({
     <div className="space-y-4">
       <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
         {/* After Image (full) */}
-        <img
-          src={afterImage}
-          alt={afterLabel}
-          className="absolute top-0 left-0 w-full h-full object-contain"
-        />
+        <div className="absolute inset-0">
+          <img
+            src={afterImage}
+            alt={afterLabel}
+            className="w-full h-full object-contain"
+          />
+        </div>
 
         {/* Before Image (clipped) */}
         <div
-          className="absolute top-0 left-0 h-full overflow-hidden"
-          style={{ width: `${sliderPosition[0]}%` }}
+          className="absolute inset-0 overflow-hidden"
+          style={{ clipPath: `inset(0 ${100 - sliderPosition[0]}% 0 0)` }}
         >
           <img
             src={beforeImage}
             alt={beforeLabel}
             className="w-full h-full object-contain"
-            style={{
-              width: "100vw",
-              maxWidth: "none",
-              position: "absolute",
-              left: 0,
-            }}
           />
         </div>
 
         {/* Divider Line */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-white shadow-lg"
-          style={{ left: `${sliderPosition[0]}%` }}
+          className="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10 pointer-events-none"
+          style={{ left: `${sliderPosition[0]}%`, transform: 'translateX(-50%)' }}
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-primary rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center pointer-events-auto cursor-ew-resize">
+            <div className="w-6 h-6 border-2 border-primary rounded-full" />
           </div>
         </div>
 
         {/* Labels */}
-        <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
+        <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm z-20">
           {beforeLabel}
         </div>
-        <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
+        <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-sm z-20">
           {afterLabel}
         </div>
       </div>
 
       {/* Slider Control */}
-      <Slider
-        value={sliderPosition}
-        onValueChange={setSliderPosition}
-        max={100}
-        step={1}
-        className="w-full"
-      />
+      <div className="px-2">
+        <Slider
+          value={sliderPosition}
+          onValueChange={setSliderPosition}
+          max={100}
+          step={1}
+          className="w-full"
+        />
+      </div>
     </div>
   );
 };
