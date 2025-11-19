@@ -17,8 +17,8 @@ import citizenM32 from "@/assets/equipment/citizen-m32.jpg";
 import doosan from "@/assets/equipment/doosan.png";
 import robodrill from "@/assets/equipment/robodrill.webp";
 import walter from "@/assets/equipment/walter.webp";
-import zeissContura from "@/assets/equipment/zeiss-contura.webp";
-import opticalCNC from "@/assets/equipment/optical-cnc.webp";
+import zeissContura from "@/assets/metrology/zeiss-contura.webp";
+import opticalCNC from "@/assets/metrology/optical-cnc.webp";
 
 // Products
 import medicalScrew from "@/assets/products/medical-screw-hero.webp";
