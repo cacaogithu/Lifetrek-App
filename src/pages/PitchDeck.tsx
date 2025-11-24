@@ -18,7 +18,10 @@ import {
   FileX,
   Clock,
   Target,
-  Microscope
+  Microscope,
+  Zap,
+  Factory,
+  Layers
 } from "lucide-react";
 
 // Assets
@@ -69,9 +72,9 @@ import torideNew from "@/assets/clients/toride-new.png";
 import ultradentNew from "@/assets/clients/ultradent-new.png";
 import vinculaNew from "@/assets/clients/vincula-new.png";
 
-// Glass Card Component
+// Glass Card Component - Premium Subtle Shading
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`bg-background/60 backdrop-blur-xl border border-border/30 rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] transition-all duration-500 ${className}`}>
+  <div className={`bg-background/50 backdrop-blur-2xl border border-border/20 rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.1)] transition-all duration-700 ${className}`}>
     {children}
   </div>
 );
@@ -133,9 +136,9 @@ const PitchDeck = () => {
                   { title: "Fabricantes de Dispositivos Dentais", desc: "Implantes, instrumentos e componentes protéticos" },
                   { title: "Empresas de Implantes Veterinários", desc: "Dispositivos ortopédicos para animais de grande e pequeno porte" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-4">
-                    <Check className="text-accent-orange w-8 h-8 mt-1 flex-shrink-0" />
-                    <div><h3 className="text-2xl font-semibold mb-2 text-foreground">{item.title}</h3><p className="text-lg text-muted-foreground">{item.desc}</p></div>
+                  <div key={i} className="flex items-start gap-4 group">
+                    <Check className="text-accent-orange w-6 h-6 mt-1 flex-shrink-0" strokeWidth={1.5} />
+                    <div className="border-l border-accent-orange/10 pl-3"><h3 className="text-2xl font-semibold mb-2 text-foreground">{item.title}</h3><p className="text-lg text-muted-foreground">{item.desc}</p></div>
                   </div>
                 ))}
               </div>
@@ -144,14 +147,15 @@ const PitchDeck = () => {
                   { title: "Hospitais e Sistemas de Saúde", desc: "Instrumentos cirúrgicos customizados e ferramentas específicas" },
                   { title: "Parceiros OEM / Contract Manufacturing", desc: "Empresas que precisam de capacidade de manufatura certificada ISO 13485" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-4">
-                    <Check className="text-accent-orange w-8 h-8 mt-1 flex-shrink-0" />
-                    <div><h3 className="text-2xl font-semibold mb-2 text-foreground">{item.title}</h3><p className="text-lg text-muted-foreground">{item.desc}</p></div>
+                  <div key={i} className="flex items-start gap-4 group">
+                    <Check className="text-accent-orange w-6 h-6 mt-1 flex-shrink-0" strokeWidth={1.5} />
+                    <div className="border-l border-accent-orange/10 pl-3"><h3 className="text-2xl font-semibold mb-2 text-foreground">{item.title}</h3><p className="text-lg text-muted-foreground">{item.desc}</p></div>
                   </div>
                 ))}
               </div>
             </div>
-            <GlassCard className="p-8 border-l-4 border-primary">
+            <GlassCard className="p-8 border-l-2 border-primary relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-1 h-12 bg-gradient-to-b from-accent-orange/30 to-transparent" />
               <p className="text-3xl font-semibold text-foreground leading-relaxed">
                 "Se seu produto entra em um corpo humano ou animal, nós fabricamos como se nossa própria vida dependesse disso."
               </p>
@@ -177,8 +181,9 @@ const PitchDeck = () => {
                 { Icon: FileX, title: "Fornecedores sem ISO 13485", desc: "Parceiros que não entendem requisitos médicos e não têm sistemas de qualidade certificados." },
                 { Icon: AlertTriangle, title: "Um Lote Ruim = Dano Permanente", desc: "Reputação destruída, confiança de médicos perdida e processos legais custosos." }
               ].map((item, i) => (
-                <div key={i} className="bg-card border border-border/50 rounded-2xl p-8 hover:border-primary/30 transition-all duration-300">
-                  <item.Icon className="w-12 h-12 text-foreground/70 mb-4" />
+                <div key={i} className="bg-card border border-border/30 rounded-2xl p-8 hover:border-primary/20 hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.05)] transition-all duration-500 relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-accent-orange/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <item.Icon className="w-10 h-10 text-foreground/60 mb-4" strokeWidth={1.5} />
                   <h3 className="text-2xl font-bold mb-3 text-foreground">{item.title}</h3>
                   <p className="text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
@@ -197,15 +202,16 @@ const PitchDeck = () => {
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Nossa Promessa</h2>
             <p className="text-3xl font-light text-muted-foreground mb-16">Lifetrek Medical = Manufatura "sem surpresas"</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-l-2 border-accent-orange/20 pl-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-l border-accent-orange/10 pl-8">
               {[
-                { Icon: Target, color: "text-primary", title: "Foco Exclusivo Médico", desc: "30+ anos exclusivamente em implantes e instrumentos cirúrgicos. Não fazemos automotive, aerospace ou consumer. Apenas medical." },
-                { Icon: CheckCircle, color: "text-accent", title: "QMS Certificado", desc: "ISO 13485:2016 completo, com auditorias anuais. Sistemas de qualidade que funcionam de verdade, não apenas documentos na gaveta." },
-                { Icon: Microscope, color: "text-primary", title: "Mentalidade Zero-Defeito", desc: "CMM ZEISS 3D, inspeção óptica automatizada, análise de dureza e rugosidade. Medimos tudo, documentamos tudo." },
-                { Icon: Shield, color: "text-accent", title: "Audit-Ready Day One", desc: "Rastreabilidade completa desde matéria-prima até embalagem final. Seus auditores vão adorar nossos arquivos." }
+                { Icon: Target, color: "text-primary", accent: "accent-orange", title: "Foco Exclusivo Médico", desc: "30+ anos exclusivamente em implantes e instrumentos cirúrgicos. Não fazemos automotive, aerospace ou consumer. Apenas medical." },
+                { Icon: CheckCircle, color: "text-accent", accent: "accent", title: "QMS Certificado", desc: "ISO 13485:2016 completo, com auditorias anuais. Sistemas de qualidade que funcionam de verdade, não apenas documentos na gaveta." },
+                { Icon: Microscope, color: "text-primary", accent: "accent-orange", title: "Mentalidade Zero-Defeito", desc: "CMM ZEISS 3D, inspeção óptica automatizada, análise de dureza e rugosidade. Medimos tudo, documentamos tudo." },
+                { Icon: Shield, color: "text-accent", accent: "accent", title: "Audit-Ready Day One", desc: "Rastreabilidade completa desde matéria-prima até embalagem final. Seus auditores vão adorar nossos arquivos." }
               ].map((item, i) => (
-                <GlassCard key={i} className="p-10">
-                  <item.Icon className={`w-16 h-16 ${item.color} mb-6`} />
+                <GlassCard key={i} className="p-10 relative overflow-hidden group">
+                  <div className={`absolute top-0 right-0 w-16 h-0.5 bg-${item.accent}/20`} />
+                  <item.Icon className={`w-12 h-12 ${item.color} mb-6`} strokeWidth={1.5} />
                   <h3 className="text-3xl font-bold mb-4 text-foreground">{item.title}</h3>
                   <p className="text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
                 </GlassCard>
@@ -230,8 +236,9 @@ const PitchDeck = () => {
                 { Icon: PawPrint, bg: veterinaryImplant1, title: "Implantes Veterinários", desc: "Dispositivos ortopédicos para animais de grande e pequeno porte, placas, parafusos e sistemas de fixação veterinários." }
               ].map((item, i) => (
                 <GlassCard key={i} className="p-10 group relative overflow-hidden">
-                  <div className="absolute inset-0 bg-cover bg-center opacity-[0.05]" style={{ backgroundImage: `url(${item.bg})` }} />
-                  <item.Icon className="relative z-10 w-16 h-16 text-primary group-hover:text-accent-orange transition-colors duration-300 mb-6" />
+                  <div className="absolute inset-0 bg-cover bg-center opacity-[0.04]" style={{ backgroundImage: `url(${item.bg})` }} />
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent-orange/20 via-transparent to-transparent" />
+                  <item.Icon className="relative z-10 w-12 h-12 text-primary group-hover:text-accent-orange transition-colors duration-500 mb-6" strokeWidth={1.5} />
                   <h3 className="relative z-10 text-3xl font-bold mb-4 text-foreground">{item.title}</h3>
                   <p className="relative z-10 text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
                 </GlassCard>
@@ -241,7 +248,7 @@ const PitchDeck = () => {
         </div>
       ),
     },
-    // Slide 6 - Como Fazemos
+    // Slide 6A - Como Fazemos: Processo
     {
       id: 6,
       content: (
@@ -249,87 +256,198 @@ const PitchDeck = () => {
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 text-foreground">Como Fazemos</h2>
             <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas:</p>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              <div className="space-y-8 border-l-2 border-primary/30 pl-8">
-                {[
-                  { title: "DFM & Análise de Risco", desc: "CAD/CAM review, FMEA de processo, identificação de pontos críticos", accent: false },
-                  { title: "Usinagem CNC", desc: "Swiss-type tornos, multi-axis, com controle estatístico de processo", accent: false },
-                  { title: "Tratamento Térmico", desc: "Fornos controlados com rastreabilidade de ciclos e certificados", accent: false },
-                  { title: "Acabamento Superficial", desc: "Electropolish, passivação, inspeção visual 100%", accent: false },
-                  { title: "Metrologia Avançada", desc: "CMM 3D, inspeção óptica, dureza, rugosidade - tudo documentado", accent: false },
-                  { title: "Embalagem Cleanroom ISO 7", desc: "60m² de salas limpas, componentes prontos para esterilização", accent: true }
-                ].map((item, i) => (
-                  <div key={i} className={`flex items-start gap-6 ${item.accent ? 'border-l-2 border-accent -ml-[2px] pl-[30px]' : ''}`}>
-                    <div className={`${item.accent ? 'bg-accent text-background' : 'bg-primary text-primary-foreground'} rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold flex-shrink-0`}>{i + 1}</div>
-                    <div><h3 className="text-2xl font-bold mb-2 text-foreground">{item.title}</h3><p className="text-lg text-muted-foreground">{item.desc}</p></div>
+            <div className="space-y-6 border-l border-primary/20 pl-12 max-w-4xl">
+              {[
+                { num: 1, title: "DFM & Análise de Risco", desc: "CAD/CAM review, FMEA de processo, identificação de pontos críticos", accent: false },
+                { num: 2, title: "Usinagem CNC", desc: "Swiss-type tornos, multi-axis, com controle estatístico de processo", accent: false },
+                { num: 3, title: "Tratamento Térmico", desc: "Fornos controlados com rastreabilidade de ciclos e certificados", accent: false },
+                { num: 4, title: "Acabamento Superficial", desc: "Electropolish, passivação, inspeção visual 100%", accent: false },
+                { num: 5, title: "Metrologia Avançada", desc: "CMM 3D, inspeção óptica, dureza, rugosidade - tudo documentado", accent: false },
+                { num: 6, title: "Embalagem Cleanroom ISO 7", desc: "60m² de salas limpas, componentes prontos para esterilização", accent: true }
+              ].map((item, i) => (
+                <div key={i} className={`flex items-start gap-8 relative group ${item.accent ? 'border-l-2 border-accent -ml-[1px] pl-11' : ''}`}>
+                  <div className={`absolute -left-12 top-0 text-6xl font-bold ${item.accent ? 'text-accent/20' : 'text-primary/15'}`}>{item.num}</div>
+                  <div className={`${item.accent ? 'bg-accent/5' : 'bg-primary/5'} rounded-full w-14 h-14 flex items-center justify-center text-xl font-bold flex-shrink-0 ${item.accent ? 'text-accent' : 'text-primary'} border border-border/30`}>{item.num}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-2xl font-bold text-foreground">{item.title}</h3>
+                      {item.accent && <div className="h-px flex-1 bg-gradient-to-r from-accent/30 to-transparent" />}
+                    </div>
+                    <p className="text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
                   </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { img: citizenL20, name: "Citizen Swiss" },
-                  { img: doosanNew, name: "Doosan Multi-axis" },
-                  { img: robodrill, name: "FANUC Robodrill" },
-                  { img: zeissContura, name: "ZEISS CMM" },
-                  { img: electropolishLine, name: "Electropolish" },
-                  { img: laserMarking, name: "Laser Marking" }
-                ].map((item, i) => (
-                  <div key={i} className="bg-card rounded-xl p-3 hover:scale-105 transition-transform">
-                    <img src={item.img} alt={item.name} className="w-full h-20 object-contain mb-2" />
-                    <p className="text-xs text-center text-muted-foreground">{item.name}</p>
-                  </div>
-                ))}
-              </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12 flex items-center gap-2 text-muted-foreground max-w-4xl pl-12">
+              <div className="h-px flex-1 bg-gradient-to-r from-accent-orange/20 via-accent-orange/10 to-transparent" />
+              <span className="text-sm">Próximo: Infraestrutura</span>
             </div>
           </div>
         </div>
       ),
     },
-    // Slide 7 - Infraestrutura
+    // Slide 6B - Como Fazemos: Equipamentos
     {
       id: 7,
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-16 text-foreground">Infraestrutura Que Reduz Risco</h2>
-            <div className="space-y-8">
-              <GlassCard className="p-8">
-                <h3 className="text-3xl font-bold mb-6 text-foreground border-l-4 border-primary pl-4">Parque CNC (15+ máquinas)</h3>
-                <div className="grid grid-cols-2 gap-8">
-                  <ul className="space-y-3 text-lg text-muted-foreground">
-                    {["Citizen Swiss-type (L20, L32, M32)", "Tornos GT26 e GT13", "Doosan Multi-axis (4 e 5 eixos)"].map((item, i) => (
-                      <li key={i} className="flex items-center gap-2"><Check className="text-accent w-5 h-5" />{item}</li>
+            <h2 className="text-5xl font-bold mb-6 text-foreground">Equipamentos de Manufatura</h2>
+            <p className="text-xl text-muted-foreground mb-12">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
+            <div className="grid grid-cols-3 gap-8">
+              {[
+                { img: citizenL20, name: "Citizen Swiss L20", desc: "Tornos Swiss-type de 7 eixos para componentes complexos" },
+                { img: citizenM32, name: "Citizen Cincom M32", desc: "Alta precisão para implantes com diâmetros até 32mm" },
+                { img: doosanNew, name: "Doosan DNM 400", desc: "Centro de usinagem 5 eixos para geometrias complexas" },
+                { img: robodrill, name: "FANUC Robodrill", desc: "Usinagem rápida de alta precisão com troca automática" },
+                { img: zeissContura, name: "ZEISS Contura", desc: "CMM 3D com precisão de 0.001mm para metrologia" },
+                { img: electropolishLine, name: "Linha Electropolish", desc: "Acabamento espelhado e passivação controlada" }
+              ].map((item, i) => (
+                <GlassCard key={i} className="p-6 group hover:scale-[1.02] transition-transform duration-500">
+                  <div className="bg-card/50 rounded-xl p-4 mb-4 h-40 flex items-center justify-center overflow-hidden">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-contain" />
+                  </div>
+                  <div className="border-t border-accent-orange/10 pt-4">
+                    <h3 className="text-xl font-bold mb-2 text-foreground">{item.name}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    // Slide 7A - Infraestrutura: CNC Park
+    {
+      id: 8,
+      content: (
+        <div className="h-full w-full bg-background">
+          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-5xl font-bold mb-6 text-foreground">Parque CNC</h2>
+            <p className="text-2xl text-muted-foreground mb-12">15+ máquinas de alta precisão para manufatura médica</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <GlassCard className="p-10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-1 bg-gradient-to-l from-accent-orange/30 to-transparent" />
+                <Factory className="w-12 h-12 text-primary mb-6" strokeWidth={1.5} />
+                <h3 className="text-3xl font-bold mb-6 text-foreground">Swiss-Type CNC</h3>
+                <ul className="space-y-4">
+                  {["Citizen Cincom L20 (7 eixos)", "Citizen Cincom L32 (diâmetros até 32mm)", "Citizen Cincom M32 (alta precisão)", "Tornos GT26 e GT13"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-lg text-muted-foreground">
+                      <Check className="text-accent w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+              <GlassCard className="p-10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-1 bg-gradient-to-l from-accent/30 to-transparent" />
+                <Layers className="w-12 h-12 text-primary mb-6" strokeWidth={1.5} />
+                <h3 className="text-3xl font-bold mb-6 text-foreground">Multi-Axis & Suporte</h3>
+                <ul className="space-y-4">
+                  {["Doosan DNM 400 (5 eixos)", "FANUC Robodrill (alta velocidade)", "Retíficas Walter", "Laser Marking fibra"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-lg text-muted-foreground">
+                      <Check className="text-accent w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            </div>
+            <div className="mt-12 grid grid-cols-4 gap-6">
+              {[citizenL20, citizenM32, doosanNew, robodrill].map((img, i) => (
+                <div key={i} className="bg-card/30 rounded-xl p-4 border border-border/20 hover:border-primary/20 transition-colors duration-500">
+                  <img src={img} alt="Equipment" className="w-full h-24 object-contain" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    // Slide 7B - Infraestrutura: Metrologia
+    {
+      id: 9,
+      content: (
+        <div className="h-full w-full bg-background">
+          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-5xl font-bold mb-6 text-foreground">Laboratório de Metrologia</h2>
+            <p className="text-2xl text-muted-foreground mb-12">100m² dedicados à inspeção dimensional e certificação</p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <GlassCard className="p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent-orange/20 via-primary/20 to-transparent" />
+                <Microscope className="w-10 h-10 text-primary mb-4" strokeWidth={1.5} />
+                <h3 className="text-2xl font-bold mb-4 text-foreground">CMM 3D</h3>
+                <p className="text-muted-foreground mb-4">ZEISS Contura com precisão de 0.001mm</p>
+                <img src={zeissContura} alt="ZEISS" className="w-full h-32 object-contain rounded-lg bg-card/50 p-3" />
+              </GlassCard>
+              <GlassCard className="p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent/20 via-primary/20 to-transparent" />
+                <Target className="w-10 h-10 text-primary mb-4" strokeWidth={1.5} />
+                <h3 className="text-2xl font-bold mb-4 text-foreground">Inspeção Óptica</h3>
+                <p className="text-muted-foreground mb-4">CNC e manual para geometrias complexas</p>
+                <img src={opticalCNC} alt="Optical" className="w-full h-32 object-contain rounded-lg bg-card/50 p-3" />
+              </GlassCard>
+              <GlassCard className="p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent-orange/20 via-accent/20 to-transparent" />
+                <Zap className="w-10 h-10 text-accent mb-4" strokeWidth={1.5} />
+                <h3 className="text-2xl font-bold mb-4 text-foreground">Análise de Material</h3>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Dureza Vickers</li>
+                  <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Rugosidade</li>
+                  <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Metalografia</li>
+                </ul>
+              </GlassCard>
+            </div>
+            <GlassCard className="mt-12 p-8 border-l-2 border-primary">
+              <p className="text-xl text-foreground leading-relaxed">"Cada componente é medido e documentado. Rastreabilidade lote-a-lote para auditorias regulatórias."</p>
+            </GlassCard>
+          </div>
+        </div>
+      ),
+    },
+    // Slide 7C - Infraestrutura: Cleanrooms
+    {
+      id: 10,
+      content: (
+        <div className="h-full w-full bg-background relative overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center opacity-[0.06]" style={{ backgroundImage: `url(${cleanroomHero})` }} />
+          <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-5xl font-bold mb-6 text-foreground">Salas Limpas ISO 7</h2>
+            <p className="text-2xl text-muted-foreground mb-12">120m² de ambiente controlado para embalagem sterile-ready</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div>
+                <GlassCard className="p-10 relative overflow-hidden mb-8">
+                  <div className="absolute top-0 right-0 w-1 h-24 bg-gradient-to-b from-accent/30 to-transparent" />
+                  <h3 className="text-3xl font-bold mb-6 text-foreground">Controles Ambientais</h3>
+                  <ul className="space-y-4">
+                    {[
+                      "Monitoramento contínuo de partículas",
+                      "Temperatura e umidade controladas",
+                      "Pressão positiva diferencial",
+                      "Acesso controlado com paramentação"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <CheckCircle className="text-accent w-6 h-6 flex-shrink-0 mt-1" strokeWidth={1.5} />
+                        <span className="text-lg text-muted-foreground">{item}</span>
+                      </li>
                     ))}
                   </ul>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[citizenL20, citizenM32, doosanNew].map((img, i) => (
-                      <img key={i} src={img} alt="Equipment" className="w-full h-16 object-contain rounded-lg bg-card p-2" />
-                    ))}
+                </GlassCard>
+                <div className="border-l-2 border-accent-orange/20 pl-6">
+                  <p className="text-lg text-muted-foreground leading-relaxed">"Componentes saem prontos para esterilização. Seus processos de embalagem final ficam mais simples e seguros."</p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-6">
+                <img src={cleanroomHero} alt="Cleanroom" className="w-full h-80 object-cover rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)]" />
+                <GlassCard className="p-6">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div><div className="text-3xl font-bold text-primary mb-1">120m²</div><div className="text-sm text-muted-foreground">Área Total</div></div>
+                    <div><div className="text-3xl font-bold text-primary mb-1">ISO 7</div><div className="text-sm text-muted-foreground">Classificação</div></div>
+                    <div><div className="text-3xl font-bold text-accent mb-1">24/7</div><div className="text-sm text-muted-foreground">Monitoramento</div></div>
                   </div>
-                </div>
-              </GlassCard>
-              <GlassCard className="p-8">
-                <h3 className="text-3xl font-bold mb-6 text-foreground border-l-4 border-primary pl-4">Laboratório de Metrologia (100m²)</h3>
-                <div className="grid grid-cols-2 gap-8">
-                  <ul className="space-y-3 text-lg text-muted-foreground">
-                    {["CMM ZEISS Contura (precisão 0.001mm)", "Inspeção Óptica CNC e Manual", "Dureza Vickers, Rugosidade, Metalografia"].map((item, i) => (
-                      <li key={i} className="flex items-center gap-2"><Check className="text-accent w-5 h-5" />{item}</li>
-                    ))}
-                  </ul>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[zeissContura, opticalCNC].map((img, i) => (
-                      <img key={i} src={img} alt="Equipment" className="w-full h-16 object-contain rounded-lg bg-card p-2" />
-                    ))}
-                  </div>
-                </div>
-              </GlassCard>
-              <GlassCard className="p-8">
-                <h3 className="text-3xl font-bold mb-6 text-foreground border-l-4 border-accent pl-4">Duas Salas Limpas ISO 7 (120m² total)</h3>
-                <div className="grid grid-cols-2 gap-8 items-center">
-                  <p className="text-lg text-muted-foreground leading-relaxed">Monitoramento contínuo de partículas, controle de temperatura e umidade, acesso controlado com paramentação completa. Embalagem final em ambiente sterile-ready.</p>
-                  <img src={cleanroomHero} alt="Cleanroom" className="w-full h-48 object-cover rounded-xl shadow-lg" />
-                </div>
-              </GlassCard>
+                </GlassCard>
+              </div>
             </div>
           </div>
         </div>
@@ -337,7 +455,7 @@ const PitchDeck = () => {
     },
     // Slide 8 - Clientes
     {
-      id: 8,
+      id: 11,
       content: (
         <div className="relative h-full w-full bg-background overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-[0.05]" style={{ backgroundImage: `url(${factoryExterior})` }} />
@@ -345,8 +463,9 @@ const PitchDeck = () => {
             <h2 className="text-6xl font-bold mb-8 text-foreground">Confiança de Líderes do Mercado</h2>
             <div className="grid grid-cols-4 sm:grid-cols-6 gap-8 mb-12">
               {clientLogos.map((logo, index) => (
-                <div key={index} className="flex items-center justify-center">
-                  <img src={logo.src} alt={logo.name} className="h-12 w-auto object-contain filter grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300 mix-blend-multiply" />
+                <div key={index} className="flex items-center justify-center group relative">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-primary/5 via-accent-orange/5 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <img src={logo.src} alt={logo.name} className="relative h-12 w-auto object-contain filter grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100 transition-all duration-500 mix-blend-multiply" />
                 </div>
               ))}
             </div>
@@ -368,7 +487,7 @@ const PitchDeck = () => {
     },
     // Slide 9 - Low-Risk Start
     {
-      id: 9,
+      id: 12,
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
@@ -381,9 +500,9 @@ const PitchDeck = () => {
                   { title: "Processo completo", desc: "Usinagem → acabamento → metrologia → embalagem cleanroom" },
                   { title: "Documentação completa", desc: "Toda documentação para seu arquivo regulatório (DHF/DMR)" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-4">
-                    <Check className="text-accent w-8 h-8 mt-1 flex-shrink-0" />
-                    <div><h4 className="text-2xl font-bold mb-2 text-foreground">{item.title}</h4><p className="text-lg text-muted-foreground">{item.desc}</p></div>
+                  <div key={i} className="flex items-start gap-4 group">
+                    <Check className="text-accent w-7 h-7 mt-1 flex-shrink-0" strokeWidth={1.5} />
+                    <div className="border-l border-accent/10 pl-3"><h4 className="text-2xl font-bold mb-2 text-foreground">{item.title}</h4><p className="text-lg text-muted-foreground">{item.desc}</p></div>
                   </div>
                 ))}
               </div>
@@ -398,8 +517,9 @@ const PitchDeck = () => {
               </GlassCard>
             </div>
             <div className="flex justify-center">
-              <button className="bg-primary hover:bg-primary-hover text-primary-foreground text-2xl font-bold px-12 py-6 rounded-xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-105 transition-all duration-300 border-2 border-accent-orange/20 flex items-center gap-3">
-                Agendar Consulta<ArrowRight className="w-8 h-8" />
+              <button className="bg-primary hover:bg-primary-hover text-primary-foreground text-2xl font-bold px-12 py-6 rounded-xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.15)] hover:scale-[1.02] transition-all duration-500 border border-accent-orange/10 flex items-center gap-3 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-0.5 bg-gradient-to-l from-accent-orange/30 to-transparent" />
+                Agendar Consulta<ArrowRight className="w-8 h-8 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={1.5} />
               </button>
             </div>
           </div>
@@ -408,7 +528,7 @@ const PitchDeck = () => {
     },
     // Slide 10 - Próximos Passos
     {
-      id: 10,
+      id: 13,
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
