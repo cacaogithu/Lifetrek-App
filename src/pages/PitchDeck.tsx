@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Download, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
   Share2,
   Check,
   CheckCircle,
@@ -14,8 +14,21 @@ import {
   FileX,
   Clock,
   Target,
-  Microscope
+  Microscope,
+  Bone,
+  Scissors,
+  Smile,
+  PawPrint,
+  Zap,
+  Factory,
+  Layers,
+  Cog,
+  Sparkles,
+  Package
 } from "lucide-react";
+import { BlobBackground } from "@/components/BlobBackground";
+import { StatCard } from "@/components/StatCard";
+import { MagneticButton } from "@/components/MagneticButton";
 
 // Assets
 import logo from "@/assets/logo-optimized.webp";
@@ -91,15 +104,47 @@ const StatCounter = ({ value, label, suffix = "" }: { value: string; label: stri
   </div>
 );
 
-// Enhanced Section Header Component
-const SectionHeader = ({ title, subtitle, align = "left" }: { title: string; subtitle?: string; align?: "left" | "center" }) => (
+// Section Badge Component for Consistency
+const SectionBadge = ({ icon: Icon, label, variant = "primary" }: { icon: React.ElementType; label: string; variant?: "primary" | "accent" | "warning" }) => {
+  const variants = {
+    primary: "bg-primary/10 border-primary/20 text-primary",
+    accent: "bg-accent/10 border-accent/20 text-accent",
+    warning: "bg-red-500/10 border-red-500/20 text-red-500"
+  };
+
+  return (
+    <div className={`inline-flex items-center gap-3 mb-4 px-4 py-2 border rounded-full ${variants[variant]}`}>
+      <Icon className="w-5 h-5" strokeWidth={2} />
+      <span className="text-sm font-bold uppercase tracking-wide">{label}</span>
+    </div>
+  );
+};
+
+// Enhanced Section Header Component (Standardized with Badges)
+const SectionHeader = ({ badge, title, subtitle, align = "left" }: {
+  badge?: { icon: React.ElementType; label: string; variant?: "primary" | "accent" | "warning" };
+  title: string;
+  subtitle?: string;
+  align?: "left" | "center"
+}) => (
   <div className={`mb-16 ${align === "center" ? "text-center" : ""}`}>
+    {badge && <SectionBadge {...badge} />}
     <h2 className="text-7xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground to-primary/70">
       {title}
     </h2>
     {subtitle && (
       <p className="text-2xl text-muted-foreground font-light tracking-wide">{subtitle}</p>
     )}
+  </div>
+);
+
+// Standardized Slide Container
+const SlideContainer = ({ children, withBlobs = true }: { children: React.ReactNode; withBlobs?: boolean }) => (
+  <div className="relative h-full w-full bg-background overflow-hidden">
+    {withBlobs && <BlobBackground />}
+    <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+      {children}
+    </div>
   </div>
 );
 
@@ -164,16 +209,19 @@ const PitchDeck = () => {
         </div>
       ),
     },
-    // Slide 2 - Para Quem Fabricamos (ENHANCED)
+    // Slide 2 - Para Quem Fabricamos (ENHANCED with Consistency)
     {
       id: 2,
       content: (
-        <div className="relative h-full w-full bg-background overflow-hidden">
+        <SlideContainer>
           <div className="absolute right-0 top-0 h-full w-1/2 bg-cover bg-center opacity-[0.07]" style={{ backgroundImage: `url(${cleanroomHero})` }} />
           <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-accent via-primary to-transparent opacity-40" />
 
-          <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <SectionHeader title="Para Quem Fabricamos" subtitle="Parceiros estratégicos em múltiplos segmentos médicos" />
+          <SectionHeader
+            badge={{ icon: Target, label: "Nossos Parceiros", variant: "primary" }}
+            title="Para Quem Fabricamos"
+            subtitle="Parceiros estratégicos em múltiplos segmentos médicos"
+          />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
               <div className="space-y-6">
@@ -215,17 +263,16 @@ const PitchDeck = () => {
               </div>
             </div>
 
-            <GlassCard variant="accent" className="p-10 border-l-4 border-accent relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-accent to-transparent" />
-              <div className="flex items-start gap-6">
-                <div className="text-6xl text-accent/20">"</div>
-                <p className="text-3xl font-bold text-foreground leading-relaxed">
-                  Se seu produto entra em um corpo humano ou animal, nós fabricamos como se nossa própria vida dependesse disso.
-                </p>
-              </div>
-            </GlassCard>
-          </div>
-        </div>
+          <GlassCard variant="accent" className="p-10 border-l-4 border-accent relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-accent to-transparent" />
+            <div className="flex items-start gap-6">
+              <div className="text-6xl text-accent/20">"</div>
+              <p className="text-3xl font-bold text-foreground leading-relaxed">
+                Se seu produto entra em um corpo humano ou animal, nós fabricamos como se nossa própria vida dependesse disso.
+              </p>
+            </div>
+          </GlassCard>
+        </SlideContainer>
       ),
     },
     // Slide 3 - O Problema (ENHANCED)
@@ -621,25 +668,17 @@ const PitchDeck = () => {
               <p className="text-2xl text-muted-foreground font-light">Parceiros de excelência que confiam na nossa manufatura</p>
             </div>
 
-            {/* Stats Cards - More Prominent */}
+            {/* Stats Cards - Animated with StatCard Component */}
             <div className="grid grid-cols-3 gap-8 mb-12">
               {[
-                { num: "30+", label: "Clientes Médicos Ativos", variant: "primary", icon: Factory },
-                { num: "15+", label: "Anos de Parcerias OEM", variant: "primary", icon: CheckCircle },
-                { num: "Zero", label: "Não-conformidades Maiores", variant: "accent", icon: Shield }
+                { num: "30+", label: "Clientes Médicos Ativos", icon: Factory, delay: 0 },
+                { num: "15+", label: "Anos de Parcerias OEM", icon: CheckCircle, delay: 200 },
+                { num: "Zero", label: "Não-conformidades Maiores", icon: Shield, delay: 400 }
               ].map((item, i) => (
-                <GlassCard key={i} variant={item.variant as "primary" | "accent"} className="p-10 text-center group hover:scale-105 transition-all duration-300">
-                  <item.icon className={`w-12 h-12 mx-auto mb-4 ${item.variant === "primary" ? "text-primary" : "text-accent"}`} strokeWidth={2} />
-                  <StatCounter value={item.num} label={item.label} />
-                { num: "30+", label: "Clientes Médicos Ativos", gradient: "from-primary via-primary to-primary-dark", borderTop: "from-primary/30 via-primary/50 to-primary/30" },
-                { num: "30+", label: "Anos de Experiência", gradient: "from-accent via-accent to-accent/80", borderTop: "from-accent/30 via-accent/50 to-accent/30" },
-                { num: "100%", label: "Produtos com Qualidade Assegurada", gradient: "from-accent-orange via-accent-orange to-accent-orange/80", borderTop: "from-accent-orange/30 via-accent-orange/50 to-accent-orange/30" }
-              ].map((item, i) => (
-                <GlassCard key={i} className="p-10 text-center relative overflow-hidden group">
-                  <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${item.borderTop}`} />
-                  <div className={`text-7xl font-bold bg-gradient-to-br ${item.gradient} bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-500`}>{item.num}</div>
-                  <p className="text-lg text-muted-foreground font-medium">{item.label}</p>
-                </GlassCard>
+                <div key={i} className="relative">
+                  <item.icon className={`w-10 h-10 mx-auto mb-3 ${i === 2 ? "text-accent" : "text-primary"}`} strokeWidth={2} />
+                  <StatCard value={item.num} label={item.label} delay={item.delay} />
+                </div>
               ))}
             </div>
 
@@ -722,13 +761,17 @@ const PitchDeck = () => {
               </GlassCard>
             </div>
 
-            {/* Enhanced CTA Button */}
+            {/* Enhanced Magnetic CTA Button */}
             <div className="flex justify-center">
-              <button className="group relative bg-gradient-to-r from-primary via-primary to-accent hover:from-accent hover:via-primary hover:to-primary text-white text-2xl font-black px-16 py-8 rounded-2xl shadow-[0_20px_40px_-12px_rgba(0,114,187,0.4)] hover:shadow-[0_24px_48px_-16px_rgba(234,88,12,0.5)] hover:scale-105 transition-all duration-500 border-2 border-white/10 flex items-center gap-4 overflow-hidden">
+              <MagneticButton
+                strength={30}
+                className="group relative bg-gradient-to-r from-primary via-primary to-accent hover:from-accent hover:via-primary hover:to-primary text-white text-2xl font-black px-16 py-8 rounded-2xl shadow-[0_20px_40px_-12px_rgba(0,114,187,0.4)] hover:shadow-[0_24px_48px_-16px_rgba(234,88,12,0.5)] transition-all duration-500 border-2 border-white/10 flex items-center gap-4 overflow-hidden"
+                size="lg"
+              >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 <span className="relative z-10">Agendar Consulta</span>
                 <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform duration-300 relative z-10" strokeWidth={2.5} />
-              </button>
+              </MagneticButton>
             </div>
           </div>
         </div>
