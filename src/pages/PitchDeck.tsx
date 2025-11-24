@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -75,6 +76,7 @@ const GlassCard = ({ children, className = "" }: { children: React.ReactNode; cl
 const PitchDeck = () => {
   const { t } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [direction, setDirection] = useState(0);
 
   const clientLogos = [
     { src: cpmhNew, name: "CPMH" }, { src: evolveNew, name: "Evolve" }, { src: fgmNew, name: "FGM" },
@@ -604,8 +606,42 @@ const PitchDeck = () => {
     },
   ];
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  const nextSlide = () => {
+    setDirection(1);
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+  
+  const prevSlide = () => {
+    setDirection(-1);
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setDirection(index > currentSlide ? 1 : -1);
+    setCurrentSlide(index);
+  };
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+  };
+
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset: number, velocity: number) => {
+    return Math.abs(offset) * velocity;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -621,11 +657,42 @@ const PitchDeck = () => {
           </div>
         </div>
       </div>
-      <div className="pt-20 h-screen"><div className="h-[calc(100vh-8rem)] relative">{slides[currentSlide].content}</div></div>
+      <div className="pt-20 h-screen">
+        <div className="h-[calc(100vh-8rem)] relative overflow-hidden">
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.div
+              key={currentSlide}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.3 },
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={1}
+              onDragEnd={(e, { offset, velocity }) => {
+                const swipe = swipePower(offset.x, velocity.x);
+                if (swipe < -swipeConfidenceThreshold && currentSlide < slides.length - 1) {
+                  nextSlide();
+                } else if (swipe > swipeConfidenceThreshold && currentSlide > 0) {
+                  prevSlide();
+                }
+              }}
+              className="absolute inset-0"
+            >
+              {slides[currentSlide].content}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Button variant="outline" size="lg" onClick={prevSlide} disabled={currentSlide === 0}><ChevronLeft className="w-5 h-5 mr-2" />Previous</Button>
-          <div className="flex items-center gap-2">{slides.map((_, index) => (<button key={index} onClick={() => setCurrentSlide(index)} className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide ? "w-8 bg-primary" : "w-2 bg-muted hover:bg-muted-foreground/50"}`} />))}</div>
+          <div className="flex items-center gap-2">{slides.map((_, index) => (<button key={index} onClick={() => goToSlide(index)} className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide ? "w-8 bg-primary" : "w-2 bg-muted hover:bg-muted-foreground/50"}`} />))}</div>
           <Button variant="outline" size="lg" onClick={nextSlide} disabled={currentSlide === slides.length - 1}>Next<ChevronRight className="w-5 h-5 ml-2" /></Button>
         </div>
       </div>
