@@ -92,24 +92,37 @@ const PitchDeck = () => {
     {
       id: 1,
       content: (
-        <div className="relative h-full w-full flex flex-col items-center justify-center overflow-hidden">
+        <div className="relative h-full min-h-[800px] max-h-[800px] w-full flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${factoryHeroFull})` }} />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/75 to-primary-dark/90" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary-dark/95" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
           <div className="relative z-10 text-center space-y-8 px-16 max-w-7xl animate-in fade-in duration-700">
-            <img src={logo} alt="Lifetrek Medical" className="h-32 mx-auto mb-8 drop-shadow-2xl" />
-            <h1 className="text-7xl font-bold mb-6 tracking-tight text-white">Lifetrek Medical</h1>
+            <div className="relative inline-block mb-6">
+              <div className="absolute inset-0 bg-accent-orange/20 blur-3xl rounded-full" />
+              <img src={logo} alt="Lifetrek Medical" className="relative h-32 mx-auto drop-shadow-2xl" />
+            </div>
+            <h1 className="text-7xl font-bold mb-6 tracking-tight text-white relative">
+              Lifetrek Medical
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-accent-orange/60 to-transparent" />
+            </h1>
             <div className="flex items-center justify-center gap-4 mb-8">
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20">
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/30 shadow-[0_8px_32px_-8px_rgba(255,255,255,0.1)]">
                 <img src={isoLogo} alt="ISO 13485" className="h-12" />
               </div>
             </div>
-            <h2 className="text-3xl font-light max-w-4xl mx-auto leading-relaxed text-white">
-              Manufatura Contratada ISO 13485 para Implantes e Instrumentos Cirúrgicos
+            <h2 className="text-3xl font-light max-w-4xl mx-auto leading-relaxed text-white relative">
+              <span className="bg-gradient-to-r from-white via-white to-white/90 bg-clip-text text-transparent">
+                Manufatura Contratada ISO 13485 para Implantes e Instrumentos Cirúrgicos
+              </span>
             </h2>
             <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
               Do CAD ao componente embalado em sala limpa, com qualidade zero-defeito e rastreabilidade regulatória completa.
             </p>
-            <div className="w-full max-w-md mx-auto h-0.5 bg-gradient-to-r from-transparent via-accent-orange/30 to-transparent mt-12" />
+            <div className="flex items-center justify-center gap-4 mt-12">
+              <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-accent-orange/40 to-accent-orange/20" />
+              <div className="w-2 h-2 rounded-full bg-accent-orange/60 shadow-[0_0_12px_rgba(239,119,55,0.4)]" />
+              <div className="w-32 h-0.5 bg-gradient-to-l from-transparent via-accent-orange/40 to-accent-orange/20" />
+            </div>
           </div>
         </div>
       ),
@@ -118,19 +131,25 @@ const PitchDeck = () => {
     {
       id: 2,
       content: (
-        <div className="h-full w-full bg-background overflow-hidden">
-          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 text-foreground">Para Quem Fabricamos</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+          <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent relative">
+              Para Quem Fabricamos
+              <div className="absolute -bottom-1 left-0 w-48 h-1 bg-gradient-to-r from-primary/40 via-accent/20 to-transparent" />
+            </h2>
+            <p className="text-xl text-muted-foreground mb-10">Parceiros que não podem comprometer a vida dos seus pacientes</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               <div className="space-y-6">
                 {[
                   { title: "OEMs de Implantes Ortopédicos", desc: "Trauma, coluna, extremidades superiores e inferiores" },
                   { title: "Fabricantes de Dispositivos Dentais", desc: "Implantes, instrumentos e componentes protéticos" },
                   { title: "Empresas de Implantes Veterinários", desc: "Dispositivos ortopédicos para animais de grande e pequeno porte" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-4 group">
+                  <div key={i} className="flex items-start gap-4 group relative">
+                    <div className="absolute -left-3 top-0 w-0.5 h-full bg-gradient-to-b from-accent-orange/30 via-accent-orange/10 to-transparent" />
                     <Check className="text-accent-orange w-6 h-6 mt-1 flex-shrink-0" strokeWidth={1.5} />
-                    <div className="border-l border-accent-orange/10 pl-3">
+                    <div className="border-l-2 border-primary/10 pl-4 group-hover:border-primary/30 transition-colors duration-500">
                       <h3 className="text-2xl font-semibold mb-2 text-foreground">{item.title}</h3>
                       <p className="text-lg text-muted-foreground">{item.desc}</p>
                     </div>
@@ -142,9 +161,10 @@ const PitchDeck = () => {
                   { title: "Hospitais e Sistemas de Saúde", desc: "Instrumentos cirúrgicos customizados e ferramentas específicas" },
                   { title: "Parceiros OEM / Contract Manufacturing", desc: "Empresas que precisam de capacidade de manufatura certificada ISO 13485" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-4 group">
-                    <Check className="text-accent-orange w-6 h-6 mt-1 flex-shrink-0" strokeWidth={1.5} />
-                    <div className="border-l border-accent-orange/10 pl-3">
+                  <div key={i} className="flex items-start gap-4 group relative">
+                    <div className="absolute -left-3 top-0 w-0.5 h-full bg-gradient-to-b from-accent/30 via-accent/10 to-transparent" />
+                    <Check className="text-accent w-6 h-6 mt-1 flex-shrink-0" strokeWidth={1.5} />
+                    <div className="border-l-2 border-accent/10 pl-4 group-hover:border-accent/30 transition-colors duration-500">
                       <h3 className="text-2xl font-semibold mb-2 text-foreground">{item.title}</h3>
                       <p className="text-lg text-muted-foreground">{item.desc}</p>
                     </div>
@@ -152,9 +172,11 @@ const PitchDeck = () => {
                 ))}
               </div>
             </div>
-            <GlassCard className="p-8 border-l-2 border-primary relative overflow-hidden mt-4">
-              <div className="absolute top-0 right-0 w-1 h-12 bg-gradient-to-b from-accent-orange/30 to-transparent" />
-              <p className="text-2xl font-semibold text-foreground leading-relaxed">
+            <GlassCard className="p-8 border-l-4 border-primary relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 via-accent-orange/20 to-transparent" />
+              <div className="absolute top-0 right-0 w-1 h-16 bg-gradient-to-b from-accent-orange/40 to-transparent" />
+              <div className="absolute bottom-0 right-0 w-32 h-0.5 bg-gradient-to-l from-accent/30 to-transparent" />
+              <p className="text-2xl font-semibold text-foreground leading-relaxed relative">
                 "Se seu produto entra em um corpo humano ou animal, nós fabricamos como se nossa própria vida dependesse disso."
               </p>
             </GlassCard>
@@ -166,24 +188,31 @@ const PitchDeck = () => {
     {
       id: 3,
       content: (
-        <div className="h-full w-full bg-gradient-to-br from-secondary/30 via-background to-background">
-          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">O Problema</h2>
-            <p className="text-xl text-muted-foreground mb-12">Por que terceirizar usinagem tira seu sono à noite:</p>
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-gradient-to-br from-secondary/30 via-background to-background relative overflow-hidden">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+          <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/80 bg-clip-text text-transparent relative">
+              O Problema
+              <div className="absolute -bottom-1 left-0 w-40 h-1 bg-gradient-to-r from-destructive/60 via-accent-orange/40 to-transparent" />
+            </h2>
+            <p className="text-xl text-muted-foreground mb-10">Por que terceirizar usinagem tira seu sono à noite:</p>
             <div className="grid grid-cols-2 gap-6">
               {[
-                { Icon: AlertTriangle, title: "Qualidade Inconsistente", desc: "Tolerâncias que \"variam\" entre lotes, causando recalls e custos ocultos de retrabalho." },
-                { Icon: FileX, title: "Documentação Fraca", desc: "Falta de rastreabilidade lote-a-lote e registros auditáveis para reguladores." },
-                { Icon: Clock, title: "Atrasos em Lançamentos", desc: "Lead times imprevisíveis que atrasam estudos clínicos e aprovações de mercado." },
-                { Icon: Shield, title: "Riscos de Contaminação", desc: "Oficinas sem ambiente controlado que comprometem a esterilidade do produto final." },
-                { Icon: FileX, title: "Fornecedores sem ISO 13485", desc: "Parceiros que não entendem requisitos médicos e não têm sistemas de qualidade certificados." },
-                { Icon: AlertTriangle, title: "Um Lote Ruim = Dano Permanente", desc: "Reputação destruída, confiança de médicos perdida e processos legais custosos." }
+                { Icon: AlertTriangle, title: "Qualidade Inconsistente", desc: "Tolerâncias que \"variam\" entre lotes, causando recalls e custos ocultos de retrabalho.", gradient: "from-destructive/5 via-transparent to-transparent", borderColor: "border-destructive/20" },
+                { Icon: FileX, title: "Documentação Fraca", desc: "Falta de rastreabilidade lote-a-lote e registros auditáveis para reguladores.", gradient: "from-accent-orange/5 via-transparent to-transparent", borderColor: "border-accent-orange/20" },
+                { Icon: Clock, title: "Atrasos em Lançamentos", desc: "Lead times imprevisíveis que atrasam estudos clínicos e aprovações de mercado.", gradient: "from-primary/5 via-transparent to-transparent", borderColor: "border-primary/20" },
+                { Icon: Shield, title: "Riscos de Contaminação", desc: "Oficinas sem ambiente controlado que comprometem a esterilidade do produto final.", gradient: "from-accent/5 via-transparent to-transparent", borderColor: "border-accent/20" },
+                { Icon: FileX, title: "Fornecedores sem ISO 13485", desc: "Parceiros que não entendem requisitos médicos e não têm sistemas de qualidade certificados.", gradient: "from-destructive/5 via-transparent to-transparent", borderColor: "border-destructive/20" },
+                { Icon: AlertTriangle, title: "Um Lote Ruim = Dano Permanente", desc: "Reputação destruída, confiança de médicos perdida e processos legais custosos.", gradient: "from-accent-orange/5 via-transparent to-transparent", borderColor: "border-accent-orange/20" }
               ].map((item, i) => (
-                <div key={i} className="bg-card border border-border/30 rounded-2xl p-8 hover:border-primary/20 hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.05)] transition-all duration-500 relative overflow-hidden group">
-                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-accent-orange/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <item.Icon className="w-10 h-10 text-foreground/60 mb-4" strokeWidth={1.5} />
-                  <h3 className="text-2xl font-bold mb-3 text-foreground">{item.title}</h3>
-                  <p className="text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
+                <div key={i} className={`bg-card/50 backdrop-blur-sm border ${item.borderColor} rounded-2xl p-8 hover:border-primary/30 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.1)] transition-all duration-500 relative overflow-hidden group`}>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-orange/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute bottom-0 right-0 w-24 h-0.5 bg-gradient-to-l from-accent/30 to-transparent" />
+                  <item.Icon className="relative z-10 w-10 h-10 text-foreground/60 mb-4" strokeWidth={1.5} />
+                  <h3 className="relative z-10 text-2xl font-bold mb-3 text-foreground">{item.title}</h3>
+                  <p className="relative z-10 text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -195,7 +224,7 @@ const PitchDeck = () => {
     {
       id: 4,
       content: (
-        <div className="relative h-full w-full bg-background overflow-hidden">
+        <div className="relative h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-[0.08]" style={{ backgroundImage: `url(${labOverview})` }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Nossa Promessa</h2>
@@ -223,7 +252,7 @@ const PitchDeck = () => {
     {
       id: 5,
       content: (
-        <div className="h-full w-full bg-background">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-12 text-foreground">O Que Fazemos</h2>
             <div className="grid grid-cols-2 gap-6">
@@ -250,7 +279,7 @@ const PitchDeck = () => {
     {
       id: 6,
       content: (
-        <div className="h-full w-full bg-background">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 text-foreground">Como Fazemos</h2>
             <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas:</p>
@@ -276,19 +305,15 @@ const PitchDeck = () => {
                 </div>
               ))}
             </div>
-            <div className="mt-12 flex items-center gap-2 text-muted-foreground max-w-4xl pl-12">
-              <div className="h-px flex-1 bg-gradient-to-r from-accent-orange/20 via-accent-orange/10 to-transparent" />
-              <span className="text-sm">Próximo: Infraestrutura</span>
-            </div>
           </div>
         </div>
       ),
     },
-    // Slide 6B - Como Fazemos: Equipamentos
+    // Slide 6B - Como Fazemos: Equipamentos  
     {
       id: 7,
       content: (
-        <div className="h-full w-full bg-background">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 text-foreground">Equipamentos de Manufatura</h2>
             <p className="text-xl text-muted-foreground mb-10">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
@@ -320,7 +345,7 @@ const PitchDeck = () => {
     {
       id: 8,
       content: (
-        <div className="h-full w-full bg-background">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Parque CNC</h2>
             <p className="text-xl text-muted-foreground mb-10">15+ máquinas de alta precisão para manufatura médica</p>
@@ -368,7 +393,7 @@ const PitchDeck = () => {
     {
       id: 9,
       content: (
-        <div className="h-full w-full bg-background">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Laboratório de Metrologia</h2>
             <p className="text-xl text-muted-foreground mb-10">100m² dedicados à inspeção dimensional e certificação</p>
@@ -410,7 +435,7 @@ const PitchDeck = () => {
     {
       id: 10,
       content: (
-        <div className="h-full w-full bg-background relative overflow-hidden">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-[0.06]" style={{ backgroundImage: `url(${cleanroomHero})` }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-accent-orange bg-clip-text text-transparent">Salas Limpas ISO 7</h2>
@@ -469,7 +494,7 @@ const PitchDeck = () => {
     {
       id: 11,
       content: (
-        <div className="relative h-full w-full bg-background overflow-hidden">
+        <div className="relative h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-[0.05]" style={{ backgroundImage: `url(${factoryExterior})` }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-10 text-foreground">Confiança de Líderes do Mercado</h2>
@@ -502,7 +527,7 @@ const PitchDeck = () => {
     {
       id: 12,
       content: (
-        <div className="h-full w-full bg-background">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-6 text-foreground">Comece com Baixo Risco</h2>
             <h3 className="text-3xl text-primary mb-10">Célula Piloto de Manufatura</h3>
@@ -546,7 +571,7 @@ const PitchDeck = () => {
     {
       id: 13,
       content: (
-        <div className="h-full w-full bg-background">
+        <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-12 text-foreground">Próximos Passos</h2>
             <div className="space-y-10 mb-12">
