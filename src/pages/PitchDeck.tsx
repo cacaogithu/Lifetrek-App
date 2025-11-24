@@ -8,20 +8,13 @@ import {
   Share2,
   Check,
   CheckCircle,
-  Bone,
-  Scissors,
-  Smile,
-  PawPrint,
   ArrowRight,
   AlertTriangle,
   Shield,
   FileX,
   Clock,
   Target,
-  Microscope,
-  Zap,
-  Factory,
-  Layers
+  Microscope
 } from "lucide-react";
 
 // Assets
@@ -230,16 +223,16 @@ const PitchDeck = () => {
             <h2 className="text-6xl font-bold mb-16 text-foreground">O Que Fazemos</h2>
             <div className="grid grid-cols-2 gap-8">
               {[
-                { Icon: Bone, bg: medicalScrew, title: "Implantes Ortopédicos", desc: "Placas e parafusos de trauma, sistemas de fusão espinhal, implantes de membros superiores/inferiores, fixação craniana." },
-                { Icon: Scissors, bg: surgicalDrills, title: "Instrumentos Cirúrgicos", desc: "Brocas, fresas, alargadores, guides de perfuração, instrumentais para cirurgias complexas e ferramentas customizadas." },
-                { Icon: Smile, bg: dentalInstruments, title: "Dispositivos Dentais", desc: "Implantes dentários, pilares protéticos (angulados e retos), componentes para sistemas de fixação e instrumentos específicos." },
-                { Icon: PawPrint, bg: veterinaryImplant1, title: "Implantes Veterinários", desc: "Dispositivos ortopédicos para animais de grande e pequeno porte, placas, parafusos e sistemas de fixação veterinários." }
+                { bg: medicalScrew, title: "Implantes Ortopédicos", desc: "Placas e parafusos de trauma, sistemas de fusão espinhal, implantes de membros superiores/inferiores, fixação craniana.", gradient: "from-primary/10 via-primary/5 to-transparent", border: "border-primary/20" },
+                { bg: surgicalDrills, title: "Instrumentos Cirúrgicos", desc: "Brocas, fresas, alargadores, guides de perfuração, instrumentais para cirurgias complexas e ferramentas customizadas.", gradient: "from-accent/10 via-accent/5 to-transparent", border: "border-accent/20" },
+                { bg: dentalInstruments, title: "Dispositivos Dentais", desc: "Implantes dentários, pilares protéticos (angulados e retos), componentes para sistemas de fixação e instrumentos específicos.", gradient: "from-primary/10 via-accent/5 to-transparent", border: "border-primary/20" },
+                { bg: veterinaryImplant1, title: "Implantes Veterinários", desc: "Dispositivos ortopédicos para animais de grande e pequeno porte, placas, parafusos e sistemas de fixação veterinários.", gradient: "from-accent/10 via-primary/5 to-transparent", border: "border-accent/20" }
               ].map((item, i) => (
-                <GlassCard key={i} className="p-10 group relative overflow-hidden">
+                <GlassCard key={i} className={`p-10 group relative overflow-hidden border-l-4 ${item.border}`}>
                   <div className="absolute inset-0 bg-cover bg-center opacity-[0.04]" style={{ backgroundImage: `url(${item.bg})` }} />
-                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent-orange/20 via-transparent to-transparent" />
-                  <item.Icon className="relative z-10 w-12 h-12 text-primary group-hover:text-accent-orange transition-colors duration-500 mb-6" strokeWidth={1.5} />
-                  <h3 className="relative z-10 text-3xl font-bold mb-4 text-foreground">{item.title}</h3>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
+                  <div className="absolute top-0 right-0 w-24 h-1 bg-gradient-to-l from-accent-orange/30 to-transparent" />
+                  <h3 className="relative z-10 text-3xl font-bold mb-4 bg-gradient-to-br from-primary via-primary to-accent bg-clip-text text-transparent">{item.title}</h3>
                   <p className="relative z-10 text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
                 </GlassCard>
               ))}
@@ -324,29 +317,29 @@ const PitchDeck = () => {
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-5xl font-bold mb-6 text-foreground">Parque CNC</h2>
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Parque CNC</h2>
             <p className="text-2xl text-muted-foreground mb-12">15+ máquinas de alta precisão para manufatura médica</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <GlassCard className="p-10 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-1 bg-gradient-to-l from-accent-orange/30 to-transparent" />
-                <Factory className="w-12 h-12 text-primary mb-6" strokeWidth={1.5} />
-                <h3 className="text-3xl font-bold mb-6 text-foreground">Swiss-Type CNC</h3>
-                <ul className="space-y-4">
+              <GlassCard className="p-10 relative overflow-hidden border-l-4 border-primary/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50" />
+                <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-accent-orange/30 via-primary/20 to-transparent" />
+                <h3 className="relative text-3xl font-bold mb-6 text-foreground">Swiss-Type CNC</h3>
+                <ul className="relative space-y-4">
                   {["Citizen Cincom L20 (7 eixos)", "Citizen Cincom L32 (diâmetros até 32mm)", "Citizen Cincom M32 (alta precisão)", "Tornos GT26 e GT13"].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-lg text-muted-foreground">
+                    <li key={i} className="flex items-center gap-3 text-lg text-muted-foreground border-l-2 border-accent-orange/10 pl-3">
                       <Check className="text-accent w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </GlassCard>
-              <GlassCard className="p-10 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-1 bg-gradient-to-l from-accent/30 to-transparent" />
-                <Layers className="w-12 h-12 text-primary mb-6" strokeWidth={1.5} />
-                <h3 className="text-3xl font-bold mb-6 text-foreground">Multi-Axis & Suporte</h3>
-                <ul className="space-y-4">
+              <GlassCard className="p-10 relative overflow-hidden border-l-4 border-accent/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-50" />
+                <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-accent/30 via-primary/20 to-transparent" />
+                <h3 className="relative text-3xl font-bold mb-6 text-foreground">Multi-Axis & Suporte</h3>
+                <ul className="relative space-y-4">
                   {["Doosan DNM 400 (5 eixos)", "FANUC Robodrill (alta velocidade)", "Retíficas Walter", "Laser Marking fibra"].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-lg text-muted-foreground">
+                    <li key={i} className="flex items-center gap-3 text-lg text-muted-foreground border-l-2 border-accent-orange/10 pl-3">
                       <Check className="text-accent w-5 h-5 flex-shrink-0" strokeWidth={1.5} />
                       <span>{item}</span>
                     </li>
@@ -356,8 +349,9 @@ const PitchDeck = () => {
             </div>
             <div className="mt-12 grid grid-cols-4 gap-6">
               {[citizenL20, citizenM32, doosanNew, robodrill].map((img, i) => (
-                <div key={i} className="bg-card/30 rounded-xl p-4 border border-border/20 hover:border-primary/20 transition-colors duration-500">
-                  <img src={img} alt="Equipment" className="w-full h-24 object-contain" />
+                <div key={i} className="bg-card/30 rounded-xl p-4 border border-border/20 hover:border-primary/20 transition-colors duration-500 relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <img src={img} alt="Equipment" className="relative w-full h-24 object-contain" />
                 </div>
               ))}
             </div>
@@ -371,35 +365,36 @@ const PitchDeck = () => {
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-5xl font-bold mb-6 text-foreground">Laboratório de Metrologia</h2>
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Laboratório de Metrologia</h2>
             <p className="text-2xl text-muted-foreground mb-12">100m² dedicados à inspeção dimensional e certificação</p>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <GlassCard className="p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent-orange/20 via-primary/20 to-transparent" />
-                <Microscope className="w-10 h-10 text-primary mb-4" strokeWidth={1.5} />
-                <h3 className="text-2xl font-bold mb-4 text-foreground">CMM 3D</h3>
-                <p className="text-muted-foreground mb-4">ZEISS Contura com precisão de 0.001mm</p>
-                <img src={zeissContura} alt="ZEISS" className="w-full h-32 object-contain rounded-lg bg-card/50 p-3" />
+              <GlassCard className="p-8 relative overflow-hidden border-t-4 border-primary/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent" />
+                <div className="absolute bottom-0 right-0 w-1 h-20 bg-gradient-to-t from-accent-orange/30 to-transparent" />
+                <h3 className="relative text-2xl font-bold mb-4 text-foreground">CMM 3D</h3>
+                <p className="relative text-muted-foreground mb-4">ZEISS Contura com precisão de <span className="text-primary font-bold">0.001mm</span></p>
+                <img src={zeissContura} alt="ZEISS" className="relative w-full h-32 object-contain rounded-lg bg-card/50 p-3 border border-border/20" />
               </GlassCard>
-              <GlassCard className="p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent/20 via-primary/20 to-transparent" />
-                <Target className="w-10 h-10 text-primary mb-4" strokeWidth={1.5} />
-                <h3 className="text-2xl font-bold mb-4 text-foreground">Inspeção Óptica</h3>
-                <p className="text-muted-foreground mb-4">CNC e manual para geometrias complexas</p>
-                <img src={opticalCNC} alt="Optical" className="w-full h-32 object-contain rounded-lg bg-card/50 p-3" />
+              <GlassCard className="p-8 relative overflow-hidden border-t-4 border-accent/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/8 via-transparent to-transparent" />
+                <div className="absolute bottom-0 right-0 w-1 h-20 bg-gradient-to-t from-accent-orange/30 to-transparent" />
+                <h3 className="relative text-2xl font-bold mb-4 text-foreground">Inspeção Óptica</h3>
+                <p className="relative text-muted-foreground mb-4">CNC e manual para geometrias complexas</p>
+                <img src={opticalCNC} alt="Optical" className="relative w-full h-32 object-contain rounded-lg bg-card/50 p-3 border border-border/20" />
               </GlassCard>
-              <GlassCard className="p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accent-orange/20 via-accent/20 to-transparent" />
-                <Zap className="w-10 h-10 text-accent mb-4" strokeWidth={1.5} />
-                <h3 className="text-2xl font-bold mb-4 text-foreground">Análise de Material</h3>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Dureza Vickers</li>
-                  <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Rugosidade</li>
-                  <li className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Metalografia</li>
+              <GlassCard className="p-8 relative overflow-hidden border-t-4 border-accent-orange/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent-orange/8 via-transparent to-transparent" />
+                <div className="absolute bottom-0 right-0 w-1 h-20 bg-gradient-to-t from-primary/30 to-transparent" />
+                <h3 className="relative text-2xl font-bold mb-4 text-foreground">Análise de Material</h3>
+                <ul className="relative space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2 text-sm border-l-2 border-accent/20 pl-2"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Dureza Vickers</li>
+                  <li className="flex items-center gap-2 text-sm border-l-2 border-accent/20 pl-2"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Rugosidade</li>
+                  <li className="flex items-center gap-2 text-sm border-l-2 border-accent/20 pl-2"><Check className="w-4 h-4 text-accent" strokeWidth={1.5} />Metalografia</li>
                 </ul>
               </GlassCard>
             </div>
-            <GlassCard className="mt-12 p-8 border-l-2 border-primary">
+            <GlassCard className="mt-12 p-8 border-l-4 border-primary/30 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-accent-orange/20 to-transparent" />
               <p className="text-xl text-foreground leading-relaxed">"Cada componente é medido e documentado. Rastreabilidade lote-a-lote para auditorias regulatórias."</p>
             </GlassCard>
           </div>
@@ -413,38 +408,50 @@ const PitchDeck = () => {
         <div className="h-full w-full bg-background relative overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-[0.06]" style={{ backgroundImage: `url(${cleanroomHero})` }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-5xl font-bold mb-6 text-foreground">Salas Limpas ISO 7</h2>
+            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-accent-orange bg-clip-text text-transparent">Salas Limpas ISO 7</h2>
             <p className="text-2xl text-muted-foreground mb-12">120m² de ambiente controlado para embalagem sterile-ready</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <div>
-                <GlassCard className="p-10 relative overflow-hidden mb-8">
-                  <div className="absolute top-0 right-0 w-1 h-24 bg-gradient-to-b from-accent/30 to-transparent" />
-                  <h3 className="text-3xl font-bold mb-6 text-foreground">Controles Ambientais</h3>
-                  <ul className="space-y-4">
+                <GlassCard className="p-10 relative overflow-hidden mb-8 border-l-4 border-accent/20">
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent" />
+                  <div className="absolute top-0 right-0 w-24 h-1 bg-gradient-to-l from-accent/30 to-transparent" />
+                  <h3 className="relative text-3xl font-bold mb-6 text-foreground">Controles Ambientais</h3>
+                  <ul className="relative space-y-4">
                     {[
                       "Monitoramento contínuo de partículas",
                       "Temperatura e umidade controladas",
                       "Pressão positiva diferencial",
                       "Acesso controlado com paramentação"
                     ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                      <li key={i} className="flex items-start gap-3 border-l-2 border-accent-orange/10 pl-3">
                         <CheckCircle className="text-accent w-6 h-6 flex-shrink-0 mt-1" strokeWidth={1.5} />
                         <span className="text-lg text-muted-foreground">{item}</span>
                       </li>
                     ))}
                   </ul>
                 </GlassCard>
-                <div className="border-l-2 border-accent-orange/20 pl-6">
+                <div className="border-l-4 border-accent-orange/20 pl-6 relative">
+                  <div className="absolute top-0 left-0 w-1 h-12 bg-gradient-to-b from-accent-orange/30 to-transparent" />
                   <p className="text-lg text-muted-foreground leading-relaxed">"Componentes saem prontos para esterilização. Seus processos de embalagem final ficam mais simples e seguros."</p>
                 </div>
               </div>
               <div className="flex flex-col gap-6">
-                <img src={cleanroomHero} alt="Cleanroom" className="w-full h-80 object-cover rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)]" />
-                <GlassCard className="p-6">
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div><div className="text-3xl font-bold text-primary mb-1">120m²</div><div className="text-sm text-muted-foreground">Área Total</div></div>
-                    <div><div className="text-3xl font-bold text-primary mb-1">ISO 7</div><div className="text-sm text-muted-foreground">Classificação</div></div>
-                    <div><div className="text-3xl font-bold text-accent mb-1">24/7</div><div className="text-sm text-muted-foreground">Monitoramento</div></div>
+                <img src={cleanroomHero} alt="Cleanroom" className="w-full h-80 object-cover rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)] border border-border/20" />
+                <GlassCard className="p-8 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/30 via-accent/30 to-accent-orange/30" />
+                  <div className="grid grid-cols-3 gap-6 text-center">
+                    <div>
+                      <div className="text-4xl font-bold bg-gradient-to-br from-primary to-primary-dark bg-clip-text text-transparent mb-2">120m²</div>
+                      <div className="text-sm text-muted-foreground">Área Total</div>
+                    </div>
+                    <div>
+                      <div className="text-4xl font-bold bg-gradient-to-br from-accent to-accent/80 bg-clip-text text-transparent mb-2">ISO 7</div>
+                      <div className="text-sm text-muted-foreground">Classificação</div>
+                    </div>
+                    <div>
+                      <div className="text-4xl font-bold bg-gradient-to-br from-accent-orange to-accent-orange/80 bg-clip-text text-transparent mb-2">24/7</div>
+                      <div className="text-sm text-muted-foreground">Monitoramento</div>
+                    </div>
                   </div>
                 </GlassCard>
               </div>
@@ -471,13 +478,14 @@ const PitchDeck = () => {
             </div>
             <div className="grid grid-cols-3 gap-8 mt-8">
               {[
-                { num: "30+", label: "Clientes Médicos Ativos", color: "text-primary" },
-                { num: "15+", label: "Anos de Parcerias OEM", color: "text-primary" },
-                { num: "Zero", label: "Não-conformidades Maiores", color: "text-accent" }
+                { num: "30+", label: "Clientes Médicos Ativos", gradient: "from-primary via-primary to-primary-dark", borderTop: "from-primary/30 via-primary/50 to-primary/30" },
+                { num: "30+", label: "Anos de Experiência", gradient: "from-accent via-accent to-accent/80", borderTop: "from-accent/30 via-accent/50 to-accent/30" },
+                { num: "100%", label: "Produtos com Qualidade Assegurada", gradient: "from-accent-orange via-accent-orange to-accent-orange/80", borderTop: "from-accent-orange/30 via-accent-orange/50 to-accent-orange/30" }
               ].map((item, i) => (
-                <GlassCard key={i} className="p-8 text-center">
-                  <div className={`text-5xl font-bold ${item.color} mb-2`}>{item.num}</div>
-                  <p className="text-lg text-muted-foreground">{item.label}</p>
+                <GlassCard key={i} className="p-10 text-center relative overflow-hidden group">
+                  <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${item.borderTop}`} />
+                  <div className={`text-7xl font-bold bg-gradient-to-br ${item.gradient} bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-500`}>{item.num}</div>
+                  <p className="text-lg text-muted-foreground font-medium">{item.label}</p>
                 </GlassCard>
               ))}
             </div>
