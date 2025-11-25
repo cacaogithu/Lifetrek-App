@@ -47,7 +47,7 @@ export default function Assessment() {
       setStep(2);
     } else {
       // Handle final submission
-      console.log("Assessment submitted:", { ...formData, date });
+      // Assessment submitted successfully
       setStep(3);
     }
   };

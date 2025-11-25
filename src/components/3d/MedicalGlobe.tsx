@@ -6,7 +6,7 @@ import * as THREE from 'three';
 function Globe() {
   const groupRef = useRef<THREE.Group>(null);
   const { gl } = useThree();
-  
+
   // WebGL Context Recovery
   useEffect(() => {
     const canvas = gl?.domElement;
@@ -14,11 +14,11 @@ function Globe() {
 
     const handleContextLost = (e: Event) => {
       e.preventDefault();
-      console.log('WebGL context lost, attempting restore...');
+      // WebGL context lost, attempting restore
     };
-    
+
     const handleContextRestored = () => {
-      console.log('WebGL context restored');
+      // WebGL context restored
     };
 
     canvas.addEventListener('webglcontextlost', handleContextLost);
@@ -29,7 +29,7 @@ function Globe() {
       canvas.removeEventListener('webglcontextrestored', handleContextRestored);
     };
   }, [gl]);
-  
+
   useFrame((state) => {
     if (groupRef.current) {
       groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.2;
@@ -38,23 +38,23 @@ function Globe() {
 
   const points = 100;
   const markers: Array<[number, number, number]> = [];
-  
+
   for (let i = 0; i < points; i++) {
     const phi = Math.acos(-1 + (2 * i) / points);
     const theta = Math.sqrt(points * Math.PI) * phi;
-    
+
     const x = Math.cos(theta) * Math.sin(phi) * 1.5;
     const y = Math.sin(theta) * Math.sin(phi) * 1.5;
     const z = Math.cos(phi) * 1.5;
-    
+
     markers.push([x, y, z]);
   }
 
   return (
     <group ref={groupRef}>
       <Sphere args={[1.5, 32, 32]}>
-        <meshStandardMaterial 
-          color="#1e40af" 
+        <meshStandardMaterial
+          color="#1e40af"
           wireframe={true}
           transparent
           opacity={0.3}
@@ -63,8 +63,8 @@ function Globe() {
       {markers.slice(0, 20).map((pos, i) => (
         <mesh key={i} position={pos}>
           <sphereGeometry args={[0.04, 8, 8]} />
-          <meshStandardMaterial 
-            color={i % 3 === 0 ? "#22c55e" : "#f97316"} 
+          <meshStandardMaterial
+            color={i % 3 === 0 ? "#22c55e" : "#f97316"}
             emissive={i % 3 === 0 ? "#22c55e" : "#f97316"}
             emissiveIntensity={0.5}
           />
