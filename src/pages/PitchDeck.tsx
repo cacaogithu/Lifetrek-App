@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Download,
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ChevronLeft, 
@@ -83,77 +79,10 @@ import torideNew from "@/assets/clients/toride-new.png";
 import ultradentNew from "@/assets/clients/ultradent-new.png";
 import vinculaNew from "@/assets/clients/vincula-new.png";
 
-// Enhanced Glass Card Components with Multiple Variants
-const GlassCard = ({ children, className = "", variant = "default" }: { children: React.ReactNode; className?: string; variant?: "default" | "elevated" | "accent" | "primary" }) => {
-  const variants = {
-    default: "bg-background/60 backdrop-blur-2xl border border-border/30 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.15)] hover:border-border/50",
-    elevated: "bg-background/70 backdrop-blur-3xl border-2 border-border/40 shadow-[0_12px_32px_-10px_rgba(0,0,0,0.12)] hover:shadow-[0_24px_48px_-16px_rgba(0,0,0,0.2)] hover:border-primary/30 hover:-translate-y-1",
-    accent: "bg-gradient-to-br from-accent/5 via-background/60 to-background/60 backdrop-blur-2xl border-2 border-accent/20 shadow-[0_8px_24px_-8px_rgba(234,88,12,0.15)] hover:shadow-[0_20px_40px_-12px_rgba(234,88,12,0.25)] hover:border-accent/40",
-    primary: "bg-gradient-to-br from-primary/5 via-background/60 to-background/60 backdrop-blur-2xl border-2 border-primary/20 shadow-[0_8px_24px_-8px_rgba(0,114,187,0.15)] hover:shadow-[0_20px_40px_-12px_rgba(0,114,187,0.25)] hover:border-primary/40"
-  };
-
-  return (
-    <div className={`${variants[variant]} rounded-2xl transition-all duration-500 ${className}`}>
-      {children}
-    </div>
-  );
-};
-
-// Animated Stat Counter Component
-const StatCounter = ({ value, label, suffix = "" }: { value: string; label: string; suffix?: string }) => (
-  <div className="text-center group">
-    <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary to-accent mb-3 group-hover:scale-110 transition-transform duration-300">
-      {value}{suffix}
-    </div>
-    <div className="text-lg text-muted-foreground font-medium">{label}</div>
-  </div>
-);
-
-// Section Badge Component for Consistency
-const SectionBadge = ({ icon: Icon, label, variant = "primary" }: { icon: React.ElementType; label: string; variant?: "primary" | "accent" | "warning" }) => {
-  const variants = {
-    primary: "bg-primary/10 border-primary/20 text-primary",
-    accent: "bg-accent/10 border-accent/20 text-accent",
-    warning: "bg-red-500/10 border-red-500/20 text-red-500"
-  };
-
-  return (
-    <div className={`inline-flex items-center gap-3 mb-4 px-4 py-2 border rounded-full ${variants[variant]}`}>
-      <Icon className="w-5 h-5" strokeWidth={2} />
-      <span className="text-sm font-bold uppercase tracking-wide">{label}</span>
-    </div>
-  );
-};
-
-// Enhanced Section Header Component (Standardized with Badges)
-const SectionHeader = ({ badge, title, subtitle, align = "left" }: {
-  badge?: { icon: React.ElementType; label: string; variant?: "primary" | "accent" | "warning" };
-  title: string;
-  subtitle?: string;
-  align?: "left" | "center"
-}) => (
-  <div className={`mb-16 ${align === "center" ? "text-center" : ""}`}>
-    {badge && <SectionBadge {...badge} />}
-    <h2 className="text-7xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground to-primary/70">
-      {title}
-    </h2>
-    {subtitle && (
-      <p className="text-2xl text-muted-foreground font-light tracking-wide">{subtitle}</p>
-    )}
-// Glass Card Component - Premium Subtle Shading
+// Glass Card Component
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <div className={`bg-background/50 backdrop-blur-2xl border border-border/20 rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.1)] transition-all duration-700 ${className}`}>
     {children}
-  </div>
-);
-
-// Standardized Slide Container
-const SlideContainer = ({ children, withBlobs = true }: { children: React.ReactNode; withBlobs?: boolean }) => (
-  <div className="relative h-full w-full bg-background overflow-hidden">
-    {withBlobs && <BlobBackground />}
-    <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-      {children}
-    </div>
   </div>
 );
 
@@ -213,21 +142,6 @@ const PitchDeck = () => {
         </div>
       ),
     },
-    // Slide 2 - Para Quem Fabricamos (ENHANCED with Consistency)
-    {
-      id: 2,
-      content: (
-        <SlideContainer>
-          <div className="absolute right-0 top-0 h-full w-1/2 bg-cover bg-center opacity-[0.07]" style={{ backgroundImage: `url(${cleanroomHero})` }} />
-          <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-accent via-primary to-transparent opacity-40" />
-
-          <SectionHeader
-            badge={{ icon: Target, label: "Nossos Parceiros", variant: "primary" }}
-            title="Para Quem Fabricamos"
-            subtitle="Parceiros estratégicos em múltiplos segmentos médicos"
-          />
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
     // Slide 2 - Para Quem Fabricamos
     {
       id: 2,
@@ -274,16 +188,6 @@ const PitchDeck = () => {
               </div>
             </div>
 
-          <GlassCard variant="accent" className="p-10 border-l-4 border-accent relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-accent to-transparent" />
-            <div className="flex items-start gap-6">
-              <div className="text-6xl text-accent/20">"</div>
-              <p className="text-3xl font-bold text-foreground leading-relaxed">
-                Se seu produto entra em um corpo humano ou animal, nós fabricamos como se nossa própria vida dependesse disso.
-              </p>
-            </div>
-          </GlassCard>
-        </SlideContainer>
             <GlassCard className="p-8 border-l-4 border-primary relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 via-accent-orange/20 to-transparent" />
               <div className="absolute top-0 right-0 w-1 h-16 bg-gradient-to-b from-accent-orange/40 to-transparent" />
@@ -619,17 +523,7 @@ const PitchDeck = () => {
               ))}
             </div>
 
-            {/* Stats Cards - Animated with StatCard Component */}
-            <div className="grid grid-cols-3 gap-8 mb-12">
-              {[
-                { num: "30+", label: "Clientes Médicos Ativos", icon: Factory, delay: 0 },
-                { num: "15+", label: "Anos de Parcerias OEM", icon: CheckCircle, delay: 200 },
-                { num: "Zero", label: "Não-conformidades Maiores", icon: Shield, delay: 400 }
-              ].map((item, i) => (
-                <div key={i} className="relative">
-                  <item.icon className={`w-10 h-10 mx-auto mb-3 ${i === 2 ? "text-accent" : "text-primary"}`} strokeWidth={2} />
-                  <StatCard value={item.num} label={item.label} delay={item.delay} />
-                </div>
+            {/* Stats Cards */}
             <div className="grid grid-cols-3 gap-6">
               {[
                 { num: "30+", label: "Clientes Médicos Ativos", gradient: "from-primary via-primary to-primary-dark", borderTop: "from-primary/30 via-primary/50 to-primary/30" },
@@ -693,11 +587,6 @@ const PitchDeck = () => {
                 <span className="relative z-10">Agendar Consulta</span>
                 <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform duration-300 relative z-10" strokeWidth={2.5} />
               </MagneticButton>
-            <div className="flex justify-center">
-              <button className="bg-primary hover:bg-primary-hover text-primary-foreground text-2xl font-bold px-12 py-6 rounded-xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.15)] hover:scale-[1.02] transition-all duration-500 border border-accent-orange/10 flex items-center gap-3 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-0.5 bg-gradient-to-l from-accent-orange/30 to-transparent" />
-                Agendar Consulta<ArrowRight className="w-8 h-8 group-hover:translate-x-1 transition-transform duration-300" strokeWidth={1.5} />
-              </button>
             </div>
           </div>
         </div>
