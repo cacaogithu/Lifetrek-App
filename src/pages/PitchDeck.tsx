@@ -66,9 +66,7 @@ const GlassCard = ({
     {children}
   </div>;
 const PitchDeck = () => {
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
   const clientLogos = [{
@@ -142,7 +140,7 @@ const PitchDeck = () => {
   // Slide 1 - Cover Premium
   {
     id: 1,
-    content: <div className="relative h-full min-h-[800px] max-h-[800px] w-full flex flex-col items-center justify-center overflow-hidden">
+    content: <div data-slide className="relative h-full min-h-[800px] max-h-[800px] w-full flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center" style={{
         backgroundImage: `url(${factoryHeroFull})`
       }} />
@@ -179,7 +177,7 @@ const PitchDeck = () => {
   // Slide 2 - Para Quem Fabricamos
   {
     id: 2,
-    content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden relative">
+    content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent relative">
@@ -239,7 +237,7 @@ const PitchDeck = () => {
   // Slide 3 - O Problema
   {
     id: 3,
-    content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-gradient-to-br from-secondary/30 via-background to-background relative overflow-hidden">
+    content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-gradient-to-br from-secondary/30 via-background to-background relative overflow-hidden">
           <div className="absolute top-20 right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
           <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
@@ -301,7 +299,7 @@ const PitchDeck = () => {
   // Slide 4 - Nossa Promessa
   {
     id: 4,
-    content: <div className="relative h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden">
+    content: <div data-slide className="relative h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-[0.08]" style={{
         backgroundImage: `url(${labOverview})`
       }} />
@@ -346,7 +344,7 @@ const PitchDeck = () => {
   // Slide 5 - O Que Fazemos
   {
     id: 5,
-    content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
+    content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
             <h2 className="text-6xl font-bold mb-12 text-foreground">O Que Fazemos</h2>
             <div className="grid grid-cols-2 gap-6">
