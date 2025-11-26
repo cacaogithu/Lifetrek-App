@@ -243,10 +243,11 @@ const PitchDeck = () => {
           <div className="absolute top-20 right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
           <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/80 bg-clip-text text-transparent relative">
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/80 bg-clip-text text-transparent relative">
               O Problema
               <div className="absolute -bottom-1 left-0 w-40 h-1 bg-gradient-to-r from-destructive/60 via-accent-orange/40 to-transparent" />
             </h2>
+            <p className="text-xl text-muted-foreground mb-10">Desafios comuns na manufatura de dispositivos médicos</p>
             
             <div className="grid grid-cols-2 gap-6">
               {[{
@@ -374,8 +375,10 @@ const PitchDeck = () => {
             gradient: "from-accent/10 via-primary/5 to-transparent",
             border: "border-accent/20"
           }].map((item, i) => <GlassCard key={i} className={`p-10 group relative overflow-hidden border-l-4 ${item.border}`}>
-                  <div className="absolute inset-0 bg-cover bg-center opacity-[0.04]" style={{
-              backgroundImage: `url(${item.bg})`
+                  <div className="absolute inset-0 bg-cover bg-center" style={{
+              backgroundImage: `url(${item.bg})`,
+              maskImage: 'linear-gradient(to right, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.15) 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.15) 100%)'
             }} />
                   <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
                   <div className="absolute top-0 right-0 w-24 h-1 bg-gradient-to-l from-accent-orange/30 to-transparent" />
@@ -389,52 +392,66 @@ const PitchDeck = () => {
   // Slide 6A - Como Fazemos: Processo
   {
     id: 6,
-    content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
-          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">Como Fazemos</h2>
-            <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas:</p>
-            <div className="space-y-6 border-l border-primary/20 pl-12 max-w-4xl">
-              {[{
-            num: 1,
-            title: "DFM & Análise de Risco",
-            desc: "CAD/CAM review, FMEA de processo, identificação de pontos críticos",
-            accent: false
-          }, {
-            num: 2,
-            title: "Usinagem CNC",
-            desc: "Swiss-type tornos, multi-axis, com controle estatístico de processo",
-            accent: false
-          }, {
-            num: 3,
-            title: "Tratamento Térmico",
-            desc: "Fornos controlados com rastreabilidade de ciclos e certificados",
-            accent: false
-          }, {
-            num: 4,
-            title: "Acabamento Superficial",
-            desc: "Electropolish, passivação, inspeção visual 100%",
-            accent: false
-          }, {
-            num: 5,
-            title: "Metrologia Avançada",
-            desc: "CMM 3D, inspeção óptica, dureza, rugosidade - tudo documentado",
-            accent: false
-          }, {
-            num: 6,
-            title: "Embalagem Cleanroom ISO 7",
-            desc: "60m² de salas limpas, componentes prontos para esterilização",
-            accent: true
-          }].map((item, i) => <div key={i} className={`flex items-start gap-8 relative group ${item.accent ? 'border-l-2 border-accent -ml-[1px] pl-11' : ''}`}>
-                  <div className={`absolute -left-12 top-0 text-6xl font-bold ${item.accent ? 'text-accent/20' : 'text-primary/15'}`}>{item.num}</div>
-                  <div className={`${item.accent ? 'bg-accent/5' : 'bg-primary/5'} rounded-full w-14 h-14 flex items-center justify-center text-xl font-bold flex-shrink-0 ${item.accent ? 'text-accent' : 'text-primary'} border border-border/30`}>{item.num}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-2xl font-bold text-foreground">{item.title}</h3>
-                      {item.accent && <div className="h-px flex-1 bg-gradient-to-r from-accent/30 to-transparent" />}
-                    </div>
-                    <p className="text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>)}
+    content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+          <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-accent-orange to-accent bg-clip-text text-transparent relative">
+              Como Fazemos
+              <div className="absolute -bottom-1 left-0 w-48 h-1 bg-gradient-to-r from-primary/40 via-accent-orange/30 to-accent/20" />
+            </h2>
+            <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas</p>
+            
+            <div className="relative">
+              <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-primary/20 via-accent-orange/30 via-accent/20 to-primary/20 -translate-y-1/2" />
+              <div className="grid grid-cols-6 gap-4">
+                {[{
+              num: 1,
+              title: "DFM & Análise",
+              desc: "CAD/CAM review e FMEA",
+              color: "primary",
+              bgGradient: "from-primary/10 to-primary/5"
+            }, {
+              num: 2,
+              title: "Usinagem CNC",
+              desc: "Swiss-type e multi-axis",
+              color: "accent-orange",
+              bgGradient: "from-accent-orange/10 to-accent-orange/5"
+            }, {
+              num: 3,
+              title: "Tratamento Térmico",
+              desc: "Fornos controlados",
+              color: "accent",
+              bgGradient: "from-accent/10 to-accent/5"
+            }, {
+              num: 4,
+              title: "Acabamento",
+              desc: "Electropolish e passivação",
+              color: "primary",
+              bgGradient: "from-primary/10 to-primary/5"
+            }, {
+              num: 5,
+              title: "Metrologia",
+              desc: "CMM 3D e inspeção óptica",
+              color: "accent-orange",
+              bgGradient: "from-accent-orange/10 to-accent-orange/5"
+            }, {
+              num: 6,
+              title: "Embalagem Cleanroom",
+              desc: "ISO 7 sterile-ready",
+              color: "accent",
+              bgGradient: "from-accent/10 to-accent/5"
+            }].map((item, i) => <div key={i} className="relative z-10 group">
+                    <GlassCard className={`p-6 h-full bg-gradient-to-br ${item.bgGradient} border-2 border-${item.color}/20 hover:border-${item.color}/40 transition-all duration-500 hover:scale-105 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.15)]`}>
+                      <div className={`w-12 h-12 rounded-full bg-${item.color}/10 border-2 border-${item.color} flex items-center justify-center mb-4 mx-auto`}>
+                        <span className={`text-xl font-bold text-${item.color}`}>{item.num}</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground mb-2 text-center">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground text-center leading-tight">{item.desc}</p>
+                      <div className={`absolute top-0 right-0 w-16 h-0.5 bg-gradient-to-l from-${item.color}/30 to-transparent`} />
+                    </GlassCard>
+                  </div>)}
+              </div>
             </div>
           </div>
         </div>
@@ -471,9 +488,9 @@ const PitchDeck = () => {
             img: electropolishLine,
             name: "Linha Electropolish",
             desc: "Acabamento espelhado e passivação controlada"
-          }].map((item, i) => <GlassCard key={i} className="p-6 group hover:scale-[1.02] transition-transform duration-500">
-                  <div className="bg-card/50 rounded-xl p-4 mb-4 h-40 flex items-center justify-center overflow-hidden">
-                    <img src={item.img} alt={item.name} className="w-full h-full object-contain" />
+          }].map((item, i) => <GlassCard key={i} className="p-4 group hover:scale-[1.02] transition-transform duration-500">
+                  <div className="bg-card/50 rounded-xl p-2 mb-4 h-56 flex items-center justify-center overflow-hidden">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover rounded-lg" />
                   </div>
                   <div className="border-t border-accent-orange/10 pt-4">
                     <h3 className="text-xl font-bold mb-2 text-foreground">{item.name}</h3>

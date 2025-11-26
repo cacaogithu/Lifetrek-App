@@ -40,5 +40,20 @@ export const MagneticButton = ({
       y: 0
     });
   };
-  return;
+  return (
+    <Button
+      ref={buttonRef}
+      variant={variant}
+      size={size}
+      onClick={onClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={cn("transition-transform duration-300 ease-out", className)}
+      style={{
+        transform: `translate(${position.x}px, ${position.y}px)`
+      }}
+    >
+      {children}
+    </Button>
+  );
 };
