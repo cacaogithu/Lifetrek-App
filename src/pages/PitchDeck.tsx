@@ -247,7 +247,7 @@ const PitchDeck = () => {
               O Problema
               <div className="absolute -bottom-1 left-0 w-40 h-1 bg-gradient-to-r from-destructive/60 via-accent-orange/40 to-transparent" />
             </h2>
-            <p className="text-xl text-muted-foreground mb-10">Por que terceirizar usinagem tira seu sono à noite:</p>
+            
             <div className="grid grid-cols-2 gap-6">
               {[{
             Icon: AlertTriangle,
@@ -289,7 +289,7 @@ const PitchDeck = () => {
                   <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-orange/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 right-0 w-24 h-0.5 bg-gradient-to-l from-accent/30 to-transparent" />
-                  <item.Icon className="relative z-10 w-10 h-10 text-foreground/60 mb-4" strokeWidth={1.5} />
+                  
                   <h3 className="relative z-10 text-2xl font-bold mb-3 text-foreground">{item.title}</h3>
                   <p className="relative z-10 text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>)}
