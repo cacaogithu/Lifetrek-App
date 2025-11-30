@@ -329,7 +329,7 @@ const PitchDeck = () => {
             Icon: Shield,
             color: "text-accent",
             accent: "accent",
-            title: "Audit-Ready Day One",
+            title: "Pronto Para Auditoria",
             desc: "Rastreabilidade completa desde matéria-prima até embalagem final. Seus auditores vão adorar nossos arquivos."
           }].map((item, i) => <GlassCard key={i} className="p-10 relative overflow-hidden group">
                   <div className={`absolute top-0 right-0 w-16 h-0.5 bg-${item.accent}/20`} />
@@ -390,63 +390,50 @@ const PitchDeck = () => {
   // Slide 6A - Como Fazemos: Processo
   {
     id: 6,
-    content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+    content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-accent-orange to-accent bg-clip-text text-transparent relative">
+            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent relative">
               Como Fazemos
-              <div className="absolute -bottom-1 left-0 w-48 h-1 bg-gradient-to-r from-primary/40 via-accent-orange/30 to-accent/20" />
+              <div className="absolute -bottom-1 left-0 w-48 h-1 bg-gradient-to-r from-primary/40 via-accent/20 to-transparent" />
             </h2>
             <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas</p>
             
             <div className="relative">
-              <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-primary/20 via-accent-orange/30 via-accent/20 to-primary/20 -translate-y-1/2" />
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-y-1/2" />
               <div className="grid grid-cols-6 gap-4">
                 {[{
               num: 1,
               title: "DFM & Análise",
-              desc: "CAD/CAM review e FMEA",
-              color: "primary",
-              bgGradient: "from-primary/10 to-primary/5"
+              desc: "CAD/CAM review e FMEA"
             }, {
               num: 2,
               title: "Usinagem CNC",
-              desc: "Swiss-type e multi-axis",
-              color: "accent-orange",
-              bgGradient: "from-accent-orange/10 to-accent-orange/5"
+              desc: "Swiss-type e multi-axis"
             }, {
               num: 3,
               title: "Tratamento Térmico",
-              desc: "Fornos controlados",
-              color: "accent",
-              bgGradient: "from-accent/10 to-accent/5"
+              desc: "Fornos controlados"
             }, {
               num: 4,
               title: "Acabamento",
-              desc: "Electropolish e passivação",
-              color: "primary",
-              bgGradient: "from-primary/10 to-primary/5"
+              desc: "Electropolish e passivação"
             }, {
               num: 5,
               title: "Metrologia",
-              desc: "CMM 3D e inspeção óptica",
-              color: "accent-orange",
-              bgGradient: "from-accent-orange/10 to-accent-orange/5"
+              desc: "CMM 3D e inspeção óptica"
             }, {
               num: 6,
               title: "Embalagem Cleanroom",
-              desc: "ISO 7 sterile-ready",
-              color: "accent",
-              bgGradient: "from-accent/10 to-accent/5"
+              desc: "ISO 7 sterile-ready"
             }].map((item, i) => <div key={i} className="relative z-10 group">
-                    <GlassCard className={`p-6 h-full bg-gradient-to-br ${item.bgGradient} border-2 border-${item.color}/20 hover:border-${item.color}/40 transition-all duration-500 hover:scale-105 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.15)]`}>
-                      <div className={`w-12 h-12 rounded-full bg-${item.color}/10 border-2 border-${item.color} flex items-center justify-center mb-4 mx-auto`}>
-                        <span className={`text-xl font-bold text-${item.color}`}>{item.num}</span>
+                    <GlassCard className="p-6 h-full border border-border/20 hover:border-primary/20 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.1)]">
+                      <div className="w-12 h-12 rounded-full bg-primary/5 border border-primary/20 flex items-center justify-center mb-4 mx-auto">
+                        <span className="text-xl font-bold text-primary">{item.num}</span>
                       </div>
                       <h3 className="text-lg font-bold text-foreground mb-2 text-center">{item.title}</h3>
                       <p className="text-sm text-muted-foreground text-center leading-tight">{item.desc}</p>
-                      <div className={`absolute top-0 right-0 w-16 h-0.5 bg-gradient-to-l from-${item.color}/30 to-transparent`} />
+                      <div className="absolute top-0 right-0 w-12 h-0.5 bg-gradient-to-l from-accent-orange/20 to-transparent" />
                     </GlassCard>
                   </div>)}
               </div>
@@ -708,23 +695,15 @@ const PitchDeck = () => {
               </GlassCard>
             </div>
 
-            {/* Enhanced Magnetic CTA Button */}
-            <div className="flex justify-center">
-              <MagneticButton strength={30} className="group relative bg-gradient-to-r from-primary via-primary to-accent hover:from-accent hover:via-primary hover:to-primary text-white text-2xl font-black px-16 py-8 rounded-2xl shadow-[0_20px_40px_-12px_rgba(0,114,187,0.4)] hover:shadow-[0_24px_48px_-16px_rgba(234,88,12,0.5)] transition-all duration-500 border-2 border-white/10 flex items-center gap-4 overflow-hidden" size="lg">
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                <span className="relative z-10">Agendar Consulta</span>
-                <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform duration-300 relative z-10" strokeWidth={2.5} />
-              </MagneticButton>
-            </div>
           </div>
         </div>
   },
   // Slide 10 - Próximos Passos
   {
     id: 13,
-    content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
+    content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 text-foreground">Próximos Passos</h2>
+            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Próximos Passos</h2>
             <div className="space-y-10 mb-12">
               {[{
             num: "1",
@@ -754,8 +733,8 @@ const PitchDeck = () => {
                   </div>
                 </div>)}
             </div>
-            <GlassCard className="p-10 border-l-4 border-primary">
-              <p className="text-3xl font-semibold text-foreground leading-relaxed mb-8">"Vamos revisar um projeto atual ou futuro e ver se conseguimos reduzir seu risco de timeline e qualidade."</p>
+            <GlassCard className="p-10 border-l-4 border-primary relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-accent-orange/20 to-transparent" />
               <div className="flex items-center gap-8 text-muted-foreground">
                 <div className="text-lg">contato@lifetrek.com.br</div>
                 <div className="h-6 w-px bg-border" />
