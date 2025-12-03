@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Download, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
   Share2,
   Check,
   CheckCircle,
@@ -67,7 +67,7 @@ import vinculaNew from "@/assets/clients/vincula-new.png";
 
 // Glass Card Component - Premium Subtle Shading
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`bg-background/50 backdrop-blur-2xl border border-border/20 rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.1)] transition-all duration-700 ${className}`}>
+  <div className={`bg-background/50 backdrop-blur-2xl border border-border/20 rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] group hover:scale-[1.01] hover:-translate-y-1 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] transition-all duration-700 ${className}`}>
     {children}
   </div>
 );
@@ -120,7 +120,7 @@ const PitchDeck = () => {
       content: (
         <div className="h-full w-full bg-background overflow-hidden">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 text-foreground">Para Quem Fabricamos</h2>
+            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Para Quem Fabricamos</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
               <div className="space-y-6">
                 {[
@@ -166,9 +166,9 @@ const PitchDeck = () => {
     {
       id: 3,
       content: (
-        <div className="h-full w-full bg-gradient-to-br from-secondary/30 via-background to-background">
+        <div className="h-full w-full bg-gradient-to-br from-accent-orange/10 via-background to-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">O Problema</h2>
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">O Problema</h2>
             <p className="text-xl text-muted-foreground mb-12">Por que terceirizar usinagem tira seu sono à noite:</p>
             <div className="grid grid-cols-2 gap-6">
               {[
@@ -225,7 +225,7 @@ const PitchDeck = () => {
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 text-foreground">O Que Fazemos</h2>
+            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">O Que Fazemos</h2>
             <div className="grid grid-cols-2 gap-6">
               {[
                 { bg: medicalScrew, title: "Implantes Ortopédicos", desc: "Placas e parafusos de trauma, sistemas de fusão espinhal, implantes de membros superiores/inferiores, fixação craniana.", gradient: "from-primary/10 via-primary/5 to-transparent", border: "border-primary/20" },
@@ -252,7 +252,7 @@ const PitchDeck = () => {
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">Como Fazemos</h2>
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Como Fazemos</h2>
             <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas:</p>
             <div className="space-y-6 border-l border-primary/20 pl-12 max-w-4xl">
               {[
@@ -290,7 +290,7 @@ const PitchDeck = () => {
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">Equipamentos de Manufatura</h2>
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Equipamentos de Manufatura</h2>
             <p className="text-xl text-muted-foreground mb-10">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
             <div className="grid grid-cols-3 gap-6">
               {[
@@ -472,7 +472,7 @@ const PitchDeck = () => {
         <div className="relative h-full w-full bg-background overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-[0.05]" style={{ backgroundImage: `url(${factoryExterior})` }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-10 text-foreground">Confiança de Líderes do Mercado</h2>
+            <h2 className="text-6xl font-bold mb-10 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Confiança de Líderes do Mercado</h2>
             <div className="grid grid-cols-4 sm:grid-cols-6 gap-6 mb-10">
               {clientLogos.map((logo, index) => (
                 <div key={index} className="flex items-center justify-center group relative">
@@ -504,7 +504,7 @@ const PitchDeck = () => {
       content: (
         <div className="h-full w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">Comece com Baixo Risco</h2>
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Comece com Baixo Risco</h2>
             <h3 className="text-3xl text-primary mb-10">Célula Piloto de Manufatura</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               <div className="space-y-6">
@@ -546,9 +546,10 @@ const PitchDeck = () => {
     {
       id: 13,
       content: (
-        <div className="h-full w-full bg-background">
-          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 text-foreground">Próximos Passos</h2>
+        <div className="relative h-full w-full bg-background overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center opacity-[0.05]" style={{ backgroundImage: `url(${factoryExterior})` }} />
+          <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Próximos Passos</h2>
             <div className="space-y-10 mb-12">
               {[
                 { num: "1", title: "Assinar NDA", desc: "Confidencialidade garantida para todas as informações técnicas e comerciais", border: "border-primary/30" },
@@ -597,6 +598,15 @@ const PitchDeck = () => {
         </div>
       </div>
       <div className="pt-20 h-screen"><div className="h-[calc(100vh-8rem)] relative">{slides[currentSlide].content}</div></div>
+
+      {/* Progress Bar */}
+      <div className="fixed bottom-0 left-0 h-1 bg-muted w-full z-50">
+        <div
+          className="h-full bg-primary transition-all duration-500 ease-out"
+          style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
+        />
+      </div>
+
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border px-8 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Button variant="outline" size="lg" onClick={prevSlide} disabled={currentSlide === 0}><ChevronLeft className="w-5 h-5 mr-2" />Previous</Button>
