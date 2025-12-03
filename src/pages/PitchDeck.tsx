@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
@@ -19,9 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // Assets
 import logo from "@/assets/logo-optimized.webp";
-import isoLogo from "@/assets/certifications/iso.webp";
 import cleanroomHero from "@/assets/facility/cleanroom-hero.webp";
-import factoryExterior from "@/assets/facility/exterior-hero.webp";
 import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
 
 // Equipment
@@ -31,7 +28,6 @@ import doosanNew from "@/assets/equipment/doosan-new.png";
 import robodrill from "@/assets/equipment/robodrill.webp";
 import zeissContura from "@/assets/metrology/zeiss-contura.webp";
 import opticalCNC from "@/assets/metrology/optical-cnc.webp";
-import laserMarking from "@/assets/equipment/laser-marking.webp";
 import electropolishLine from "@/assets/equipment/electropolish-line.webp";
 
 // Products
@@ -79,7 +75,6 @@ const GlassCard = ({
 );
 
 const PitchDeck = () => {
-  const { t } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
 
