@@ -12,9 +12,12 @@ import {
   FileX,
   Clock,
   Target,
-  Microscope
+  Microscope,
+  FileDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { generatePitchDeckPPTX } from "@/utils/generatePitchDeckPPTX";
+import { toast } from "sonner";
 
 // Assets
 import logo from "@/assets/logo-optimized.webp";
@@ -628,6 +631,23 @@ const PitchDeck = () => {
           <div className="flex items-center gap-4">
             <Button variant="outline" size="sm"><Share2 className="w-4 h-4 mr-2" />Share</Button>
             <Button variant="outline" size="sm"><Download className="w-4 h-4 mr-2" />Download PDF</Button>
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={async () => {
+                toast.loading("Generating PPTX...");
+                try {
+                  await generatePitchDeckPPTX();
+                  toast.dismiss();
+                  toast.success("PPTX downloaded successfully!");
+                } catch (error) {
+                  toast.dismiss();
+                  toast.error("Failed to generate PPTX");
+                }
+              }}
+            >
+              <FileDown className="w-4 h-4 mr-2" />Download PPTX
+            </Button>
           </div>
         </div>
       </div>
