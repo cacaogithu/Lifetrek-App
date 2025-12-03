@@ -1,6 +1,21 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Share2,
+  Check,
+  CheckCircle,
+  ArrowRight,
+  AlertTriangle,
+  Shield,
+  FileX,
+  Clock,
+  Target,
+  Microscope
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Download, Share2, Check, CheckCircle, ArrowRight, AlertTriangle, Shield, FileX, Clock, Target, Microscope, Bone, Scissors, Smile, PawPrint, Zap, Factory, Layers, Cog, Sparkles, Package } from "lucide-react";
 import { BlobBackground } from "@/components/BlobBackground";
@@ -55,6 +70,9 @@ import torideNew from "@/assets/clients/toride-new.png";
 import ultradentNew from "@/assets/clients/ultradent-new.png";
 import vinculaNew from "@/assets/clients/vincula-new.png";
 
+// Glass Card Component - Premium Subtle Shading
+const GlassCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div className={`bg-background/50 backdrop-blur-2xl border border-border/20 rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] group hover:scale-[1.01] hover:-translate-y-1 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] transition-all duration-700 ${className}`}>
 // Glass Card Component
 const GlassCard = ({
   children,
@@ -173,6 +191,16 @@ const PitchDeck = () => {
             </div>
           </div>
         </div>
+      ),
+    },
+    // Slide 2 - Para Quem Fabricamos
+    {
+      id: 2,
+      content: (
+        <div className="h-full w-full bg-background overflow-hidden">
+          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Para Quem Fabricamos</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
   },
   // Slide 2 - Para Quem Fabricamos
   {
@@ -233,6 +261,16 @@ const PitchDeck = () => {
             </GlassCard>
           </div>
         </div>
+      ),
+    },
+    // Slide 3 - O Problema
+    {
+      id: 3,
+      content: (
+        <div className="h-full w-full bg-gradient-to-br from-accent-orange/10 via-background to-background">
+          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">O Problema</h2>
+            <p className="text-xl text-muted-foreground mb-12">Por que terceirizar usinagem tira seu sono à noite:</p>
   },
   // Slide 3 - O Problema
   {
@@ -346,7 +384,7 @@ const PitchDeck = () => {
     id: 5,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 text-foreground">O Que Fazemos</h2>
+            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">O Que Fazemos</h2>
             <div className="grid grid-cols-2 gap-6">
               {[{
             bg: medicalScrew,
@@ -386,6 +424,41 @@ const PitchDeck = () => {
             </div>
           </div>
         </div>
+      ),
+    },
+    // Slide 6A - Como Fazemos: Processo
+    {
+      id: 6,
+      content: (
+        <div className="h-full w-full bg-background">
+          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Como Fazemos</h2>
+            <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas:</p>
+            <div className="space-y-6 border-l border-primary/20 pl-12 max-w-4xl">
+              {[
+                { num: 1, title: "DFM & Análise de Risco", desc: "CAD/CAM review, FMEA de processo, identificação de pontos críticos", accent: false },
+                { num: 2, title: "Usinagem CNC", desc: "Swiss-type tornos, multi-axis, com controle estatístico de processo", accent: false },
+                { num: 3, title: "Tratamento Térmico", desc: "Fornos controlados com rastreabilidade de ciclos e certificados", accent: false },
+                { num: 4, title: "Acabamento Superficial", desc: "Electropolish, passivação, inspeção visual 100%", accent: false },
+                { num: 5, title: "Metrologia Avançada", desc: "CMM 3D, inspeção óptica, dureza, rugosidade - tudo documentado", accent: false },
+                { num: 6, title: "Embalagem Cleanroom ISO 7", desc: "60m² de salas limpas, componentes prontos para esterilização", accent: true }
+              ].map((item, i) => (
+                <div key={i} className={`flex items-start gap-8 relative group ${item.accent ? 'border-l-2 border-accent -ml-[1px] pl-11' : ''}`}>
+                  <div className={`absolute -left-12 top-0 text-6xl font-bold ${item.accent ? 'text-accent/20' : 'text-primary/15'}`}>{item.num}</div>
+                  <div className={`${item.accent ? 'bg-accent/5' : 'bg-primary/5'} rounded-full w-14 h-14 flex items-center justify-center text-xl font-bold flex-shrink-0 ${item.accent ? 'text-accent' : 'text-primary'} border border-border/30`}>{item.num}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-2xl font-bold text-foreground">{item.title}</h3>
+                      {item.accent && <div className="h-px flex-1 bg-gradient-to-r from-accent/30 to-transparent" />}
+                    </div>
+                    <p className="text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12 flex items-center gap-2 text-muted-foreground max-w-4xl pl-12">
+              <div className="h-px flex-1 bg-gradient-to-r from-accent-orange/20 via-accent-orange/10 to-transparent" />
+              <span className="text-sm">Próximo: Infraestrutura</span>
   },
   // Slide 6A - Como Fazemos: Processo
   {
@@ -446,7 +519,7 @@ const PitchDeck = () => {
     id: 7,
     content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">Equipamentos de Manufatura</h2>
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Equipamentos de Manufatura</h2>
             <p className="text-xl text-muted-foreground mb-10">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
             <div className="grid grid-cols-3 gap-6">
               {[{
@@ -626,7 +699,7 @@ const PitchDeck = () => {
         backgroundImage: `url(${factoryExterior})`
       }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-10 text-foreground">Confiança de Líderes do Mercado</h2>
+            <h2 className="text-6xl font-bold mb-10 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Confiança de Líderes do Mercado</h2>
             <div className="grid grid-cols-4 sm:grid-cols-6 gap-6 mb-10">
               {clientLogos.map((logo, index) => <div key={index} className="flex items-center justify-center group relative">
                   <div className="absolute -inset-2 bg-gradient-to-r from-primary/5 via-accent-orange/5 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -665,7 +738,7 @@ const PitchDeck = () => {
     id: 12,
     content: <div className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 text-foreground">Comece com Baixo Risco</h2>
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Comece com Baixo Risco</h2>
             <h3 className="text-3xl text-primary mb-10">Célula Piloto de Manufatura</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               <div className="space-y-6">
@@ -697,6 +770,15 @@ const PitchDeck = () => {
 
           </div>
         </div>
+      ),
+    },
+    // Slide 10 - Próximos Passos
+    {
+      id: 13,
+      content: (
+        <div className="relative h-full w-full bg-background overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center opacity-[0.05]" style={{ backgroundImage: `url(${factoryExterior})` }} />
+          <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
   },
   // Slide 10 - Próximos Passos
   {
@@ -789,6 +871,16 @@ const PitchDeck = () => {
           </div>
         </div>
       </div>
+      <div className="pt-20 h-screen"><div className="h-[calc(100vh-8rem)] relative">{slides[currentSlide].content}</div></div>
+
+      {/* Progress Bar */}
+      <div className="fixed bottom-0 left-0 h-1 bg-muted w-full z-50">
+        <div
+          className="h-full bg-primary transition-all duration-500 ease-out"
+          style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
+        />
+      </div>
+
       <div className="pt-20 h-screen">
         <div className="h-[calc(100vh-8rem)] relative overflow-hidden">
           <AnimatePresence initial={false} custom={direction} mode="wait">
