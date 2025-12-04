@@ -15,7 +15,48 @@ serve(async (req) => {
   }
 
   try {
-    console.log("Starting weekly report generation...");
+    // Check for cron secret authentication (for scheduled jobs)
+    const authHeader = req.headers.get("authorization");
+    const cronSecret = Deno.env.get("CRON_SECRET");
+    
+    // Allow either valid JWT (admin user) or cron secret
+    const isCronAuth = authHeader === `Bearer ${cronSecret}`;
+    
+    if (!isCronAuth) {
+      // If not cron auth, verify it's a valid admin JWT
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.39.3");
+      const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader || "" } }
+      });
+      
+      const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+      if (authError || !user) {
+        console.error("Unauthorized access attempt");
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Check if user is admin
+      const { data: adminCheck } = await supabaseAuth
+        .from("admin_users")
+        .select("id")
+        .eq("user_id", user.id)
+        .single();
+      
+      if (!adminCheck) {
+        console.error("Non-admin user attempted to trigger report");
+        return new Response(
+          JSON.stringify({ error: "Forbidden - Admin access required" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+    
+    console.log(`Starting weekly report generation... (auth: ${isCronAuth ? 'cron' : 'admin'})`);
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
