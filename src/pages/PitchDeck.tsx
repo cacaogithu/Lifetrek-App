@@ -62,27 +62,18 @@ const GlassCard = ({
   </div>;
 
 // Heading Variations
-// Variation 1 - Gradient Line (orange/green gradient underline)
-const HeadingGradientLine = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <h2 className={`text-6xl font-bold text-primary relative inline-block ${className}`}>
+// Variation 1 - Gradient Text (no underline)
+const HeadingGradient = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <h2 className={`text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent ${className}`}>
     {children}
-    <div className="absolute -bottom-2 left-0 w-48 h-1 bg-gradient-to-r from-accent-orange via-accent-orange/50 to-accent/30" />
   </h2>
 );
 
-// Variation 2 - Blue Gradient Text + Orange/Green Line
-const HeadingBlueGradient = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <h2 className={`text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent relative inline-block ${className}`}>
+// Variation 2 - Blue Text with Gradient Line underneath
+const HeadingWithLine = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <h2 className={`text-6xl font-bold text-primary relative inline-block ${className}`}>
     {children}
     <div className="absolute -bottom-2 left-0 w-40 h-1 bg-gradient-to-r from-accent-orange via-accent to-transparent" />
-  </h2>
-);
-
-// Variation 3 - Simple Line Accent (risquinho)
-const HeadingLine = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <h2 className={`text-6xl font-bold text-primary relative inline-block ${className}`}>
-    {children}
-    <div className="absolute -bottom-2 left-0 w-24 h-0.5 bg-accent-orange/60" />
   </h2>
 );
 
@@ -196,7 +187,7 @@ const PitchDeck = () => {
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingGradientLine className="mb-4">Para Quem Fabricamos</HeadingGradientLine>
+            <HeadingWithLine className="mb-4">Para Quem Fabricamos</HeadingWithLine>
             <p className="text-xl text-muted-foreground mb-10 mt-2">Parceiros que não podem comprometer a vida dos seus pacientes</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               <div className="space-y-6">
@@ -251,7 +242,7 @@ const PitchDeck = () => {
           <div className="absolute top-20 right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
           <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingGradientLine className="mb-4">O Problema</HeadingGradientLine>
+            <HeadingWithLine className="mb-4">O Problema</HeadingWithLine>
             <p className="text-xl text-muted-foreground mb-10 mt-2">Desafios comuns na manufatura de dispositivos médicos</p>
             <div className="grid grid-cols-2 gap-6">
               {[{
@@ -300,7 +291,7 @@ const PitchDeck = () => {
         backgroundImage: `url(${labOverview})`
       }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingBlueGradient className="mb-4">Nossa Promessa</HeadingBlueGradient>
+            <HeadingGradient className="mb-4">Nossa Promessa</HeadingGradient>
             <p className="text-2xl font-light text-muted-foreground mb-12 mt-2">Lifetrek Medical = Manufatura "sem surpresas"</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-l border-accent-orange/10 pl-8">
               {[{
@@ -337,7 +328,7 @@ const PitchDeck = () => {
     id: 5,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingLine className="mb-12">O Que Fazemos</HeadingLine>
+            <HeadingWithLine className="mb-12">O Que Fazemos</HeadingWithLine>
             <div className="grid grid-cols-2 gap-6 mt-4">
               {[{
             bg: medicalScrew,
@@ -378,7 +369,7 @@ const PitchDeck = () => {
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
           <div className="relative max-w-7xl mx-auto px-16 py-12 h-full flex flex-col justify-center">
-            <HeadingGradientLine className="mb-3">Como Fazemos</HeadingGradientLine>
+            <HeadingGradient className="mb-3">Como Fazemos</HeadingGradient>
             <p className="text-xl text-muted-foreground mb-8 mt-2">Do desenho a componentes sterile-ready em 6 etapas controladas</p>
             <div className="relative">
               <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-y-1/2" />
@@ -421,18 +412,18 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 7 - Equipamentos de Manufatura (Variation 3 - Line)
+  // Slide 7 - Equipamentos de Manufatura
   {
     id: 7,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-10 h-full flex flex-col justify-center">
-            <HeadingLine className="mb-2">Equipamentos de Manufatura</HeadingLine>
-            <p className="text-lg text-muted-foreground mb-6 mt-2">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
-            <div className="grid grid-cols-3 gap-4">
+            <HeadingWithLine className="mb-2">Equipamentos de Manufatura</HeadingWithLine>
+            <p className="text-lg text-muted-foreground mb-4 mt-2">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
+            <div className="grid grid-cols-2 gap-3">
               {[{
             img: citizenL20,
             name: "Citizen Swiss L20",
-            desc: "Tornos Swiss-type de 7 eixos"
+            desc: "Tornos Swiss-type 7 eixos"
           }, {
             img: citizenM32,
             name: "Citizen Cincom M32",
@@ -453,13 +444,13 @@ const PitchDeck = () => {
             img: electropolishLine,
             name: "Linha Electropolish",
             desc: "Acabamento e passivação"
-          }].map((item, i) => <GlassCard key={i} className="p-3 group hover:scale-[1.02] transition-transform duration-500">
-                  <div className="bg-card/50 rounded-lg p-1 mb-2 h-32 flex items-center justify-center overflow-hidden">
-                    <img src={item.img} alt={item.name} className="w-full h-full object-cover rounded-md" />
+          }].map((item, i) => <GlassCard key={i} className="p-2 group hover:scale-[1.01] transition-transform duration-500 flex gap-3 items-center">
+                  <div className="bg-card/50 rounded-lg h-24 w-32 flex-shrink-0 overflow-hidden">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
                   </div>
-                  <div className="border-t border-accent-orange/10 pt-2">
-                    <h3 className="text-base font-bold mb-1 text-foreground">{item.name}</h3>
-                    <p className="text-xs text-muted-foreground leading-tight">{item.desc}</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-foreground truncate">{item.name}</h3>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
                   </div>
                 </GlassCard>)}
             </div>
@@ -471,7 +462,7 @@ const PitchDeck = () => {
     id: 8,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingBlueGradient className="mb-4">Parque CNC</HeadingBlueGradient>
+            <HeadingGradient className="mb-4">Parque CNC</HeadingGradient>
             <p className="text-xl text-muted-foreground mb-10 mt-2">15+ máquinas de alta precisão para manufatura médica</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <GlassCard className="p-10 relative overflow-hidden border-l-4 border-primary/20">
@@ -506,7 +497,7 @@ const PitchDeck = () => {
     id: 9,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingGradientLine className="mb-4">Laboratório de Metrologia</HeadingGradientLine>
+            <HeadingWithLine className="mb-4">Laboratório de Metrologia</HeadingWithLine>
             <p className="text-xl text-muted-foreground mb-10 mt-2">100m² dedicados à inspeção dimensional e certificação</p>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <GlassCard className="p-8 relative overflow-hidden border-t-4 border-primary/30">
@@ -539,7 +530,7 @@ const PitchDeck = () => {
         backgroundImage: `url(${cleanroomHero})`
       }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingLine className="mb-4">Sala Limpa ISO 7</HeadingLine>
+            <HeadingGradient className="mb-4">Sala Limpa ISO 7</HeadingGradient>
             <p className="text-xl text-muted-foreground mb-10 mt-4">60m² dedicados à embalagem sterile-ready</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <GlassCard className="p-10 border-l-4 border-accent/30">
@@ -570,7 +561,7 @@ const PitchDeck = () => {
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingBlueGradient className="mb-10">Confiança de Líderes do Mercado</HeadingBlueGradient>
+            <HeadingGradient className="mb-10">Confiança de Líderes do Mercado</HeadingGradient>
             <div className="grid grid-cols-4 sm:grid-cols-6 gap-6 mb-10 mt-4">
               {clientLogos.map((logo, index) => <div key={index} className="flex items-center justify-center group relative">
                   <img src={logo.src} alt={logo.name} className="relative h-12 w-auto object-contain filter grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100 transition-all duration-500 mix-blend-multiply" />
@@ -602,7 +593,7 @@ const PitchDeck = () => {
     id: 12,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingGradientLine className="mb-4">Comece com Baixo Risco</HeadingGradientLine>
+            <HeadingWithLine className="mb-4">Comece com Baixo Risco</HeadingWithLine>
             <h3 className="text-3xl text-primary mb-10 mt-2">Célula Piloto de Manufatura</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               <div className="space-y-6">
@@ -639,7 +630,7 @@ const PitchDeck = () => {
     id: 13,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingLine className="mb-12">Próximos Passos</HeadingLine>
+            <HeadingGradient className="mb-12">Próximos Passos</HeadingGradient>
             <div className="space-y-10 mb-12 mt-4">
               {[{
             num: "1",
