@@ -39,6 +39,7 @@ export default function LinkedInCarousel() {
   const [proofPoints, setProofPoints] = useState("");
   const [ctaAction, setCtaAction] = useState("");
   const [format, setFormat] = useState<"carousel" | "single-image">("carousel");
+  const [wantImages, setWantImages] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [carouselResult, setCarouselResult] = useState<CarouselResult | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -221,6 +222,7 @@ export default function LinkedInCarousel() {
           proofPoints,
           ctaAction,
           format,
+          wantImages,
         },
       });
 
@@ -395,10 +397,28 @@ ${carouselResult.caption}
                     </Select>
                     <p className="text-xs text-muted-foreground">
                       {format === "carousel" 
-                        ? "Generate multiple slides with professional images for each" 
-                        : "Generate one comprehensive image with all key points"}
+                        ? "Gera múltiplos slides para carrossel" 
+                        : "Gera uma imagem única com pontos-chave"}
                     </p>
                   </div>
+
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="wantImages"
+                      checked={wantImages}
+                      onChange={(e) => setWantImages(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    <Label htmlFor="wantImages" className="text-sm font-normal cursor-pointer">
+                      Gerar imagens com IA (NanoBananaPro)
+                    </Label>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {wantImages 
+                      ? "Imagens profissionais serão geradas para cada slide" 
+                      : "Apenas texto será gerado (mais rápido)"}
+                  </p>
 
                   <Button
                     onClick={handleGenerate}
