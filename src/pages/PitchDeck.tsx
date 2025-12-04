@@ -78,14 +78,11 @@ const HeadingBlueGradient = ({ children, className = "" }: { children: React.Rea
   </h2>
 );
 
-// Variation 3 - Donut Accent (decorative ring)
-const HeadingDonut = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+// Variation 3 - Simple Line Accent (risquinho)
+const HeadingLine = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <h2 className={`text-6xl font-bold text-primary relative inline-block ${className}`}>
     {children}
-    <div className="absolute -bottom-3 left-0 flex items-center gap-2">
-      <div className="w-32 h-0.5 bg-gradient-to-r from-accent-orange to-accent-orange/30" />
-      <div className="w-3 h-3 rounded-full border-2 border-accent-orange bg-transparent" />
-    </div>
+    <div className="absolute -bottom-2 left-0 w-24 h-0.5 bg-accent-orange/60" />
   </h2>
 );
 
@@ -340,7 +337,7 @@ const PitchDeck = () => {
     id: 5,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingDonut className="mb-12">O Que Fazemos</HeadingDonut>
+            <HeadingLine className="mb-12">O Que Fazemos</HeadingLine>
             <div className="grid grid-cols-2 gap-6 mt-4">
               {[{
             bg: medicalScrew,
@@ -424,45 +421,45 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 7 - Equipamentos de Manufatura (Variation 3 - Donut)
+  // Slide 7 - Equipamentos de Manufatura (Variation 3 - Line)
   {
     id: 7,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
-          <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingDonut className="mb-4">Equipamentos de Manufatura</HeadingDonut>
-            <p className="text-xl text-muted-foreground mb-10 mt-4">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
-            <div className="grid grid-cols-3 gap-6">
+          <div className="max-w-7xl mx-auto px-16 py-10 h-full flex flex-col justify-center">
+            <HeadingLine className="mb-2">Equipamentos de Manufatura</HeadingLine>
+            <p className="text-lg text-muted-foreground mb-6 mt-2">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
+            <div className="grid grid-cols-3 gap-4">
               {[{
             img: citizenL20,
             name: "Citizen Swiss L20",
-            desc: "Tornos Swiss-type de 7 eixos para componentes complexos"
+            desc: "Tornos Swiss-type de 7 eixos"
           }, {
             img: citizenM32,
             name: "Citizen Cincom M32",
-            desc: "Alta precisão para implantes com diâmetros até 32mm"
+            desc: "Alta precisão até 32mm"
           }, {
             img: doosanNew,
             name: "Doosan DNM 400",
-            desc: "Centro de usinagem 5 eixos para geometrias complexas"
+            desc: "Centro 5 eixos"
           }, {
             img: robodrill,
             name: "FANUC Robodrill",
-            desc: "Usinagem rápida de alta precisão com troca automática"
+            desc: "Alta velocidade"
           }, {
             img: zeissContura,
             name: "ZEISS Contura",
-            desc: "CMM 3D com precisão de 0.001mm para metrologia"
+            desc: "CMM 3D 0.001mm"
           }, {
             img: electropolishLine,
             name: "Linha Electropolish",
-            desc: "Acabamento espelhado e passivação controlada"
-          }].map((item, i) => <GlassCard key={i} className="p-4 group hover:scale-[1.02] transition-transform duration-500">
-                  <div className="bg-card/50 rounded-xl p-2 mb-4 h-56 flex items-center justify-center overflow-hidden">
-                    <img src={item.img} alt={item.name} className="w-full h-full object-cover rounded-lg" />
+            desc: "Acabamento e passivação"
+          }].map((item, i) => <GlassCard key={i} className="p-3 group hover:scale-[1.02] transition-transform duration-500">
+                  <div className="bg-card/50 rounded-lg p-1 mb-2 h-32 flex items-center justify-center overflow-hidden">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover rounded-md" />
                   </div>
-                  <div className="border-t border-accent-orange/10 pt-4">
-                    <h3 className="text-xl font-bold mb-2 text-foreground">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <div className="border-t border-accent-orange/10 pt-2">
+                    <h3 className="text-base font-bold mb-1 text-foreground">{item.name}</h3>
+                    <p className="text-xs text-muted-foreground leading-tight">{item.desc}</p>
                   </div>
                 </GlassCard>)}
             </div>
@@ -542,7 +539,7 @@ const PitchDeck = () => {
         backgroundImage: `url(${cleanroomHero})`
       }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingDonut className="mb-4">Sala Limpa ISO 7</HeadingDonut>
+            <HeadingLine className="mb-4">Sala Limpa ISO 7</HeadingLine>
             <p className="text-xl text-muted-foreground mb-10 mt-4">60m² dedicados à embalagem sterile-ready</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <GlassCard className="p-10 border-l-4 border-accent/30">
@@ -642,7 +639,7 @@ const PitchDeck = () => {
     id: 13,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <HeadingDonut className="mb-12">Próximos Passos</HeadingDonut>
+            <HeadingLine className="mb-12">Próximos Passos</HeadingLine>
             <div className="space-y-10 mb-12 mt-4">
               {[{
             num: "1",
