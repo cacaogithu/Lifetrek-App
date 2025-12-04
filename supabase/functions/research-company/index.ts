@@ -7,8 +7,8 @@ const corsHeaders = {
 };
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const firecrawlApiKey = Deno.env.get('FIRECRAWL_API_KEY');
 const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY');
@@ -21,6 +21,32 @@ interface CompanyResearch {
   industry: string | null;
   key_products: string[] | null;
   recent_news: string | null;
+}
+
+// Input validation
+function validateInput(data: unknown): { email?: string; company?: string; website?: string } | null {
+  if (!data || typeof data !== 'object') return null;
+  
+  const obj = data as Record<string, unknown>;
+  const result: { email?: string; company?: string; website?: string } = {};
+  
+  if (obj.email && typeof obj.email === 'string') {
+    const email = obj.email.trim().slice(0, 255);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+    result.email = email;
+  }
+  
+  if (obj.company && typeof obj.company === 'string') {
+    result.company = obj.company.trim().slice(0, 200);
+  }
+  
+  if (obj.website && typeof obj.website === 'string') {
+    result.website = obj.website.trim().slice(0, 500);
+  }
+  
+  if (!result.email && !result.website) return null;
+  
+  return result;
 }
 
 // Extract domain from email or URL
@@ -129,7 +155,6 @@ function analyzeWebsiteContent(content: string | null): {
 } {
   if (!content) return { industry: null, key_products: null };
 
-  // Simple keyword extraction (in production, you'd use AI for this)
   const industryKeywords = {
     'medical': ['medical', 'healthcare', 'health', 'hospital', 'clinical', 'surgical'],
     'manufacturing': ['manufacturing', 'production', 'factory', 'industrial'],
@@ -149,8 +174,34 @@ function analyzeWebsiteContent(content: string | null): {
 
   return {
     industry: detectedIndustry,
-    key_products: null, // Would extract with AI in production
+    key_products: null,
   };
+}
+
+// Verify user is admin
+async function verifyAdmin(authHeader: string | null): Promise<boolean> {
+  if (!authHeader) return false;
+  
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) return false;
+    
+    // Check if user is admin
+    const { data: adminData } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    
+    return !!adminData;
+  } catch {
+    return false;
+  }
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -159,8 +210,29 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, company, website } = await req.json();
+    // Verify admin authorization
+    const authHeader = req.headers.get('authorization');
+    const isAdmin = await verifyAdmin(authHeader);
+    
+    if (!isAdmin) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Admin access required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
+    // Validate input
+    const rawData = await req.json();
+    const validatedInput = validateInput(rawData);
+    
+    if (!validatedInput) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input - provide valid email or website' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { email, company, website } = validatedInput;
     console.log('Research request:', { email, company, website });
 
     // Extract domain
@@ -173,6 +245,9 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log('Extracted domain:', domain);
+
+    // Use service role for database operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Check if we have cached research that's not expired
     const { data: cachedResearch, error: cacheError } = await supabase
@@ -225,10 +300,11 @@ const handler = async (req: Request): Promise<Response> => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in research-company:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
     return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
