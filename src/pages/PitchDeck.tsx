@@ -60,6 +60,35 @@ const GlassCard = ({
 }) => <div className={`bg-background/50 backdrop-blur-2xl border border-border/20 rounded-2xl shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05),0_2px_4px_-1px_rgba(0,0,0,0.03)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.1)] transition-all duration-700 ${className}`}>
     {children}
   </div>;
+
+// Heading Variations
+// Variation 1 - Gradient Line (orange/green gradient underline)
+const HeadingGradientLine = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <h2 className={`text-6xl font-bold text-primary relative inline-block ${className}`}>
+    {children}
+    <div className="absolute -bottom-2 left-0 w-48 h-1 bg-gradient-to-r from-accent-orange via-accent-orange/50 to-accent/30" />
+  </h2>
+);
+
+// Variation 2 - Blue Gradient Text + Orange/Green Line
+const HeadingBlueGradient = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <h2 className={`text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent relative inline-block ${className}`}>
+    {children}
+    <div className="absolute -bottom-2 left-0 w-40 h-1 bg-gradient-to-r from-accent-orange via-accent to-transparent" />
+  </h2>
+);
+
+// Variation 3 - Donut Accent (decorative ring)
+const HeadingDonut = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <h2 className={`text-6xl font-bold text-primary relative inline-block ${className}`}>
+    {children}
+    <div className="absolute -bottom-3 left-0 flex items-center gap-2">
+      <div className="w-32 h-0.5 bg-gradient-to-r from-accent-orange to-accent-orange/30" />
+      <div className="w-3 h-3 rounded-full border-2 border-accent-orange bg-transparent" />
+    </div>
+  </h2>
+);
+
 const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -164,17 +193,14 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 2 - Para Quem Fabricamos
+  // Slide 2 - Para Quem Fabricamos (Variation 1 - Gradient Line)
   {
     id: 2,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden relative">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent relative">
-              Para Quem Fabricamos
-              <div className="absolute -bottom-1 left-0 w-48 h-1 bg-gradient-to-r from-primary/40 via-accent/20 to-transparent" />
-            </h2>
-            <p className="text-xl text-muted-foreground mb-10">Parceiros que não podem comprometer a vida dos seus pacientes</p>
+            <HeadingGradientLine className="mb-4">Para Quem Fabricamos</HeadingGradientLine>
+            <p className="text-xl text-muted-foreground mb-10 mt-2">Parceiros que não podem comprometer a vida dos seus pacientes</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               <div className="space-y-6">
                 {[{
@@ -221,18 +247,15 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 3 - O Problema
+  // Slide 3 - O Problema (Variation 1 - Gradient Line)
   {
     id: 3,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-gradient-to-br from-secondary/30 via-background to-background relative overflow-hidden">
           <div className="absolute top-20 right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
           <div className="absolute bottom-20 left-20 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
           <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/80 bg-clip-text relative text-primary">
-              O Problema
-              <div className="absolute -bottom-1 left-0 w-40 h-1 bg-gradient-to-r from-destructive/60 via-accent-orange/40 to-transparent" />
-            </h2>
-            <p className="text-xl text-muted-foreground mb-10">Desafios comuns na manufatura de dispositivos médicos</p>
+            <HeadingGradientLine className="mb-4">O Problema</HeadingGradientLine>
+            <p className="text-xl text-muted-foreground mb-10 mt-2">Desafios comuns na manufatura de dispositivos médicos</p>
             <div className="grid grid-cols-2 gap-6">
               {[{
             Icon: AlertTriangle,
@@ -272,7 +295,7 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 4 - Nossa Promessa
+  // Slide 4 - Nossa Promessa (Variation 2 - Blue Gradient + Line)
   {
     id: 4,
     content: <div data-slide className="relative h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden">
@@ -280,8 +303,8 @@ const PitchDeck = () => {
         backgroundImage: `url(${labOverview})`
       }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Nossa Promessa</h2>
-            <p className="text-2xl font-light text-muted-foreground mb-12">Lifetrek Medical = Manufatura "sem surpresas"</p>
+            <HeadingBlueGradient className="mb-4">Nossa Promessa</HeadingBlueGradient>
+            <p className="text-2xl font-light text-muted-foreground mb-12 mt-2">Lifetrek Medical = Manufatura "sem surpresas"</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-l border-accent-orange/10 pl-8">
               {[{
             Icon: Target,
@@ -312,13 +335,13 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 5 - O Que Fazemos
+  // Slide 5 - O Que Fazemos (Variation 3 - Donut)
   {
     id: 5,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">O Que Fazemos</h2>
-            <div className="grid grid-cols-2 gap-6">
+            <HeadingDonut className="mb-12">O Que Fazemos</HeadingDonut>
+            <div className="grid grid-cols-2 gap-6 mt-4">
               {[{
             bg: medicalScrew,
             title: "Implantes Ortopédicos",
@@ -352,20 +375,17 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 6 - Como Fazemos: Processo
+  // Slide 6 - Como Fazemos: Processo (Variation 1 - Gradient Line) - REDUCED HEIGHT
   {
     id: 6,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
-          <div className="relative max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent relative">
-              Como Fazemos
-              <div className="absolute -bottom-1 left-0 w-48 h-1 bg-gradient-to-r from-primary/40 via-accent/20 to-transparent" />
-            </h2>
-            <p className="text-2xl text-muted-foreground mb-12">Do desenho a componentes sterile-ready em 6 etapas controladas</p>
+          <div className="relative max-w-7xl mx-auto px-16 py-12 h-full flex flex-col justify-center">
+            <HeadingGradientLine className="mb-3">Como Fazemos</HeadingGradientLine>
+            <p className="text-xl text-muted-foreground mb-8 mt-2">Do desenho a componentes sterile-ready em 6 etapas controladas</p>
             <div className="relative">
               <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-y-1/2" />
-              <div className="grid grid-cols-6 gap-4">
+              <div className="grid grid-cols-6 gap-3">
                 {[{
               num: 1,
               title: "DFM & Análise",
@@ -391,12 +411,12 @@ const PitchDeck = () => {
               title: "Embalagem Cleanroom",
               desc: "ISO 7 sterile-ready"
             }].map((item, i) => <div key={i} className="relative z-10 group">
-                    <GlassCard className="p-6 h-full border border-border/20 hover:border-primary/20 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.1)]">
-                      <div className="w-12 h-12 rounded-full bg-primary/5 border border-primary/20 flex items-center justify-center mb-4 mx-auto">
-                        <span className="text-xl font-bold text-primary">{item.num}</span>
+                    <GlassCard className="p-4 h-full border border-border/20 hover:border-primary/20 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.1)]">
+                      <div className="w-10 h-10 rounded-full bg-primary/5 border border-primary/20 flex items-center justify-center mb-3 mx-auto">
+                        <span className="text-lg font-bold text-primary">{item.num}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-foreground mb-2 text-center">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground text-center leading-tight">{item.desc}</p>
+                      <h3 className="text-base font-bold text-foreground mb-1 text-center">{item.title}</h3>
+                      <p className="text-xs text-muted-foreground text-center leading-tight">{item.desc}</p>
                     </GlassCard>
                   </div>)}
               </div>
@@ -404,13 +424,13 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 7 - Equipamentos de Manufatura
+  // Slide 7 - Equipamentos de Manufatura (Variation 3 - Donut)
   {
     id: 7,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Equipamentos de Manufatura</h2>
-            <p className="text-xl text-muted-foreground mb-10">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
+            <HeadingDonut className="mb-4">Equipamentos de Manufatura</HeadingDonut>
+            <p className="text-xl text-muted-foreground mb-10 mt-4">Tecnologia Swiss e Multi-axis para precisão micrométrica</p>
             <div className="grid grid-cols-3 gap-6">
               {[{
             img: citizenL20,
@@ -449,13 +469,13 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 8 - Parque CNC
+  // Slide 8 - Parque CNC (Variation 2 - Blue Gradient + Line)
   {
     id: 8,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Parque CNC</h2>
-            <p className="text-xl text-muted-foreground mb-10">15+ máquinas de alta precisão para manufatura médica</p>
+            <HeadingBlueGradient className="mb-4">Parque CNC</HeadingBlueGradient>
+            <p className="text-xl text-muted-foreground mb-10 mt-2">15+ máquinas de alta precisão para manufatura médica</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <GlassCard className="p-10 relative overflow-hidden border-l-4 border-primary/20">
                 <h3 className="relative text-3xl font-bold mb-6 text-foreground">Swiss-Type CNC</h3>
@@ -484,13 +504,13 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 9 - Laboratório de Metrologia
+  // Slide 9 - Laboratório de Metrologia (Variation 1 - Gradient Line)
   {
     id: 9,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Laboratório de Metrologia</h2>
-            <p className="text-xl text-muted-foreground mb-10">100m² dedicados à inspeção dimensional e certificação</p>
+            <HeadingGradientLine className="mb-4">Laboratório de Metrologia</HeadingGradientLine>
+            <p className="text-xl text-muted-foreground mb-10 mt-2">100m² dedicados à inspeção dimensional e certificação</p>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <GlassCard className="p-8 relative overflow-hidden border-t-4 border-primary/30">
                 <h3 className="relative text-2xl font-bold mb-4 text-foreground">CMM 3D</h3>
@@ -514,7 +534,7 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 10 - Cleanroom
+  // Slide 10 - Cleanroom (Variation 3 - Donut)
   {
     id: 10,
     content: <div data-slide className="relative h-full min-h-[800px] max-h-[800px] w-full bg-background overflow-hidden">
@@ -522,8 +542,8 @@ const PitchDeck = () => {
         backgroundImage: `url(${cleanroomHero})`
       }} />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-accent via-accent to-primary bg-clip-text text-transparent">Sala Limpa ISO 7</h2>
-            <p className="text-xl text-muted-foreground mb-10">60m² dedicados à embalagem sterile-ready</p>
+            <HeadingDonut className="mb-4">Sala Limpa ISO 7</HeadingDonut>
+            <p className="text-xl text-muted-foreground mb-10 mt-4">60m² dedicados à embalagem sterile-ready</p>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <GlassCard className="p-10 border-l-4 border-accent/30">
                 <h3 className="text-3xl font-bold mb-6 text-foreground">Especificações</h3>
@@ -547,14 +567,14 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 11 - Clientes
+  // Slide 11 - Clientes (Variation 2 - Blue Gradient + Line)
   {
     id: 11,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <div className="relative z-10 max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-10 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Confiança de Líderes do Mercado</h2>
-            <div className="grid grid-cols-4 sm:grid-cols-6 gap-6 mb-10">
+            <HeadingBlueGradient className="mb-10">Confiança de Líderes do Mercado</HeadingBlueGradient>
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-6 mb-10 mt-4">
               {clientLogos.map((logo, index) => <div key={index} className="flex items-center justify-center group relative">
                   <img src={logo.src} alt={logo.name} className="relative h-12 w-auto object-contain filter grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100 transition-all duration-500 mix-blend-multiply" />
                 </div>)}
@@ -580,13 +600,13 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 12 - Comece com Baixo Risco
+  // Slide 12 - Comece com Baixo Risco (Variation 1 - Gradient Line)
   {
     id: 12,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">Comece com Baixo Risco</h2>
-            <h3 className="text-3xl text-primary mb-10">Célula Piloto de Manufatura</h3>
+            <HeadingGradientLine className="mb-4">Comece com Baixo Risco</HeadingGradientLine>
+            <h3 className="text-3xl text-primary mb-10 mt-2">Célula Piloto de Manufatura</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               <div className="space-y-6">
                 {[{
@@ -617,15 +637,13 @@ const PitchDeck = () => {
           </div>
         </div>
   },
-  // Slide 13 - Próximos Passos
+  // Slide 13 - Próximos Passos (Variation 3 - Donut)
   {
     id: 13,
     content: <div data-slide className="h-full min-h-[800px] max-h-[800px] w-full bg-background">
           <div className="max-w-7xl mx-auto px-16 py-16 h-full flex flex-col justify-center">
-            <h2 className="text-6xl font-bold mb-12 bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-              Próximos Passos
-            </h2>
-            <div className="space-y-10 mb-12">
+            <HeadingDonut className="mb-12">Próximos Passos</HeadingDonut>
+            <div className="space-y-10 mb-12 mt-4">
               {[{
             num: "1",
             title: "Assinar NDA",
@@ -650,110 +668,104 @@ const PitchDeck = () => {
                   <div className={`text-6xl font-bold ${i === 3 ? 'text-accent/40' : 'text-primary/20'} absolute -left-4`}>{item.num}</div>
                   <div className={`ml-20 border-l-4 ${item.border} pl-8`}>
                     <h3 className="text-3xl font-bold mb-2 text-foreground">{item.title}</h3>
-                    <p className="text-lg text-muted-foreground">{item.desc}</p>
+                    <p className="text-xl text-muted-foreground">{item.desc}</p>
                   </div>
                 </div>)}
             </div>
-            <GlassCard className="p-10 border-l-4 border-primary relative overflow-hidden">
-              <div className="flex items-center gap-8 text-muted-foreground">
-                <div className="text-lg">contato@lifetrek.com.br</div>
-                <div className="h-6 w-px bg-border" />
-                <div className="text-lg">+55 (47) 3370-7146</div>
-              </div>
-            </GlassCard>
+            <div className="flex justify-center gap-6 mt-8">
+              <Button size="lg" className="text-xl px-12 py-6 bg-primary hover:bg-primary-dark shadow-[0_8px_24px_-4px_rgba(14,91,154,0.3)]">
+                Agendar Reunião
+              </Button>
+              <Button size="lg" variant="outline" className="text-xl px-12 py-6 border-2 border-primary/30 text-primary hover:bg-primary/5">
+                Enviar Requisitos
+              </Button>
+            </div>
           </div>
         </div>
   }];
   const nextSlide = () => {
-    setDirection(1);
-    setCurrentSlide(prev => (prev + 1) % slides.length);
+    if (currentSlide < slides.length - 1) {
+      setDirection(1);
+      setCurrentSlide(currentSlide + 1);
+    }
   };
   const prevSlide = () => {
-    setDirection(-1);
-    setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length);
+    if (currentSlide > 0) {
+      setDirection(-1);
+      setCurrentSlide(currentSlide - 1);
+    }
   };
-  const goToSlide = (index: number) => {
-    setDirection(index > currentSlide ? 1 : -1);
-    setCurrentSlide(index);
+  const handleDownloadPPTX = async () => {
+    toast.loading("Gerando apresentação PPTX...", {
+      id: "pptx-download"
+    });
+    try {
+      await generatePitchDeckPPTX();
+      toast.success("Apresentação PPTX baixada com sucesso!", {
+        id: "pptx-download"
+      });
+    } catch (error) {
+      console.error("Error generating PPTX:", error);
+      toast.error("Erro ao gerar PPTX. Tente novamente.", {
+        id: "pptx-download"
+      });
+    }
   };
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
+      x: direction > 0 ? 100 : -100,
       opacity: 0
     }),
     center: {
-      zIndex: 1,
       x: 0,
       opacity: 1
     },
     exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
+      x: direction < 0 ? 100 : -100,
       opacity: 0
     })
   };
-  const swipeConfidenceThreshold = 10000;
-  const swipePower = (offset: number, velocity: number) => {
-    return Math.abs(offset) * velocity;
-  };
   return <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <img src={logo} alt="Lifetrek" className="h-8" />
-            <span className="text-sm text-muted-foreground">Sales Pitch Deck</span>
+      {/* Navigation Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/10">
+        <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <img src={logo} alt="Lifetrek Medical" className="h-10 w-auto" />
+            <div className="h-6 w-px bg-border/30" />
+            <span className="text-sm text-muted-foreground font-medium">Pitch Deck</span>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm"><Share2 className="w-4 h-4 mr-2" />Share</Button>
-            <Button variant="outline" size="sm"><Download className="w-4 h-4 mr-2" />Download PDF</Button>
-            <Button variant="default" size="sm" onClick={async () => {
-            toast.loading("Generating PPTX...");
-            try {
-              await generatePitchDeckPPTX();
-              toast.dismiss();
-              toast.success("PPTX downloaded successfully!");
-            } catch (error) {
-              toast.dismiss();
-              toast.error("Failed to generate PPTX");
-            }
-          }}>
-              <FileDown className="w-4 h-4 mr-2" />Download PPTX
+            <span className="text-sm text-muted-foreground">
+              {currentSlide + 1} / {slides.length}
+            </span>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="icon" onClick={prevSlide} disabled={currentSlide === 0} className="hover:bg-primary/5">
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={nextSlide} disabled={currentSlide === slides.length - 1} className="hover:bg-primary/5">
+                <ChevronRight className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="h-6 w-px bg-border/30" />
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground" onClick={handleDownloadPPTX}>
+              <FileDown className="w-4 h-4" />
+              PPTX
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+              <Share2 className="w-4 h-4" />
+              Share
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 h-1 bg-muted w-full z-50">
-        <div className="h-full bg-primary transition-all duration-500 ease-out" style={{
-        width: `${(currentSlide + 1) / slides.length * 100}%`
-      }} />
-      </div>
-
-      <div className="pt-20 h-screen">
-        <div className="h-[calc(100vh-8rem)] relative overflow-hidden">
+      {/* Slide Container */}
+      <div className="pt-20 pb-8 px-8 min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-7xl aspect-[16/10] bg-background rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-border/10 overflow-hidden relative">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div key={currentSlide} custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{
-            x: {
-              type: "spring",
-              stiffness: 300,
-              damping: 30
-            },
-            opacity: {
-              duration: 0.3
-            }
-          }} drag="x" dragConstraints={{
-            left: 0,
-            right: 0
-          }} dragElastic={1} onDragEnd={(e, {
-            offset,
-            velocity
-          }) => {
-            const swipe = swipePower(offset.x, velocity.x);
-            if (swipe < -swipeConfidenceThreshold && currentSlide < slides.length - 1) {
-              nextSlide();
-            } else if (swipe > swipeConfidenceThreshold && currentSlide > 0) {
-              prevSlide();
-            }
+            duration: 0.4,
+            ease: [0.4, 0, 0.2, 1]
           }} className="absolute inset-0">
               {slides[currentSlide].content}
             </motion.div>
@@ -761,22 +773,12 @@ const PitchDeck = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border px-8 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Button variant="outline" size="lg" onClick={prevSlide} disabled={currentSlide === 0}>
-            <ChevronLeft className="w-5 h-5 mr-2" />Previous
-          </Button>
-          <div className="flex items-center gap-2">
-            {slides.map((_, index) => <button key={index} onClick={() => goToSlide(index)} className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide ? "w-8 bg-primary" : "w-2 bg-muted hover:bg-muted-foreground/50"}`} />)}
-          </div>
-          <Button variant="outline" size="lg" onClick={nextSlide} disabled={currentSlide === slides.length - 1}>
-            Next<ChevronRight className="w-5 h-5 ml-2" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="fixed bottom-24 right-8 z-40">
-        <img src={logo} alt="Lifetrek" className="h-8 opacity-30" />
+      {/* Progress Indicator */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-1.5">
+        {slides.map((_, index) => <button key={index} onClick={() => {
+        setDirection(index > currentSlide ? 1 : -1);
+        setCurrentSlide(index);
+      }} className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-primary w-8' : 'bg-primary/20 hover:bg-primary/40'}`} />)}
       </div>
     </div>;
 };
