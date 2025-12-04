@@ -1,10 +1,60 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+// Verify user is admin
+async function verifyAdmin(authHeader: string | null): Promise<boolean> {
+  if (!authHeader) return false;
+  
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) return false;
+    
+    const { data: adminData } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    
+    return !!adminData;
+  } catch {
+    return false;
+  }
+}
+
+// Input validation
+function validateInput(data: unknown): { imageUrl: string } | null {
+  if (!data || typeof data !== 'object') return null;
+  
+  const obj = data as Record<string, unknown>;
+  
+  if (typeof obj.imageUrl !== 'string') return null;
+  
+  const imageUrl = obj.imageUrl.trim();
+  
+  // Validate URL format (must be http/https or data URL)
+  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:image/')) {
+    return null;
+  }
+  
+  // Limit URL length
+  if (imageUrl.length > 50000) return null;
+  
+  return { imageUrl };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -12,14 +62,36 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl } = await req.json();
+    // Verify admin authorization
+    const authHeader = req.headers.get('authorization');
+    const isAdmin = await verifyAdmin(authHeader);
+    
+    if (!isAdmin) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Admin access required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate input
+    const rawData = await req.json();
+    const validatedInput = validateInput(rawData);
+    
+    if (!validatedInput) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input - provide valid imageUrl' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { imageUrl } = validatedInput;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    console.log('Analyzing image:', imageUrl);
+    console.log('Analyzing image for admin user');
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -94,7 +166,7 @@ Responda em formato JSON: {"name": "...", "description": "...", "category": "...
 
     const data = await response.json();
     const content = data.choices[0].message.content;
-    console.log('AI response:', content);
+    console.log('AI analysis completed');
 
     // Try to parse JSON from the response
     let result;
