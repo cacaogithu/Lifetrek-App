@@ -254,6 +254,127 @@ export type Database = {
           },
         ]
       }
+      content_approvals: {
+        Row: {
+          approved_at: string | null
+          comments: string | null
+          created_at: string
+          id: string
+          reviewer_email: string | null
+          reviewer_name: string
+          reviewer_type: string
+          status: string
+          template_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          comments?: string | null
+          created_at?: string
+          id?: string
+          reviewer_email?: string | null
+          reviewer_name: string
+          reviewer_type?: string
+          status: string
+          template_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          comments?: string | null
+          created_at?: string
+          id?: string
+          reviewer_email?: string | null
+          reviewer_name?: string
+          reviewer_type?: string
+          status?: string
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_approvals_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "content_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_comments: {
+        Row: {
+          comment: string
+          commenter_email: string | null
+          commenter_name: string
+          created_at: string
+          id: string
+          template_id: string
+        }
+        Insert: {
+          comment: string
+          commenter_email?: string | null
+          commenter_name: string
+          created_at?: string
+          id?: string
+          template_id: string
+        }
+        Update: {
+          comment?: string
+          commenter_email?: string | null
+          commenter_name?: string
+          created_at?: string
+          id?: string
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_comments_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "content_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_templates: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          description: string | null
+          id: string
+          language: string
+          niche: string | null
+          status: string
+          title: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          language?: string
+          niche?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          language?: string
+          niche?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
+      }
       daily_tasks: {
         Row: {
           assigned_to: string
