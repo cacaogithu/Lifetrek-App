@@ -80,6 +80,10 @@ const HeadingWithLine = ({ children, className = "" }: { children: React.ReactNo
 const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [isExportMode, setIsExportMode] = useState(false);
+  
+  const disableAnimations = () => setIsExportMode(true);
+  const enableAnimations = () => setIsExportMode(false);
   const clientLogos = [{
     src: cpmhNew,
     name: "CPMH"
@@ -726,6 +730,8 @@ const PitchDeck = () => {
                 setCurrentSlide(index);
               }}
               currentSlide={currentSlide}
+              disableAnimations={disableAnimations}
+              enableAnimations={enableAnimations}
             />
             <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
               <Share2 className="w-4 h-4" />
@@ -739,8 +745,8 @@ const PitchDeck = () => {
       <div className="pt-20 pb-8 px-8 min-h-screen flex items-center justify-center">
         <div className="w-full max-w-7xl aspect-[16/10] bg-background rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-border/10 overflow-hidden relative">
           <AnimatePresence initial={false} custom={direction} mode="wait">
-            <motion.div key={currentSlide} custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{
-            duration: 0.4,
+            <motion.div key={currentSlide} custom={direction} variants={isExportMode ? undefined : slideVariants} initial={isExportMode ? false : "enter"} animate="center" exit={isExportMode ? undefined : "exit"} transition={{
+            duration: isExportMode ? 0 : 0.4,
             ease: [0.4, 0, 0.2, 1]
           }} className="absolute inset-0">
               {slides[currentSlide].content}

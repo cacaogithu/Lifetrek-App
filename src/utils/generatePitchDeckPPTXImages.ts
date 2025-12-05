@@ -1,18 +1,35 @@
 import html2canvas from 'html2canvas';
 import pptxgen from 'pptxgenjs';
-import { toast } from 'sonner';
 
 export interface PPTXImagesGeneratorOptions {
   totalSlides: number;
   setCurrentSlide: (index: number) => void;
   onProgress?: (current: number, total: number) => void;
+  disableAnimations?: () => void;
+  enableAnimations?: () => void;
 }
+
+// Wait for slide to be fully rendered
+const waitForStableRender = (): Promise<void> => {
+  return new Promise(resolve => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        resolve();
+      });
+    });
+  });
+};
 
 export const generatePitchDeckPPTXImages = async ({
   totalSlides,
   setCurrentSlide,
-  onProgress
+  onProgress,
+  disableAnimations,
+  enableAnimations
 }: PPTXImagesGeneratorOptions): Promise<void> => {
+  // Disable animations for faster capture
+  disableAnimations?.();
+  
   const pres = new pptxgen();
 
   // Set presentation properties
@@ -30,8 +47,9 @@ export const generatePitchDeckPPTXImages = async ({
       // Navigate to slide
       setCurrentSlide(i);
       
-      // Wait for animation and render to complete
-      await new Promise(resolve => setTimeout(resolve, 600));
+      // Minimal wait - just enough for React to render
+      await waitForStableRender();
+      await new Promise(resolve => setTimeout(resolve, 100)); // 100ms vs 600ms
 
       onProgress?.(i + 1, totalSlides);
 
@@ -45,7 +63,7 @@ export const generatePitchDeckPPTXImages = async ({
 
       // Capture slide as high-res canvas
       const canvas = await html2canvas(slideElement, {
-        scale: 2, // 2x resolution for crisp output
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -54,8 +72,8 @@ export const generatePitchDeckPPTXImages = async ({
         height: slideElement.offsetHeight
       });
 
-      // Convert canvas to base64 image data
-      const imgData = canvas.toDataURL('image/png', 1.0);
+      // Convert canvas to JPEG for faster processing
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
 
       // Create slide and add image as background
       const slide = pres.addSlide();
@@ -76,5 +94,8 @@ export const generatePitchDeckPPTXImages = async ({
   } catch (error) {
     console.error('Error generating PPTX with images:', error);
     throw error;
+  } finally {
+    // Re-enable animations
+    enableAnimations?.();
   }
 };

@@ -1,23 +1,41 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { toast } from 'sonner';
 
 export interface PDFGeneratorOptions {
   totalSlides: number;
   setCurrentSlide: (index: number) => void;
   onProgress?: (current: number, total: number) => void;
+  disableAnimations?: () => void;
+  enableAnimations?: () => void;
 }
+
+// Wait for slide to be fully rendered (no animations)
+const waitForStableRender = (): Promise<void> => {
+  return new Promise(resolve => {
+    // Use requestAnimationFrame to wait for paint
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        resolve();
+      });
+    });
+  });
+};
 
 export const generatePitchDeckPDF = async ({
   totalSlides,
   setCurrentSlide,
-  onProgress
+  onProgress,
+  disableAnimations,
+  enableAnimations
 }: PDFGeneratorOptions): Promise<void> => {
+  // Disable animations for faster capture
+  disableAnimations?.();
+  
   // Create PDF with 16:9 landscape aspect ratio
   const pdf = new jsPDF({
     orientation: 'landscape',
     unit: 'mm',
-    format: [297, 167] // A4-ish 16:9 aspect
+    format: [297, 167] // 16:9 aspect ratio
   });
 
   const pageWidth = 297;
@@ -28,8 +46,9 @@ export const generatePitchDeckPDF = async ({
       // Navigate to slide
       setCurrentSlide(i);
       
-      // Wait for animation and render to complete
-      await new Promise(resolve => setTimeout(resolve, 600));
+      // Minimal wait - just enough for React to render
+      await waitForStableRender();
+      await new Promise(resolve => setTimeout(resolve, 100)); // 100ms vs 600ms
 
       onProgress?.(i + 1, totalSlides);
 
@@ -43,25 +62,32 @@ export const generatePitchDeckPDF = async ({
 
       // Capture slide as high-res canvas
       const canvas = await html2canvas(slideElement, {
-        scale: 2, // 2x resolution for crisp output
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
         logging: false,
         width: slideElement.offsetWidth,
-        height: slideElement.offsetHeight
+        height: slideElement.offsetHeight,
+        onclone: (clonedDoc) => {
+          // Remove any animation classes from cloned document
+          const clonedSlide = clonedDoc.querySelector('[data-slide]');
+          if (clonedSlide) {
+            clonedSlide.classList.add('pdf-export-mode');
+          }
+        }
       });
 
-      // Convert canvas to image data
-      const imgData = canvas.toDataURL('image/png', 1.0);
+      // Convert canvas to image data with JPEG for faster processing
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
 
       // Add new page for slides after the first
       if (i > 0) {
         pdf.addPage([pageWidth, pageHeight], 'landscape');
       }
 
-      // Add image to PDF, filling the entire page
-      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
+      // Add image to PDF
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight, `slide_${i}`, 'FAST');
     }
 
     // Save the PDF
@@ -70,5 +96,8 @@ export const generatePitchDeckPDF = async ({
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw error;
+  } finally {
+    // Re-enable animations
+    enableAnimations?.();
   }
 };

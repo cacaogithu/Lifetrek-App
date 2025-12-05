@@ -18,6 +18,8 @@ interface ExportDropdownProps {
   totalSlides: number;
   setCurrentSlide: (index: number) => void;
   currentSlide: number;
+  disableAnimations?: () => void;
+  enableAnimations?: () => void;
 }
 
 type ExportType = 'pdf' | 'pptx-images' | 'pptx-editable' | null;
@@ -25,7 +27,9 @@ type ExportType = 'pdf' | 'pptx-images' | 'pptx-editable' | null;
 export const ExportDropdown = ({ 
   totalSlides, 
   setCurrentSlide,
-  currentSlide 
+  currentSlide,
+  disableAnimations,
+  enableAnimations
 }: ExportDropdownProps) => {
   const [isExporting, setIsExporting] = useState(false);
   const [exportType, setExportType] = useState<ExportType>(null);
@@ -44,7 +48,9 @@ export const ExportDropdown = ({
       await generatePitchDeckPDF({
         totalSlides,
         setCurrentSlide,
-        onProgress: (current, total) => setProgress({ current, total })
+        onProgress: (current, total) => setProgress({ current, total }),
+        disableAnimations,
+        enableAnimations
       });
       
       toast.success('PDF gerado com sucesso!', {
@@ -75,7 +81,9 @@ export const ExportDropdown = ({
       await generatePitchDeckPPTXImages({
         totalSlides,
         setCurrentSlide,
-        onProgress: (current, total) => setProgress({ current, total })
+        onProgress: (current, total) => setProgress({ current, total }),
+        disableAnimations,
+        enableAnimations
       });
       
       toast.success('PPTX gerado com sucesso!', {
