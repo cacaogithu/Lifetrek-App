@@ -57,8 +57,13 @@ for page in cheerio_data:
 
 # 5. Process New Leads & Calculate Score
 new_rows = []
-existing_websites = set(master_df['Website'].astype(str))
-existing_names = set(master_df['Nome Empresa'].astype(str))
+
+# Seprate Master into Original vs New (to avoid duplication or stale data)
+original_leads = master_df[master_df['Status'] != 'New Lead'].copy()
+print(f"Preserving {len(original_leads)} original leads")
+
+existing_websites_orig = set(original_leads['Website'].astype(str))
+existing_names_orig = set(original_leads['Nome Empresa'].astype(str))
 
 GLOBAL_BRANDS = {
     'J&J': 3.0, 'JOHNSON': 3.0, 'BIOMET': 3.0, 'ZIMMER': 3.0,
@@ -70,8 +75,8 @@ for idx, row in places_df.iterrows():
     name = str(row['Nome Empresa'])
     website = str(row['Website'])
     
-    # Deduplicate
-    if website in existing_websites or name in existing_names:
+    # Deduplicate against ORIGINAL list only
+    if website in existing_websites_orig or name in existing_names_orig:
         continue
     
     # Get Enrichment Data
@@ -129,13 +134,13 @@ for idx, row in places_df.iterrows():
     }
     new_rows.append(new_row)
 
-print(f"Prepared {len(new_rows)} new unique leads (deduplicated)")
+print(f"Prepared {len(new_rows)} new unique leads (re-processed)")
 
 # 6. Append and Save
 if new_rows:
     new_df = pd.DataFrame(new_rows)
     # Align columns
-    combined_df = pd.concat([master_df, new_df], ignore_index=True)
+    combined_df = pd.concat([original_leads, new_df], ignore_index=True)
     combined_df = combined_df.sort_values('V2_Score', ascending=False)
     
     combined_df.to_csv('/Users/rafaelalmeida/lifetrek-mirror/MASTER_ENRICHED_LEADS.csv', index=False)
