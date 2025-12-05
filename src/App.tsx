@@ -31,6 +31,7 @@ const ProductImageProcessor = lazy(() => import("./pages/ProductImageProcessor")
 const LinkedInCarousel = lazy(() => import("./pages/LinkedInCarousel"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const SalesEngineerDashboard = lazy(() => import("./pages/SalesEngineerDashboard"));
+const ContentApproval = lazy(() => import("./pages/ContentApproval"));
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const App = () => (
                     <Route path="/admin/linkedin-carousel" element={<LinkedInCarousel />} />
                     <Route path="/pitch-deck" element={<PitchDeck />} />
                     <Route path="/ev" element={<SalesEngineerDashboard />} />
+                    <Route path="/admin/content-approval" element={<ContentApproval />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
