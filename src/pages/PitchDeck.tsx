@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Download, Share2, Check, CheckCircle, AlertTriangle, Shield, FileX, Clock, Target, Microscope, FileDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Share2, Check, CheckCircle, AlertTriangle, Shield, FileX, Clock, Target, Microscope } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { generatePitchDeckPPTX } from "@/utils/generatePitchDeckPPTX";
 import { toast } from "sonner";
+import { ExportDropdown } from "@/components/pitch-deck/ExportDropdown";
 
 // Assets
 import logo from "@/assets/logo-optimized.webp";
@@ -683,22 +683,6 @@ const PitchDeck = () => {
       setCurrentSlide(currentSlide - 1);
     }
   };
-  const handleDownloadPPTX = async () => {
-    toast.loading("Gerando apresentação PPTX...", {
-      id: "pptx-download"
-    });
-    try {
-      await generatePitchDeckPPTX();
-      toast.success("Apresentação PPTX baixada com sucesso!", {
-        id: "pptx-download"
-      });
-    } catch (error) {
-      console.error("Error generating PPTX:", error);
-      toast.error("Erro ao gerar PPTX. Tente novamente.", {
-        id: "pptx-download"
-      });
-    }
-  };
   const slideVariants = {
     enter: (direction: number) => ({
       x: direction > 0 ? 100 : -100,
@@ -735,10 +719,14 @@ const PitchDeck = () => {
               </Button>
             </div>
             <div className="h-6 w-px bg-border/30" />
-            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground" onClick={handleDownloadPPTX}>
-              <FileDown className="w-4 h-4" />
-              PPTX
-            </Button>
+            <ExportDropdown 
+              totalSlides={slides.length} 
+              setCurrentSlide={(index) => {
+                setDirection(index > currentSlide ? 1 : -1);
+                setCurrentSlide(index);
+              }}
+              currentSlide={currentSlide}
+            />
             <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
               <Share2 className="w-4 h-4" />
               Share
