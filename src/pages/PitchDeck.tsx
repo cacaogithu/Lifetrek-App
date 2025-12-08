@@ -1,5 +1,5 @@
 // Cleaned PitchDeck.tsx
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +31,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BlobBackground } from "@/components/BlobBackground";
 import { StatCard } from "@/components/StatCard";
 import { MagneticButton } from "@/components/MagneticButton";
+import { toPng } from "html-to-image";
+import PptxGenJS from "pptxgenjs";
+import { jsPDF } from "jspdf";
 
 // Assets
 import logo from "@/assets/logo-optimized.webp";
@@ -93,6 +96,9 @@ const PitchDeck = () => {
   const { t } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportMessage, setExportMessage] = useState<string | null>(null);
+  const slideRef = useRef<HTMLDivElement | null>(null);
 
   const clientLogos = [
     { src: cpmhNew, name: "CPMH" },
@@ -216,6 +222,132 @@ const PitchDeck = () => {
   };
   const swipeConfidenceThreshold = 10000;
   const swipePower = (offset: number, velocity: number) => Math.abs(offset) * velocity;
+  const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+  const waitForImages = async (node: HTMLElement) => {
+    const images = Array.from(node.querySelectorAll("img"));
+    await Promise.all(
+      images.map((img) => {
+        if (img.complete && img.naturalHeight !== 0) return Promise.resolve();
+        return new Promise<void>((resolve) => {
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+        });
+      }),
+    );
+    if (document.fonts?.ready) {
+      try {
+        await document.fonts.ready;
+      } catch {
+        /* no-op */
+      }
+    }
+  };
+
+  const getNodeSize = () => {
+    const node = slideRef.current;
+    if (!node) return { width: 1920, height: 1080 };
+    const rect = node.getBoundingClientRect();
+    return { width: Math.round(rect.width || 1920), height: Math.round(rect.height || 1080) };
+  };
+
+  const captureAllSlides = async () => {
+    const original = currentSlide;
+    const images: string[] = [];
+    let exportWidth = 1920;
+    let exportHeight = 1080;
+
+    try {
+      for (let i = 0; i < slides.length; i++) {
+        if (currentSlide !== i) {
+          setCurrentSlide(i);
+          await nextFrame();
+        }
+
+        const node = slideRef.current;
+        if (!node) continue;
+
+        await waitForImages(node);
+
+        const { width, height } = getNodeSize();
+        exportWidth = width;
+        exportHeight = height;
+
+        const dataUrl = await toPng(node, {
+          cacheBust: true,
+          pixelRatio: 2,
+          width,
+          height,
+          style: { width: `${width}px`, height: `${height}px` },
+        });
+        images.push(dataUrl);
+      }
+    } finally {
+      setCurrentSlide(original);
+      await nextFrame();
+    }
+
+    return { images, width: exportWidth, height: exportHeight };
+  };
+
+  const downloadPdf = async () => {
+    if (isExporting) return;
+    try {
+      setIsExporting(true);
+      setExportMessage("Rendering slides...");
+      const { images, width, height } = await captureAllSlides();
+      if (!images.length) return;
+
+      setExportMessage("Building PDF...");
+      const doc = new jsPDF({
+        orientation: width >= height ? "landscape" : "portrait",
+        unit: "px",
+        format: [width, height],
+        compress: true,
+      });
+
+      images.forEach((img, idx) => {
+        if (idx > 0) doc.addPage([width, height], width >= height ? "landscape" : "portrait");
+        doc.addImage(img, "PNG", 0, 0, width, height);
+      });
+
+      doc.save("pitch-deck.pdf");
+    } catch (err) {
+      console.error("PDF export failed", err);
+    } finally {
+      setExportMessage(null);
+      setIsExporting(false);
+    }
+  };
+
+  const downloadPptx = async () => {
+    if (isExporting) return;
+    try {
+      setIsExporting(true);
+      setExportMessage("Rendering slides...");
+      const { images, width, height } = await captureAllSlides();
+      if (!images.length) return;
+
+      setExportMessage("Building PPTX...");
+      const aspect = width / height;
+      const baseWidth = 13.33; // widescreen in inches
+      const pptx = new PptxGenJS();
+      pptx.defineLayout({ name: "WIDESCREEN_EXPORT", width: baseWidth, height: baseWidth / aspect });
+      pptx.layout = "WIDESCREEN_EXPORT";
+
+      images.forEach((img) => {
+        const slide = pptx.addSlide();
+        slide.addImage({ data: img, x: 0, y: 0, w: "100%", h: "100%" });
+      });
+
+      await pptx.writeFile({ fileName: "pitch-deck.pptx" });
+    } catch (err) {
+      console.error("PPTX export failed", err);
+    } finally {
+      setExportMessage(null);
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -226,31 +358,41 @@ const PitchDeck = () => {
             <span className="text-sm text-muted-foreground">Sales Pitch Deck</span>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm"><Share2 className="w-4 h-4 mr-2" />Share</Button>
-            <Button variant="outline" size="sm"><Download className="w-4 h-4 mr-2" />Download PDF</Button>
+            <Button variant="outline" size="sm" disabled={isExporting}><Share2 className="w-4 h-4 mr-2" />Share</Button>
+            <Button variant="outline" size="sm" onClick={downloadPdf} disabled={isExporting}>
+              <Download className="w-4 h-4 mr-2" />
+              {isExporting ? "Rendering…" : "Download PDF"}
+            </Button>
+          <Button variant="default" size="sm" onClick={downloadPptx} disabled={isExporting}>
+              <Download className="w-4 h-4 mr-2" />
+              {isExporting ? "Rendering…" : "Download PPTX"}
+            </Button>
           </div>
         </div>
       </div>
-      <div className="pt-20 h-screen"><div className="h-[calc(100vh-8rem)] relative">{slides[currentSlide].content}</div></div>
       {/* Progress Bar */}
       <div className="fixed bottom-0 left-0 h-1 bg-muted w-full z-50">
         <div className="h-full bg-primary transition-all duration-500 ease-out" style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }} />
       </div>
       <div className="pt-20 h-screen">
         <div className="h-[calc(100vh-8rem)] relative overflow-hidden">
-          <AnimatePresence initial={false} custom={direction} mode="wait">
+          <AnimatePresence initial={!isExporting} custom={direction} mode="wait">
             <motion.div
               key={currentSlide}
               custom={direction}
               variants={slideVariants}
-              initial="enter"
+              initial={isExporting ? false : "enter"}
               animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.3 },
-              }}
-              drag="x"
+              exit={isExporting ? undefined : "exit"}
+              transition={
+                isExporting
+                  ? { duration: 0 }
+                  : {
+                      x: { type: "spring", stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.3 },
+                    }
+              }
+              drag={isExporting ? false : "x"}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={1}
               onDragEnd={(e, { offset, velocity }) => {
@@ -262,6 +404,7 @@ const PitchDeck = () => {
                 }
               }}
               className="absolute inset-0"
+              ref={slideRef}
             >
               {slides[currentSlide].content}
             </motion.div>
@@ -284,6 +427,14 @@ const PitchDeck = () => {
         </div>
       </div>
       <div className="fixed bottom-24 right-8 z-40"><img src={logo} alt="Lifetrek" className="h-8 opacity-30" /></div>
+      {isExporting && (
+        <div className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-card border border-border rounded-xl px-6 py-4 shadow-lg flex items-center gap-3 text-foreground">
+            <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+            <span>{exportMessage || "Exporting deck..."}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
