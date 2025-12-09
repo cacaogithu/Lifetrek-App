@@ -67,14 +67,40 @@ const getContentType = (content: string, category: string): {
   };
 };
 
-// HTML Preview in iframe
+// HTML Preview in iframe with image fallback handling
 const HTMLPreview = ({ content, height = '500px' }: { content: string; height?: string }) => {
+  // Inject script to handle broken images
+  const fallbackScript = `
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('img').forEach(function(img) {
+          img.onerror = function() {
+            var alt = this.alt || 'Logo';
+            var container = document.createElement('div');
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;padding:10px;';
+            container.innerHTML = '<span style="font-size:18px;font-weight:800;color:inherit;letter-spacing:-0.02em;">' + alt.toUpperCase() + '</span>';
+            this.parentNode.replaceChild(container, this);
+          };
+          // Trigger error check for already loaded images
+          if (!img.complete || img.naturalWidth === 0) {
+            img.src = img.src;
+          }
+        });
+      });
+    </script>
+  `;
+  
+  // Insert script before closing body tag
+  const contentWithFallback = content.includes('</body>') 
+    ? content.replace('</body>', fallbackScript + '</body>')
+    : content + fallbackScript;
+  
   return (
     <iframe
-      srcDoc={content}
+      srcDoc={contentWithFallback}
       className="w-full border-0 rounded-lg bg-white"
       style={{ height }}
-      sandbox="allow-same-origin"
+      sandbox="allow-same-origin allow-scripts"
       title="Email Preview"
     />
   );
