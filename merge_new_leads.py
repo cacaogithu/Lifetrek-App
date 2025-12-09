@@ -15,13 +15,31 @@ except:
     print("Master CSV not found!")
     exit()
 
-# 2. Load Google Places Leads
+# 2. Load New Lead Sources
+# Source A: Google Places (Original)
 try:
     places_df = pd.read_csv('/Users/rafaelalmeida/lifetrek-mirror/new_leads_google_places.csv')
-    print(f"New Leads loaded: {len(places_df)} records")
+    print(f"Original Places Leads loaded: {len(places_df)} records")
 except:
-    print("No new leads found")
-    exit()
+    places_df = pd.DataFrame()
+
+# Source B: Google Places (Advanced)
+try:
+    advanced_df = pd.read_csv('new_leads_advanced.csv')
+    print(f"Advanced Places Leads loaded: {len(advanced_df)} records")
+except:
+    advanced_df = pd.DataFrame()
+    
+# Source C: Perplexity Discovery
+try:
+    perplexity_df = pd.read_csv('new_leads_perplexity_discovery.csv')
+    print(f"Perplexity Discovery Leads loaded: {len(perplexity_df)} records")
+except:
+    perplexity_df = pd.DataFrame()
+
+# Combine all new leads
+all_new_leads_df = pd.concat([places_df, advanced_df, perplexity_df], ignore_index=True)
+print(f"Total New Raw Leads: {len(all_new_leads_df)}")
 
 # 3. Load Cheerio Results
 try:
@@ -59,11 +77,20 @@ for page in cheerio_data:
 new_rows = []
 
 # Seprate Master into Original vs New (to avoid duplication or stale data)
-original_leads = master_df[master_df['Status'] != 'New Lead'].copy()
+if 'Status' in master_df.columns:
+    original_leads = master_df[master_df['Status'] != 'New Lead'].copy()
+else:
+    original_leads = master_df.copy()
+    original_leads['Status'] = 'Original'
+
 print(f"Preserving {len(original_leads)} original leads")
 
-existing_websites_orig = set(original_leads['Website'].astype(str))
-existing_names_orig = set(original_leads['Nome Empresa'].astype(str))
+# Normalize Column Names for checking existence
+website_col = 'Website' if 'Website' in original_leads.columns else 'website'
+company_col = 'Nome Empresa' if 'Nome Empresa' in original_leads.columns else 'Company'
+
+existing_websites_orig = set(original_leads[website_col].astype(str).str.lower().str.strip())
+existing_names_orig = set(original_leads[company_col].astype(str).str.lower().str.strip())
 
 GLOBAL_BRANDS = {
     'J&J': 3.0, 'JOHNSON': 3.0, 'BIOMET': 3.0, 'ZIMMER': 3.0,
@@ -71,12 +98,14 @@ GLOBAL_BRANDS = {
     'ALIGN': 1.5, 'DENTSPLY': 1.5, 'BIOTRONIK': 1.5
 }
 
-for idx, row in places_df.iterrows():
+for idx, row in all_new_leads_df.iterrows():
     name = str(row['Nome Empresa'])
     website = str(row['Website'])
     
     # Deduplicate against ORIGINAL list only
-    if website in existing_websites_orig or name in existing_names_orig:
+    if website.lower().strip() in existing_websites_orig:
+        continue
+    if name.lower().strip() in existing_names_orig:
         continue
     
     # Get Enrichment Data
@@ -111,25 +140,27 @@ for idx, row in places_df.iterrows():
     
     final_score = min(10.0, score)
     
-    # Prepare Row
+    # Prepare Row - Map to Master Schema
+    # Master schema: Company, Website, Lead_Score, ...
     new_row = {
-        'Nome Empresa': name,
+        'Company': name,
+        'Nome Empresa': name, # Keep both for safety if other scripts rely on it
         'Website': website,
         'Address': row.get('Address'),
         'Phone': row.get('Phone'),
-        'Source': 'Google Places',
+        'Source': row.get('Source', 'Google Places'),
         'Status': 'New Lead',
+        'Lead_Score': final_score, # Master uses Lead_Score
+        'Predicted_Score': final_score, 
         'V2_Score': final_score,
-        'Predicted_Score': final_score, # Alias
-        'Renner_Score': None, # Unknown
+        'Renner_Score': 0, 
         # Enrichment Cols
-        'has_fda': enrich.get('has_fda', False),
-        'has_ce': enrich.get('has_ce', False),
-        'has_iso': enrich.get('has_iso', False),
-        'has_rd': enrich.get('has_rd', False),
-        'years': enrich.get('years', 0),
-        'countries': enrich.get('countries', 0),
-        'employees': enrich.get('employees', 0),
+        'FDA_Certified': enrich.get('has_fda', False),
+        'CE_Certified': enrich.get('has_ce', False),
+        'Years_Active': enrich.get('years', 0),
+        'Employees': enrich.get('employees', 0),
+        'City': row.get('City_Scope') or row.get('City'), # Map from Scraper
+        'State': str(row.get('City_Scope', '')).split(',')[-1].strip() if ',' in str(row.get('City_Scope', '')) else None,
         'Enrichment_Status': 'Complete' if len(enrich) > 0 else 'Pending'
     }
     new_rows.append(new_row)
@@ -139,9 +170,13 @@ print(f"Prepared {len(new_rows)} new unique leads (re-processed)")
 # 6. Append and Save
 if new_rows:
     new_df = pd.DataFrame(new_rows)
-    # Align columns
+    # Align columns - Concat handles the union of columns
     combined_df = pd.concat([original_leads, new_df], ignore_index=True)
-    combined_df = combined_df.sort_values('V2_Score', ascending=False)
+    
+    # Sort by Lead_Score
+    score_col = 'Lead_Score' if 'Lead_Score' in combined_df.columns else 'Predicted_Score'
+    if score_col in combined_df.columns:
+        combined_df = combined_df.sort_values(score_col, ascending=False)
     
     combined_df.to_csv('/Users/rafaelalmeida/lifetrek-mirror/MASTER_ENRICHED_LEADS.csv', index=False)
     print("✅ Successfully Merged into MASTER_ENRICHED_LEADS.csv")

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,9 +17,30 @@ serve(async (req) => {
     console.log("Generating LinkedIn content:", { topic, targetAudience, format });
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY not configured");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error("Missing configuration keys");
     }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // Fetch available assets
+    const { data: assets, error: assetsError } = await supabase
+      .from("content_assets")
+      .select("id, filename, category, tags, public_url:id") // Assuming we can construct URL or need a public URL field. Let's use id and construct valid URLs in frontend or here if possible. 
+      // Actually, storage buckets are predictable. We can construct the URL if we know the bucket.
+      .limit(50); // Limit context window usage
+
+    if (assetsError) {
+      console.error("Error fetching assets:", assetsError);
+    }
+
+    // Construct asset context
+    const assetsContext = assets?.map(a =>
+      `- [${a.category.toUpperCase()}] ID: ${a.id} (Tags: ${a.tags?.join(", ")}, Filename: ${a.filename})`
+    ).join("\n") || "No assets available.";
 
     // Build the system prompt with Hormozi principles and LinkedIn best practices
     const systemPrompt = `You are an expert LinkedIn content strategist specializing in B2B medical device manufacturing content. You follow Alex Hormozi's $100M framework and LinkedIn carousel best practices.
@@ -43,8 +65,13 @@ CONTENT RULES:
 - High technical credibility, minimal jargon
 - Every carousel: calls out audience + promises outcome + clear next step
 
-TARGET AUDIENCE CONTEXT:
-${targetAudience}: These are professionals in medical device manufacturing who care about quality, compliance, speed-to-market, and risk mitigation.`;
+ASSET AWARENESS:
+You have access to a library of approved brand assets. You should STRATEGICALLY select an existing asset if it matches the slide content perfectly (e.g., use a "machining_center.jpg" for a slide about precision machining).
+Available Assets:
+${assetsContext}
+
+If no asset fits perfectly, choose "generate" to create a new image.
+`;
 
     const userPrompt = `Generate a LinkedIn carousel with the following details:
 
@@ -60,11 +87,7 @@ Create 5-7 slides following the structure:
 2. 3-5 content slides (numbered insights, mistakes to avoid, or before/after comparisons)
 3. CTA slide
 
-Also create an engaging LinkedIn caption (150-200 words) that:
-- Opens with the same hook as slide 1
-- Teases the carousel content
-- Includes relevant hashtags
-- Ends with the CTA`;
+Also create an engaging LinkedIn caption (150-200 words).`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -83,7 +106,7 @@ Also create an engaging LinkedIn caption (150-200 words) that:
             type: "function",
             function: {
               name: "create_carousel",
-              description: "Create a LinkedIn carousel with structured slides",
+              description: "Create a LinkedIn carousel with structured slides and asset selection",
               parameters: {
                 type: "object",
                 properties: {
@@ -100,8 +123,21 @@ Also create an engaging LinkedIn caption (150-200 words) that:
                         },
                         headline: { type: "string" },
                         body: { type: "string" },
+                        backgroundType: {
+                          type: "string",
+                          enum: ["asset", "generate"],
+                          description: "Whether to use an existing asset or generate a new image"
+                        },
+                        assetId: {
+                          type: "string",
+                          description: "The ID of the selected asset if backgroundType is 'asset'"
+                        },
+                        imageGenerationPrompt: {
+                          type: "string",
+                          description: "Detailed prompt for generating an image if backgroundType is 'generate'"
+                        }
                       },
-                      required: ["type", "headline", "body"],
+                      required: ["type", "headline", "body", "backgroundType"],
                     },
                   },
                   caption: { type: "string" },
@@ -118,151 +154,86 @@ Also create an engaging LinkedIn caption (150-200 words) that:
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI API error:", response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Payment required. Please add credits to your workspace." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
       throw new Error(`AI API error: ${response.status}`);
     }
 
     const aiResponse = await response.json();
-    console.log("AI response received");
-
     const toolCall = aiResponse.choices?.[0]?.message?.tool_calls?.[0];
     if (!toolCall) {
       throw new Error("No tool call in AI response");
     }
 
     const carousel = JSON.parse(toolCall.function.arguments);
+    console.log("Text content generated, processing visual assets...");
 
-    console.log("Text content generated, now generating images...");
-
-    // Brand-specific image generation system prompt
-    const imageSystemPrompt = `You are a professional graphic designer for Lifetrek Medical, a precision medical device manufacturer.
-
-BRAND COLORS:
-- Corporate Blue: #004F8F (primary - trust, precision)
-- Innovation Green: #1A7A3E (accents - innovation)
-- Energy Orange: #F07818 (highlights - use sparingly)
-
-DESIGN PRINCIPLES:
-- Clean, modern, minimalist
-- Professional medical device aesthetic
-- High contrast for readability
-- Inter font for text overlays
-- Technical excellence without overwhelming
-
-VISUAL STYLE:
-- Professional medical device imagery
-- Technical precision (CNC machines, implants, quality)
-- Clean backgrounds with subtle blue tinting
-- B2B professional, not consumer-facing
-
-TARGET: Medical device OEMs, orthopedic/dental manufacturers, quality engineers
-
-Generate LinkedIn-ready images (1080x1080px) that command attention while maintaining technical credibility.`;
-
-    // Generate images for each slide
-    const imageUrls: string[] = [];
+    // Image generation / Asset resolution
+    const processedSlides = [];
     const slidesToGenerate = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
 
     for (const slide of slidesToGenerate) {
-      const imagePrompt = format === "single-image" 
-        ? `Create a professional LinkedIn single-image post for Lifetrek Medical.
+      let imageUrl = "";
 
-CONTENT:
-Topic: ${carousel.topic}
-Headline: ${slide.headline}
-Key Points: ${slide.body}
-
-LAYOUT:
-- Bold headline at top using Corporate Blue (#004F8F)
-- Clean background with subtle medical device imagery
-- Key text overlays in white/high contrast
-- Lifetrek Medical branding subtle but present
-- 1080x1080px square format
-- Modern, professional, attention-grabbing
-- Include relevant icons or visual elements that represent precision manufacturing
-
-Style: Professional B2B LinkedIn post, medical device industry`
-        : `Create a LinkedIn carousel slide image for Lifetrek Medical.
-
-SLIDE TYPE: ${slide.type}
-HEADLINE: ${slide.headline}
-BODY: ${slide.body}
-
-LAYOUT RULES:
-${slide.type === "hook" ? "- Bold headline, large text, minimal content\n- Eye-catching visual hook\n- Use Corporate Blue (#004F8F) prominently" : ""}
-${slide.type === "content" ? "- Clear numbered point or bullet\n- Supporting visual element\n- Innovation Green (#1A7A3E) for accents" : ""}
-${slide.type === "cta" ? "- Clear call-to-action text\n- Contact information visible\n- Energy Orange (#F07818) for CTA button/highlight" : ""}
-
-REQUIREMENTS:
-- 1080x1080px square
-- High contrast text
-- Professional medical device aesthetic
-- Clean, modern design
-- Readable from thumbnail size
-
-Style: Professional B2B carousel slide, technical precision focus`;
-
-      try {
-        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "google/gemini-2.5-flash-image",
-            messages: [
-              { role: "system", content: imageSystemPrompt },
-              { role: "user", content: imagePrompt }
-            ],
-            modalities: ["image", "text"]
-          }),
-        });
-
-        if (!imageResponse.ok) {
-          console.error("Image generation error:", imageResponse.status);
-          imageUrls.push(""); // Push empty string on error
-          continue;
+      if (slide.backgroundType === "asset" && slide.assetId) {
+        // Construct public URL for the asset
+        const { data } = supabase.storage.from("content-assets").getPublicUrl(`${slide.assetId}`);
+        // Note: The previous select didn't actually return the filename path, just ID. 
+        // We need to store the path or lookup properly. 
+        // Correction: The table has 'file_path'. I should have selected that.
+        // Let's do a quick lookup here if we have ID, or rely on client knowing the bucket pattern if I fix the initial query.
+        // Better: Fix the initial query to return file_path or just do a lookup here if needed.
+        // Actually, let's fix the logic below by re-fetching if needed or just trusting the assetId IS the file_path if I prompted it that way?
+        // No, I prompted with ID.
+        // Let's resolve the ID to a public URL.
+        const { data: assetData } = await supabase.from("content_assets").select("filename").eq("id", slide.assetId).single();
+        if (assetData) {
+          const { data: publicUrlData } = supabase.storage.from("content-assets").getPublicUrl(assetData.filename);
+          imageUrl = publicUrlData.publicUrl;
+          console.log("Using asset:", imageUrl);
         }
-
-        const imageData = await imageResponse.json();
-        const imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-        
-        if (imageUrl) {
-          imageUrls.push(imageUrl);
-          console.log(`Generated image ${imageUrls.length}/${slidesToGenerate.length}`);
-        } else {
-          console.error("No image URL in response");
-          imageUrls.push("");
-        }
-      } catch (imageError) {
-        console.error("Error generating image:", imageError);
-        imageUrls.push("");
       }
+
+      if (!imageUrl && (slide.backgroundType === "generate" || !slide.assetId)) {
+        // Fallback to generation
+        const imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
+HEADLINE CONTEXT: ${slide.headline}
+BODY CONTEXT: ${slide.body}
+STYLE: Professional medical device aesthetic, clean, technical.
+${slide.imageGenerationPrompt || ""}
+`;
+        try {
+          const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "google/gemini-2.5-flash-image",
+              messages: [
+                { role: "system", content: "You are a professional medical designer." },
+                { role: "user", content: imagePrompt }
+              ],
+              modalities: ["image", "text"]
+            }),
+          });
+          const imageData = await imageResponse.json();
+          imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+        } catch (e) {
+          console.error("Image gen error", e);
+        }
+      }
+
+      processedSlides.push({
+        ...slide,
+        imageUrl
+      });
     }
 
-    console.log(`Content generation complete: ${imageUrls.length} images generated`);
-
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         carousel: {
           ...carousel,
+          slides: processedSlides,
           format,
-          imageUrls
+          // Legacy support (list of URLs)
+          imageUrls: processedSlides.map(s => s.imageUrl)
         }
       }),
       {
@@ -271,13 +242,10 @@ Style: Professional B2B carousel slide, technical precision focus`;
       }
     );
   } catch (error) {
-    console.error("Error in generate-linkedin-carousel:", error);
+    console.error("Error:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
 });

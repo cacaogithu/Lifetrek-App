@@ -7,6 +7,44 @@ def run_pipeline():
     print("🚀 STARTING SALES ENRICHMENT PIPELINE 🚀")
     print("=========================================")
 
+    # Step 0: Advanced Scraping
+    print("\n[STEP 0] Running Advanced Scrapers...")
+    try:
+        # 1. Google Places Advanced
+        if os.path.exists("scrape_leads_advanced.py"):
+             print("   - Running Google Places Advanced Scraper...")
+             subprocess.run(["python3", "scrape_leads_advanced.py"], check=True)
+        
+        # 2. Perplexity Discovery
+        if os.path.exists("discover_leads_perplexity.py"):
+             print("   - Running Perplexity Discovery...")
+             subprocess.run(["python3", "discover_leads_perplexity.py"], check=True)
+             
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Warning: Scraping step had issues: {e}")
+        # We continue even if scraping fails, to process existing leads
+
+    # Step 0.5: Merge & Dedup
+    print("\n[STEP 0.5] Merging New Leads into Master Database...")
+    try:
+        if os.path.exists("merge_new_leads.py"):
+            subprocess.run(["python3", "merge_new_leads.py"], check=True)
+        else:
+            print("❌ merge_new_leads.py not found!")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error during merging: {e}")
+        sys.exit(1)
+
+    # Step 0.8: Email Enrichment (Free Mode)
+    print("\n[STEP 0.8] Finding Emails (Free Advanced Scraper)...")
+    try:
+        if os.path.exists("enrich_emails_advanced_free.py"):
+             subprocess.run(["python3", "enrich_emails_advanced_free.py"], check=True)
+        else:
+             print("⚠️ enrich_emails_advanced_free.py not found, skipping.")
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Warning: Email enrichment had issues: {e}")
+
     # Step 1: Segmentation
     print("\n[STEP 1] Segmenting Leads...")
     try:
