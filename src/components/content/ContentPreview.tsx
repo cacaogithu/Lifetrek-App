@@ -67,40 +67,55 @@ const getContentType = (content: string, category: string): {
   };
 };
 
+// SVG logo as base64 for email previews
+const LIFETREK_LOGO_SVG = `data:image/svg+xml;base64,${btoa(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#004F8F"/>
+      <stop offset="100%" style="stop-color:#0066B3"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="12" width="6" height="26" rx="2" fill="url(#logoGrad)"/>
+  <text x="14" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#004F8F" letter-spacing="-0.5">LIFETREK</text>
+  <text x="138" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#1A7A3E">MEDICAL</text>
+</svg>
+`)}`;
+
+const LIFETREK_LOGO_WHITE_SVG = `data:image/svg+xml;base64,${btoa(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <rect x="0" y="12" width="6" height="26" rx="2" fill="#ffffff"/>
+  <text x="14" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#ffffff" letter-spacing="-0.5">LIFETREK</text>
+  <text x="138" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#1A7A3E">MEDICAL</text>
+</svg>
+`)}`;
+
 // HTML Preview in iframe with image fallback handling
 const HTMLPreview = ({ content, height = '500px' }: { content: string; height?: string }) => {
-  // Inject script to handle broken images
-  const fallbackScript = `
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('img').forEach(function(img) {
-          img.onerror = function() {
-            var alt = this.alt || 'Logo';
-            var container = document.createElement('div');
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;padding:10px;';
-            container.innerHTML = '<span style="font-size:18px;font-weight:800;color:inherit;letter-spacing:-0.02em;">' + alt.toUpperCase() + '</span>';
-            this.parentNode.replaceChild(container, this);
-          };
-          // Trigger error check for already loaded images
-          if (!img.complete || img.naturalWidth === 0) {
-            img.src = img.src;
-          }
-        });
-      });
-    </script>
-  `;
-  
-  // Insert script before closing body tag
-  const contentWithFallback = content.includes('</body>') 
-    ? content.replace('</body>', fallbackScript + '</body>')
-    : content + fallbackScript;
+  // Replace broken Supabase image URLs with inline SVG logos
+  let processedContent = content
+    // Replace white logo on dark backgrounds
+    .replace(
+      /https:\/\/iijkbhiqcsvtnfernrbs\.supabase\.co\/storage\/v1\/object\/public\/product-images\/lifetrek-logo-white\.png/g,
+      LIFETREK_LOGO_WHITE_SVG
+    )
+    // Replace dark logo
+    .replace(
+      /https:\/\/iijkbhiqcsvtnfernrbs\.supabase\.co\/storage\/v1\/object\/public\/product-images\/lifetrek-logo-dark\.png/g,
+      LIFETREK_LOGO_SVG
+    )
+    // Replace any other lifetrek logo references
+    .replace(
+      /https:\/\/iijkbhiqcsvtnfernrbs\.supabase\.co\/storage\/v1\/object\/public\/product-images\/lifetrek-logo[^"']*/g,
+      LIFETREK_LOGO_SVG
+    );
   
   return (
     <iframe
-      srcDoc={contentWithFallback}
+      srcDoc={processedContent}
       className="w-full border-0 rounded-lg bg-white"
       style={{ height }}
-      sandbox="allow-same-origin allow-scripts"
+      sandbox="allow-same-origin"
       title="Email Preview"
     />
   );
