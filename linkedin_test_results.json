@@ -1,0 +1,2286 @@
+[
+  {
+    "id": "602249",
+    "universalName": "neodent",
+    "linkedinUrl": "https://www.linkedin.com/company/neodent/",
+    "name": "Neodent",
+    "tagline": "New smiles everyday.",
+    "website": "http://www.neodent.com.br",
+    "phone": null,
+    "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_400_400/company-logo_400_400/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=CHE5ndV75uaePe8Squhp6G04SyyG5gonLhbLGGNhp_I",
+    "foundedOn": {
+      "month": null,
+      "year": 1993,
+      "day": null
+    },
+    "employeeCount": 2655,
+    "employeeCountRange": {
+      "start": 1001,
+      "end": 5000
+    },
+    "followerCount": 196650,
+    "description": "Neodent is a global brand with a presence in more than 97 countries. Created by dentists for dentists, we are the market leader in Brazil and one of the largest companies in the sector worldwide. With over 30 years of expertise in innovation and science, we offer aesthetic and restorative solutions designed to make oral health increasingly accessible.\n\nGuided by this vision, our purpose is to create new smiles every day.",
+    "locations": [
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Rua Benjamin Lins, 742, Batel",
+        "line2": null,
+        "postalCode": "80240-100",
+        "headquarter": true,
+        "description": "HQ",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Fortaleza",
+        "geographicArea": "CE",
+        "line1": "Av. Senador Virg\u00edlio T\u00e1vora, 1500 - salas 1403, 1404 e 1405 Aldeota",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Fortaleza",
+        "parsed": {
+          "text": "Fortaleza, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Cear\u00e1",
+          "city": "Fortaleza"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Bras\u00edlia",
+        "geographicArea": "DF",
+        "line1": "SUL QD 06 CONJ. \u201cA\u201d BL.\u201dC\u201d LJ 64,68,72-76 ASA SUL, ",
+        "line2": null,
+        "postalCode": "70322-915",
+        "headquarter": false,
+        "description": "Filial Bras\u00edlia",
+        "parsed": {
+          "text": "Bras\u00edlia, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Distrito Federal",
+          "city": "Bras\u00edlia"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Vit\u00f3ria",
+        "geographicArea": "ES",
+        "line1": "Rua Desembargador Sampaio, 204 - SL 201 - Praia do Canto",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Vit\u00f3ria",
+        "parsed": {
+          "text": "Vit\u00f3ria, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Esp\u00edrito Santo",
+          "city": "Vit\u00f3ria"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Goi\u00e2nia",
+        "geographicArea": "Goi\u00e1s",
+        "line1": "Avenida 136 761",
+        "line2": "B93 a B97",
+        "postalCode": "74093-025",
+        "headquarter": false,
+        "description": "Filial Goi\u00e1s",
+        "parsed": {
+          "text": "Goi\u00e2nia, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Goi\u00e1s",
+          "city": "Goi\u00e2nia"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Cuiab\u00e1",
+        "geographicArea": "Mato Grosso",
+        "line1": "Avenida Historiador Rubens de Mendon\u00e7a 2368",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Cuiab\u00e1",
+        "parsed": {
+          "text": "Cuiab\u00e1, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Mato Grosso",
+          "city": "Cuiab\u00e1"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Belo Horizonte",
+        "geographicArea": "Minas Gerais",
+        "line1": "Rua Padre Rolim 35",
+        "line2": null,
+        "postalCode": "30130-090",
+        "headquarter": false,
+        "description": "Filial Belo Horizonte",
+        "parsed": {
+          "text": "Belo Horizonte, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Minas Gerais",
+          "city": "Belo Horizonte"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Av. Juscelino Kubitschek de Oliveira, 3291",
+        "line2": null,
+        "postalCode": "81270-200",
+        "headquarter": false,
+        "description": "F\u00e1brica da Neodent",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Avenida Juscelino Kubitschek de Oliveira 3753",
+        "line2": null,
+        "postalCode": "81270-200",
+        "headquarter": false,
+        "description": "F\u00e1brica ClearCorrect",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Rua Benjamin Lins 742",
+        "line2": null,
+        "postalCode": "80420-100",
+        "headquarter": false,
+        "description": "Filial Curitiba ",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Recife",
+        "geographicArea": "PE ",
+        "line1": "Av. Gov. Agamenon Magalh\u00e3es, 4779, Sala 801/803, Ilha do Leite",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Recife",
+        "parsed": {
+          "text": "Recife, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Pernambuco",
+          "city": "Recife"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Maring\u00e1",
+        "geographicArea": "PR",
+        "line1": "Av. Advogado Horacio Racanello, 5570 \u2013 Sala 02 / Terreo",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Maring\u00e1",
+        "parsed": {
+          "text": "Maring\u00e1, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Maring\u00e1"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Pelotas",
+        "geographicArea": "Rio Grande do Sul",
+        "line1": "Avenida S\u00e3o Francisco de Paula 3852",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "F\u00e1brica Yller Biomateriais",
+        "parsed": {
+          "text": "Pelotas, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Rio Grande do Sul",
+          "city": "Pelotas"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Rio de Janeiro",
+        "geographicArea": "RJ",
+        "line1": "Praia de Botafogo, 440 \u2013 sala 1601, 16\u00ba. Andar",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Rio de Janeiro",
+        "parsed": {
+          "text": "Rio de Janeiro, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Rio de Janeiro",
+          "city": "Rio de Janeiro"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Porto Alegre",
+        "geographicArea": "RS",
+        "line1": "Av. Mariland, 777 9\u00ba Andar - S\u00e3o Jo\u00e3o, ",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Porto Alegre",
+        "parsed": {
+          "text": "Porto Alegre, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Rio Grande do Sul",
+          "city": "Porto Alegre"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Florian\u00f3polis",
+        "geographicArea": "SC",
+        "line1": "Av. Professor Othon Gama D\u2019E\u00e7a, 677, Salas 104 a 107",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Florian\u00f3polis",
+        "parsed": {
+          "text": "Florian\u00f3polis, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Santa Catarina",
+          "city": "Florian\u00f3polis"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Joinville",
+        "geographicArea": "SC",
+        "line1": "Rua Blumenau, 64, salas 804/805/806",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Joinville",
+        "parsed": {
+          "text": "Joinville, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Santa Catarina",
+          "city": "Joinville"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Bauru",
+        "geographicArea": "SP",
+        "line1": "Alameda Dr. Oct\u00e1vio Pinheiro Brisolla, 7-46 - Jardim Brasil",
+        "line2": null,
+        "postalCode": "17012-191",
+        "headquarter": false,
+        "description": "Filial Bauru",
+        "parsed": {
+          "text": "Bauru, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "Bauru"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Campinas",
+        "geographicArea": "SP",
+        "line1": "Av. Jos\u00e9 de Souza Campos, 900 - 2\u00b0 andar - sala 21 ",
+        "line2": null,
+        "postalCode": "13092-123",
+        "headquarter": false,
+        "description": "Filial Campinas",
+        "parsed": {
+          "text": "Campinas, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "Campinas"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "S\u00e3o Paulo",
+        "geographicArea": "SP",
+        "line1": "Av. das Na\u00e7\u00f5es Unidas , 12399 - 8\u00ba ANDAR, salas 81A, 82A e 81B ",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial S\u00e3o Paulo",
+        "parsed": {
+          "text": "S\u00e3o Paulo, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "S\u00e3o Paulo"
+        }
+      }
+    ],
+    "specialities": [
+      "Implantes dent\u00e1rios",
+      "Instrumentais cir\u00fargicos",
+      "Componentes prot\u00e9ticos",
+      "Produtos e servi\u00e7os na \u00e1rea odontol\u00f3gica",
+      "Alinhadores Transparentes",
+      "Resinas para Impress\u00e3o 3D",
+      "Fluxo Digital da Odontologia"
+    ],
+    "industries": [
+      {
+        "id": "17",
+        "name": "Medical Device",
+        "urn": "urn:li:fsd_industry:17"
+      }
+    ],
+    "logos": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_400_400/company-logo_400_400/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=CHE5ndV75uaePe8Squhp6G04SyyG5gonLhbLGGNhp_I",
+        "width": 400,
+        "height": 400,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_200_200/company-logo_200_200/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=p3032Sr4PSl272nT3S-HzIe7IKxdIkiDKfAyqOckle8",
+        "width": 200,
+        "height": 200,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_100_100/company-logo_100_100/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=cRjhALfRkm0ujr3GRBwzfcc97qzIS-oPAhEQj5zLM6w",
+        "width": 100,
+        "height": 100,
+        "expiresAt": 1766620800000
+      }
+    ],
+    "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_10000/company-background_10000/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=7VsLVmgbRwSxVuH8EaPd-8wfwCYQJqFFNnGNN0MCOds",
+    "backgroundCovers": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_10000/company-background_10000/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=7VsLVmgbRwSxVuH8EaPd-8wfwCYQJqFFNnGNN0MCOds",
+        "width": 4700,
+        "height": 796,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_400/company-background_400/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=vvBz4W9ZybYrdEdRjRccr8VXg13yVSzp7QVtGg7c8OY",
+        "width": 400,
+        "height": 67,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_200/company-background_200/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=UJ3_FSczympJ0FCwtdRjpv8Q5qQGozLux_HNWD3LEn0",
+        "width": 200,
+        "height": 33,
+        "expiresAt": 1765566000000
+      }
+    ],
+    "active": true,
+    "jobSearchUrl": "https://www.linkedin.com/jobs/search?geoId=92000000&f_C=602249",
+    "fundingData": null,
+    "pageVerified": true,
+    "announcement": null,
+    "pageType": "COMPANY",
+    "autoGenerated": false,
+    "callToActionUrl": "https://careers.straumann.com/global/en",
+    "similarOrganizations": [
+      {
+        "id": "103483567",
+        "universalName": "horse-powertrain",
+        "linkedinUrl": "https://www.linkedin.com/company/horse-powertrain/",
+        "name": "Horse Powertrain",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQHrNzjo5VE6vw/company-logo_400_400/B4DZY5kuzZG4Ac-/0/1744722652848/horse_powertrain_logo?e=1766620800&v=beta&t=Fv0JB73EaF0rmlJZahM18x6qfKKrDeJ-qLjXhWXrtsc",
+        "employeeCountRange": {
+          "start": 10001,
+          "end": null
+        },
+        "followerCount": 20297,
+        "description": "Horse Powertrain is a global leader in powertrain solutions.\n\nWe are here to move our industry forward, offering many different paths to net zero. As the partner of choice for OEMs, we seek to enable a faster transition through collaboration.\n\nWe offer a range of powertrain solutions to meet the needs of almost every customer, in every region, across every fuel type. Whatever your need, with 17 plants and 5 R&D centers on 3 continents, we have the expertise, scale and innovation to deliver.\n\nHorse Powertrain is based in London, with two divisions: Aurobay Technologies and Horse Technologies. We have regional headquarters in Gothenburg, Madrid, Shanghai.",
+        "industries": [
+          {
+            "id": "135",
+            "name": "Mechanical Or Industrial Engineering",
+            "urn": "urn:li:fsd_industry:135"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQF2ctGlA5LqIg/company-background_10000/B4DZY5nA.wHAAc-/0/1744723252354/horse_powertrain_cover?e=1765566000&v=beta&t=GYhr3Q4MeMKZ10HNwJRM45V6k2nHcpbyCR4XhtV0y_Q",
+        "callToActionUrl": null
+      },
+      {
+        "id": "6995471",
+        "universalName": "horsch",
+        "linkedinUrl": "https://www.linkedin.com/company/horsch/",
+        "name": "HORSCH",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQG6HVs5TGoSJg/company-logo_400_400/company-logo_400_400/0/1668425480972/horsch_logo?e=1766620800&v=beta&t=_APJIXlYxfbeJ8DvR4LB0qlgLcxgOb2gdnXeIBeLUrg",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 69722,
+        "description": "HORSCH ist einer der weltweit f\u00fchrenden Hersteller von moderner und innovativer Landtechnik. Das Familienunternehmen wurde 1984 gegr\u00fcndet. Der Schwerpunkt liegt auf der Entwicklung von Produkten f\u00fcr Bodenbearbeitung, Aussaat, Pflanzenschutz und Hybrid-Landwirtschaft.\nDer Hauptsitz des Unternehmens liegt im bayerischen Schwandorf. Neben den drei Standorten in Deutschland gibt es weltweit mehrere Niederlassungen, wie zum Beispiel in Brasilien oder den USA. International sind rund 3.200 Mitarbeitende bei HORSCH besch\u00e4ftigt. \n\nHORSCH is one of the worldwide leading global manufacturers of state-of-the-art and innovative agricultural technology. The family-owned company was founded in 1984. The focus is on developing products for tillage, seeding, crop care and hybrid farming. \nThe company\u2019s headquarters is located in Schwandorf, Bavaria. In addition to the three locations in Germany, HORSCH has several subsidiaries worldwide, for example in Brazil or the USA. Internationally, HORSCH employs approximately 3.200 people.",
+        "industries": [
+          {
+            "id": "55",
+            "name": "Machinery",
+            "urn": "urn:li:fsd_industry:55"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQHhMP_nfCOGUQ/company-background_10000/company-background_10000/0/1668425320387/horsch_cover?e=1765566000&v=beta&t=QZyUDEIuix5p_JcKWZUDIu4INU-mZyn49LR27ZgjN_4",
+        "callToActionUrl": null
+      },
+      {
+        "id": "24557454",
+        "universalName": "potencialoficial",
+        "linkedinUrl": "https://www.linkedin.com/company/potencialoficial/",
+        "name": "Grupo Potencial",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFG9DDDEOogqw/company-logo_400_400/company-logo_400_400/0/1727110667392/potencialoficial_logo?e=1766620800&v=beta&t=gHIJRvKr7lztiOnPW-2Odab7i7bZqAVG5VmDQ0q8FJo",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 40731,
+        "description": "A Potencial Petr\u00f3leo nasceu em 1994 na cidade de Arauc\u00e1ria, regi\u00e3o metropolitana de Curitiba. A partir desse ano, a empresa foi se expandindo para Santa Catarina, Rio Grande do Sul, S\u00e3o Paulo e Minas Gerais. Hoje, conta com mais de 100 postos bandeirados e est\u00e1 presente em mais de 2 mil munic\u00edpios da regi\u00e3o Sul e Sudeste, por meio do atendimento de postos independentes e de grandes consumidores.\n\nConstitu\u00edda por profissionais com ampla experi\u00eancia no mercado de combust\u00edveis, a empresa j\u00e1 iniciou suas atividades visando proporcionar um atendimento diferenciado, s\u00e9rio e comprometido com seus clientes, oferecendo simplicidade e praticidade operacional, al\u00e9m de baixo custo de instala\u00e7\u00e3o e opera\u00e7\u00e3o dos postos revendedores de combust\u00edveis.",
+        "industries": [
+          {
+            "id": "57",
+            "name": "Oil & Energy",
+            "urn": "urn:li:fsd_industry:57"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHlAWVlK2FNLQ/company-background_10000/company-background_10000/0/1729256086620/potencialoficial_cover?e=1765566000&v=beta&t=-NlpiViRq41MhJY9r46DELJQn_RBx7p-Oix1278m6Mc",
+        "callToActionUrl": null
+      },
+      {
+        "id": "3469",
+        "universalName": "electroluxgroup",
+        "linkedinUrl": "https://www.linkedin.com/company/electroluxgroup/",
+        "name": "Electrolux Group",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQEZiaaUvM-yOg/company-logo_400_400/company-logo_400_400/0/1631372210419?e=1766620800&v=beta&t=fKb54pasUcRJG8FyalV5KFxfUD9OySey057IHos4AyI",
+        "employeeCountRange": {
+          "start": 10001,
+          "end": null
+        },
+        "followerCount": 727178,
+        "description": "Electrolux Group is a leading global appliance company that has shaped living for the better for more than 100 years. We reinvent taste, care and wellbeing experiences for millions of people, always striving to be at the forefront of sustainability in society through our solutions and operations. Under our group of leading appliance brands, including Electrolux, AEG and Frigidaire, we sell household products in around 120 markets every year. In 2024 Electrolux Group had sales of SEK 136 billion and employed approximately 41,000 people around the world. For more information go to www.electroluxgroup.com\n\nComment moderation guidelines:\n \nWe welcome open, respectful and constructive conversation on this page. At Electrolux Group, our values of respect, dignity and courtesy guide how we engage online, and we ask that all contributions align with these principles and  LinkedIn\u2019s Community Guidelines and User Agreement. \n \nTo ensure a safe and inclusive environment, we reserve the right to remove comments that are abusive, offensive, disruptive, misleading or false, repetitive or off-topic. We may also block or report users who repeatedly violate these guidelines. \n \nPlease note that comments posted here do not necessarily reflect the views of Electrolux Group. ",
+        "industries": [
+          {
+            "id": "25",
+            "name": "Consumer Goods",
+            "urn": "urn:li:fsd_industry:25"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/C561BAQHLIKRmxFmFwQ/company-background_1536_768/company-background_1536_768/0/1584534097814?e=1765566000&v=beta&t=83IJ0XfexkpfqBwZbt9sN4QlO_-_G-ebQ0OGU8X2gQI",
+        "callToActionUrl": null
+      },
+      {
+        "id": "3713535",
+        "universalName": "onesubsea",
+        "linkedinUrl": "https://www.linkedin.com/company/onesubsea/",
+        "name": "OneSubsea",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQFYQTlPbKYu5w/company-logo_400_400/company-logo_400_400/0/1696237232524/onesubsea_logo?e=1766620800&v=beta&t=-7K-5xOfY2jL5hqm3ZWWt0QCRwC4qxlOyOY1FC_XzL8",
+        "employeeCountRange": {
+          "start": 10001,
+          "end": null
+        },
+        "followerCount": 316982,
+        "description": "SLB OneSubsea is the world\u2019s leading subsea technology and solutions provider, focused on accelerating innovation to improve subsea asset performance, while increasing energy efficiency and reducing CO2 emissions.\n\nWe are a joint venture backed by SLB, Aker Solutions, and Subsea7 which combines the subsea businesses of SLB and Aker Solutions.\n\nTogether, we are driving the new subsea era that leverages digital and technology innovation to optimize our customers\u2019 oil and gas production, reduce emissions in subsea operations, and unlock the large potential of subsea solutions to help create a sustainable energy future.\n\nWe are headquartered in Oslo and Houston, with 10,000 employees across the world.\n\nImportant Notice: Recruitment Scam Alert\n \nIt has come to our attention that fraudulent actors are using our company name - along with many others - to deceive job seekers. Please be aware that OneSubsea never has and never will request any form of payment in relation to job offers or recruitment processes.\n \nWe strongly encourage all job seekers to remain vigilant and cautious when engaging with unsolicited job offers or recruitment messages.\n \nThere are many good resources available online that can help you detect scams, and we advise any job seeker to be vigilant. ",
+        "industries": [
+          {
+            "id": "57",
+            "name": "Oil & Energy",
+            "urn": "urn:li:fsd_industry:57"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQEpIpDf_7Kr9w/company-background_10000/company-background_10000/0/1696237606042/onesubsea_cover?e=1765566000&v=beta&t=cqZC9pxIygn7kdNl1L-sch9N8PBlUEKSx7vr9qi5HC0",
+        "callToActionUrl": null
+      },
+      {
+        "id": "728915",
+        "universalName": "coritiba-foot-ball-club",
+        "linkedinUrl": "https://www.linkedin.com/company/coritiba-foot-ball-club/",
+        "name": "Coritiba SAF",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQEyQwoQdYh8Pw/company-logo_400_400/B4DZl70kKeGwAg-/0/1758719001945/coritiba_foot_ball_club_logo?e=1766620800&v=beta&t=xLwDJH5gxK9vWkb8Dv99mFgiXblUuJbXdQ7Gv7d791A",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 27399,
+        "description": "S\u00e3o 115 anos de hist\u00f3ria. In\u00fameras conquistas e uma legi\u00e3o de f\u00e3s. O futuro como realidade. O Coritiba SAF d\u00e1 um passo \u00e0 frente em sua hist\u00f3ria para se consolidar como uma das principais pot\u00eancias do futebol no Brasil.\n\nFundado em 12 de outubro de 1909, por um grupo de jovens imigrantes alem\u00e3es, o Coritiba SAF \u00e9 o mais antigo e representativo time de futebol do estado do Paran\u00e1, prestigiado pela sua hist\u00f3ria, tradi\u00e7\u00e3o e t\u00edtulos.\n\nO \u201cCoxa\u201d, como \u00e9 popularmente conhecido, foi o primeiro time do estado do Paran\u00e1 a conquistar o t\u00edtulo do Campeonato Brasileiro, em 1985. Atualmente, \u00e9 o time que mais ganhou t\u00edtulos no Paran\u00e1, somando 39 conquistas, sendo a \u00faltima conquistada em 2022. O clube foi hexacampe\u00e3o entre 1971 e 1976 e depois tetracampe\u00e3o entre 2010 e 2013.\n\nAl\u00e9m disso, o Coritiba foi o recordista sul-americano com maior n\u00famero de vit\u00f3rias consecutivas, com 24 triunfos no ano de 2011, e entrou para o Guinness Book como \u201co time mais vitorioso do mundo\u201d.\n\nAs categorias de base do clube s\u00e3o reconhecidas como uma das principais do pa\u00eds, por conta de seus t\u00edtulos e a capacidade de revelar jogadores. A base do Coxa hoje contribui para a forma\u00e7\u00e3o de atletas de alto rendimento que refor\u00e7am o elenco profissional, a Sele\u00e7\u00e3o Brasileira e outros clubes dentro e fora do pa\u00eds. \n\nOs \u201cPi\u00e1s do Couto\u201d, como s\u00e3o conhecidos os atletas da base do Coritiba, conquistaram pelo clube o in\u00e9dito t\u00edtulo da Copa do Brasil Sub-20, em 2021.\n\nAtualmente, o Coritiba joga a s\u00e9rie B do Campeonato Brasileiro e conta com mais de 35 mil s\u00f3cios torcedores ativos. \n\nA nova era do Coritiba come\u00e7ou em outubro de 2023, quando a Treecorp Investimentos adquiriu 90% da SAF do clube. Com sede em S\u00e3o Paulo, a empresa administra mais de R$2 bilh\u00f5es em aplica\u00e7\u00f5es e possui rela\u00e7\u00e3o estreita com os empreendedores. Hoje, o Coritiba \u00e9 uma Sociedade An\u00f4nima do Futebol.  ",
+        "industries": [
+          {
+            "id": "33",
+            "name": "Sports",
+            "urn": "urn:li:fsd_industry:33"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHWgi0z9ksrGw/company-background_10000/B4DZl70XdQIgAY-/0/1758718950539/coritiba_foot_ball_club_cover?e=1765566000&v=beta&t=_QaW_KDY2Z69eQ6TcBvQpMbUQOYjGxBEAV9MOQz54ww",
+        "callToActionUrl": null
+      },
+      {
+        "id": "14795150",
+        "universalName": "rh-mais-assessoria-em-recursos-humanos",
+        "linkedinUrl": "https://www.linkedin.com/company/rh-mais-assessoria-em-recursos-humanos/",
+        "name": "RH MAIS ASSESSORIA EM RECURSOS HUMANOS",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFODjxU0-g8yg/img-crop_100/B4DZnoXH9cH0AQ-/0/1760540001090?e=1766620800&v=beta&t=OFIbVoZ77IhxARuKYs7tGzOWah3yGk6OHSkSePUyhFs",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 28225,
+        "description": "Com sede localizada em Curitiba \u2013 PR, a RH MAIS atende em todo o sul do Brasil, al\u00e9m dos estados de S\u00e3o Paulo e Rio de Janeiro, na gest\u00e3o, contrata\u00e7\u00e3o, qualifica\u00e7\u00e3o, e terceiriza\u00e7\u00e3o de m\u00e3o de obra nos mais diversos segmentos empresariais.\nQualidade, transpar\u00eancia e solidez na presta\u00e7\u00e3o de servi\u00e7os, consolidam a RH MAIS no mercado, atingindo alto \u00edndice de confian\u00e7a e satisfa\u00e7\u00e3o junto aos clientes.\nPossui ampla rede de colaboradores altamente qualificados para diversas demandas, como recrutadores, selecionadores, psic\u00f3logos, administradores, consultores, assistentes, auxiliares de sele\u00e7\u00e3o, estagi\u00e1rios, supervisores, t\u00e9cnicos e operacionais dos departamentos de RH, financeiro, jur\u00eddico, comercial, contabilidade, entre outros.",
+        "industries": [
+          {
+            "id": "137",
+            "name": "Human Resources",
+            "urn": "urn:li:fsd_industry:137"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQG1ZuEqIKpZCw/company-background_10000/company-background_10000/0/1653997959618/rh_mais_assessoria_em_recursos_humanos_cover?e=1765566000&v=beta&t=wSFHFMGWEOygtZDSII2494nkGfgDBABxhhwGaYutlQU",
+        "callToActionUrl": null
+      },
+      {
+        "id": "42931902",
+        "universalName": "rhsocialaraucaria",
+        "linkedinUrl": "https://www.linkedin.com/company/rhsocialaraucaria/",
+        "name": "Rh Social Arauc\u00e1ria",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQHmZR3nBEHenQ/company-logo_400_400/company-logo_400_400/0/1732282689293/trix_coworking_logo?e=1766620800&v=beta&t=1vVMRE83iJOVtFYwK8JSXpClDR9Jyo9xcbH4BGaV9mA",
+        "employeeCountRange": {
+          "start": 2,
+          "end": 10
+        },
+        "followerCount": 9654,
+        "description": "Ag\u00eancia de empregos e sele\u00e7\u00e3o de talentos!\nServi\u00e7os de recrutamento e sele\u00e7\u00e3o de candidatos;\nM\u00e3o de obra tempor\u00e1rio e contrato por tempo determinado;\nDivulga\u00e7\u00e3o de vagas;\n\n",
+        "industries": [
+          {
+            "id": "104",
+            "name": "Staffing & Recruiting",
+            "urn": "urn:li:fsd_industry:104"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHqHB2vsXIg7Q/company-background_10000/company-background_10000/0/1732283037115/trix_coworking_cover?e=1765566000&v=beta&t=XLGjTrOdOP4gy8i5pWzAYNPRAS---62howArNaUmol8",
+        "callToActionUrl": null
+      },
+      {
+        "id": "2094",
+        "universalName": "volvo-trucks",
+        "linkedinUrl": "https://www.linkedin.com/company/volvo-trucks/",
+        "name": "Volvo Trucks",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4D0BAQHkyOpGvpYu9g/company-logo_400_400/company-logo_400_400/0/1632473258313/volvo_trucks_logo?e=1766620800&v=beta&t=5eqCoif6Wil1Spt2WNF4FK97no-P3SLj0EO_FBfKDzU",
+        "employeeCountRange": {
+          "start": 10001,
+          "end": null
+        },
+        "followerCount": 513651,
+        "description": "Volvo Trucks supplies complete transport solutions for discerning professional customers with its full range of medium- and heavy-duty trucks. Customer support is provided via a global network of dealers with 2,200 service points in about 130 countries. Volvo trucks are assembled in 12 countries across the globe. In 2024 approximately 134,000 Volvo trucks were delivered worldwide. Volvo Trucks is part of the Volvo Group, one of the world\u2019s leading manufacturers of trucks, buses, construction equipment and marine and industrial engines. The group also provides complete solutions for financing and service. Volvo Trucks\u2019 work is based on the core values of quality, safety and environmental care.",
+        "industries": [
+          {
+            "id": "53",
+            "name": "Automotive",
+            "urn": "urn:li:fsd_industry:53"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHY-wN71V15Fg/company-background_10000/B4DZWodtFSHkAY-/0/1742288120767/volvo_trucks_cover?e=1765566000&v=beta&t=Qwn3dZoo2Az3u7ntpXIgxymIF3IeVFQZaGXI9CBn2TQ",
+        "callToActionUrl": null
+      },
+      {
+        "id": "10162249",
+        "universalName": "trox-do-brasil",
+        "linkedinUrl": "https://www.linkedin.com/company/trox-do-brasil/",
+        "name": "TROX DO BRASIL",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQGMndTl3ByyGQ/company-logo_400_400/B4DZrfP3nlKIAY-/0/1764682070922/trox_do_brasil_logo?e=1766620800&v=beta&t=lJD8PVV3RIRNBnDGmJeRGNPWPLIk8HNWaZh7tnhD4oc",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 33116,
+        "description": "TROX Technik \u00e9 l\u00edder no desenvolvimento, fabrica\u00e7\u00e3o e venda de componentes, dispositivos e sistemas de ventila\u00e7\u00e3o e ar condicionado. Com subsidi\u00e1rias em 28 pa\u00edses nos cinco continentes, 14 instala\u00e7\u00f5es de produ\u00e7\u00e3o, e os importadores e representantes, a TROX est\u00e1 presente em mais de 70 pa\u00edses. Fundada em 1951 e com uma equipe de 3.700 colaboradores.\r\n\r\nA TROX do Brasil teve in\u00edcio de suas atividades em 1976. Conta hoje com mais de 400 colaboradores e possui sua f\u00e1brica instalada na Cidade Industrial de Curitiba, \u00e1rea constru\u00edda de 15.500 metros quadrados. O rigor t\u00e9cnico, a qualidade e a experi\u00eancia internacional, v\u00eam permitindo a TROX do Brasil a ocupar um lugar de lideran\u00e7a tamb\u00e9m no Brasil. Uma das nossas maiores preocupa\u00e7\u00f5es s\u00e3o nossos clientes, por isso estamos constantemente em inova\u00e7\u00e3o, com permanentes pesquisas e desenvolvimento de novos conceitos e aplica\u00e7\u00f5es, permitindo fornecer ao mercado produtos e solu\u00e7\u00f5es t\u00e9cnicas de alto n\u00edvel atendendo as necessidades de mercado.",
+        "industries": [
+          {
+            "id": "135",
+            "name": "Mechanical Or Industrial Engineering",
+            "urn": "urn:li:fsd_industry:135"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQE_i5hkgWldWA/company-background_10000/B4DZd6aeD4GkAU-/0/1750105449112/trox_do_brasil_cover?e=1765566000&v=beta&t=RDQQVf1ISlfrurXSYyZA-l3gmcSpKuaZ5hAYLkEEQ3A",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1203391",
+        "universalName": "grupo-technocoat",
+        "linkedinUrl": "https://www.linkedin.com/company/grupo-technocoat/",
+        "name": "Grupo Technocoat",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4D0BAQG4ScB82AAQiw/company-logo_400_400/company-logo_400_400/0/1630549122024/technocoat_ltda_logo?e=1766620800&v=beta&t=BooP02cebWL_bFTryI-l6ufA-N3wLrni8lrShV8F5s4",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 11707,
+        "description": "Transformamos papel em solu\u00e7\u00f5es inteligentes e sustent\u00e1veis.\n\nCom mais de 27 anos de expertise, o Grupo Technocoat se consolidou como uma refer\u00eancia no setor papeleiro, oferecendo solu\u00e7\u00f5es inovadoras que combinam tecnologia, alta performance e compromisso ambiental.\n\nDesde nossa funda\u00e7\u00e3o em 1996, evolu\u00edmos constantemente para atender as demandas da ind\u00fastria com excel\u00eancia. Nossos produtos e servi\u00e7os incluem:\n\n\u2705 Barreiras customizadas para pap\u00e9is e embalagens, reduzindo o uso de pl\u00e1stico.\n\u2705 Tubetes de alta resist\u00eancia, essenciais para os maiores players do mercado.\n\u2705 Techslip, tecnologia em slip sheet que melhora a efici\u00eancia log\u00edstica.\n\u2705 Reciclagem de fibras celul\u00f3sicas, promovendo a economia circular com a Technofibra.\n\nNosso compromisso \u00e9 oferecer solu\u00e7\u00f5es que aliam desempenho t\u00e9cnico, responsabilidade ambiental e competitividade para nossos clientes e para o planeta.\u200b\n\nQuer saber mais? Entre em contato e descubra como podemos agregar valor ao seu neg\u00f3cio!\n\n",
+        "industries": [
+          {
+            "id": "25",
+            "name": "Consumer Goods",
+            "urn": "urn:li:fsd_industry:25"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQFoMd2vfbkJoA/company-background_10000/company-background_10000/0/1724862920962/technocoat_ltda_cover?e=1765566000&v=beta&t=5wj8OGZpdb-ocrmaMsWC2bh2FbuVc8is5xrSC9-kA8M",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1056599",
+        "universalName": "grupo-hubner",
+        "linkedinUrl": "https://www.linkedin.com/company/grupo-hubner/",
+        "name": "Grupo Hubner",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQGhgLex7X5E2w/company-logo_400_400/company-logo_400_400/0/1630594007262/grupo_hubner_logo?e=1766620800&v=beta&t=W6_58Q-rSDEmRs3qkbmk_ZaSQ6Tqp9AW-HNboNuLU9w",
+        "employeeCountRange": {
+          "start": 501,
+          "end": 1000
+        },
+        "followerCount": 36651,
+        "description": "O Grupo H\u00fcbner iniciou suas atividades em 1980 e atualmente \u00e9 um importante fornecedor da ind\u00fastria automotiva, abastecendo tanto montadoras quanto seus sistemistas, al\u00e9m de ind\u00fastrias de bens de capital.\r\n\r\nO grupo \u00e9 composto por quatro unidades industriais no Brasil, atuando nas \u00e1reas de fundi\u00e7\u00e3o, usinagem e autope\u00e7as.",
+        "industries": [
+          {
+            "id": "135",
+            "name": "Mechanical Or Industrial Engineering",
+            "urn": "urn:li:fsd_industry:135"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/C4E1BAQEwwrYHZB5xSg/company-background_10000/company-background_10000/0/1584139913941/grupo_hubner_cover?e=1765566000&v=beta&t=krKwD8w6BYJ4eD1InTYivaEFhksFhoIVHgdh0VBd2rU",
+        "callToActionUrl": null
+      }
+    ],
+    "originalQuery": {
+      "search": "https://www.linkedin.com/company/neodent",
+      "location": ""
+    },
+    "requestId": "80cee9bd-daf6-44f4-8a4a-69c180c687d8"
+  },
+  {
+    "id": "602249",
+    "universalName": "neodent",
+    "linkedinUrl": "https://www.linkedin.com/company/neodent/",
+    "name": "Neodent",
+    "tagline": "New smiles everyday.",
+    "website": "http://www.neodent.com.br",
+    "phone": null,
+    "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_400_400/company-logo_400_400/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=CHE5ndV75uaePe8Squhp6G04SyyG5gonLhbLGGNhp_I",
+    "foundedOn": {
+      "month": null,
+      "year": 1993,
+      "day": null
+    },
+    "employeeCount": 2655,
+    "employeeCountRange": {
+      "start": 1001,
+      "end": 5000
+    },
+    "followerCount": 196650,
+    "description": "Neodent is a global brand with a presence in more than 97 countries. Created by dentists for dentists, we are the market leader in Brazil and one of the largest companies in the sector worldwide. With over 30 years of expertise in innovation and science, we offer aesthetic and restorative solutions designed to make oral health increasingly accessible.\n\nGuided by this vision, our purpose is to create new smiles every day.",
+    "locations": [
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Rua Benjamin Lins, 742, Batel",
+        "line2": null,
+        "postalCode": "80240-100",
+        "headquarter": true,
+        "description": "HQ",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Fortaleza",
+        "geographicArea": "CE",
+        "line1": "Av. Senador Virg\u00edlio T\u00e1vora, 1500 - salas 1403, 1404 e 1405 Aldeota",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Fortaleza",
+        "parsed": {
+          "text": "Fortaleza, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Cear\u00e1",
+          "city": "Fortaleza"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Bras\u00edlia",
+        "geographicArea": "DF",
+        "line1": "SUL QD 06 CONJ. \u201cA\u201d BL.\u201dC\u201d LJ 64,68,72-76 ASA SUL, ",
+        "line2": null,
+        "postalCode": "70322-915",
+        "headquarter": false,
+        "description": "Filial Bras\u00edlia",
+        "parsed": {
+          "text": "Bras\u00edlia, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Distrito Federal",
+          "city": "Bras\u00edlia"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Vit\u00f3ria",
+        "geographicArea": "ES",
+        "line1": "Rua Desembargador Sampaio, 204 - SL 201 - Praia do Canto",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Vit\u00f3ria",
+        "parsed": {
+          "text": "Vit\u00f3ria, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Esp\u00edrito Santo",
+          "city": "Vit\u00f3ria"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Goi\u00e2nia",
+        "geographicArea": "Goi\u00e1s",
+        "line1": "Avenida 136 761",
+        "line2": "B93 a B97",
+        "postalCode": "74093-025",
+        "headquarter": false,
+        "description": "Filial Goi\u00e1s",
+        "parsed": {
+          "text": "Goi\u00e2nia, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Goi\u00e1s",
+          "city": "Goi\u00e2nia"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Cuiab\u00e1",
+        "geographicArea": "Mato Grosso",
+        "line1": "Avenida Historiador Rubens de Mendon\u00e7a 2368",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Cuiab\u00e1",
+        "parsed": {
+          "text": "Cuiab\u00e1, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Mato Grosso",
+          "city": "Cuiab\u00e1"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Belo Horizonte",
+        "geographicArea": "Minas Gerais",
+        "line1": "Rua Padre Rolim 35",
+        "line2": null,
+        "postalCode": "30130-090",
+        "headquarter": false,
+        "description": "Filial Belo Horizonte",
+        "parsed": {
+          "text": "Belo Horizonte, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Minas Gerais",
+          "city": "Belo Horizonte"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Av. Juscelino Kubitschek de Oliveira, 3291",
+        "line2": null,
+        "postalCode": "81270-200",
+        "headquarter": false,
+        "description": "F\u00e1brica da Neodent",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Avenida Juscelino Kubitschek de Oliveira 3753",
+        "line2": null,
+        "postalCode": "81270-200",
+        "headquarter": false,
+        "description": "F\u00e1brica ClearCorrect",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Curitiba",
+        "geographicArea": "Paran\u00e1",
+        "line1": "Rua Benjamin Lins 742",
+        "line2": null,
+        "postalCode": "80420-100",
+        "headquarter": false,
+        "description": "Filial Curitiba ",
+        "parsed": {
+          "text": "Curitiba, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Curitiba"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Recife",
+        "geographicArea": "PE ",
+        "line1": "Av. Gov. Agamenon Magalh\u00e3es, 4779, Sala 801/803, Ilha do Leite",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Recife",
+        "parsed": {
+          "text": "Recife, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Pernambuco",
+          "city": "Recife"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Maring\u00e1",
+        "geographicArea": "PR",
+        "line1": "Av. Advogado Horacio Racanello, 5570 \u2013 Sala 02 / Terreo",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Maring\u00e1",
+        "parsed": {
+          "text": "Maring\u00e1, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Paran\u00e1",
+          "city": "Maring\u00e1"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Pelotas",
+        "geographicArea": "Rio Grande do Sul",
+        "line1": "Avenida S\u00e3o Francisco de Paula 3852",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "F\u00e1brica Yller Biomateriais",
+        "parsed": {
+          "text": "Pelotas, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Rio Grande do Sul",
+          "city": "Pelotas"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Rio de Janeiro",
+        "geographicArea": "RJ",
+        "line1": "Praia de Botafogo, 440 \u2013 sala 1601, 16\u00ba. Andar",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Rio de Janeiro",
+        "parsed": {
+          "text": "Rio de Janeiro, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Rio de Janeiro",
+          "city": "Rio de Janeiro"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Porto Alegre",
+        "geographicArea": "RS",
+        "line1": "Av. Mariland, 777 9\u00ba Andar - S\u00e3o Jo\u00e3o, ",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Porto Alegre",
+        "parsed": {
+          "text": "Porto Alegre, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Rio Grande do Sul",
+          "city": "Porto Alegre"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Florian\u00f3polis",
+        "geographicArea": "SC",
+        "line1": "Av. Professor Othon Gama D\u2019E\u00e7a, 677, Salas 104 a 107",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Florian\u00f3polis",
+        "parsed": {
+          "text": "Florian\u00f3polis, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Santa Catarina",
+          "city": "Florian\u00f3polis"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Joinville",
+        "geographicArea": "SC",
+        "line1": "Rua Blumenau, 64, salas 804/805/806",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial Joinville",
+        "parsed": {
+          "text": "Joinville, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "Santa Catarina",
+          "city": "Joinville"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Bauru",
+        "geographicArea": "SP",
+        "line1": "Alameda Dr. Oct\u00e1vio Pinheiro Brisolla, 7-46 - Jardim Brasil",
+        "line2": null,
+        "postalCode": "17012-191",
+        "headquarter": false,
+        "description": "Filial Bauru",
+        "parsed": {
+          "text": "Bauru, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "Bauru"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "Campinas",
+        "geographicArea": "SP",
+        "line1": "Av. Jos\u00e9 de Souza Campos, 900 - 2\u00b0 andar - sala 21 ",
+        "line2": null,
+        "postalCode": "13092-123",
+        "headquarter": false,
+        "description": "Filial Campinas",
+        "parsed": {
+          "text": "Campinas, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "Campinas"
+        }
+      },
+      {
+        "country": "BR",
+        "city": "S\u00e3o Paulo",
+        "geographicArea": "SP",
+        "line1": "Av. das Na\u00e7\u00f5es Unidas , 12399 - 8\u00ba ANDAR, salas 81A, 82A e 81B ",
+        "line2": null,
+        "postalCode": null,
+        "headquarter": false,
+        "description": "Filial S\u00e3o Paulo",
+        "parsed": {
+          "text": "S\u00e3o Paulo, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "S\u00e3o Paulo"
+        }
+      }
+    ],
+    "specialities": [
+      "Implantes dent\u00e1rios",
+      "Instrumentais cir\u00fargicos",
+      "Componentes prot\u00e9ticos",
+      "Produtos e servi\u00e7os na \u00e1rea odontol\u00f3gica",
+      "Alinhadores Transparentes",
+      "Resinas para Impress\u00e3o 3D",
+      "Fluxo Digital da Odontologia"
+    ],
+    "industries": [
+      {
+        "id": "17",
+        "name": "Medical Device",
+        "urn": "urn:li:fsd_industry:17"
+      }
+    ],
+    "logos": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_400_400/company-logo_400_400/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=CHE5ndV75uaePe8Squhp6G04SyyG5gonLhbLGGNhp_I",
+        "width": 400,
+        "height": 400,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_200_200/company-logo_200_200/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=p3032Sr4PSl272nT3S-HzIe7IKxdIkiDKfAyqOckle8",
+        "width": 200,
+        "height": 200,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4E0BAQEli08f9di0VA/company-logo_100_100/company-logo_100_100/0/1711987331050/neodent_logo?e=1766620800&v=beta&t=cRjhALfRkm0ujr3GRBwzfcc97qzIS-oPAhEQj5zLM6w",
+        "width": 100,
+        "height": 100,
+        "expiresAt": 1766620800000
+      }
+    ],
+    "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_10000/company-background_10000/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=7VsLVmgbRwSxVuH8EaPd-8wfwCYQJqFFNnGNN0MCOds",
+    "backgroundCovers": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_10000/company-background_10000/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=7VsLVmgbRwSxVuH8EaPd-8wfwCYQJqFFNnGNN0MCOds",
+        "width": 4700,
+        "height": 796,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_400/company-background_400/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=vvBz4W9ZybYrdEdRjRccr8VXg13yVSzp7QVtGg7c8OY",
+        "width": 400,
+        "height": 67,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D1BAQHAGlSPCbR3Ew/company-background_200/company-background_200/0/1712070047411/neodent_cover?e=1765566000&v=beta&t=UJ3_FSczympJ0FCwtdRjpv8Q5qQGozLux_HNWD3LEn0",
+        "width": 200,
+        "height": 33,
+        "expiresAt": 1765566000000
+      }
+    ],
+    "active": true,
+    "jobSearchUrl": "https://www.linkedin.com/jobs/search?geoId=92000000&f_C=602249",
+    "fundingData": null,
+    "pageVerified": true,
+    "announcement": null,
+    "pageType": "COMPANY",
+    "autoGenerated": false,
+    "callToActionUrl": "https://careers.straumann.com/global/en",
+    "similarOrganizations": [
+      {
+        "id": "1349058",
+        "universalName": "rh-center",
+        "linkedinUrl": "https://www.linkedin.com/company/rh-center/",
+        "name": "RH Center Gest\u00e3o de Pessoas",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFFbP86BlPXzg/company-logo_400_400/B4DZXxREX_HAAY-/0/1743509538709/rh_center_logo?e=1766620800&v=beta&t=bkepIozryFWVdZKkLdcKuuQ_0QYTsGLMXn5r18h-o0w",
+        "employeeCountRange": {
+          "start": 11,
+          "end": 50
+        },
+        "followerCount": 152059,
+        "description": "A RH Center \u00e9 uma parceira estrat\u00e9gica de servi\u00e7os de RH que atende empresas de diversos segmentos desde 1997. \n\nA experi\u00eancia nessa \u00e1rea e a evolu\u00e7\u00e3o que o atendimento a centenas de clientes nos proporcionou, nos permitiu aprimorar a nossa atua\u00e7\u00e3o e, por conta disso, oferecemos solu\u00e7\u00f5es que estimulam tanto o crescimento quanto melhores resultados dos nossos clientes. \n\nAo longo dos anos, investimos em tecnologias e ferramentas que facilitam o oferta de nossos servi\u00e7os, que incluem:\n\n\u27a1 Processamento e folha de pagamento;\n\u27a1 Terceiriza\u00e7\u00e3o de m\u00e3o de obra;\n\u27a1 Capta\u00e7\u00e3o de talentos (recrutamento e sele\u00e7\u00e3o); \n\u27a1 Avalia\u00e7\u00e3o comportamental.\n",
+        "industries": [
+          {
+            "id": "137",
+            "name": "Human Resources",
+            "urn": "urn:li:fsd_industry:137"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQEB5VG0xjatww/company-background_10000/B4DZXUcMh8HYAc-/0/1743025916567/rh_center_cover?e=1765566000&v=beta&t=Eg7ql9OLxr5ooiohDT-vRYnK8BlF7cUWfs1HAxMQmUo",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1663225",
+        "universalName": "berneck-paineis-e-serrados",
+        "linkedinUrl": "https://www.linkedin.com/company/berneck-paineis-e-serrados/",
+        "name": "Berneck S.A. Pain\u00e9is e Serrados",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQGdXQBoeoW1RA/company-logo_400_400/company-logo_400_400/0/1698843360728/berneck_sa_pain_is_e_serrados_logo?e=1766620800&v=beta&t=KXiHV_ffsHMYuCQJMrSyWewwrk08zyP9ltboxmpT_Uk",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 107478,
+        "description": "A\u00a0BERNECK\u00ae\u00a0\u00e9 uma empresa brasileira com mais de 70 anos de hist\u00f3ria. Especializada em pain\u00e9is MDP, MDF e HDF, al\u00e9m de Pinus e Teca serrados, possui plantas industriais com alt\u00edssima capacidade de produ\u00e7\u00e3o e tecnologia de ponta. \nTodos os seus produtos s\u00e3o provenientes de florestas plantadas e s\u00e3o destinados \u00e0 ind\u00fastria de m\u00f3veis, constru\u00e7\u00e3o civil, automotiva, eletr\u00f4nica, e embalagens, entre outras, no Brasil e no exterior.\nDesde a sua funda\u00e7\u00e3o, em 1952, a empresa vem contribuindo para o desenvolvimento social e econ\u00f4mico por meio do desenvolvimento de capital humano e produtos inovadores e sustent\u00e1veis.",
+        "industries": [
+          {
+            "id": "49",
+            "name": "Building Materials",
+            "urn": "urn:li:fsd_industry:49"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQF6PNFjRjWg6A/company-background_10000/company-background_10000/0/1719942167386/berneck_paineis_e_serrados_cover?e=1765566000&v=beta&t=oNNqigt0s1HHlQqpCql6gh0g6v0OCVSi2dXFnd90lJI",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1590799",
+        "universalName": "neoortho",
+        "linkedinUrl": "https://www.linkedin.com/company/neoortho/",
+        "name": "NeoOrtho Solu\u00e7\u00f5es Ortop\u00e9dicas",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQHk_dGZF2yxfw/company-logo_400_400/company-logo_400_400/0/1630652369230/neoortho_logo?e=1766620800&v=beta&t=b4247_DFWY2E14RPM7msC9pKDfRC4q4FcnyFUUgnxLY",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 16770,
+        "description": "A Neoortho \u00e9 uma empresa brasileira e pertence ao Grupo Neodent. Foi criada em junho de 2004, com o desafio de utilizar e adaptar os recursos existentes na f\u00e1brica de implantes odontol\u00f3gicos para a fabrica\u00e7\u00e3o de implantes ortop\u00e9dicos. A empresa fabrica produtos para bucomaxilo, implantes para coluna e para fratura de membros.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQH2fv7yS8S3XQ/company-background_10000/B4DZl8Bo0CHYAU-/0/1758722430544/neoortho_cover?e=1765566000&v=beta&t=ahK771kXgc0RqVq2ppQ2l7sI9tuy4XYhUh_WfwmAXMA",
+        "callToActionUrl": null
+      },
+      {
+        "id": "73265698",
+        "universalName": "rh-inova",
+        "linkedinUrl": "https://www.linkedin.com/company/rh-inova/",
+        "name": "Inova RH",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQGXFJdSIt7soQ/company-logo_400_400/company-logo_400_400/0/1736423524044/rh_inova_logo?e=1766620800&v=beta&t=S1FlAy1a3J_HxHhrg1ZhgMVrirDHsO1QpwuIuACtHcM",
+        "employeeCountRange": {
+          "start": 11,
+          "end": 50
+        },
+        "followerCount": 42004,
+        "description": "O que fazemos de t\u00e3o especial\n\n     A Inova RH \u00e9 uma empresa que vem trazendo INOVA\u00c7\u00c3O para o mercado de trabalho, sendo uma empresa moderna que investe em qualidades cont\u00ednua, buscamos atender todo mercado brasileiro como parceiros estrat\u00e9gicos , al\u00e9m de oferecemos solu\u00e7\u00f5es em Recursos Humanos e Gest\u00e3o de Pessoas apoiando nossos clientes na evolu\u00e7\u00e3o de sua organiza\u00e7\u00e3o.\n      O setor de Recursos Humanos tem passado por mudan\u00e7as em que as empresas que pretendem se consolidar nesse mercado necessitam de atitudes arrojadas, com responsabilidades. Nesse contexto, a Inova RH possui a combina\u00e7\u00e3o que permitir\u00e1 liderar e servir melhor seus clientes e parceiros\n      Nosso enfoque \u00e9 desenvolver solu\u00e7\u00f5es customizada que atendam aos interesses dos nossos cliente, contribuindo com os resultados do neg\u00f3cio e com a realiza\u00e7\u00e3o da miss\u00e3o da Organiza\u00e7\u00e3o\n\nMiss\u00e3o\n     Impactar de forma positiva, despertar nas pessoas seu potencial e a sua capacidade atrav\u00e9s de mudan\u00e7a de pensamento \u201cmind-set\u201d, fazendo que cada um entenda a real necessidade de melhoria nos aspectos profissionais e pessoais. Trabalhar as habilidades das pessoas de maneira que encontrem o alto conhecimento, melhoria cont\u00ednua e \u00eaxito como ser humano.\n\n     Transformar os desejos e objetivos dos nossos clientes em resultados, atrav\u00e9s da mudan\u00e7a de comportamento, gerando valor para as organiza\u00e7\u00f5es e sociedade atrav\u00e9s da agilidade na presta\u00e7\u00e3o dos servi\u00e7os aos nossos clientes e consumidores, com confiabilidade e seguran\u00e7a!",
+        "industries": [
+          {
+            "id": "137",
+            "name": "Human Resources",
+            "urn": "urn:li:fsd_industry:137"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQEFv2yNynM7lw/company-background_10000/B4DZrGjlJlH0AU-/0/1764267813506/rh_inova_cover?e=1765566000&v=beta&t=244uJ2P5_7mdV03sr5KHnxpulg0jnRsMTu37CZ-l6uU",
+        "callToActionUrl": null
+      },
+      {
+        "id": "5116557",
+        "universalName": "rhcuritibaoficial",
+        "linkedinUrl": "https://www.linkedin.com/company/rhcuritibaoficial/",
+        "name": "RH CURITIBA",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQFEz6tGxS8CUQ/company-logo_400_400/company-logo_400_400/0/1631344672252?e=1766620800&v=beta&t=BO2lXE9sREQVWr9KnVa7rMD5QzUTTGtApSBdP7ylINM",
+        "employeeCountRange": {
+          "start": 11,
+          "end": 50
+        },
+        "followerCount": 106293,
+        "description": "A RH CURITIBA est\u00e1 h\u00e1 mais de 19 anos no mercado desenvolvendo solu\u00e7\u00f5es em Recursos humanos, atendendo os mais variados segmentos, empresas de pequeno \u00e1 grande porte, vagas operacionais, administrativas, gerenciais, PCD, entre outros. \r\nDesenvolvemos processos de Recrutamento e Sele\u00e7\u00e3o, Avalia\u00e7\u00e3o T\u00e9cnica, Psicol\u00f3gica, Desempenho e Pesquisa de Clima Organizacional. \r\n\r\nNossa equipe \u00e9 formada por profissionais preparados e especializados que certamente ir\u00e3o suprir as necessidades exigidas pela sua empresa.\r\n\r\nContamos com sala de entrevista e recursos audiovisuais para atender nossos clientes.\r\n\r\nNosso banco de dados \u00e9 exclusivo e atualizado diariamente.\r\n\r\nTemos como principal objetivo qualidade, agilidade e efici\u00eancia em nossos processos para assim construir uma parceria s\u00f3lida e clientes satisfeitos.",
+        "industries": [
+          {
+            "id": "104",
+            "name": "Staffing & Recruiting",
+            "urn": "urn:li:fsd_industry:104"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQGCLi-SKOyVJw/company-background_10000/company-background_10000/0/1679197009438/curitiba_rh_cover?e=1765566000&v=beta&t=sefOXESEke11e-Tv7iOkara4DlULmwljjKFtPLSm-ls",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1018971",
+        "universalName": "rhnossa",
+        "linkedinUrl": "https://www.linkedin.com/company/rhnossa/",
+        "name": "Nossa Gest\u00e3o de Pessoas",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFMZeKm2fQr0A/company-logo_400_400/B4DZrk2quvJMAc-/0/1764776127956/rhnossa_logo?e=1766620800&v=beta&t=NBE4usAsvdKflTNNenExQpBtQyLlCcOYwU1AvWluAbo",
+        "employeeCountRange": {
+          "start": 5001,
+          "end": 10000
+        },
+        "followerCount": 283377,
+        "description": "Selecionar, contratar e gerir pessoas com lideran\u00e7a, habilidade e sensibilidade. Essas s\u00e3o caracter\u00edsticas especiais da NOSSA, empresa que h\u00e1 mais de 20 anos se dedica a trazer ao mercado as melhores solu\u00e7\u00f5es em Gest\u00e3o de Pessoas e servi\u00e7os. \r\n\r\nA empresa nasceu em Curitiba (PR), em 1993. De l\u00e1 para c\u00e1, desenvolveu especialidades e tornou-se refer\u00eancia na contrata\u00e7\u00e3o de profissionais para empresas nacionais e multinacionais. Com 80 funcion\u00e1rios dedicados a buscar os melhores resultados, a NOSSA est\u00e1 entre as maiores fornecedoras do segmento. \r\n\r\nA excel\u00eancia dos servi\u00e7os prestados pela NOSSA \u00e9 fruto de muita dedica\u00e7\u00e3o e trabalho. Temos nosso sistema de gest\u00e3o e procedimentos de recrutamento e sele\u00e7\u00e3o reconhecidos dentro das normas internacionais. Desde 2006, temos a certifica\u00e7\u00e3o ISO 9001:2008, com registro junto \u00e0 BSI \u2013 British Standards. \r\n\r\nIsso tudo refor\u00e7a nossa cren\u00e7a de que o melhor modelo de gest\u00e3o de pessoas \u00e9 aquele em que promovemos verdadeiras parcerias entre funcion\u00e1rios e empresa. E essa pol\u00edtica resulta em ganhos de produtividade e fortalecimento do neg\u00f3cio de nossas empresas-clientes.",
+        "industries": [
+          {
+            "id": "137",
+            "name": "Human Resources",
+            "urn": "urn:li:fsd_industry:137"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQFrH4LTSOngfQ/company-background_10000/B4DZpJvelsGgAU-/0/1762173775105/rhnossa_cover?e=1765566000&v=beta&t=H5w30RMwS3jg2_mprL6lc7B9j6mXtxuysfdId-S76PQ",
+        "callToActionUrl": null
+      },
+      {
+        "id": "2965185",
+        "universalName": "sumitomo-rubber-do-brasil",
+        "linkedinUrl": "https://www.linkedin.com/company/sumitomo-rubber-do-brasil/",
+        "name": "Sumitomo Rubber do Brasil",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQGnFmQPuGwynQ/company-logo_400_400/company-logo_400_400/0/1630589224601/sumitomo_rubber_do_brasil_logo?e=1766620800&v=beta&t=8p1N9Lrxx8Bz6dzfc-ulfmotCbsQfjTNzppPEtAcGpo",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 82142,
+        "description": "A Sumitomo Rubber do Brasil Ltda pertence ao Grupo Sumitomo Rubber Industries, que foi fundado em 1909 na cidade de Kobe, no Jap\u00e3o. Cresceu baseada na tecnologia da borracha e, em 1913, foi a primeira a produzir pneus para autom\u00f3veis no Jap\u00e3o.\n\nHoje, a Sumitomo \u00e9 considerada uma das principais fabricantes deste segmento no Jap\u00e3o. Tamb\u00e9m \u00e9 reconhecida pelo desenvolvimento de novos produtos, utilizando-se das mais avan\u00e7adas tecnologias dispon\u00edveis no mercado, oferecendo sempre produtos de alta qualidade.",
+        "industries": [
+          {
+            "id": "53",
+            "name": "Automotive",
+            "urn": "urn:li:fsd_industry:53"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/C4E1BAQFNJ9qjMMjzqA/company-background_10000/company-background_10000/0/1584016145529/sumitomo_rubber_do_brasil_cover?e=1765566000&v=beta&t=rvHXWH6CsUuZTSpHaJ8z4kuiAJoYw4A1-s48ozBHh5k",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1026298",
+        "universalName": "densodobrasil",
+        "linkedinUrl": "https://www.linkedin.com/company/densodobrasil/",
+        "name": "Denso Brasil",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4D0BAQHH9WKc4e24TA/company-logo_400_400/company-logo_400_400/0/1631370189488?e=1766620800&v=beta&t=b0GxDJMgtgPC56fJMclDvWrslwkEqg8OeVG7ZGjbH24",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 140783,
+        "description": "A DENSO \u00e9 l\u00edder mundial em inova\u00e7\u00e3o tecnol\u00f3gica fornecendo sistemas e componentes para todas as grandes montadoras do setor automotivo no mundo. Operamos em 32 pa\u00edses e regi\u00f5es, com mais de 170.000 colaboradores.\n\nTemos como princ\u00edpio de gest\u00e3o guia nossa \"\u200b Filosofia DENSO \"\u200b e o \"\u200b DENSO Spirit \"\u200b que orienta e dirige nossas a\u00e7\u00f5es corporativas, que assegura a perpetua\u00e7\u00e3o da organiza\u00e7\u00e3o em termos de credibilidade para as pessoas em todo o mundo. \n\nConsideramos a melhoria cont\u00ednua um procedimento de rotina, buscamos o crescimento e aperfei\u00e7oamento constante dos nossos produtos, processos e tecnologia, contribuindo assim para um mundo melhor atrav\u00e9s da cria\u00e7\u00e3o de valores com a vis\u00e3o de futuro. \n\nValorizamos nossos profissionais estimulando-os a assumir sempre os desafios como chave para motiva\u00e7\u00e3o no trabalho e que isto permite inova\u00e7\u00e3o constante para superar as expectativas dos nossos clientes com excel\u00eancia em qualidade e extraindo o melhor do potencial e for\u00e7a do nossa equipe.",
+        "industries": [
+          {
+            "id": "53",
+            "name": "Automotive",
+            "urn": "urn:li:fsd_industry:53"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQFGaYDC_PHy9w/company-background_10000/company-background_10000/0/1654101558252/densodobrasil_cover?e=1765566000&v=beta&t=flnlSDJA4Go8RhLx1LgCm50GeFPr_t-XKezn6cfzX5Q",
+        "callToActionUrl": null
+      },
+      {
+        "id": "2101362",
+        "universalName": "ntn-rolamentos-do-brasil",
+        "linkedinUrl": "https://www.linkedin.com/company/ntn-rolamentos-do-brasil/",
+        "name": "NTN Rolamentos do Brasil",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4D0BAQE-xmDg2p_bSA/company-logo_400_400/company-logo_400_400/0/1635976921370/ntn_rolamentos_do_brasil_logo?e=1766620800&v=beta&t=45nVRy3RbjmuDq_9Qfr-a2SoaAkozTQhpNnLN_Rs4IE",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 15371,
+        "description": "Uma das l\u00edderes mundiais e com 100 anos de experi\u00eancia, a NTN est\u00e1 presente e inovando nos mercados industriais, automotivos e aeroespaciais. A NTN \u00e9 uma fabricante de equipamentos de alta precis\u00e3o que faz neg\u00f3cios por todo o mundo em rolamentos e outros produtos tamb\u00e9m com consci\u00eancia ecol\u00f3gica que diminuem o consumo de energia e que reduzem o atrito. Baseada em inova\u00e7\u00e3o e comprometimento, a NTN vem construindo sua hist\u00f3ria de desenvolvimento, projetando produtos com alta qualidade e tecnologia. Atualmente possui cerca 25.000 funcion\u00e1rios, localizados em mais de 70 f\u00e1bricas, 7 centros de P&D e mais de 100 escrit\u00f3rios comerciais no mundo. Al\u00e9m da presta\u00e7\u00e3o de servi\u00e7os, o grupo NTN projeta, desenvolve e fabrica rolamentos, guias lineares, mancais e pe\u00e7as de reposi\u00e7\u00e3o automotiva. O Grupo trabalha com as marcas NTN, SNR e BOWER.\n \nAtuante em todo o Brasil, por meio de uma rede com mais de 50 distribuidores autorizados, que atende um p\u00fablico exigente e competitivo oferecendo produtos e servi\u00e7os de alta qualidade e precis\u00e3o.\n\nAtrav\u00e9s de seu sistema integrado de log\u00edstica distribu\u00edmos nossos produtos em toda a Am\u00e9rica Latina, pois aonde h\u00e1 movimento, o rolamento SNR est\u00e1 presente. \n  \nUnindo compet\u00eancia e tradi\u00e7\u00e3o a fus\u00e3o entre a SNR e a NTN faz surgir um novo grupo que mant\u00e9m os mesmos valores, que veio para trazer benef\u00edcios a todos os seus clientes, com o objetivo de se tornar l\u00edder mundial em rolamentos e atender ao crescente mercado latino americano, o grupo une suas for\u00e7as juntamente com uma trajet\u00f3ria de mais de 90 anos de cada empresa, investindo fortemente em pesquisa e desenvolvimento de novos produtos e tecnologias inovadoras. \n \nOferecendo mais do que nunca as melhores solu\u00e7\u00f5es para atender as necessidades de cada aplica\u00e7\u00e3o, sejam elas nos setores industrial, automotivo e aeroespacial, com aten\u00e7\u00e3o especial para a Am\u00e9rica Latina, que vem crescendo e fortalecendo essa conquista.\n  \nUm grupo, uma imagem. Duas marcas NTN e SNR. Para mudar o futuro.",
+        "industries": [
+          {
+            "id": "53",
+            "name": "Automotive",
+            "urn": "urn:li:fsd_industry:53"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQGqRJ-2pSfHEg/company-background_10000/company-background_10000/0/1673449290841/ntn_rolamentos_do_brasil_cover?e=1765566000&v=beta&t=l_2-r0-PyBq126L5qdyWnFHq8FFSefbzWJsoylgx2YY",
+        "callToActionUrl": null
+      },
+      {
+        "id": "14795150",
+        "universalName": "rh-mais-assessoria-em-recursos-humanos",
+        "linkedinUrl": "https://www.linkedin.com/company/rh-mais-assessoria-em-recursos-humanos/",
+        "name": "RH MAIS ASSESSORIA EM RECURSOS HUMANOS",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFODjxU0-g8yg/img-crop_100/B4DZnoXH9cH0AQ-/0/1760540001090?e=1766620800&v=beta&t=OFIbVoZ77IhxARuKYs7tGzOWah3yGk6OHSkSePUyhFs",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 28225,
+        "description": "Com sede localizada em Curitiba \u2013 PR, a RH MAIS atende em todo o sul do Brasil, al\u00e9m dos estados de S\u00e3o Paulo e Rio de Janeiro, na gest\u00e3o, contrata\u00e7\u00e3o, qualifica\u00e7\u00e3o, e terceiriza\u00e7\u00e3o de m\u00e3o de obra nos mais diversos segmentos empresariais.\nQualidade, transpar\u00eancia e solidez na presta\u00e7\u00e3o de servi\u00e7os, consolidam a RH MAIS no mercado, atingindo alto \u00edndice de confian\u00e7a e satisfa\u00e7\u00e3o junto aos clientes.\nPossui ampla rede de colaboradores altamente qualificados para diversas demandas, como recrutadores, selecionadores, psic\u00f3logos, administradores, consultores, assistentes, auxiliares de sele\u00e7\u00e3o, estagi\u00e1rios, supervisores, t\u00e9cnicos e operacionais dos departamentos de RH, financeiro, jur\u00eddico, comercial, contabilidade, entre outros.",
+        "industries": [
+          {
+            "id": "137",
+            "name": "Human Resources",
+            "urn": "urn:li:fsd_industry:137"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQG1ZuEqIKpZCw/company-background_10000/company-background_10000/0/1653997959618/rh_mais_assessoria_em_recursos_humanos_cover?e=1765566000&v=beta&t=wSFHFMGWEOygtZDSII2494nkGfgDBABxhhwGaYutlQU",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1271930",
+        "universalName": "jtekt-brasil",
+        "linkedinUrl": "https://www.linkedin.com/company/jtekt-brasil/",
+        "name": "JTEKT Brasil Ltda.",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C560BAQH4Ovx38TWuxg/company-logo_400_400/company-logo_400_400/0/1631372246262?e=1766620800&v=beta&t=NfknBnliqzT_FON-sm-xqyFFUhuFU9PFZSR4M6iRBxk",
+        "employeeCountRange": {
+          "start": 501,
+          "end": 1000
+        },
+        "followerCount": 38015,
+        "description": "A JTEKT Brasil, hoje pertencente ao Grupo JTEKT, iniciou suas atividades no Brasil em 1998, ainda com o nome de Koyo, passando a ser conhecida pelo nome atual ap\u00f3s uma fus\u00e3o com a companhia japonesa Toyoda, efetuada em 2006. \n\nDesde 2010, a empresa conta com uma planta em S\u00e3o Jos\u00e9 dos Pinhais (PR) com potencial de produ\u00e7\u00e3o de 1,3 milh\u00e3o de pe\u00e7as por ano. \n\nCertificada pelas normas mundiais de qualidade IATF 16949 ISO 140001, atende as principais montadoras do Mercosul e o mercado de reposi\u00e7\u00e3o nacional.",
+        "industries": [
+          {
+            "id": "53",
+            "name": "Automotive",
+            "urn": "urn:li:fsd_industry:53"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQEntGjKvmzlEw/company-background_10000/B4DZrBMx.nKQAU-/0/1764177945486/jtekt_brasil_cover?e=1765566000&v=beta&t=DqljDtW4HP5WBQGnO5o_zUuuBrkaZdt1yrIbkhvuUHQ",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1089556",
+        "universalName": "gd9rh",
+        "linkedinUrl": "https://www.linkedin.com/company/gd9rh/",
+        "name": "GD9 Consultoria em Recursos Humanos",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D560BAQFA52iapEMhcQ/company-logo_400_400/B56ZfwSVzqGoAY-/0/1752083029776/gd9rh_logo?e=1766620800&v=beta&t=K76sKFyWtvaKSHGj-vAS3iyuN34XhGE7GvynK87clqs",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 96890,
+        "description": "Somos uma empresa que atua no mercado h\u00e1 9 anos, nossa matriz esta localizada em Curitiba e contamos com uma Filial, na Capital Paulista, oferecemos uma estrutura especializada e com valores pautados na \u00c9tica, Legalidade, Entusiasmo, Compromisso e Transpar\u00eancia em nossas a\u00e7\u00f5es.\r\n\r\nContamos com atualizados recursos tecnol\u00f3gicos para possibilitar uma parceria atuante, efetiva e duradoura com as empresas, visando a agilidade e a otimiza\u00e7\u00e3o na presta\u00e7\u00e3o de nossos servi\u00e7os e seus resultados para o cliente.\r\n\r\nTrazemos como diferencial para o mercado, profissionais qualificados que buscam a excel\u00eancia no desenvolvimento de suas atividades, agregando a capacidade e adequando-se nas reais necessidades de nossos clientes.",
+        "industries": [
+          {
+            "id": "137",
+            "name": "Human Resources",
+            "urn": "urn:li:fsd_industry:137"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D561BAQHf6YqNNk4p9w/company-background_10000/B56ZfwR5aiHcAU-/0/1752082914054/gd9rh_cover?e=1765566000&v=beta&t=hNmr8XYOh6JjRfxcF0PDD8tugFGbCYBwUd7cb0IMgwA",
+        "callToActionUrl": null
+      }
+    ],
+    "originalQuery": {
+      "search": "Neodent",
+      "location": ""
+    },
+    "requestId": "ade426a2-9ac7-402c-82c3-0ec4728c593a"
+  },
+  {
+    "id": "11711258",
+    "universalName": "implacil-osstem",
+    "linkedinUrl": "https://www.linkedin.com/company/implacil-osstem/",
+    "name": "Implacil Osstem",
+    "tagline": null,
+    "website": "http://implacil.com.br/",
+    "phone": null,
+    "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_400_400/B4DZjJP4aLGQAg-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=A-Z_-1JnXBbwWtbX8kUnz5Z16IMSG9DEBv6vYNSNmNA",
+    "foundedOn": {
+      "month": null,
+      "year": 1981,
+      "day": null
+    },
+    "employeeCount": 369,
+    "employeeCountRange": {
+      "start": 51,
+      "end": 200
+    },
+    "followerCount": 10229,
+    "description": "Pioneirismo e solidez. Essas s\u00e3o as marcas da Implacil De Bortoli. ",
+    "locations": [
+      {
+        "country": "BR",
+        "city": "Sao Paulo",
+        "geographicArea": "S\u00e3o Paulo",
+        "line1": "Rua Ces\u00e1rio Ramalho 821",
+        "line2": "Cambuci",
+        "postalCode": "01521-000",
+        "headquarter": true,
+        "description": null,
+        "parsed": {
+          "text": "S\u00e3o Paulo, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "S\u00e3o Paulo"
+        }
+      }
+    ],
+    "specialities": [
+      "implantodontia",
+      "implantes odontol\u00f3gicos",
+      "Implantes dent\u00e1rios ",
+      "fabricante de implante dent\u00e1rio",
+      "laborat\u00f3rio implante dent\u00e1rio",
+      "equipamentos odontol\u00f3gicos"
+    ],
+    "industries": [
+      {
+        "id": "17",
+        "name": "Medical Device",
+        "urn": "urn:li:fsd_industry:17"
+      }
+    ],
+    "logos": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_400_400/B4DZjJP4aLGQAg-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=A-Z_-1JnXBbwWtbX8kUnz5Z16IMSG9DEBv6vYNSNmNA",
+        "width": 400,
+        "height": 400,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_200_200/B4DZjJP4aLGQAQ-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=07oa7rQu_Gv8ABErYPMqGo_qyPJfLDJWsM5DEenYizQ",
+        "width": 200,
+        "height": 200,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_100_100/B4DZjJP4aLGQAY-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=x85sP6TXRRGS0mgWwlKJxr-x1nc5fDgwSQa9yH75_zs",
+        "width": 100,
+        "height": 100,
+        "expiresAt": 1766620800000
+      }
+    ],
+    "backgroundCover": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_10000/company-background_10000/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=seee9WpffRkPyyFVRKzYTzitHHlGf6RDNM9LYjCFmEI",
+    "backgroundCovers": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_10000/company-background_10000/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=seee9WpffRkPyyFVRKzYTzitHHlGf6RDNM9LYjCFmEI",
+        "width": 1500,
+        "height": 500,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_400/company-background_400/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=1T0EokHLNeYmH1PcCHlM3-jjA71hJvGyaA3co6-ib4E",
+        "width": 400,
+        "height": 133,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_200/company-background_200/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=ZZ1hKbOyL93WSX7sJoDReSo9CGCJgCHizhNbeEDAy_4",
+        "width": 200,
+        "height": 66,
+        "expiresAt": 1765566000000
+      }
+    ],
+    "active": true,
+    "jobSearchUrl": "https://www.linkedin.com/jobs/search?geoId=92000000&f_C=11711258",
+    "fundingData": null,
+    "pageVerified": true,
+    "announcement": null,
+    "pageType": "COMPANY",
+    "autoGenerated": false,
+    "callToActionUrl": "https://implacil.com.br/",
+    "similarOrganizations": [
+      {
+        "id": "25042945",
+        "universalName": "geistlichbrasil",
+        "linkedinUrl": "https://www.linkedin.com/company/geistlichbrasil/",
+        "name": "Geistlich Pharma do Brasil",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQHWDkCmH5tWvA/company-logo_400_400/company-logo_400_400/0/1702990950636/geistlichbrasil_logo?e=1766620800&v=beta&t=AOgbxKjpHmri8XIHRZskryXVlt7c8YdvDuI5u8QoLb0",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 4013,
+        "description": "A Geistlich Pharma do Brasil, situada em S\u00e3o Paulo, \u00e9 a subsidi\u00e1ria Brasileira do Grupo Geistlich Pharma, com sede na Su\u00ed\u00e7a. Empresa l\u00edder mundial em produtos para regenera\u00e7\u00e3o, a equipe da Geistlich est\u00e1 preparada para fornecer produtos, servi\u00e7os e suporte cient\u00edfico de alto n\u00edvel em todo o territ\u00f3rio nacional.\n\nPol\u00edtica da qualidade:\n\"A Geistlich Pharma do Brasil \u00e9 uma empresa focada em atender constantemente as necessidades dos clientes atrav\u00e9s de produtos altamente cient\u00edficos e inovadores, buscando tamb\u00e9m a melhoria cont\u00ednua dos processos.\"",
+        "industries": [
+          {
+            "id": "75",
+            "name": "Government Administration",
+            "urn": "urn:li:fsd_industry:75"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHjhzYVCTL4gA/company-background_10000/company-background_10000/0/1702990256923/geistlichbrasil_cover?e=1765566000&v=beta&t=6q8vW5CNga17wh75BDU9BK3e0axicpj4BnOcFJu7NZE",
+        "callToActionUrl": null
+      },
+      {
+        "id": "622127",
+        "universalName": "tdv-dental-ltda.",
+        "linkedinUrl": "https://www.linkedin.com/company/tdv-dental-ltda./",
+        "name": "TDV Dental Ltda.",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHnYHbriyB-JA/company-logo_400_400/company-logo_400_400/0/1690562194971/tdv_dental_ltda_logo?e=1766620800&v=beta&t=QMEIcjhObrSuL9vo6b4YMqCo3xYDeAFmstcphrn1_-A",
+        "employeeCountRange": {
+          "start": 501,
+          "end": 1000
+        },
+        "followerCount": 7858,
+        "description": "20 years\r\n60 countries\r\nThousands of users assure TDV quality\r\n\r\nTDV was born overcoming challenges. It has been created for over 20 years to make innovative and high-quality products.\r\nThis commitment led its foundation and the company sought for technology and valued talents. Along with discipline, respect and transparency on the relationships with its customers and partners, these investments turned the business which initiated its activities in rented spaces in Pomerode, Santa Catarina, in a worldwide recognized company.\r\nOur path started in November 1989 and two years later we were searching for international technology in Germany. Three years later, we were already installed in our own building and since then running our business in an independent way. Nowadays our know-how makes us grow at a rate of over 20% per year.\r\nAll this success has been achieved by offering a complete line of auxiliary products for dentistry, what made us reference in the market and allowed us to gain the world. Today, TDV products are found in the shelves of more than 60 countries; this is an evidence of confidence that just increases our responsibility and keeps us pushing towards innovation.\r\nThat is why we are continuously reinventing our marketing practices and developing new solutions for the health professional, seeking for offering the best benefit-cost relation and assuring its satisfaction.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHLRgn87ujQJQ/company-background_10000/company-background_10000/0/1692282934030/tdv_dental_ltda_cover?e=1765566000&v=beta&t=R3bE9QPBQl_W-F_XPvvUvEh_Ngi5h4eQNVePTkbR-Vs",
+        "callToActionUrl": null
+      },
+      {
+        "id": "24493739",
+        "universalName": "eff-dental-componentes",
+        "linkedinUrl": "https://www.linkedin.com/company/eff-dental-componentes/",
+        "name": "EFF Dental Componentes",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D560BAQHm4fXAC8nZKg/company-logo_400_400/company-logo_400_400/0/1685025326199/eff_dental_componentes_logo?e=1766620800&v=beta&t=tijup497GUTVAwHTX_A_5IaI0RwPzBZn_cwgTnwA87g",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 1308,
+        "description": "A EFF Dental \u00e9 uma empresa confi\u00e1vel e altamente respeitada, que se dedica h\u00e1 mais de 15 anos a oferecer uma odontologia facilitadora de excel\u00eancia. Nossa paix\u00e3o pela \u00e1rea impulsionou o desenvolvimento de componentes prot\u00e9ticos que abrangem diversas marcas de implantes, tanto nacional quanto internacionalmente.\n\nCom presen\u00e7a em v\u00e1rios pa\u00edses da Am\u00e9rica Latina e Europa, a EFF Dental \u00e9 pioneira no Brasil no fluxo 100% digital da odontologia. Nosso objetivo \u00e9 fornecer aos cirurgi\u00f5es-dentistas e t\u00e9cnicos em pr\u00f3tese dent\u00e1ria um dia a dia mais \u00e1gil, confi\u00e1vel e repleto de resultados positivos.\n\nNosso compromisso em facilitar e simplificar a odontologia \u00e9 inigual\u00e1vel, o que nos levou a sermos reconhecidos como verdadeiros facilitadores. Voc\u00ea pode confiar em nossa experi\u00eancia e dedica\u00e7\u00e3o para alcan\u00e7ar os melhores resultados poss\u00edveis.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D561BAQHVKLg3WL5m0A/company-background_10000/company-background_10000/0/1685025024133/eff_dental_componentes_cover?e=1765566000&v=beta&t=jWywGLO1x8r-vmnZnPxgzxe5pVL3-duc8Dx9SBl35W0",
+        "callToActionUrl": null
+      },
+      {
+        "id": "383111",
+        "universalName": "angelus-industria-de-produtos-odontologicos-s-a",
+        "linkedinUrl": "https://www.linkedin.com/company/angelus-industria-de-produtos-odontologicos-s-a/",
+        "name": "Angelus Odonto",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQEcyVSJ-AfQNw/company-logo_400_400/B4DZY5WThpG4AY-/0/1744718871052/angelus_industria_de_produtos_odontologicos_s_a_logo?e=1766620800&v=beta&t=FfmQB_qGclSRbxREEZY4JvelQ8ugE__6YEgiPfG1S28",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 19637,
+        "description": "A Angelus \u00e9 uma ind\u00fastria de produtos odontol\u00f3gicos situada na cidade de Londrina, Paran\u00e1, que, desde a sua funda\u00e7\u00e3o em 1994, tem como miss\u00e3o \u201cGerar sorrisos saud\u00e1veis com inova\u00e7\u00e3o na Odontologia\u201d. Para isso, investimos grande parte de nossos recursos na \u00e1rea de pesquisa e desenvolvimento e temos relacionamento estreito com Universidades e Centros de Pesquisa Tecnol\u00f3gicas para criar solu\u00e7\u00f5es inovadoras e que simplifiquem a rotina cl\u00ednica dos dentistas.\n\nAtualmente, nossos produtos atendem n\u00e3o apenas dentistas brasileiros como tamb\u00e9m profissionais de mais de 80 pa\u00edses nos 6 continentes. \n\nTendo a inova\u00e7\u00e3o como meta, a empresa investiu grande parte dos seus recursos na \u00e1rea de Pesquisa e Desenvolvimento e cresceu num estreito relacionamento com o setor acad\u00eamico, t\u00e9cnico e cient\u00edfico.\nHoje, a ANGELUS atua em todo o Brasil e mais de 80 pa\u00edses nos 5 continentes do planeta.\n\nCom orgulho de ser reconhecida como uma empresa inovadora, acreditando que imposs\u00edvel \u00e9 o que ainda n\u00e3o foi tentado, a cada dia busca fazer diferente e melhor a fim de alcan\u00e7ar a grande miss\u00e3o de gerar sorrisos saud\u00e1veis com inova\u00e7\u00e3o na odontologia.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQEJtOEQuYxeZQ/company-background_10000/B4DZkuT7PRJYAU-/0/1757418599876/angelus_industria_de_produtos_odontologicos_s_a_cover?e=1765566000&v=beta&t=NN1BUrukHiXvLJ0kzXsDo4apFzC-ZTIGdF-3ZYzD1mg",
+        "callToActionUrl": null
+      },
+      {
+        "id": "12658339",
+        "universalName": "straumann-group",
+        "linkedinUrl": "https://www.linkedin.com/company/straumann-group/",
+        "name": "Straumann Group",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQESsvaRCymnZA/company-logo_400_400/company-logo_400_400/0/1676992631300/straumann_group_logo?e=1766620800&v=beta&t=X4ANHrvh24cglllY_cAsgVsCu_poIsxsbzHpHksd_pE",
+        "employeeCountRange": {
+          "start": 5001,
+          "end": 10000
+        },
+        "followerCount": 199047,
+        "description": "United for global excellence in dentistry.\nEvery vision has its story, and ours began more than 60 years ago. Since then, our innovations and achievements have become landmarks in dentistry worldwide. Straumann began as a family-owned institute, grew into a publicly-owned holding, and today comprises a number of leading and talented companies around the world. Our vision has always been to create more than just smiles, but lasting confidence for dentists, labs, patients, employees, partners, dental networks and the global community. ",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQFecPALDMvNmA/company-background_10000/company-background_10000/0/1676990970200/straumann_group_cover?e=1765566000&v=beta&t=8fr1hKsn2v7MEEKTCZP2q8b4ZggETQdo5Doro8fmLpM",
+        "callToActionUrl": null
+      },
+      {
+        "id": "11191557",
+        "universalName": "kopp-sistema-de-implante-dental",
+        "linkedinUrl": "https://www.linkedin.com/company/kopp-sistema-de-implante-dental/",
+        "name": "Kopp Implantes",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQGzfp0QbDjLMA/company-logo_400_400/B4DZUmDJNuHYAY-/0/1740100113885?e=1766620800&v=beta&t=h6k-U8AO3c6gLCbWs1pLAPLj6yxS4R6EZULsZe_2nIs",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 3958,
+        "description": "A Kopp atua com excel\u00eancia no mercado desde 1998, e tem como miss\u00e3o desenvolver produtos que beneficiem os cirurgi\u00f5es-dentistas, prot\u00e9ticos e pacientes, visando \u00e0 simplifica\u00e7\u00e3o de processos.\n\nA inova\u00e7\u00e3o e qualidade est\u00e3o no DNA da empresa, que une o conhecimento de especialistas cl\u00ednicos e t\u00e9cnicos para o desenvolvimento de produtos de alta performance. O investimento em pesquisas cient\u00edficas, alta tecnologia e tratamento de superf\u00edcie s\u00e3o constantes, e o controle de qualidade \u00e9 realizado do in\u00edcio do projeto dos produtos, at\u00e9 a estocagem. \n\n\n",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQEwPbknnoAg1Q/company-background_10000/B4DZU.yZ8XHYAY-/0/1740515156527/kopp_sistema_de_implante_dental_cover?e=1765566000&v=beta&t=z2Om407F1Cz4ZDI2lO5OoISp1SS0ugwjGI72N43SeNY",
+        "callToActionUrl": null
+      },
+      {
+        "id": "20479738",
+        "universalName": "plenum-bioengenharia",
+        "linkedinUrl": "https://www.linkedin.com/company/plenum-bioengenharia/",
+        "name": "Plenum Bioengenharia",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHg8Ufr4qBfUA/company-logo_400_400/B4EZcS.b1pHkAY-/0/1748370046882/plenum_bioengenharia_logo?e=1766620800&v=beta&t=qbMAp23orebLHAuBxKz5OegvFnGpChjTvbQpjoJHV4g",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 9777,
+        "description": "Com o desenvolvimento de solu\u00e7\u00f5es inovadoras e de alta qualidade, a Plenum chega para protagonizar o novo momento da implantodontia e da bioengenharia.\nMotivadas pela ci\u00eancia da vida, a institui\u00e7\u00e3o busca revolucionar processos, produtos, servi\u00e7os e comportamentos oferecendo solu\u00e7\u00f5es acess\u00edveis e com elevado grau de ci\u00eancia e tecnologia.\n\nIncorporar a cultura de inova\u00e7\u00e3o no DNA da Plenum s\u00f3 foi poss\u00edvel com investimentos em pesquisas cient\u00edficas, testes de efic\u00e1cia da tecnologia e a cria\u00e7\u00e3o de novos modelos de atua\u00e7\u00e3o para atender o mercado. Atrelado a isso, pessoas engajadas e capacitadas em cuidar de cada detalhe do projeto e que levam a busca do conhecimento s\u00f3lido como guia para uma vida plena.\n\nAqui, a impress\u00e3o 3D para o ser humano \u00e9 fato, tornando a bioengenharia uma realidade. Come\u00e7amos com implantes dent\u00e1rios e regenerativos sint\u00e9ticos que ir\u00e3o favorecer a ades\u00e3o, a integra\u00e7\u00e3o e a prolifera\u00e7\u00e3o celular.\nReabilitar \u00e9 tornar a vida ainda maior e melhor.\n\nhttps://linktr.ee/plenum.bio",
+        "industries": [
+          {
+            "id": "12",
+            "name": "Biotechnology",
+            "urn": "urn:li:fsd_industry:12"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQF51C9iPu-X7A/company-background_10000/B4DZfW8t5jH4AY-/0/1751657930777/plenum_bioengenharia_cover?e=1765566000&v=beta&t=cUOs0y6uOBErO9tMPdrZxrAIrUW7F_ryUXrHvX8fdk0",
+        "callToActionUrl": null
+      },
+      {
+        "id": "1650455",
+        "universalName": "clearcorrect",
+        "linkedinUrl": "https://www.linkedin.com/company/clearcorrect/",
+        "name": "ClearCorrect",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C560BAQECKvfXh4iLIA/company-logo_400_400/company-logo_400_400/0/1678804968592/clearcorrect_logo?e=1766620800&v=beta&t=kJ3om5k_p-mVRYb_kY6R1Q5-L5cOqGHN4x1gmWXWhEM",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 44760,
+        "description": "Looking for an alternative to braces? \r\n\r\nClearCorrect is the clear and simple choice. No wires. No brackets. Just clear, convenient comfort\u2014every reason to smile.\r\n\r\nWith ClearCorrect, your dentist or orthodontist can straighten your teeth using a series of clear, custom, removable aligners. Each aligner moves your teeth just a little bit at a time until you eventually get straight teeth.\r\n\r\nClearCorrect works with more than 20,000 doctors making it a leading manufacturer of clear aligner orthodontic products used to discreetly correct malocclusion in adults and teenagers. ClearCorrect offers a more affordable and doctor-friendly approach to clear aligner orthodontics, including a phase-based system that enhances flexibility and control for doctors.  Founded in 2006, ClearCorrect designs, manufactures, and supports its products out of its facility in Round Rock, Texas. For more information, visit clearcorrect.com or call (888) 331-3323.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D561BAQGBn8NhNbQn0w/company-background_10000/company-background_10000/0/1699283931114/clearcorrect_cover?e=1765566000&v=beta&t=XImP52XmAPvKp78VOGH07MejU_5TPfbbNWiDoO_dSVQ",
+        "callToActionUrl": null
+      },
+      {
+        "id": "3257923",
+        "universalName": "kerrdental",
+        "linkedinUrl": "https://www.linkedin.com/company/kerrdental/",
+        "name": "Kerr Dental",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C560BAQH30MyHW2yrkQ/company-logo_400_400/company-logo_400_400/0/1640796992350/kavokerr_logo?e=1766620800&v=beta&t=6JrbVxtaUrCtaGUCTzlm3cXlQDRT7D8BNEZP9nAFZHY",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 86375,
+        "description": "Kerr is a premier dental solutions provider committed to exceptional customer experience.  Kerr\u2019s long history of innovation began in 1891 in Detroit, Michigan and expanded to the European Market in 1893.  Market leading brands include OptiBond, SonicFill, Harmonize, Maxcem Elite, K-Files, and CaviWipes.\n\nFor more information about Kerr, visit www.kerrdental.com.  \n\nFor our full social media terms and conditions, please see https://p.widencdn.net/p9jlyz/Document7.docx .",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/C561BAQFXEQtxBkS6wA/company-background_10000/company-background_10000/0/1640793516114/kavokerr_cover?e=1765566000&v=beta&t=2B9_PAo91flJZeDnoDn-_rvYoGqEE62z2bTG4W_-HT4",
+        "callToActionUrl": null
+      },
+      {
+        "id": "59630",
+        "universalName": "kavodental",
+        "linkedinUrl": "https://www.linkedin.com/company/kavodental/",
+        "name": "KaVo Dental",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4D0BAQGvUy0YI0M2JA/company-logo_400_400/company-logo_400_400/0/1630558984364/kavo_kerreu_logo?e=1766620800&v=beta&t=INysyOjItm_P5lCfdIxRU9YUmqHaQHizUxZZHrrLbIM",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 80380,
+        "description": "For over 110 years, our employees have been developing, manufacturing and selling high-quality products that set new market standards. KaVo has made a significant contribution to the history of dentistry with its consistent innovations.\n\nImpressum: www.kavo.com/en/imprint-disclaimer\nTerms of Use: https://www.kavo.com/en/terms-use\nPrivacy Policy: www.kavo.com/en/privacy-policy-2023\nSocial Media Nettiquette: https://www.kavo.com/en/welcome-kavo-dental-social-media-pages",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQHtZnobuVk10A/company-background_10000/company-background_10000/0/1680587954358/kavodental_cover?e=1765566000&v=beta&t=Tc-VvrRRIS9WkU3gdgcr_qqmzAGmTQj-z0pch48t4K8",
+        "callToActionUrl": null
+      },
+      {
+        "id": "2748",
+        "universalName": "colgate-palmolive",
+        "linkedinUrl": "https://www.linkedin.com/company/colgate-palmolive/",
+        "name": "Colgate-Palmolive",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHi5k01BnLvsQ/company-logo_400_400/B4EZpLGtpqHMAc-/0/1762196642732/colgate_palmolive_logo?e=1766620800&v=beta&t=Tl0xcf_0ivsxr_ROZQg5S0eUjgn_6F_zhnjWJ_gcxfQ",
+        "employeeCountRange": {
+          "start": 10001,
+          "end": null
+        },
+        "followerCount": 2677785,
+        "description": "Make More Smiles. We are Colgate-Palmolive, a caring, innovative growth company that is reimagining a healthier future for all people, their pets and our planet. For over 200 years, we've poured our care into creating a future where everyone has more reasons to smile. CP People develop, produce, distribute and sell essential health & hygiene products and pet nutrition offerings through brands such as Colgate, Palmolive, elmex, Tom\u2019s of Maine, hello, Sorriso, Speed Stick, Softsoap, Irish Spring, Protex, Sanex, Filorga, eltaMD, PCA Skin, Ajax, Axion, Fabuloso, Soupline and Suavitel, as well as Hill\u2019s Science Diet and Hill\u2019s Prescription Diet.\n\nThe Company is recognized for its leadership and innovation in\npromoting sustainability and community wellbeing, including its achievements in decreasing\nplastic waste and promoting recyclability, saving water, conserving natural resources and\nimproving children\u2019s oral health through the Colgate Bright Smiles, Bright Futures program,\nwhich has reached approximately 1.8 billion children and their families since 1991.",
+        "industries": [
+          {
+            "id": "25",
+            "name": "Consumer Goods",
+            "urn": "urn:li:fsd_industry:25"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQHwUHTL81zbpg/company-background_10000/B4EZh3f8SAGYAU-/0/1754351519347/colgate_palmolive_cover?e=1765566000&v=beta&t=7C6pXIedavSg8MtCjv5LDCjPQHqvtdZSyU2zVbeW41c",
+        "callToActionUrl": null
+      },
+      {
+        "id": "2072479",
+        "universalName": "olsensa",
+        "linkedinUrl": "https://www.linkedin.com/company/olsensa/",
+        "name": "Olsen Ind\u00fastria e Com\u00e9rcio S/A",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFEDEvPJ5K0fg/company-logo_400_400/company-logo_400_400/0/1702473843481/olsensa_logo?e=1766620800&v=beta&t=gBlCXDWBsfamd5INPVAajxSYc3kvz7hWUOrnziD-ARk",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 17037,
+        "description": "Olsen Ind\u00fastria e Com\u00e9rcio S/A. Uma empresa sempre preocupada em estar \u00e0 frente de seu tempo, preocupada em disponibilizar aos seus clientes o que h\u00e1 no mercado de mais tecnol\u00f3gico e inovador.\r\nNossos produtos s\u00e3o vendidos em todo o territ\u00f3rio nacional atrav\u00e9s de revendas credenciadas. Possu\u00edmos uma extensa e competente rede de assist\u00eancias t\u00e9cnicas autorizadas e uma excelente equipe de p\u00f3s-venda. Tudo para que nossos clientes estejam sempre satisfeitos com nossos produtos e servi\u00e7os.\r\nCom a marca consolidada no mercado e oferecemos as melhores op\u00e7\u00f5es em termos de custo & benef\u00edcio, e este ano comemoramos 33 anos confirmando a frase conceito que vem se firmando entre os profissionais e parceiros que atuam na \u00e1rea m\u00e9dica e odontol\u00f3gica:\r\nOLSEN \u00e9 a marca do seu pr\u00f3ximo equipamento.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQElUsrQN6K_9A/company-background_10000/company-background_10000/0/1724779442328/olsensa_cover?e=1765566000&v=beta&t=9mAr0q-2OmMcj3iUSD4jmRjbMG7ZZAoTL1Lb6kYQiR4",
+        "callToActionUrl": null
+      }
+    ],
+    "originalQuery": {
+      "search": "https://www.linkedin.com/company/implacil-osstem",
+      "location": ""
+    },
+    "requestId": "cef69b92-aa35-4c13-b100-952d63981abd"
+  },
+  {
+    "id": "11711258",
+    "universalName": "implacil-osstem",
+    "linkedinUrl": "https://www.linkedin.com/company/implacil-osstem/",
+    "name": "Implacil Osstem",
+    "tagline": null,
+    "website": "http://implacil.com.br/",
+    "phone": null,
+    "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_400_400/B4DZjJP4aLGQAg-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=A-Z_-1JnXBbwWtbX8kUnz5Z16IMSG9DEBv6vYNSNmNA",
+    "foundedOn": {
+      "month": null,
+      "year": 1981,
+      "day": null
+    },
+    "employeeCount": 369,
+    "employeeCountRange": {
+      "start": 51,
+      "end": 200
+    },
+    "followerCount": 10229,
+    "description": "Pioneirismo e solidez. Essas s\u00e3o as marcas da Implacil De Bortoli. ",
+    "locations": [
+      {
+        "country": "BR",
+        "city": "Sao Paulo",
+        "geographicArea": "S\u00e3o Paulo",
+        "line1": "Rua Ces\u00e1rio Ramalho 821",
+        "line2": "Cambuci",
+        "postalCode": "01521-000",
+        "headquarter": true,
+        "description": null,
+        "parsed": {
+          "text": "S\u00e3o Paulo, Brazil",
+          "countryCode": "BR",
+          "regionCode": null,
+          "country": "Brazil",
+          "countryFull": "Brazil",
+          "state": "S\u00e3o Paulo",
+          "city": "S\u00e3o Paulo"
+        }
+      }
+    ],
+    "specialities": [
+      "implantodontia",
+      "implantes odontol\u00f3gicos",
+      "Implantes dent\u00e1rios ",
+      "fabricante de implante dent\u00e1rio",
+      "laborat\u00f3rio implante dent\u00e1rio",
+      "equipamentos odontol\u00f3gicos"
+    ],
+    "industries": [
+      {
+        "id": "17",
+        "name": "Medical Device",
+        "urn": "urn:li:fsd_industry:17"
+      }
+    ],
+    "logos": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_400_400/B4DZjJP4aLGQAg-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=A-Z_-1JnXBbwWtbX8kUnz5Z16IMSG9DEBv6vYNSNmNA",
+        "width": 400,
+        "height": 400,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_200_200/B4DZjJP4aLGQAQ-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=07oa7rQu_Gv8ABErYPMqGo_qyPJfLDJWsM5DEenYizQ",
+        "width": 200,
+        "height": 200,
+        "expiresAt": 1766620800000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/D4D0BAQG9AcbHZlw2OA/company-logo_100_100/B4DZjJP4aLGQAY-/0/1755723041409/implacil_de_bortoli_logo?e=1766620800&v=beta&t=x85sP6TXRRGS0mgWwlKJxr-x1nc5fDgwSQa9yH75_zs",
+        "width": 100,
+        "height": 100,
+        "expiresAt": 1766620800000
+      }
+    ],
+    "backgroundCover": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_10000/company-background_10000/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=seee9WpffRkPyyFVRKzYTzitHHlGf6RDNM9LYjCFmEI",
+    "backgroundCovers": [
+      {
+        "url": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_10000/company-background_10000/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=seee9WpffRkPyyFVRKzYTzitHHlGf6RDNM9LYjCFmEI",
+        "width": 1500,
+        "height": 500,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_400/company-background_400/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=1T0EokHLNeYmH1PcCHlM3-jjA71hJvGyaA3co6-ib4E",
+        "width": 400,
+        "height": 133,
+        "expiresAt": 1765566000000
+      },
+      {
+        "url": "https://media.licdn.com/dms/image/v2/C561BAQFOL77rQM3nRw/company-background_200/company-background_200/0/1584471006826/implacil_de_bortoli_cover?e=1765566000&v=beta&t=ZZ1hKbOyL93WSX7sJoDReSo9CGCJgCHizhNbeEDAy_4",
+        "width": 200,
+        "height": 66,
+        "expiresAt": 1765566000000
+      }
+    ],
+    "active": true,
+    "jobSearchUrl": "https://www.linkedin.com/jobs/search?geoId=92000000&f_C=11711258",
+    "fundingData": null,
+    "pageVerified": true,
+    "announcement": null,
+    "pageType": "COMPANY",
+    "autoGenerated": false,
+    "callToActionUrl": "https://implacil.com.br/",
+    "similarOrganizations": [
+      {
+        "id": "25042945",
+        "universalName": "geistlichbrasil",
+        "linkedinUrl": "https://www.linkedin.com/company/geistlichbrasil/",
+        "name": "Geistlich Pharma do Brasil",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQHWDkCmH5tWvA/company-logo_400_400/company-logo_400_400/0/1702990950636/geistlichbrasil_logo?e=1766620800&v=beta&t=AOgbxKjpHmri8XIHRZskryXVlt7c8YdvDuI5u8QoLb0",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 4013,
+        "description": "A Geistlich Pharma do Brasil, situada em S\u00e3o Paulo, \u00e9 a subsidi\u00e1ria Brasileira do Grupo Geistlich Pharma, com sede na Su\u00ed\u00e7a. Empresa l\u00edder mundial em produtos para regenera\u00e7\u00e3o, a equipe da Geistlich est\u00e1 preparada para fornecer produtos, servi\u00e7os e suporte cient\u00edfico de alto n\u00edvel em todo o territ\u00f3rio nacional.\n\nPol\u00edtica da qualidade:\n\"A Geistlich Pharma do Brasil \u00e9 uma empresa focada em atender constantemente as necessidades dos clientes atrav\u00e9s de produtos altamente cient\u00edficos e inovadores, buscando tamb\u00e9m a melhoria cont\u00ednua dos processos.\"",
+        "industries": [
+          {
+            "id": "75",
+            "name": "Government Administration",
+            "urn": "urn:li:fsd_industry:75"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHjhzYVCTL4gA/company-background_10000/company-background_10000/0/1702990256923/geistlichbrasil_cover?e=1765566000&v=beta&t=6q8vW5CNga17wh75BDU9BK3e0axicpj4BnOcFJu7NZE",
+        "callToActionUrl": null
+      },
+      {
+        "id": "622127",
+        "universalName": "tdv-dental-ltda.",
+        "linkedinUrl": "https://www.linkedin.com/company/tdv-dental-ltda./",
+        "name": "TDV Dental Ltda.",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHnYHbriyB-JA/company-logo_400_400/company-logo_400_400/0/1690562194971/tdv_dental_ltda_logo?e=1766620800&v=beta&t=QMEIcjhObrSuL9vo6b4YMqCo3xYDeAFmstcphrn1_-A",
+        "employeeCountRange": {
+          "start": 501,
+          "end": 1000
+        },
+        "followerCount": 7858,
+        "description": "20 years\r\n60 countries\r\nThousands of users assure TDV quality\r\n\r\nTDV was born overcoming challenges. It has been created for over 20 years to make innovative and high-quality products.\r\nThis commitment led its foundation and the company sought for technology and valued talents. Along with discipline, respect and transparency on the relationships with its customers and partners, these investments turned the business which initiated its activities in rented spaces in Pomerode, Santa Catarina, in a worldwide recognized company.\r\nOur path started in November 1989 and two years later we were searching for international technology in Germany. Three years later, we were already installed in our own building and since then running our business in an independent way. Nowadays our know-how makes us grow at a rate of over 20% per year.\r\nAll this success has been achieved by offering a complete line of auxiliary products for dentistry, what made us reference in the market and allowed us to gain the world. Today, TDV products are found in the shelves of more than 60 countries; this is an evidence of confidence that just increases our responsibility and keeps us pushing towards innovation.\r\nThat is why we are continuously reinventing our marketing practices and developing new solutions for the health professional, seeking for offering the best benefit-cost relation and assuring its satisfaction.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQHLRgn87ujQJQ/company-background_10000/company-background_10000/0/1692282934030/tdv_dental_ltda_cover?e=1765566000&v=beta&t=R3bE9QPBQl_W-F_XPvvUvEh_Ngi5h4eQNVePTkbR-Vs",
+        "callToActionUrl": null
+      },
+      {
+        "id": "24493739",
+        "universalName": "eff-dental-componentes",
+        "linkedinUrl": "https://www.linkedin.com/company/eff-dental-componentes/",
+        "name": "EFF Dental Componentes",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D560BAQHm4fXAC8nZKg/company-logo_400_400/company-logo_400_400/0/1685025326199/eff_dental_componentes_logo?e=1766620800&v=beta&t=tijup497GUTVAwHTX_A_5IaI0RwPzBZn_cwgTnwA87g",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 1308,
+        "description": "A EFF Dental \u00e9 uma empresa confi\u00e1vel e altamente respeitada, que se dedica h\u00e1 mais de 15 anos a oferecer uma odontologia facilitadora de excel\u00eancia. Nossa paix\u00e3o pela \u00e1rea impulsionou o desenvolvimento de componentes prot\u00e9ticos que abrangem diversas marcas de implantes, tanto nacional quanto internacionalmente.\n\nCom presen\u00e7a em v\u00e1rios pa\u00edses da Am\u00e9rica Latina e Europa, a EFF Dental \u00e9 pioneira no Brasil no fluxo 100% digital da odontologia. Nosso objetivo \u00e9 fornecer aos cirurgi\u00f5es-dentistas e t\u00e9cnicos em pr\u00f3tese dent\u00e1ria um dia a dia mais \u00e1gil, confi\u00e1vel e repleto de resultados positivos.\n\nNosso compromisso em facilitar e simplificar a odontologia \u00e9 inigual\u00e1vel, o que nos levou a sermos reconhecidos como verdadeiros facilitadores. Voc\u00ea pode confiar em nossa experi\u00eancia e dedica\u00e7\u00e3o para alcan\u00e7ar os melhores resultados poss\u00edveis.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D561BAQHVKLg3WL5m0A/company-background_10000/company-background_10000/0/1685025024133/eff_dental_componentes_cover?e=1765566000&v=beta&t=jWywGLO1x8r-vmnZnPxgzxe5pVL3-duc8Dx9SBl35W0",
+        "callToActionUrl": null
+      },
+      {
+        "id": "11191557",
+        "universalName": "kopp-sistema-de-implante-dental",
+        "linkedinUrl": "https://www.linkedin.com/company/kopp-sistema-de-implante-dental/",
+        "name": "Kopp Implantes",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQGzfp0QbDjLMA/company-logo_400_400/B4DZUmDJNuHYAY-/0/1740100113885?e=1766620800&v=beta&t=h6k-U8AO3c6gLCbWs1pLAPLj6yxS4R6EZULsZe_2nIs",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 3958,
+        "description": "A Kopp atua com excel\u00eancia no mercado desde 1998, e tem como miss\u00e3o desenvolver produtos que beneficiem os cirurgi\u00f5es-dentistas, prot\u00e9ticos e pacientes, visando \u00e0 simplifica\u00e7\u00e3o de processos.\n\nA inova\u00e7\u00e3o e qualidade est\u00e3o no DNA da empresa, que une o conhecimento de especialistas cl\u00ednicos e t\u00e9cnicos para o desenvolvimento de produtos de alta performance. O investimento em pesquisas cient\u00edficas, alta tecnologia e tratamento de superf\u00edcie s\u00e3o constantes, e o controle de qualidade \u00e9 realizado do in\u00edcio do projeto dos produtos, at\u00e9 a estocagem. \n\n\n",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQEwPbknnoAg1Q/company-background_10000/B4DZU.yZ8XHYAY-/0/1740515156527/kopp_sistema_de_implante_dental_cover?e=1765566000&v=beta&t=z2Om407F1Cz4ZDI2lO5OoISp1SS0ugwjGI72N43SeNY",
+        "callToActionUrl": null
+      },
+      {
+        "id": "20479738",
+        "universalName": "plenum-bioengenharia",
+        "linkedinUrl": "https://www.linkedin.com/company/plenum-bioengenharia/",
+        "name": "Plenum Bioengenharia",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHg8Ufr4qBfUA/company-logo_400_400/B4EZcS.b1pHkAY-/0/1748370046882/plenum_bioengenharia_logo?e=1766620800&v=beta&t=qbMAp23orebLHAuBxKz5OegvFnGpChjTvbQpjoJHV4g",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 9777,
+        "description": "Com o desenvolvimento de solu\u00e7\u00f5es inovadoras e de alta qualidade, a Plenum chega para protagonizar o novo momento da implantodontia e da bioengenharia.\nMotivadas pela ci\u00eancia da vida, a institui\u00e7\u00e3o busca revolucionar processos, produtos, servi\u00e7os e comportamentos oferecendo solu\u00e7\u00f5es acess\u00edveis e com elevado grau de ci\u00eancia e tecnologia.\n\nIncorporar a cultura de inova\u00e7\u00e3o no DNA da Plenum s\u00f3 foi poss\u00edvel com investimentos em pesquisas cient\u00edficas, testes de efic\u00e1cia da tecnologia e a cria\u00e7\u00e3o de novos modelos de atua\u00e7\u00e3o para atender o mercado. Atrelado a isso, pessoas engajadas e capacitadas em cuidar de cada detalhe do projeto e que levam a busca do conhecimento s\u00f3lido como guia para uma vida plena.\n\nAqui, a impress\u00e3o 3D para o ser humano \u00e9 fato, tornando a bioengenharia uma realidade. Come\u00e7amos com implantes dent\u00e1rios e regenerativos sint\u00e9ticos que ir\u00e3o favorecer a ades\u00e3o, a integra\u00e7\u00e3o e a prolifera\u00e7\u00e3o celular.\nReabilitar \u00e9 tornar a vida ainda maior e melhor.\n\nhttps://linktr.ee/plenum.bio",
+        "industries": [
+          {
+            "id": "12",
+            "name": "Biotechnology",
+            "urn": "urn:li:fsd_industry:12"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQF51C9iPu-X7A/company-background_10000/B4DZfW8t5jH4AY-/0/1751657930777/plenum_bioengenharia_cover?e=1765566000&v=beta&t=cUOs0y6uOBErO9tMPdrZxrAIrUW7F_ryUXrHvX8fdk0",
+        "callToActionUrl": null
+      },
+      {
+        "id": "383111",
+        "universalName": "angelus-industria-de-produtos-odontologicos-s-a",
+        "linkedinUrl": "https://www.linkedin.com/company/angelus-industria-de-produtos-odontologicos-s-a/",
+        "name": "Angelus Odonto",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQEcyVSJ-AfQNw/company-logo_400_400/B4DZY5WThpG4AY-/0/1744718871052/angelus_industria_de_produtos_odontologicos_s_a_logo?e=1766620800&v=beta&t=FfmQB_qGclSRbxREEZY4JvelQ8ugE__6YEgiPfG1S28",
+        "employeeCountRange": {
+          "start": 51,
+          "end": 200
+        },
+        "followerCount": 19637,
+        "description": "A Angelus \u00e9 uma ind\u00fastria de produtos odontol\u00f3gicos situada na cidade de Londrina, Paran\u00e1, que, desde a sua funda\u00e7\u00e3o em 1994, tem como miss\u00e3o \u201cGerar sorrisos saud\u00e1veis com inova\u00e7\u00e3o na Odontologia\u201d. Para isso, investimos grande parte de nossos recursos na \u00e1rea de pesquisa e desenvolvimento e temos relacionamento estreito com Universidades e Centros de Pesquisa Tecnol\u00f3gicas para criar solu\u00e7\u00f5es inovadoras e que simplifiquem a rotina cl\u00ednica dos dentistas.\n\nAtualmente, nossos produtos atendem n\u00e3o apenas dentistas brasileiros como tamb\u00e9m profissionais de mais de 80 pa\u00edses nos 6 continentes. \n\nTendo a inova\u00e7\u00e3o como meta, a empresa investiu grande parte dos seus recursos na \u00e1rea de Pesquisa e Desenvolvimento e cresceu num estreito relacionamento com o setor acad\u00eamico, t\u00e9cnico e cient\u00edfico.\nHoje, a ANGELUS atua em todo o Brasil e mais de 80 pa\u00edses nos 5 continentes do planeta.\n\nCom orgulho de ser reconhecida como uma empresa inovadora, acreditando que imposs\u00edvel \u00e9 o que ainda n\u00e3o foi tentado, a cada dia busca fazer diferente e melhor a fim de alcan\u00e7ar a grande miss\u00e3o de gerar sorrisos saud\u00e1veis com inova\u00e7\u00e3o na odontologia.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQEJtOEQuYxeZQ/company-background_10000/B4DZkuT7PRJYAU-/0/1757418599876/angelus_industria_de_produtos_odontologicos_s_a_cover?e=1765566000&v=beta&t=NN1BUrukHiXvLJ0kzXsDo4apFzC-ZTIGdF-3ZYzD1mg",
+        "callToActionUrl": null
+      },
+      {
+        "id": "2072479",
+        "universalName": "olsensa",
+        "linkedinUrl": "https://www.linkedin.com/company/olsensa/",
+        "name": "Olsen Ind\u00fastria e Com\u00e9rcio S/A",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQFEDEvPJ5K0fg/company-logo_400_400/company-logo_400_400/0/1702473843481/olsensa_logo?e=1766620800&v=beta&t=gBlCXDWBsfamd5INPVAajxSYc3kvz7hWUOrnziD-ARk",
+        "employeeCountRange": {
+          "start": 201,
+          "end": 500
+        },
+        "followerCount": 17037,
+        "description": "Olsen Ind\u00fastria e Com\u00e9rcio S/A. Uma empresa sempre preocupada em estar \u00e0 frente de seu tempo, preocupada em disponibilizar aos seus clientes o que h\u00e1 no mercado de mais tecnol\u00f3gico e inovador.\r\nNossos produtos s\u00e3o vendidos em todo o territ\u00f3rio nacional atrav\u00e9s de revendas credenciadas. Possu\u00edmos uma extensa e competente rede de assist\u00eancias t\u00e9cnicas autorizadas e uma excelente equipe de p\u00f3s-venda. Tudo para que nossos clientes estejam sempre satisfeitos com nossos produtos e servi\u00e7os.\r\nCom a marca consolidada no mercado e oferecemos as melhores op\u00e7\u00f5es em termos de custo & benef\u00edcio, e este ano comemoramos 33 anos confirmando a frase conceito que vem se firmando entre os profissionais e parceiros que atuam na \u00e1rea m\u00e9dica e odontol\u00f3gica:\r\nOLSEN \u00e9 a marca do seu pr\u00f3ximo equipamento.",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQElUsrQN6K_9A/company-background_10000/company-background_10000/0/1724779442328/olsensa_cover?e=1765566000&v=beta&t=9mAr0q-2OmMcj3iUSD4jmRjbMG7ZZAoTL1Lb6kYQiR4",
+        "callToActionUrl": null
+      },
+      {
+        "id": "2748",
+        "universalName": "colgate-palmolive",
+        "linkedinUrl": "https://www.linkedin.com/company/colgate-palmolive/",
+        "name": "Colgate-Palmolive",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4E0BAQHi5k01BnLvsQ/company-logo_400_400/B4EZpLGtpqHMAc-/0/1762196642732/colgate_palmolive_logo?e=1766620800&v=beta&t=Tl0xcf_0ivsxr_ROZQg5S0eUjgn_6F_zhnjWJ_gcxfQ",
+        "employeeCountRange": {
+          "start": 10001,
+          "end": null
+        },
+        "followerCount": 2677785,
+        "description": "Make More Smiles. We are Colgate-Palmolive, a caring, innovative growth company that is reimagining a healthier future for all people, their pets and our planet. For over 200 years, we've poured our care into creating a future where everyone has more reasons to smile. CP People develop, produce, distribute and sell essential health & hygiene products and pet nutrition offerings through brands such as Colgate, Palmolive, elmex, Tom\u2019s of Maine, hello, Sorriso, Speed Stick, Softsoap, Irish Spring, Protex, Sanex, Filorga, eltaMD, PCA Skin, Ajax, Axion, Fabuloso, Soupline and Suavitel, as well as Hill\u2019s Science Diet and Hill\u2019s Prescription Diet.\n\nThe Company is recognized for its leadership and innovation in\npromoting sustainability and community wellbeing, including its achievements in decreasing\nplastic waste and promoting recyclability, saving water, conserving natural resources and\nimproving children\u2019s oral health through the Colgate Bright Smiles, Bright Futures program,\nwhich has reached approximately 1.8 billion children and their families since 1991.",
+        "industries": [
+          {
+            "id": "25",
+            "name": "Consumer Goods",
+            "urn": "urn:li:fsd_industry:25"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQHwUHTL81zbpg/company-background_10000/B4EZh3f8SAGYAU-/0/1754351519347/colgate_palmolive_cover?e=1765566000&v=beta&t=7C6pXIedavSg8MtCjv5LDCjPQHqvtdZSyU2zVbeW41c",
+        "callToActionUrl": null
+      },
+      {
+        "id": "555079",
+        "universalName": "grupocimed",
+        "linkedinUrl": "https://www.linkedin.com/company/grupocimed/",
+        "name": "Grupo Cimed",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQEPGaFCNli0xw/company-logo_400_400/company-logo_400_400/0/1630596250026/grupocimed_logo?e=1766620800&v=beta&t=1yc3SiFlypgyZuWw7Jjh-K4agbgUT-cRXSkn2YhZTFs",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 819336,
+        "description": "The group, with 10 essential companies in the health, beauty and hygiene segments, has started its activities in the medicines sector. With its 100% national investiment capital, it is a major player in Brazil, competing equally with multinational companies for its space in the market. \r\n\r\nMore than 700 products, 2 000 direct employees, 22 distribuition centers, more than 30 000 POS serviced/month and 240 million units produced/year.",
+        "industries": [
+          {
+            "id": "15",
+            "name": "Pharmaceuticals",
+            "urn": "urn:li:fsd_industry:15"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQGFsdznls0VPA/company-background_10000/company-background_10000/0/1723830605952/grupocimed_cover?e=1765566000&v=beta&t=ScolUdnbWk54OKO5stkjbwih4iKzmtncEuJIaCrxPhs",
+        "callToActionUrl": null
+      },
+      {
+        "id": "59630",
+        "universalName": "kavodental",
+        "linkedinUrl": "https://www.linkedin.com/company/kavodental/",
+        "name": "KaVo Dental",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4D0BAQGvUy0YI0M2JA/company-logo_400_400/company-logo_400_400/0/1630558984364/kavo_kerreu_logo?e=1766620800&v=beta&t=INysyOjItm_P5lCfdIxRU9YUmqHaQHizUxZZHrrLbIM",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 80380,
+        "description": "For over 110 years, our employees have been developing, manufacturing and selling high-quality products that set new market standards. KaVo has made a significant contribution to the history of dentistry with its consistent innovations.\n\nImpressum: www.kavo.com/en/imprint-disclaimer\nTerms of Use: https://www.kavo.com/en/terms-use\nPrivacy Policy: www.kavo.com/en/privacy-policy-2023\nSocial Media Nettiquette: https://www.kavo.com/en/welcome-kavo-dental-social-media-pages",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQHtZnobuVk10A/company-background_10000/company-background_10000/0/1680587954358/kavodental_cover?e=1765566000&v=beta&t=Tc-VvrRRIS9WkU3gdgcr_qqmzAGmTQj-z0pch48t4K8",
+        "callToActionUrl": null
+      },
+      {
+        "id": "12658339",
+        "universalName": "straumann-group",
+        "linkedinUrl": "https://www.linkedin.com/company/straumann-group/",
+        "name": "Straumann Group",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQESsvaRCymnZA/company-logo_400_400/company-logo_400_400/0/1676992631300/straumann_group_logo?e=1766620800&v=beta&t=X4ANHrvh24cglllY_cAsgVsCu_poIsxsbzHpHksd_pE",
+        "employeeCountRange": {
+          "start": 5001,
+          "end": 10000
+        },
+        "followerCount": 199047,
+        "description": "United for global excellence in dentistry.\nEvery vision has its story, and ours began more than 60 years ago. Since then, our innovations and achievements have become landmarks in dentistry worldwide. Straumann began as a family-owned institute, grew into a publicly-owned holding, and today comprises a number of leading and talented companies around the world. Our vision has always been to create more than just smiles, but lasting confidence for dentists, labs, patients, employees, partners, dental networks and the global community. ",
+        "industries": [
+          {
+            "id": "17",
+            "name": "Medical Device",
+            "urn": "urn:li:fsd_industry:17"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4E1BAQFecPALDMvNmA/company-background_10000/company-background_10000/0/1676990970200/straumann_group_cover?e=1765566000&v=beta&t=8fr1hKsn2v7MEEKTCZP2q8b4ZggETQdo5Doro8fmLpM",
+        "callToActionUrl": null
+      },
+      {
+        "id": "719830",
+        "universalName": "libbsfarmaceutica",
+        "linkedinUrl": "https://www.linkedin.com/company/libbsfarmaceutica/",
+        "name": "LIBBS FARMAC\u00caUTICA LTDA",
+        "website": null,
+        "logo": "https://media.licdn.com/dms/image/v2/D4D0BAQHo3mpBBTsGKA/company-logo_400_400/company-logo_400_400/0/1665437120780/libbsfarmaceutica_logo?e=1766620800&v=beta&t=OPD8XbQqZi-xyglS7GykDAsR0r7J5dF90lUJ8lVcGyI",
+        "employeeCountRange": {
+          "start": 1001,
+          "end": 5000
+        },
+        "followerCount": 843094,
+        "description": "A Libbs \u00e9 uma empresa 100% nacional e de capital fechado, que tem como miss\u00e3o produzir solu\u00e7\u00f5es farmac\u00eauticas, inspirando uma comunidade comprometida com a sa\u00fade. Fundada em 1958, a empresa emprega mais de dois mil colaboradores que atuam em S\u00e3o Paulo, Embu das Artes e em 1.100 munic\u00edpios de todo o Brasil. \r\n\r\nO parque industrial, localizado em Embu das Artes, tem mais de 40 mil m\u00b2 de \u00e1rea constru\u00edda e compreende duas unidades, a Farmac\u00eautica, que atua na fabrica\u00e7\u00e3o de medicamentos, e a Farmoqu\u00edmica, com produ\u00e7\u00e3o de Insumos Farmac\u00eauticos Ativos (IFAs) para consumo interno e externo. Em abril desse ano, a companhia anunciou a constru\u00e7\u00e3o de uma f\u00e1brica voltada para a produ\u00e7\u00e3o de medicamentos biol\u00f3gicos, a Libbs Biotech. A \u00e1rea administrativa da empresa est\u00e1 localizada no bairro da Barra Funda, em S\u00e3o Paulo. \r\n\r\nA Libbs investe constantemente em pesquisas, desenvolvimento e inova\u00e7\u00e3o e mant\u00e9m Centro de Desenvolvimento Integrado (CDI), um moderno complexo de laborat\u00f3rios destinados \u00e0 pesquisa e desenvolvimento de medicamentos e de Insumos Farmac\u00eauticos Ativos (IFAs), com cerca de 130 colaboradores. Em 2012, foram investidos R$ 42 milh\u00f5es em PD&I.  \r\n\r\nDesde 2008, a empresa mant\u00e9m a Pol\u00edtica de Patroc\u00ednios Institucionais para aporte em projetos sociais nas \u00e1reas de sa\u00fade, educa\u00e7\u00e3o e qualidade de vida. Saiba mais em www.libbs.com.br",
+        "industries": [
+          {
+            "id": "15",
+            "name": "Pharmaceuticals",
+            "urn": "urn:li:fsd_industry:15"
+          }
+        ],
+        "backgroundCover": "https://media.licdn.com/dms/image/v2/D4D1BAQFc8JBPdCSGNA/company-background_10000/B4DZYAmwE_GwAY-/0/1743766880963/libbsfarmaceutica_cover?e=1765566000&v=beta&t=O11IgsaKLv3XwMWnOR0ESSkjhOdbIcFtriVaYedUWf0",
+        "callToActionUrl": null
+      }
+    ],
+    "originalQuery": {
+      "search": "Implacil Osstem",
+      "location": ""
+    },
+    "requestId": "b8b856ae-372b-4a97-a23d-d60622517d76"
+  }
+]
