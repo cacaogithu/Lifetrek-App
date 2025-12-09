@@ -1,10 +1,67 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+// Verify user is admin
+async function verifyAdmin(authHeader: string | null): Promise<boolean> {
+  if (!authHeader) return false;
+  
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) return false;
+    
+    const { data: adminData } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    
+    return !!adminData;
+  } catch {
+    return false;
+  }
+}
+
+// Input validation
+function validateInput(data: unknown): { imageData: string; prompt?: string } | null {
+  if (!data || typeof data !== 'object') return null;
+  
+  const obj = data as Record<string, unknown>;
+  
+  if (typeof obj.imageData !== 'string') return null;
+  
+  const imageData = obj.imageData.trim();
+  
+  // Validate URL format (must be http/https or data URL)
+  if (!imageData.startsWith('http://') && !imageData.startsWith('https://') && !imageData.startsWith('data:image/')) {
+    return null;
+  }
+  
+  // Limit data URL length (max ~10MB base64)
+  if (imageData.length > 15000000) return null;
+  
+  // Validate optional prompt
+  let prompt: string | undefined;
+  if (obj.prompt !== undefined) {
+    if (typeof obj.prompt !== 'string' || obj.prompt.length > 5000) return null;
+    prompt = obj.prompt.trim();
+  }
+  
+  return { imageData, prompt };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -12,16 +69,38 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, prompt } = await req.json();
+    // Verify admin authorization
+    const authHeader = req.headers.get('authorization');
+    const isAdmin = await verifyAdmin(authHeader);
+    
+    if (!isAdmin) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Admin access required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate input
+    const rawData = await req.json();
+    const validatedInput = validateInput(rawData);
+    
+    if (!validatedInput) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input - provide valid imageData' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { imageData, prompt } = validatedInput;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    console.log('Enhancing product image with Lovable AI...');
+    console.log('Enhancing product image for admin user');
 
-    // Professional medical/dental product photography prompt - inspired by high-end medical equipment catalogs
+    // Professional medical/dental product photography prompt
     const enhancementPrompt = prompt || 
       `Transform this into a premium medical equipment photoshoot worthy of a high-end catalog:
 
@@ -90,7 +169,7 @@ OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment
         throw new Error('Payment required. Please add credits to your workspace.');
       }
       
-      throw new Error(`AI API error: ${response.status} - ${errorText}`);
+      throw new Error(`AI API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -101,6 +180,8 @@ OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment
     if (!enhancedImageUrl) {
       throw new Error('No image returned from AI');
     }
+
+    console.log('Image enhancement completed');
 
     return new Response(
       JSON.stringify({ 
@@ -114,8 +195,7 @@ OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment
     console.error('Error in enhance-product-image:', error);
     return new Response(
       JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Unknown error',
-        details: error instanceof Error ? error.stack : undefined
+        error: error instanceof Error ? error.message : 'Unknown error'
       }),
       { 
         status: 500, 

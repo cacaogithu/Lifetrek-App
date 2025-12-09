@@ -10,13 +10,19 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.analyze-product-image]
-verify_jwt = false
+verify_jwt = true
 
 [functions.enhance-product-image]
-verify_jwt = false
+verify_jwt = true
 
 [functions.research-company]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-linkedin-carousel]
 verify_jwt = true
+
+[functions.calculate-lead-score]
+verify_jwt = true
+
+[functions.send-weekly-report]
+verify_jwt = false
