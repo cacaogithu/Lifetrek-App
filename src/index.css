@@ -355,4 +355,63 @@ All colors MUST be HSL.
       transition-duration: 0.01ms !important;
     }
   }
+
+  /* PDF Export Mode - Fallbacks for html2canvas unsupported properties */
+  .pdf-export-mode {
+    /* Disable all animations */
+    * {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+
+  .pdf-export-mode .backdrop-blur-sm,
+  .pdf-export-mode .backdrop-blur,
+  .pdf-export-mode .backdrop-blur-md,
+  .pdf-export-mode .backdrop-blur-lg,
+  .pdf-export-mode .backdrop-blur-xl,
+  .pdf-export-mode .backdrop-blur-2xl,
+  .pdf-export-mode .backdrop-blur-3xl,
+  .pdf-export-mode [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .pdf-export-mode .glass-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: linear-gradient(135deg, hsl(210 100% 28% / 0.95) 0%, hsl(210 100% 22% / 0.98) 100%) !important;
+  }
+
+  .pdf-export-mode .glass-card-strong {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: hsl(var(--card) / 0.98) !important;
+  }
+
+  /* Replace mask-image with solid backgrounds */
+  .pdf-export-mode [style*="mask-image"],
+  .pdf-export-mode [style*="-webkit-mask-image"] {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  /* Ensure text is visible and sharp */
+  .pdf-export-mode * {
+    -webkit-font-smoothing: antialiased !important;
+    text-rendering: optimizeLegibility !important;
+  }
+
+  /* Force solid backgrounds where transparency might cause issues */
+  .pdf-export-mode .bg-gradient-to-br {
+    background: linear-gradient(135deg, hsl(210 100% 28%) 0%, hsl(210 100% 18%) 100%) !important;
+  }
+
+  /* Ensure borders are visible */
+  .pdf-export-mode .border-white\/10,
+  .pdf-export-mode .border-white\/20,
+  .pdf-export-mode .border-white\/30 {
+    border-color: hsl(0 0% 100% / 0.3) !important;
+  }
 }
