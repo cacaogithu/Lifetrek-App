@@ -1,5 +1,6 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { flushSync } from 'react-dom';
 
 export interface PDFGeneratorOptions {
   totalSlides: number;
@@ -9,13 +10,15 @@ export interface PDFGeneratorOptions {
   enableAnimations?: () => void;
 }
 
-// Wait for slide to be fully rendered (no animations)
-const waitForStableRender = (): Promise<void> => {
+// Wait for DOM to fully update and render
+const waitForDOMUpdate = (ms: number = 300): Promise<void> => {
   return new Promise(resolve => {
-    // Use requestAnimationFrame to wait for paint
+    // First wait for React to flush
     requestAnimationFrame(() => {
+      // Then wait for paint
       requestAnimationFrame(() => {
-        resolve();
+        // Then add buffer time for images/fonts
+        setTimeout(resolve, ms);
       });
     });
   });
@@ -28,8 +31,11 @@ export const generatePitchDeckPDF = async ({
   disableAnimations,
   enableAnimations
 }: PDFGeneratorOptions): Promise<void> => {
-  // Disable animations for faster capture
+  // Disable animations for clean capture
   disableAnimations?.();
+  
+  // Wait for animation disable to take effect
+  await waitForDOMUpdate(100);
   
   // Create PDF with 16:9 landscape aspect ratio
   const pdf = new jsPDF({
@@ -43,12 +49,13 @@ export const generatePitchDeckPDF = async ({
 
   try {
     for (let i = 0; i < totalSlides; i++) {
-      // Navigate to slide
-      setCurrentSlide(i);
+      // Use flushSync to force synchronous React render
+      flushSync(() => {
+        setCurrentSlide(i);
+      });
       
-      // Minimal wait - just enough for React to render
-      await waitForStableRender();
-      await new Promise(resolve => setTimeout(resolve, 100)); // 100ms vs 600ms
+      // Wait for DOM to fully update (images, fonts, styles)
+      await waitForDOMUpdate(400);
 
       onProgress?.(i + 1, totalSlides);
 
@@ -78,16 +85,16 @@ export const generatePitchDeckPDF = async ({
         }
       });
 
-      // Convert canvas to image data with JPEG for faster processing
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      // Convert canvas to image data with JPEG for smaller file size
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
       // Add new page for slides after the first
       if (i > 0) {
         pdf.addPage([pageWidth, pageHeight], 'landscape');
       }
 
-      // Add image to PDF
-      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight, `slide_${i}`, 'FAST');
+      // Add image to PDF - fill entire page
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight, `slide_${i}`, 'MEDIUM');
     }
 
     // Save the PDF
