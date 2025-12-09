@@ -764,4 +764,5 @@ const PitchDeck = () => {
       </div>
     </div>;
 };
+
 export default PitchDeck;
