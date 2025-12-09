@@ -67,26 +67,44 @@ const getContentType = (content: string, category: string): {
   };
 };
 
-// SVG logo as base64 for email previews
-const LIFETREK_LOGO_SVG = `data:image/svg+xml;base64,${btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
-  <defs>
-    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#004F8F"/>
-      <stop offset="100%" style="stop-color:#0066B3"/>
-    </linearGradient>
-  </defs>
-  <rect x="0" y="12" width="6" height="26" rx="2" fill="url(#logoGrad)"/>
-  <text x="14" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#004F8F" letter-spacing="-0.5">LIFETREK</text>
-  <text x="138" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#1A7A3E">MEDICAL</text>
+// Lifetrek logo as SVG for email previews - matches actual brand logo with DNA/implant icon
+const LIFETREK_LOGO_SVG = `data:image/svg+xml,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 70" width="320" height="70">
+  <!-- DNA/Implant icon in oval -->
+  <ellipse cx="35" cy="35" rx="26" ry="30" fill="none" stroke="#0F3460" stroke-width="2"/>
+  <!-- Implant top (screw head) -->
+  <rect x="26" y="10" width="18" height="10" rx="2" fill="#0F3460"/>
+  <!-- DNA helix strands -->
+  <path d="M26 24 Q35 28, 44 24" stroke="#0F3460" stroke-width="2" fill="none"/>
+  <path d="M26 31 Q35 27, 44 31" stroke="#0F3460" stroke-width="2" fill="none"/>
+  <path d="M26 38 Q35 42, 44 38" stroke="#0F3460" stroke-width="2" fill="none"/>
+  <path d="M26 45 Q35 41, 44 45" stroke="#0F3460" stroke-width="2" fill="none"/>
+  <!-- Implant bottom point -->
+  <polygon points="30,50 40,50 35,58" fill="#0F3460"/>
+  <!-- LIFETREK text - italic bold -->
+  <text x="72" y="36" font-family="Arial Black, Arial, sans-serif" font-size="26" font-weight="900" fill="#0F3460" font-style="italic" letter-spacing="0.5">LIFETREK</text>
+  <!-- medical text - italic lighter -->
+  <text x="72" y="56" font-family="Arial, sans-serif" font-size="18" font-weight="400" fill="#0F3460" font-style="italic" letter-spacing="2">medical</text>
 </svg>
 `)}`;
 
-const LIFETREK_LOGO_WHITE_SVG = `data:image/svg+xml;base64,${btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
-  <rect x="0" y="12" width="6" height="26" rx="2" fill="#ffffff"/>
-  <text x="14" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="800" fill="#ffffff" letter-spacing="-0.5">LIFETREK</text>
-  <text x="138" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="400" fill="#1A7A3E">MEDICAL</text>
+const LIFETREK_LOGO_WHITE_SVG = `data:image/svg+xml,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 70" width="320" height="70">
+  <!-- DNA/Implant icon in oval -->
+  <ellipse cx="35" cy="35" rx="26" ry="30" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <!-- Implant top (screw head) -->
+  <rect x="26" y="10" width="18" height="10" rx="2" fill="#ffffff"/>
+  <!-- DNA helix strands -->
+  <path d="M26 24 Q35 28, 44 24" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <path d="M26 31 Q35 27, 44 31" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <path d="M26 38 Q35 42, 44 38" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <path d="M26 45 Q35 41, 44 45" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <!-- Implant bottom point -->
+  <polygon points="30,50 40,50 35,58" fill="#ffffff"/>
+  <!-- LIFETREK text - italic bold -->
+  <text x="72" y="36" font-family="Arial Black, Arial, sans-serif" font-size="26" font-weight="900" fill="#ffffff" font-style="italic" letter-spacing="0.5">LIFETREK</text>
+  <!-- medical text - italic lighter -->
+  <text x="72" y="56" font-family="Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" font-style="italic" letter-spacing="2">medical</text>
 </svg>
 `)}`;
 
