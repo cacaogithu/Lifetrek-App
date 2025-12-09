@@ -102,7 +102,7 @@ export default function AssetLibrary() {
         try {
             // Delete from DB
             const { error: dbError } = await supabase
-                .from("content_assets")
+                .from("content_assets" as any)
                 .delete()
                 .eq("id", id);
 
