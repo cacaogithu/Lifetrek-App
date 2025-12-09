@@ -20,7 +20,10 @@ import {
   ArrowLeft,
   Mail,
   Bot,
-  MessageSquare
+  MessageSquare,
+  Linkedin,
+  Send,
+  Sparkles
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -72,13 +75,49 @@ interface ContentTemplate {
   rafaelApproval?: ContentApprovalRecord;
 }
 
-const categoryLabels: Record<string, string> = {
-  email_reply: 'Respostas de Email',
-  linkedin_outreach: 'Outreach LinkedIn',
-  cold_email: 'Cold Email',
-  carousel_content: 'Conteúdo Carrossel',
-  crm_agent: 'Agente CRM',
-  personalized_outreach: 'Outreach Personalizado',
+const categoryConfig: Record<string, { label: string; icon: React.ReactNode; color: string; order: number }> = {
+  email_reply: { 
+    label: 'Email Templates', 
+    icon: <Mail className="h-5 w-5" />, 
+    color: 'from-blue-500/20 to-blue-600/10 border-blue-500/30',
+    order: 1
+  },
+  cold_email: { 
+    label: 'Cold Emails', 
+    icon: <Send className="h-5 w-5" />, 
+    color: 'from-violet-500/20 to-violet-600/10 border-violet-500/30',
+    order: 2
+  },
+  linkedin_outreach: { 
+    label: 'LinkedIn Outreach', 
+    icon: <Linkedin className="h-5 w-5" />, 
+    color: 'from-sky-500/20 to-sky-600/10 border-sky-500/30',
+    order: 3
+  },
+  linkedin_carousel: { 
+    label: 'LinkedIn Carousels', 
+    icon: <Linkedin className="h-5 w-5" />, 
+    color: 'from-sky-500/20 to-sky-600/10 border-sky-500/30',
+    order: 4
+  },
+  carousel_content: { 
+    label: 'Conteúdo Carrossel', 
+    icon: <Sparkles className="h-5 w-5" />, 
+    color: 'from-pink-500/20 to-pink-600/10 border-pink-500/30',
+    order: 5
+  },
+  crm_agent: { 
+    label: 'AI Agent Prompts', 
+    icon: <Bot className="h-5 w-5" />, 
+    color: 'from-emerald-500/20 to-emerald-600/10 border-emerald-500/30',
+    order: 6
+  },
+  personalized_outreach: { 
+    label: 'Outreach Personalizado', 
+    icon: <MessageSquare className="h-5 w-5" />, 
+    color: 'from-orange-500/20 to-orange-600/10 border-orange-500/30',
+    order: 7
+  },
 };
 
 const nicheLabels: Record<string, string> = {
@@ -88,6 +127,24 @@ const nicheLabels: Record<string, string> = {
   hospital: 'Hospital',
   oem: 'OEM',
   general: 'Geral',
+};
+
+// Helper to group templates by category
+const groupTemplatesByCategory = (templates: ContentTemplate[]) => {
+  const grouped: Record<string, ContentTemplate[]> = {};
+  templates.forEach(template => {
+    if (!grouped[template.category]) {
+      grouped[template.category] = [];
+    }
+    grouped[template.category].push(template);
+  });
+  
+  // Sort categories by order
+  return Object.entries(grouped).sort((a, b) => {
+    const orderA = categoryConfig[a[0]]?.order || 999;
+    const orderB = categoryConfig[b[0]]?.order || 999;
+    return orderA - orderB;
+  });
 };
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -276,8 +333,8 @@ const ContentApproval = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas</SelectItem>
-                {Object.entries(categoryLabels).map(([key, label]) => (
-                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                {Object.entries(categoryConfig).map(([key, config]) => (
+                  <SelectItem key={key} value={key}>{config.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -285,164 +342,188 @@ const ContentApproval = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto max-w-7xl px-4 py-6">
+      {/* Main Content - Grouped by Category */}
+      <div className="container mx-auto max-w-7xl px-4 py-6 space-y-6">
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground">Carregando...</div>
-        ) : (
-          <div className="border rounded-lg overflow-hidden bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="w-8"></TableHead>
-                  <TableHead className="font-semibold">Título</TableHead>
-                  <TableHead className="font-semibold">Tipo</TableHead>
-                  <TableHead className="font-semibold">Categoria</TableHead>
-                  <TableHead className="font-semibold">Nicho</TableHead>
-                  <TableHead className="font-semibold text-center">Status</TableHead>
-                  <TableHead className="font-semibold text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <User className="h-4 w-4" />
-                      Nelson
-                    </div>
-                  </TableHead>
-                  <TableHead className="font-semibold text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <User className="h-4 w-4" />
-                      Rafael
-                    </div>
-                  </TableHead>
-                  <TableHead className="font-semibold text-center">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {templates?.map((template) => (
-                  <>
-                    <TableRow 
-                      key={template.id}
-                      className="group hover:bg-muted/30 transition-colors"
-                    >
-                      <TableCell className="p-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={() => toggleRow(template.id)}
-                        >
-                          {expandedRows.has(template.id) ? (
-                            <ChevronDown className="h-4 w-4" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        <div className="max-w-[250px]">
-                          <p className="truncate">{template.title}</p>
-                          {template.description && (
-                            <p className="text-xs text-muted-foreground truncate">
-                              {template.description}
-                            </p>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {(() => {
-                          const contentType = getContentType(template.content, template.category);
-                          return (
-                            <Badge className={`${contentType.color} border text-[10px]`}>
-                              <span className="flex items-center gap-1">
-                                {contentType.icon}
-                                {contentType.label}
-                              </span>
-                            </Badge>
-                          );
-                        })()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="font-normal">
-                          {categoryLabels[template.category] || template.category}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {nicheLabels[template.niche] || template.niche || '—'}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge 
-                          className={`${statusConfig[template.status]?.color || 'bg-muted'} border`}
-                        >
-                          <span className="flex items-center gap-1">
-                            {statusConfig[template.status]?.icon}
-                            {statusConfig[template.status]?.label || template.status}
-                          </span>
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center" title={template.nelsonApproval?.comments || 'Pendente'}>
-                          {getApprovalIcon(template.nelsonApproval)}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center" title={template.rafaelApproval?.comments || 'Pendente'}>
-                          {getApprovalIcon(template.rafaelApproval)}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedTemplate(template)}
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Revisar
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                    {expandedRows.has(template.id) && (
-                      <TableRow className="bg-muted/20">
-                        <TableCell colSpan={9} className="p-4">
-                          <div className="flex items-start gap-4">
-                            <div className="flex-1">
-                              <ContentPreviewMini 
-                                content={template.content} 
-                                category={template.category} 
-                              />
-                            </div>
-                            {template.approvals && template.approvals.length > 0 && (
-                              <div className="w-72 space-y-2">
-                                <p className="text-sm font-medium">Histórico de Aprovações</p>
-                                <ScrollArea className="max-h-[280px]">
-                                  {template.approvals.map((approval: ContentApprovalRecord) => (
-                                    <div 
-                                      key={approval.id} 
-                                      className="text-xs bg-background/50 border rounded-md p-2 mb-2"
-                                    >
-                                      <div className="flex items-center justify-between mb-1">
-                                        <span className="font-medium">{approval.reviewer_name}</span>
-                                        <Badge variant="outline" className="text-[10px] px-1">
-                                          {approval.status}
-                                        </Badge>
-                                      </div>
-                                      {approval.comments && (
-                                        <p className="text-muted-foreground italic">
-                                          "{approval.comments}"
-                                        </p>
-                                      )}
-                                    </div>
-                                  ))}
-                                </ScrollArea>
-                              </div>
-                            )}
+        ) : templates && templates.length > 0 ? (
+          groupTemplatesByCategory(templates).map(([category, categoryTemplates]) => {
+            const config = categoryConfig[category] || { 
+              label: category, 
+              icon: <FileText className="h-5 w-5" />, 
+              color: 'from-muted to-muted/50 border-border' 
+            };
+            
+            return (
+              <div key={category} className="space-y-3">
+                {/* Category Header */}
+                <div className={`flex items-center gap-3 p-4 rounded-lg border bg-gradient-to-r ${config.color}`}>
+                  <div className="p-2 rounded-md bg-background/80 border">
+                    {config.icon}
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">{config.label}</h2>
+                    <p className="text-sm text-muted-foreground">
+                      {categoryTemplates.length} template{categoryTemplates.length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Category Table */}
+                <div className="border rounded-lg overflow-hidden bg-card">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/30 hover:bg-muted/30">
+                        <TableHead className="w-8"></TableHead>
+                        <TableHead className="font-semibold">Título</TableHead>
+                        <TableHead className="font-semibold">Tipo</TableHead>
+                        <TableHead className="font-semibold">Nicho</TableHead>
+                        <TableHead className="font-semibold text-center">Status</TableHead>
+                        <TableHead className="font-semibold text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <User className="h-4 w-4" />
+                            Nelson
                           </div>
-                        </TableCell>
+                        </TableHead>
+                        <TableHead className="font-semibold text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <User className="h-4 w-4" />
+                            Rafael
+                          </div>
+                        </TableHead>
+                        <TableHead className="font-semibold text-center">Ações</TableHead>
                       </TableRow>
-                    )}
-                  </>
-                ))}
-              </TableBody>
-            </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {categoryTemplates.map((template) => (
+                        <>
+                          <TableRow 
+                            key={template.id}
+                            className="group hover:bg-muted/30 transition-colors"
+                          >
+                            <TableCell className="p-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6"
+                                onClick={() => toggleRow(template.id)}
+                              >
+                                {expandedRows.has(template.id) ? (
+                                  <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              <div className="max-w-[300px]">
+                                <p className="truncate">{template.title}</p>
+                                {template.description && (
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {template.description}
+                                  </p>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {(() => {
+                                const contentType = getContentType(template.content, template.category);
+                                return (
+                                  <Badge className={`${contentType.color} border text-[10px]`}>
+                                    <span className="flex items-center gap-1">
+                                      {contentType.icon}
+                                      {contentType.label}
+                                    </span>
+                                  </Badge>
+                                );
+                              })()}
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm text-muted-foreground">
+                                {nicheLabels[template.niche] || template.niche || '—'}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge 
+                                className={`${statusConfig[template.status]?.color || 'bg-muted'} border`}
+                              >
+                                <span className="flex items-center gap-1">
+                                  {statusConfig[template.status]?.icon}
+                                  {statusConfig[template.status]?.label || template.status}
+                                </span>
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex justify-center" title={template.nelsonApproval?.comments || 'Pendente'}>
+                                {getApprovalIcon(template.nelsonApproval)}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex justify-center" title={template.rafaelApproval?.comments || 'Pendente'}>
+                                {getApprovalIcon(template.rafaelApproval)}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setSelectedTemplate(template)}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Revisar
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                          {expandedRows.has(template.id) && (
+                            <TableRow className="bg-muted/20">
+                              <TableCell colSpan={8} className="p-4">
+                                <div className="flex items-start gap-4">
+                                  <div className="flex-1">
+                                    <ContentPreviewMini 
+                                      content={template.content} 
+                                      category={template.category} 
+                                    />
+                                  </div>
+                                  {template.approvals && template.approvals.length > 0 && (
+                                    <div className="w-72 space-y-2">
+                                      <p className="text-sm font-medium">Histórico de Aprovações</p>
+                                      <ScrollArea className="max-h-[280px]">
+                                        {template.approvals.map((approval: ContentApprovalRecord) => (
+                                          <div 
+                                            key={approval.id} 
+                                            className="text-xs bg-background/50 border rounded-md p-2 mb-2"
+                                          >
+                                            <div className="flex items-center justify-between mb-1">
+                                              <span className="font-medium">{approval.reviewer_name}</span>
+                                              <Badge variant="outline" className="text-[10px] px-1">
+                                                {approval.status}
+                                              </Badge>
+                                            </div>
+                                            {approval.comments && (
+                                              <p className="text-muted-foreground italic">
+                                                "{approval.comments}"
+                                              </p>
+                                            )}
+                                          </div>
+                                        ))}
+                                      </ScrollArea>
+                                    </div>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            Nenhum template encontrado
           </div>
         )}
       </div>
@@ -462,7 +543,7 @@ const ContentApproval = () => {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2">
                 <Badge variant="outline">
-                  {categoryLabels[selectedTemplate?.category || ''] || selectedTemplate?.category}
+                  {categoryConfig[selectedTemplate?.category || '']?.label || selectedTemplate?.category}
                 </Badge>
                 {selectedTemplate?.niche && (
                   <Badge variant="secondary">
