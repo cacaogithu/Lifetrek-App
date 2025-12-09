@@ -4,13 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { 
   CheckCircle2, 
   XCircle, 
   Clock, 
-  MessageSquare, 
   Eye, 
   ThumbsUp, 
   ThumbsDown, 
@@ -19,7 +17,10 @@ import {
   ChevronRight,
   User,
   FileText,
-  ArrowLeft
+  ArrowLeft,
+  Mail,
+  Bot,
+  MessageSquare
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -40,6 +41,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Link } from 'react-router-dom';
+import { ContentPreview, ContentPreviewMini, getContentType } from '@/components/content/ContentPreview';
 
 interface ContentApprovalRecord {
   id: string;
@@ -294,6 +296,7 @@ const ContentApproval = () => {
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
                   <TableHead className="w-8"></TableHead>
                   <TableHead className="font-semibold">Título</TableHead>
+                  <TableHead className="font-semibold">Tipo</TableHead>
                   <TableHead className="font-semibold">Categoria</TableHead>
                   <TableHead className="font-semibold">Nicho</TableHead>
                   <TableHead className="font-semibold text-center">Status</TableHead>
@@ -344,6 +347,19 @@ const ContentApproval = () => {
                         </div>
                       </TableCell>
                       <TableCell>
+                        {(() => {
+                          const contentType = getContentType(template.content, template.category);
+                          return (
+                            <Badge className={`${contentType.color} border text-[10px]`}>
+                              <span className="flex items-center gap-1">
+                                {contentType.icon}
+                                {contentType.label}
+                              </span>
+                            </Badge>
+                          );
+                        })()}
+                      </TableCell>
+                      <TableCell>
                         <Badge variant="outline" className="font-normal">
                           {categoryLabels[template.category] || template.category}
                         </Badge>
@@ -386,23 +402,22 @@ const ContentApproval = () => {
                     </TableRow>
                     {expandedRows.has(template.id) && (
                       <TableRow className="bg-muted/20">
-                        <TableCell colSpan={8} className="p-4">
-                          <div className="space-y-3">
-                            <div className="flex items-start gap-4">
-                              <div className="flex-1">
-                                <p className="text-sm font-medium mb-1">Preview do Conteúdo</p>
-                                <pre className="text-xs bg-background/50 border rounded-md p-3 whitespace-pre-wrap max-h-[200px] overflow-auto font-mono">
-                                  {template.content.slice(0, 500)}
-                                  {template.content.length > 500 && '...'}
-                                </pre>
-                              </div>
-                              {template.approvals && template.approvals.length > 0 && (
-                                <div className="w-64 space-y-2">
-                                  <p className="text-sm font-medium">Histórico de Aprovações</p>
-                                  {template.approvals.slice(0, 3).map((approval: ContentApprovalRecord) => (
+                        <TableCell colSpan={9} className="p-4">
+                          <div className="flex items-start gap-4">
+                            <div className="flex-1">
+                              <ContentPreviewMini 
+                                content={template.content} 
+                                category={template.category} 
+                              />
+                            </div>
+                            {template.approvals && template.approvals.length > 0 && (
+                              <div className="w-72 space-y-2">
+                                <p className="text-sm font-medium">Histórico de Aprovações</p>
+                                <ScrollArea className="max-h-[280px]">
+                                  {template.approvals.map((approval: ContentApprovalRecord) => (
                                     <div 
                                       key={approval.id} 
-                                      className="text-xs bg-background/50 border rounded-md p-2"
+                                      className="text-xs bg-background/50 border rounded-md p-2 mb-2"
                                     >
                                       <div className="flex items-center justify-between mb-1">
                                         <span className="font-medium">{approval.reviewer_name}</span>
@@ -417,9 +432,9 @@ const ContentApproval = () => {
                                       )}
                                     </div>
                                   ))}
-                                </div>
-                              )}
-                            </div>
+                                </ScrollArea>
+                              </div>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -455,11 +470,15 @@ const ContentApproval = () => {
                   </Badge>
                 )}
               </div>
-              <ScrollArea className="h-[400px] border rounded-lg">
-                <pre className="p-4 text-sm whitespace-pre-wrap font-mono">
-                  {selectedTemplate?.content}
-                </pre>
-              </ScrollArea>
+              {selectedTemplate && (
+                <ContentPreview 
+                  content={selectedTemplate.content} 
+                  category={selectedTemplate.category}
+                  title={selectedTemplate.title}
+                  maxHeight="500px"
+                  showTabs={true}
+                />
+              )}
             </div>
 
             {/* Approval Panel */}
