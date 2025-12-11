@@ -1,227 +1,212 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// --- EMBEDDED CONTEXTS ---
-
+// --- BRAND CONTEXT (PORTUGUÊS) ---
 const COMPANY_CONTEXT = `
-# Lifetrek Medical - Company Context & Brand Book
-**Version**: 3.0 (Comprehensive / Brand Book)
+# Lifetrek Medical - Contexto da Marca
 
-## 1. Brand Identity & Voice
-**Mission**: "To lead in the manufacture of high-performance products... with an absolute commitment to life."
-**Tagline**: "Global Reach, Local Excellence."
-**Tone**: Technical, Ethical, Confident, Partnership-Oriented.
-**Key Themes**:
-- **Risk Reduction**: "Manufacturing Capabilities That De-Risk Your Supply Chain".
-- **Precision**: "Micron-level accuracy", "Zero-Defect Manufacturing".
-- **Compliance**: "Regulatory Confidence", "ISO 13485:2016", "ANVISA".
-- **Speed**: "Faster Time to Market".
+## Identidade
+**Missão**: Liderar na fabricação de produtos de alta performance com compromisso absoluto com a vida.
+**Slogan**: "Alcance Global, Excelência Local."
+**Tom**: Técnico, Consultivo, Confiante, Parceiro.
 
-## 2. Infrastructure & Machinery (Technical Specs)
-Lifetrek operates a world-class facility in **Indaiatuba / SP, Brazil**.
+## Diferenciais-Chave
+- **Redução de Risco**: Capacidades que eliminam riscos na cadeia de suprimentos.
+- **Precisão**: Acurácia em nível de mícron, manufatura zero-defeito.
+- **Conformidade**: ISO 13485:2016, ANVISA, rastreabilidade total.
+- **Agilidade**: Protótipos em 10 dias, fábrica em Indaiatuba/SP.
 
-### CNC Manufacturing (Swiss-Type & Turning)
-*   **Citizen M32 (Swiss-Type CNC Lathe)**
-    *   *Specs*: 32mm bar capacity, 12-axis control, live tooling.
-    *   *Application*: Complex bone screws, intricate implants.
-*   **Citizen L20 (Swiss-Type CNC Lathe)**
-*   **Doosan Lynx 2100 (Turning Center)**
-*   **Tornos GT26 (Multi-Axis)**
-*   **FANUC Robodrill**
-*   **Walter Helitronic** (Tool Grinding)
+## Equipamentos Principais
+- **Citizen M32/L20**: Tornos suíços para geometrias complexas.
+- **Zeiss Contura CMM**: Metrologia automatizada, precisão 1.9μm.
+- **Salas Limpas ISO 7**: Duas cleanrooms certificadas.
+- **Eletropolimento**: Acabamento Ra < 0.1μm.
 
-### Metrology & Quality Control
-*   **ZEISS Contura (3D CMM)**: Accuracy 1.9 + L/300 μm, fully automated.
-*   **Optical Comparator CNC**
-*   **Olympus Microscope** (Metallographic analysis)
-*   **Hardness Vickers** (Automated testing)
-
-### Finishing & Facilities
-*   **Electropolishing In-House**: Ra < 0.1μm mirror finish.
-*   **Laser Marking**: Fiber laser for UDI.
-*   **Cleanrooms**: Two ISO Class 7 cleanrooms.
-
-## 3. Product Catalog
-*   **Medical**: Spinal Systems, Trauma Fixation (Plates/Screws/Nails), Cranial, Extremities.
-*   **Surgical Instruments**: Drills, Reamers, Taps, Guides, Handles.
-*   **Dental**: Titanium Implants (Hex), Abutments, Tools.
-*   **Veterinary**: Orthopedic Plates (TPLO), Bone Screws.
-
-## 4. Client Portfolio
-FGM Dental Group, Neortho, Ultradent Products, Traumec, Razek, Vincula, CPMH, Evolve, GMI, HCS, Impol, Implanfix, IOL, Plenum, Medens, OBL Dental, Orthometric, Óssea, React, Russer, TechImport, Toride.
-
-## 5. Strategic Messaging
-*   **OEMs**: "Eliminate supplier risks. ISO 13485 certified quality system."
-*   **R&D**: "Accelerate product development. From ESD prototypes to mass production."
-*   **Proof Points**: 30+ years experience, 100% Quality Board, In-House Finishing.
+## Clientes
+FGM, Neortho, Ultradent, Traumec, Vincula, GMI, Orthometric, entre outros.
 `;
 
-const LINKEDIN_BEST_PRACTICES = `
-# LinkedIn Best Practices (Summary)
+const LINKEDIN_BEST_PRACTICES_PT = `
+# Melhores Práticas LinkedIn - Carrossel
 
-### Carousel Rules
-*   **Slides**: 5-10 slides (7 is sweet spot).
-*   **Dimensions**: 1080x1350px (Portrait) preferred.
-*   **Text**: Minimal text per slide (20-40 words max).
-*   **Contrast**: High contrast, readable fonts (30pt+).
+## Regras de Slides
+- **Quantidade**: 5-7 slides (ideal: 7).
+- **Dimensões**: 1080x1350px (retrato).
+- **Texto**: MÍNIMO por slide. Headlines até 40 caracteres. Body até 80 caracteres.
 
-### Hook Formulas
-1.  **The Callout**: "[Audience]: If you're still [doing X], you're losing [specific loss]."
-2.  **The Counter-Intuitive**: "I stopped [common practice] and [unexpected result]."
-3.  **The Risk/Loss**: "[X] is costing [audience] [amount]."
+## Estrutura
+- **Slide 1 (Hook)**: Uma promessa/problema grande.
+- **Slides 2-6 (Corpo)**: Um insight por slide. Numerados.
+- **Slide 7 (CTA)**: CTA de baixa fricção.
 
-### Slide Structure
-*   **Slide 1 (Hook)**: One big promise/problem.
-*   **Slides 2-6 (Body)**: One key insight per slide. Numbered.
-*   **Slide 7 (CTA)**: Clear low-friction CTA (e.g., "Comment X").
+## Tom de Voz
+- Consultivo, não agressivo.
+- Técnico mas acessível.
+- Parceria, não venda.
+- Provas concretas (nomes de equipamentos, certificações).
 
-### Caption Structure
-1.  Hook (first 125 chars)
-2.  Expand on promise (2-3 sentences)
-3.  Tease content ("In this carousel...")
-4.  CTA
-5.  Hashtags (#MedTech #ISO13485 #PrecisionMachining)
+## Fórmulas de Hook
+1. "[Audiência]: Se você ainda [faz X], pode estar [perdendo Y]."
+2. "O que aprendi ao [fazer X] para [resultado]."
+3. "[Problema específico] pode impactar [resultado] - veja como."
 `;
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+// --- STEP 1: Validação de Input ---
+function validateInput(data: any): { valid: boolean; error?: string } {
+  console.log("=== STEP 1: Validação de Input ===");
+  console.log("Dados recebidos:", JSON.stringify(data, null, 2));
+
+  if (!data.topic || typeof data.topic !== "string") {
+    return { valid: false, error: "Tópico é obrigatório" };
+  }
+  if (!data.targetAudience || typeof data.targetAudience !== "string") {
+    return { valid: false, error: "Audiência alvo é obrigatória" };
   }
 
-  try {
-    const {
-      topic,
-      targetAudience,
-      painPoint,
-      desiredOutcome,
-      proofPoints,
-      ctaAction,
-      format = "carousel",
-      wantImages = true,
-      numberOfCarousels = 1
-    } = await req.json();
+  console.log("✓ Validação OK:", {
+    topic: data.topic,
+    targetAudience: data.targetAudience,
+    format: data.format || "carousel",
+    wantImages: data.wantImages ?? true,
+    numberOfCarousels: data.numberOfCarousels || 1,
+  });
 
-    const isBatch = numberOfCarousels > 1;
+  return { valid: true };
+}
 
-    console.log("Generating LinkedIn content:", { topic, targetAudience, format, wantImages, numberOfCarousels });
+// --- STEP 2: Geração de Conteúdo ---
+async function generateContent(
+  data: any,
+  LOVABLE_API_KEY: string
+): Promise<any[]> {
+  console.log("=== STEP 2: Geração de Conteúdo ===");
+  console.log("Modelo: google/gemini-2.5-flash");
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const {
+    topic,
+    targetAudience,
+    painPoint,
+    desiredOutcome,
+    proofPoints,
+    ctaAction,
+    numberOfCarousels = 1,
+  } = data;
 
-    if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error("Missing configuration keys");
-    }
+  const isBatch = numberOfCarousels > 1;
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const SYSTEM_PROMPT = `Você é o Gerador de Carrossel LinkedIn da Lifetrek Medical.
 
-    // Fetch available assets
-    const { data: assets, error: assetsError } = await supabase
-      .from("content_assets")
-      .select("id, filename, category, tags")
-      .limit(50);
-
-    if (assetsError) {
-      console.error("Error fetching assets:", assetsError);
-    }
-
-    const assetsContext = assets?.map(a =>
-      `- [${a.category.toUpperCase()}] ID: ${a.id} (Tags: ${a.tags?.join(", ")}, Filename: ${a.filename})`
-    ).join("\n") || "No assets available.";
-
-    // Combined System Prompt with EMBEDDED CONTEXT
-    const SYSTEM_PROMPT = `You are the LinkedIn Carousel Content Generator for Lifetrek Medical, a senior content strategist assistant.
-
-=== KNOWLEDGE BASE (COMPANY) ===
 ${COMPANY_CONTEXT}
 
-=== KNOWLEDGE BASE (LINKEDIN BEST PRACTICES) ===
-${LINKEDIN_BEST_PRACTICES}
+${LINKEDIN_BEST_PRACTICES_PT}
 
-=== ASSET LIBRARY ===
-You have access to a library of approved brand assets. STRATEGICALLY select an existing asset if it matches the slide content perfectly.
-${assetsContext}
-
-=== INSTRUCTIONS ===
-1. **Use the Hook Formulas** from the best practices.
-2. **Be Specific**: Use exact machine names (Citizen M32, Zeiss Contura) and client names where relevant to build authority.
-3. **Asset Usage**: Use 'backgroundType': 'asset' AND 'assetId' when an asset fits. Use 'backgroundType': 'generate' AND 'imageGenerationPrompt' when no asset fits.
-4. **Voice**: Technical but accessible, confident.
-
-BATCH GENERATION:
-If requested, generate multiple distinct carousels for a content calendar.
-    `;
-
-    // Construct User Prompt
-    let userPrompt = `Topic: ${topic}
-Target Audience: ${targetAudience}
-Pain Point: ${painPoint}
-${desiredOutcome ? `Outcome: ${desiredOutcome}` : ""}
-${proofPoints ? `Proof: ${proofPoints}` : ""}
-${ctaAction ? `CTA: ${ctaAction}` : ""}
+=== INSTRUÇÕES CRÍTICAS ===
+1. TODO conteúdo DEVE ser em PORTUGUÊS BRASILEIRO.
+2. Headlines: MÁXIMO 40 caracteres. Curtos e impactantes.
+3. Body: MÁXIMO 80 caracteres. Concisos e diretos.
+4. Tom: Consultivo, parceiro. NUNCA agressivo ou alarmista.
+5. Use nomes específicos: Citizen M32, Zeiss Contura, ISO 13485.
+6. Estruture com 5-7 slides seguindo o padrão hook → corpo → CTA.
+7. CTA de baixa fricção: "Comente X", "Veja mais", "Fale conosco".
 `;
 
-    if (isBatch) {
-      userPrompt += `\nGenerate ${numberOfCarousels} distinct carousels for a content calendar. Each should have a different angle.`;
-    } else {
-      userPrompt += `\nGenerate a single high-impact carousel following the best practices structure.`;
-    }
+  let userPrompt = `Crie um carrossel para LinkedIn.
 
-    // Define Tools
-    const slideSchema = {
-      type: "object",
-      properties: {
-        type: { type: "string", enum: ["hook", "content", "cta"] },
-        headline: { type: "string" },
-        body: { type: "string" },
-        backgroundType: { type: "string", enum: ["asset", "generate"] },
-        assetId: { type: "string" },
-        imageGenerationPrompt: { type: "string" }
+Tópico: ${topic}
+Audiência: ${targetAudience}
+${painPoint ? `Dor principal: ${painPoint}` : ""}
+${desiredOutcome ? `Resultado desejado: ${desiredOutcome}` : ""}
+${proofPoints ? `Provas/dados: ${proofPoints}` : ""}
+${ctaAction ? `CTA desejado: ${ctaAction}` : ""}
+
+LEMBRE: Headlines ≤40 chars, Body ≤80 chars, tudo em PORTUGUÊS, tom consultivo.
+`;
+
+  if (isBatch) {
+    userPrompt += `\nGere ${numberOfCarousels} carrosséis distintos, cada um com ângulo diferente.`;
+  }
+
+  console.log("Prompt do usuário:", userPrompt);
+
+  const slideSchema = {
+    type: "object",
+    properties: {
+      type: { 
+        type: "string", 
+        enum: ["hook", "content", "cta"],
+        description: "Tipo do slide" 
       },
-      required: ["type", "headline", "body", "backgroundType"]
-    };
+      headline: { 
+        type: "string",
+        description: "Título curto em PORTUGUÊS. MÁXIMO 40 caracteres." 
+      },
+      body: { 
+        type: "string",
+        description: "Texto de suporte em PORTUGUÊS. MÁXIMO 80 caracteres." 
+      },
+      imageGenerationPrompt: { 
+        type: "string",
+        description: "Descrição visual para gerar imagem de fundo (em inglês para o modelo de imagem)" 
+      },
+    },
+    required: ["type", "headline", "body"],
+  };
 
-    const tools = [
-      {
-        type: "function",
-        function: {
-          name: isBatch ? "create_batch_carousels" : "create_carousel",
-          description: isBatch ? "Create multiple carousels" : "Create a single carousel",
-          parameters: {
-            type: "object",
-            properties: isBatch ? {
-              carousels: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    topic: { type: "string" },
-                    targetAudience: { type: "string" },
-                    slides: { type: "array", items: slideSchema },
-                    caption: { type: "string" }
+  const tools = [
+    {
+      type: "function",
+      function: {
+        name: isBatch ? "create_batch_carousels" : "create_carousel",
+        description: isBatch
+          ? "Criar múltiplos carrosséis em português"
+          : "Criar um carrossel em português",
+        parameters: {
+          type: "object",
+          properties: isBatch
+            ? {
+                carousels: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      topic: { type: "string" },
+                      targetAudience: { type: "string" },
+                      slides: { type: "array", items: slideSchema },
+                      caption: { 
+                        type: "string",
+                        description: "Caption do post em português, com hashtags" 
+                      },
+                    },
+                    required: ["topic", "targetAudience", "slides", "caption"],
                   },
-                  required: ["topic", "targetAudience", "slides", "caption"]
-                }
+                },
               }
-            } : {
-              topic: { type: "string" },
-              targetAudience: { type: "string" },
-              slides: { type: "array", items: slideSchema },
-              caption: { type: "string" }
-            },
-            required: isBatch ? ["carousels"] : ["topic", "targetAudience", "slides", "caption"]
-          }
-        }
-      }
-    ];
+            : {
+                topic: { type: "string" },
+                targetAudience: { type: "string" },
+                slides: { type: "array", items: slideSchema },
+                caption: { 
+                  type: "string",
+                  description: "Caption do post em português, com hashtags" 
+                },
+              },
+          required: isBatch
+            ? ["carousels"]
+            : ["topic", "targetAudience", "slides", "caption"],
+        },
+      },
+    },
+  ];
 
-    // Call AI
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  console.log("Chamando API de conteúdo...");
+
+  const response = await fetch(
+    "https://ai.gateway.lovable.dev/v1/chat/completions",
+    {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -234,83 +219,228 @@ ${ctaAction ? `CTA: ${ctaAction}` : ""}
           { role: "user", content: userPrompt },
         ],
         tools: tools,
-        tool_choice: { type: "function", function: { name: isBatch ? "create_batch_carousels" : "create_carousel" } },
+        tool_choice: {
+          type: "function",
+          function: { name: isBatch ? "create_batch_carousels" : "create_carousel" },
+        },
       }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Erro na API de conteúdo:", response.status, errorText);
+    throw new Error(`Erro API conteúdo: ${response.status}`);
+  }
+
+  const aiResponse = await response.json();
+  console.log("Resposta da API recebida");
+
+  const toolCall = aiResponse.choices?.[0]?.message?.tool_calls?.[0];
+  if (!toolCall) {
+    console.error("Sem tool call na resposta:", JSON.stringify(aiResponse));
+    throw new Error("Sem tool call na resposta da IA");
+  }
+
+  const args = JSON.parse(toolCall.function.arguments);
+  const carousels = isBatch ? args.carousels : [args];
+
+  console.log(`✓ Conteúdo gerado: ${carousels.length} carrossel(éis)`);
+  
+  // Log slide details
+  carousels.forEach((c: any, idx: number) => {
+    console.log(`Carrossel ${idx + 1}:`, {
+      topic: c.topic,
+      slideCount: c.slides?.length || 0,
+      slides: c.slides?.map((s: any) => ({
+        type: s.type,
+        headlineLength: s.headline?.length,
+        bodyLength: s.body?.length,
+      })),
+    });
+  });
+
+  return carousels;
+}
+
+// --- STEP 3: Geração de Imagens ---
+async function generateImages(
+  carousels: any[],
+  wantImages: boolean,
+  format: string,
+  LOVABLE_API_KEY: string
+): Promise<any[]> {
+  console.log("=== STEP 3: Geração de Imagens ===");
+  console.log("Modelo: google/gemini-3-pro-image-preview (Nano Banana Pro)");
+  console.log("wantImages:", wantImages);
+  console.log("format:", format);
+
+  if (!wantImages) {
+    console.log("⏭ Imagens não solicitadas, pulando...");
+    return carousels;
+  }
+
+  for (let cIdx = 0; cIdx < carousels.length; cIdx++) {
+    const carousel = carousels[cIdx];
+    const slidesToProcess = format === "single-image" 
+      ? [carousel.slides[0]] 
+      : carousel.slides;
+
+    console.log(`Processando carrossel ${cIdx + 1}: ${slidesToProcess.length} slides`);
+
+    const processedSlides = [];
+
+    for (let sIdx = 0; sIdx < slidesToProcess.length; sIdx++) {
+      const slide = slidesToProcess[sIdx];
+      console.log(`  Slide ${sIdx + 1}/${slidesToProcess.length}: "${slide.headline}"`);
+
+      let imageUrl = "";
+
+      try {
+        const imagePrompt = `Create a professional LinkedIn carousel background image.
+
+CONTEXT: ${slide.headline} - ${slide.body}
+VISUAL: ${slide.imageGenerationPrompt || "Professional medical manufacturing environment"}
+
+STYLE REQUIREMENTS:
+- Clean, modern, medical-industrial aesthetic
+- Primary color: Corporate blue (#003A5D)
+- Subtle accents in green (#1E6F50) or orange (#E65100)
+- NO TEXT in the image
+- ISO 13485 medical manufacturing feel
+- High quality, professional look
+- Suitable as background for white text overlay`;
+
+        console.log(`    Gerando imagem com prompt: ${imagePrompt.substring(0, 100)}...`);
+
+        const imgRes = await fetch(
+          "https://ai.gateway.lovable.dev/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "google/gemini-3-pro-image-preview",
+              messages: [
+                {
+                  role: "system",
+                  content: "You are a professional medical/industrial designer creating LinkedIn carousel backgrounds.",
+                },
+                { role: "user", content: imagePrompt },
+              ],
+              modalities: ["image", "text"],
+            }),
+          }
+        );
+
+        if (!imgRes.ok) {
+          const errorText = await imgRes.text();
+          console.error(`    ✗ Erro na geração de imagem: ${imgRes.status}`, errorText);
+        } else {
+          const imgData = await imgRes.json();
+          imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+          
+          if (imageUrl) {
+            console.log(`    ✓ Imagem gerada (${imageUrl.substring(0, 50)}...)`);
+          } else {
+            console.log("    ⚠ Sem imagem na resposta");
+          }
+        }
+      } catch (e) {
+        console.error(`    ✗ Erro ao gerar imagem:`, e);
+      }
+
+      processedSlides.push({ ...slide, imageUrl });
+    }
+
+    // If single-image, keep only first slide processed, rest unchanged
+    if (format === "single-image") {
+      carousel.slides = [processedSlides[0], ...carousel.slides.slice(1)];
+    } else {
+      carousel.slides = processedSlides;
+    }
+    
+    carousel.imageUrls = carousel.slides.map((s: any) => s.imageUrl);
+  }
+
+  console.log("✓ Geração de imagens concluída");
+  return carousels;
+}
+
+// --- STEP 4: Response Final ---
+function buildResponse(carousels: any[], isBatch: boolean) {
+  console.log("=== STEP 4: Response Final ===");
+  console.log("isBatch:", isBatch);
+  console.log("Total carrosséis:", carousels.length);
+
+  const result = isBatch 
+    ? { carousels } 
+    : { carousel: carousels[0] };
+
+  console.log("✓ Response construída com sucesso");
+  return result;
+}
+
+// --- MAIN HANDLER ---
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  console.log("========================================");
+  console.log("LinkedIn Carousel Generator - Iniciando");
+  console.log("Timestamp:", new Date().toISOString());
+  console.log("========================================");
+
+  try {
+    const data = await req.json();
+
+    // STEP 1: Validação
+    const validation = validateInput(data);
+    if (!validation.valid) {
+      console.error("✗ Falha na validação:", validation.error);
+      return new Response(
+        JSON.stringify({ error: validation.error }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
+    }
+
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY não configurada");
+    }
+
+    // STEP 2: Geração de Conteúdo
+    let carousels = await generateContent(data, LOVABLE_API_KEY);
+
+    // STEP 3: Geração de Imagens
+    const wantImages = data.wantImages ?? true;
+    const format = data.format || "carousel";
+    carousels = await generateImages(carousels, wantImages, format, LOVABLE_API_KEY);
+
+    // STEP 4: Response
+    const isBatch = (data.numberOfCarousels || 1) > 1;
+    const result = buildResponse(carousels, isBatch);
+
+    console.log("========================================");
+    console.log("✓ Geração concluída com sucesso");
+    console.log("========================================");
+
+    return new Response(JSON.stringify(result), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-    if (!response.ok) {
-      throw new Error(`AI API error: ${response.status}`);
-    }
-
-    const aiResponse = await response.json();
-    const toolCall = aiResponse.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall) throw new Error("No tool call in AI response");
-
-    const args = JSON.parse(toolCall.function.arguments);
-
-    // Normalize to array
-    let resultCarousels = isBatch ? args.carousels : [args];
-
-    // Process Images for ALL carousels
-    for (const carousel of resultCarousels) {
-      const processedSlides = [];
-      const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
-
-      for (const slide of slidesToProcess) {
-        let imageUrl = "";
-
-        // 1. Try Asset
-        if (slide.backgroundType === "asset" && slide.assetId) {
-          const { data: assetData } = await supabase.from("content_assets").select("filename").eq("id", slide.assetId).single();
-          if (assetData) {
-            const { data: publicUrlData } = supabase.storage.from("content-assets").getPublicUrl(assetData.filename);
-            imageUrl = publicUrlData.publicUrl;
-          }
-        }
-
-        // 2. Generate if needed
-        if (!imageUrl && wantImages && (slide.backgroundType === "generate" || !slide.assetId)) {
-          try {
-            const imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
-HEADLINE: ${slide.headline}
-CONTEXT: ${slide.body}
-VISUAL DESCRIPTION: ${slide.imageGenerationPrompt || "Professional medical manufacturing scene"}
-STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
-
-            const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: "google/gemini-2.5-flash-image",
-                messages: [
-                  { role: "system", content: "You are a professional medical designer." },
-                  { role: "user", content: imagePrompt }
-                ],
-                modalities: ["image", "text"]
-              }),
-            });
-            const imgData = await imgRes.json();
-            imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
-          } catch (e) {
-            console.error("Image gen error", e);
-          }
-        }
-
-        processedSlides.push({ ...slide, imageUrl });
-      }
-      carousel.slides = processedSlides;
-      carousel.imageUrls = processedSlides.map(s => s.imageUrl);
-    }
-
-    return new Response(
-      JSON.stringify(isBatch ? { carousels: resultCarousels } : { carousel: resultCarousels[0] }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-
   } catch (error) {
-    console.error("Error:", error);
+    console.error("========================================");
+    console.error("✗ ERRO:", error);
+    console.error("========================================");
+
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : "Erro desconhecido" 
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }

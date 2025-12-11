@@ -16,23 +16,29 @@ interface SlideCanvasProps {
 
 export const SlideCanvas = forwardRef<HTMLDivElement, SlideCanvasProps>(
     ({ mode, slide, className, aspectRatio = "square" }, ref) => {
-        // Styles for rendering
         const containerClasses = cn(
-            "relative overflow-hidden bg-white text-slate-900 flex flex-col",
+            "relative overflow-hidden flex flex-col",
             aspectRatio === "square" ? "aspect-square" : "aspect-[4/5]",
             className
         );
 
         const isExport = mode === "export";
 
+        // Brand type labels in Portuguese
+        const typeLabels: Record<string, string> = {
+            hook: "GANCHO",
+            content: "CONTEÚDO",
+            cta: "CTA",
+        };
+
         return (
             <div
                 ref={ref}
                 className={containerClasses}
                 style={{
-                    // Force dimensions for export accuracy if needed, otherwise relying on container
                     width: isExport ? "1080px" : "100%",
                     height: isExport ? "1080px" : "auto",
+                    backgroundColor: "hsl(210 100% 18%)", // primary dark
                 }}
             >
                 {/* Background Image Layer */}
@@ -44,61 +50,101 @@ export const SlideCanvas = forwardRef<HTMLDivElement, SlideCanvasProps>(
                                 alt="Background"
                                 className="w-full h-full object-cover"
                             />
-                            {/* Overlay gradient for text readability */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-slate-900/10" />
+                            {/* Brand-colored overlay gradient */}
+                            <div 
+                                className="absolute inset-0"
+                                style={{
+                                    background: "linear-gradient(to top, hsl(210 100% 18% / 0.95) 0%, hsl(210 100% 18% / 0.6) 40%, hsl(210 100% 18% / 0.3) 100%)"
+                                }}
+                            />
                         </>
                     ) : (
-                        <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">
-                            <span className="text-sm">No Background Image</span>
+                        <div 
+                            className="w-full h-full flex items-center justify-center"
+                            style={{
+                                background: "linear-gradient(135deg, hsl(210 100% 18%) 0%, hsl(210 100% 28%) 100%)"
+                            }}
+                        >
+                            <span className="text-sm text-white/40">Sem imagem de fundo</span>
                         </div>
                     )}
                 </div>
 
                 {/* Content Layer */}
-                <div className="relative z-10 flex-1 flex flex-col p-12 text-white h-full justify-between">
+                <div className="relative z-10 flex-1 flex flex-col p-10 text-white h-full justify-between">
                     {/* Header / Brand Area */}
                     <div className="flex justify-between items-start">
-                        {/* Placeholder for Logo if we add it later */}
                         <div className="flex items-center gap-2">
-                            <div className="h-8 w-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                <span className="font-bold text-xs">LM</span>
+                            <div 
+                                className="h-10 w-10 rounded-lg flex items-center justify-center"
+                                style={{
+                                    backgroundColor: "hsl(0 0% 100% / 0.15)",
+                                    backdropFilter: "blur(8px)",
+                                }}
+                            >
+                                <span className="font-bold text-sm text-white">LM</span>
                             </div>
                         </div>
-                        <Badge variant="secondary" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border-0 uppercase tracking-wider text-[10px]">
-                            {slide.type}
+                        <Badge 
+                            variant="secondary" 
+                            className="border-0 uppercase tracking-wider text-[10px] font-semibold"
+                            style={{
+                                backgroundColor: slide.type === "cta" 
+                                    ? "hsl(25 90% 52% / 0.9)" // accent orange
+                                    : slide.type === "hook"
+                                    ? "hsl(142 70% 35% / 0.9)" // accent green
+                                    : "hsl(0 0% 100% / 0.15)",
+                                color: "white",
+                            }}
+                        >
+                            {typeLabels[slide.type] || slide.type.toUpperCase()}
                         </Badge>
                     </div>
 
                     {/* Main Content Area */}
-                    <div className="flex flex-col gap-6 mt-auto mb-auto">
+                    <div className="flex flex-col gap-5 mt-auto mb-auto">
                         <h2
                             className={cn(
-                                "font-bold leading-tight tracking-tight",
-                                slide.type === "hook" ? "text-6xl" : "text-4xl"
+                                "font-bold leading-tight tracking-tight text-white",
+                                slide.type === "hook" ? "text-5xl" : "text-4xl"
                             )}
-                            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+                            style={{ textShadow: "0 2px 12px hsl(210 100% 10% / 0.5)" }}
                         >
                             {slide.headline}
                         </h2>
-                        <div className={cn(
-                            "w-20 h-2 rounded-full",
-                            slide.type === "cta" ? "bg-orange-500" : "bg-blue-500"
-                        )} />
+                        {/* Accent bar using brand colors */}
+                        <div 
+                            className="w-16 h-1.5 rounded-full"
+                            style={{
+                                backgroundColor: slide.type === "cta" 
+                                    ? "hsl(25 90% 52%)" // accent orange
+                                    : "hsl(142 70% 35%)" // accent green
+                            }}
+                        />
                         <p
                             className={cn(
-                                "text-slate-100 font-medium whitespace-pre-line leading-relaxed",
-                                slide.type === "hook" ? "text-2xl" : "text-xl"
+                                "font-medium whitespace-pre-line leading-relaxed",
+                                slide.type === "hook" ? "text-xl" : "text-lg"
                             )}
-                            style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
+                            style={{ 
+                                color: "hsl(0 0% 100% / 0.9)",
+                                textShadow: "0 1px 4px hsl(210 100% 10% / 0.4)" 
+                            }}
                         >
                             {slide.body}
                         </p>
                     </div>
 
                     {/* Footer Area */}
-                    <div className="pt-8 border-t border-white/20 flex justify-between items-center text-sm font-light text-slate-300">
+                    <div 
+                        className="pt-6 flex justify-between items-center text-sm font-medium"
+                        style={{
+                            borderTop: "1px solid hsl(0 0% 100% / 0.15)",
+                            color: "hsl(0 0% 100% / 0.7)",
+                        }}
+                    >
                         <span>Lifetrek Medical</span>
-                        <span>www.lifetrek-medical.com</span>
+                        <span>lifetrek-medical.com</span>
                     </div>
                 </div>
             </div>
