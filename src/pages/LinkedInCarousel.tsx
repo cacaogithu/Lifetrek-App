@@ -121,20 +121,9 @@ export default function LinkedInCarousel() {
   };
 
   const fetchAssets = async () => {
-    try {
-      const { data, error } = await supabase.from("content_assets" as any).select("id, filename, category");
-      if (error) throw error;
-
-      const assetsWithUrls = data.map((asset: any) => {
-        const { data: { publicUrl } } = supabase.storage
-          .from("content-assets")
-          .getPublicUrl(asset.filename);
-        return { ...asset, public_url: publicUrl };
-      });
-      setAvailableAssets(assetsWithUrls || []);
-    } catch (error) {
-      console.error("Error fetching assets", error);
-    }
+    // content_assets table não existe ainda - desabilitado por enquanto
+    // Para habilitar, criar a tabela content_assets no banco
+    setAvailableAssets([]);
   };
 
   const saveCarousel = async (result: CarouselResult) => {
