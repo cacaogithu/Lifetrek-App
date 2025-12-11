@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
@@ -33,54 +34,62 @@ const AssetLibrary = lazy(() => import("./pages/AssetLibrary"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const SalesEngineerDashboard = lazy(() => import("./pages/SalesEngineerDashboard"));
 const ContentApproval = lazy(() => import("./pages/ContentApproval"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <LanguageProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <div className="flex flex-col min-h-screen overflow-x-hidden">
-            <Header />
-            <main className="flex-1 w-full">
-              <PageTransition>
-                <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><LoadingSpinner /></div>}>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/what-we-do" element={<WhatWeDo />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/capabilities" element={<Capabilities />} />
-                    <Route path="/clients" element={<Clients />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/assessment" element={<Assessment />} />
-                    <Route path="/calculator" element={<Calculator />} />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route path="/product-catalog" element={<ProductCatalog />} />
-                    <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
-                    <Route path="/admin/linkedin-carousel" element={<LinkedInCarousel />} />
-                    <Route path="/admin/assets" element={<AssetLibrary />} />
-                    <Route path="/pitch-deck" element={<PitchDeck />} />
-                    <Route path="/ev" element={<SalesEngineerDashboard />} />
-                    <Route path="/admin/content-approval" element={<ContentApproval />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </PageTransition>
-            </main>
-            <Footer />
-            <MobileNav />
-            <ScrollToTop />
-            {/* <AIChatbot /> */}
-          </div>
-        </BrowserRouter>
-      </LanguageProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <LanguageProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <div className="flex flex-col min-h-screen overflow-x-hidden">
+              <Header />
+              <main className="flex-1 w-full">
+                <PageTransition>
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><LoadingSpinner /></div>}>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/what-we-do" element={<WhatWeDo />} />
+                      <Route path="/products" element={<Products />} />
+                      <Route path="/capabilities" element={<Capabilities />} />
+                      <Route path="/clients" element={<Clients />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/assessment" element={<Assessment />} />
+                      <Route path="/calculator" element={<Calculator />} />
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route path="/product-catalog" element={<ProductCatalog />} />
+                      <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
+                      <Route path="/admin/linkedin-carousel" element={<LinkedInCarousel />} />
+                      <Route path="/admin/assets" element={<AssetLibrary />} />
+                      <Route path="/admin/blog" element={<AdminBlog />} />
+                      <Route path="/pitch-deck" element={<PitchDeck />} />
+                      <Route path="/ev" element={<SalesEngineerDashboard />} />
+                      <Route path="/admin/content-approval" element={<ContentApproval />} />
+                      <Route path="/blog" element={<Blog />} />
+                      <Route path="/blog/:slug" element={<BlogPost />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </PageTransition>
+              </main>
+              <Footer />
+              <MobileNav />
+              <ScrollToTop />
+              {/* <AIChatbot /> */}
+            </div>
+          </BrowserRouter>
+        </LanguageProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
