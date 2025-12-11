@@ -263,14 +263,91 @@ LEMBRE: Headlines ≤40 chars, Body ≤80 chars, tudo em PORTUGUÊS, tom consult
   return carousels;
 }
 
-// --- STEP 3: Geração de Imagens ---
+// --- STEP 3: Geração de Imagens (PARALELO) ---
+async function generateSingleImage(
+  slide: any,
+  slideIndex: number,
+  totalSlides: number,
+  LOVABLE_API_KEY: string
+): Promise<string> {
+  console.log(`  Slide ${slideIndex + 1}/${totalSlides}: "${slide.headline}"`);
+
+  try {
+    const imagePrompt = `Create a professional LinkedIn carousel background image.
+
+CONTEXT: ${slide.headline} - ${slide.body}
+VISUAL: ${slide.imageGenerationPrompt || "Professional medical manufacturing environment"}
+
+STYLE REQUIREMENTS:
+- Clean, modern, medical-industrial aesthetic
+- Primary color: Corporate blue (#003A5D)
+- Subtle accents in green (#1E6F50) or orange (#E65100)
+- NO TEXT in the image
+- ISO 13485 medical manufacturing feel
+- High quality, professional look
+- Suitable as background for white text overlay`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout per image
+
+    const imgRes = await fetch(
+      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-pro-image-preview",
+          messages: [
+            {
+              role: "system",
+              content: "You are a professional medical/industrial designer creating LinkedIn carousel backgrounds.",
+            },
+            { role: "user", content: imagePrompt },
+          ],
+          modalities: ["image", "text"],
+        }),
+        signal: controller.signal,
+      }
+    );
+
+    clearTimeout(timeoutId);
+
+    if (!imgRes.ok) {
+      const errorText = await imgRes.text();
+      console.error(`    ✗ Erro na geração de imagem: ${imgRes.status}`, errorText);
+      return "";
+    }
+
+    const imgData = await imgRes.json();
+    const imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+    
+    if (imageUrl) {
+      console.log(`    ✓ Slide ${slideIndex + 1} imagem gerada`);
+    } else {
+      console.log(`    ⚠ Slide ${slideIndex + 1} sem imagem na resposta`);
+    }
+
+    return imageUrl;
+  } catch (e: any) {
+    if (e.name === 'AbortError') {
+      console.error(`    ✗ Slide ${slideIndex + 1} timeout na geração de imagem`);
+    } else {
+      console.error(`    ✗ Slide ${slideIndex + 1} erro:`, e);
+    }
+    return "";
+  }
+}
+
 async function generateImages(
   carousels: any[],
   wantImages: boolean,
   format: string,
   LOVABLE_API_KEY: string
 ): Promise<any[]> {
-  console.log("=== STEP 3: Geração de Imagens ===");
+  console.log("=== STEP 3: Geração de Imagens (PARALELO) ===");
   console.log("Modelo: google/gemini-3-pro-image-preview (Nano Banana Pro)");
   console.log("wantImages:", wantImages);
   console.log("format:", format);
@@ -286,74 +363,20 @@ async function generateImages(
       ? [carousel.slides[0]] 
       : carousel.slides;
 
-    console.log(`Processando carrossel ${cIdx + 1}: ${slidesToProcess.length} slides`);
+    console.log(`Processando carrossel ${cIdx + 1}: ${slidesToProcess.length} slides EM PARALELO`);
 
-    const processedSlides = [];
+    // Gerar todas as imagens em paralelo
+    const imagePromises = slidesToProcess.map((slide: any, sIdx: number) =>
+      generateSingleImage(slide, sIdx, slidesToProcess.length, LOVABLE_API_KEY)
+    );
 
-    for (let sIdx = 0; sIdx < slidesToProcess.length; sIdx++) {
-      const slide = slidesToProcess[sIdx];
-      console.log(`  Slide ${sIdx + 1}/${slidesToProcess.length}: "${slide.headline}"`);
+    const imageUrls = await Promise.all(imagePromises);
 
-      let imageUrl = "";
-
-      try {
-        const imagePrompt = `Create a professional LinkedIn carousel background image.
-
-CONTEXT: ${slide.headline} - ${slide.body}
-VISUAL: ${slide.imageGenerationPrompt || "Professional medical manufacturing environment"}
-
-STYLE REQUIREMENTS:
-- Clean, modern, medical-industrial aesthetic
-- Primary color: Corporate blue (#003A5D)
-- Subtle accents in green (#1E6F50) or orange (#E65100)
-- NO TEXT in the image
-- ISO 13485 medical manufacturing feel
-- High quality, professional look
-- Suitable as background for white text overlay`;
-
-        console.log(`    Gerando imagem com prompt: ${imagePrompt.substring(0, 100)}...`);
-
-        const imgRes = await fetch(
-          "https://ai.gateway.lovable.dev/v1/chat/completions",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "google/gemini-3-pro-image-preview",
-              messages: [
-                {
-                  role: "system",
-                  content: "You are a professional medical/industrial designer creating LinkedIn carousel backgrounds.",
-                },
-                { role: "user", content: imagePrompt },
-              ],
-              modalities: ["image", "text"],
-            }),
-          }
-        );
-
-        if (!imgRes.ok) {
-          const errorText = await imgRes.text();
-          console.error(`    ✗ Erro na geração de imagem: ${imgRes.status}`, errorText);
-        } else {
-          const imgData = await imgRes.json();
-          imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
-          
-          if (imageUrl) {
-            console.log(`    ✓ Imagem gerada (${imageUrl.substring(0, 50)}...)`);
-          } else {
-            console.log("    ⚠ Sem imagem na resposta");
-          }
-        }
-      } catch (e) {
-        console.error(`    ✗ Erro ao gerar imagem:`, e);
-      }
-
-      processedSlides.push({ ...slide, imageUrl });
-    }
+    // Atribuir URLs às slides
+    const processedSlides = slidesToProcess.map((slide: any, idx: number) => ({
+      ...slide,
+      imageUrl: imageUrls[idx] || "",
+    }));
 
     // If single-image, keep only first slide processed, rest unchanged
     if (format === "single-image") {
@@ -365,7 +388,7 @@ STYLE REQUIREMENTS:
     carousel.imageUrls = carousel.slides.map((s: any) => s.imageUrl);
   }
 
-  console.log("✓ Geração de imagens concluída");
+  console.log("✓ Geração de imagens concluída (paralelo)");
   return carousels;
 }
 
