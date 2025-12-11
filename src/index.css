@@ -381,20 +381,22 @@ All colors MUST be HSL.
   .pdf-export-mode .glass-card {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    background: linear-gradient(135deg, hsl(210 100% 28% / 0.95) 0%, hsl(210 100% 22% / 0.98) 100%) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
   }
 
   .pdf-export-mode .glass-card-strong {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    background: hsl(var(--card) / 0.98) !important;
+    background: rgba(255, 255, 255, 0.98) !important;
   }
 
-  /* Replace mask-image with solid backgrounds */
+  /* Remove mask-image completely - NOT supported by html2canvas */
   .pdf-export-mode [style*="mask-image"],
   .pdf-export-mode [style*="-webkit-mask-image"] {
     mask-image: none !important;
     -webkit-mask-image: none !important;
+    opacity: 0.15 !important;
   }
 
   /* Ensure text is visible and sharp */
@@ -403,57 +405,66 @@ All colors MUST be HSL.
     text-rendering: optimizeLegibility !important;
   }
 
-  /* Force solid backgrounds where transparency might cause issues */
+  /* Force solid backgrounds for dark gradient slides */
   .pdf-export-mode .bg-gradient-to-br {
-    background: linear-gradient(135deg, hsl(210 100% 28%) 0%, hsl(210 100% 18%) 100%) !important;
+    background: #003366 !important;
   }
 
   /* Ensure borders are visible */
   .pdf-export-mode .border-white\/10,
   .pdf-export-mode .border-white\/20,
   .pdf-export-mode .border-white\/30 {
-    border-color: hsl(0 0% 100% / 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
   }
 
   /* Fix gradient text - bg-clip-text is NOT supported by html2canvas */
-  /* Use primary blue color for gradient text on light backgrounds */
   .pdf-export-mode .bg-clip-text {
     -webkit-background-clip: border-box !important;
     background-clip: border-box !important;
     -webkit-text-fill-color: unset !important;
-    color: hsl(210 100% 30%) !important;
+    color: #003A5D !important;
     background: transparent !important;
   }
 
   .pdf-export-mode .text-transparent {
-    color: hsl(210 100% 30%) !important;
+    color: #003A5D !important;
   }
 
-  /* Ensure headings are visible - primary color for light backgrounds */
+  /* Ensure headings are visible */
   .pdf-export-mode .text-primary {
-    color: hsl(210 100% 28%) !important;
+    color: #003A5D !important;
   }
 
   /* Ensure muted foreground is visible */
   .pdf-export-mode .text-muted-foreground {
-    color: hsl(215 25% 40%) !important;
+    color: #4a5568 !important;
   }
 
   /* Ensure foreground text is visible */
   .pdf-export-mode .text-foreground {
-    color: hsl(215 30% 20%) !important;
+    color: #1a202c !important;
   }
 
   /* GlassCard backgrounds - make them solid for PDF */
   .pdf-export-mode .bg-background\/50 {
-    background-color: hsl(0 0% 100% / 0.95) !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
   }
 
   .pdf-export-mode .bg-card\/50 {
-    background-color: hsl(0 0% 98% / 0.95) !important;
+    background-color: rgba(248, 248, 248, 0.95) !important;
   }
 
   .pdf-export-mode .bg-card\/30 {
-    background-color: hsl(0 0% 98% / 0.9) !important;
+    background-color: rgba(248, 248, 248, 0.9) !important;
+  }
+
+  /* Fix the gradient underline for headings */
+  .pdf-export-mode .bg-gradient-to-r.from-accent-orange {
+    background: linear-gradient(to right, #E65100, #1E6F50, transparent) !important;
+  }
+
+  /* Ensure images behind text are visible but not overpowering */
+  .pdf-export-mode .absolute.inset-0.bg-cover {
+    opacity: 0.15 !important;
   }
 }
