@@ -88,10 +88,10 @@ export const generatePitchDeckPDF = async ({
 
       // Capture slide as high-res canvas with improved settings
       const canvas = await html2canvas(slideElement, {
-        scale: 2, // Good balance between quality and speed
+        scale: 2.5, // Better quality
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: null, // Let slide background show through
         logging: false,
         width: slideElement.offsetWidth,
         height: slideElement.offsetHeight,
@@ -102,12 +102,17 @@ export const generatePitchDeckPDF = async ({
           
           const clonedSlide = clonedDoc.querySelector('[data-slide]') as HTMLElement;
           if (clonedSlide) {
-            // Detect if slide has dark background
-            const hasDarkBg = clonedSlide.classList.contains('bg-primary') ||
-                              clonedSlide.className.includes('from-primary') ||
-                              clonedSlide.className.includes('bg-gradient-to-br');
+            // Detect if slide has dark background (cover slide is first slide with bg-gradient overlay)
+            const hasGradientOverlay = clonedSlide.querySelector('.from-primary\\/90, .from-primary\\/80');
+            const isDarkSlide = i === 0 || hasGradientOverlay; // First slide is always cover
             
-            clonedSlide.style.backgroundColor = hasDarkBg ? '#003366' : '#ffffff';
+            if (isDarkSlide) {
+              clonedSlide.setAttribute('data-dark-slide', 'true');
+              clonedSlide.style.backgroundColor = '#003366';
+            } else {
+              // Light slides get white background
+              clonedSlide.style.backgroundColor = '#ffffff';
+            }
           }
           
           // Process all elements for PDF compatibility
@@ -123,8 +128,11 @@ export const generatePitchDeckPDF = async ({
             htmlEl.style.transition = 'none';
             
             // Remove mask-image (not supported by html2canvas)
-            htmlEl.style.maskImage = 'none';
-            (htmlEl.style as any).webkitMaskImage = 'none';
+            if (htmlEl.style.maskImage || (htmlEl.style as any).webkitMaskImage) {
+              htmlEl.style.maskImage = 'none';
+              (htmlEl.style as any).webkitMaskImage = 'none';
+              htmlEl.style.opacity = '0.1';
+            }
             
             // Fix gradient text - replace with solid color
             if (htmlEl.classList.contains('bg-clip-text') || 
@@ -136,17 +144,12 @@ export const generatePitchDeckPDF = async ({
               htmlEl.style.color = '#003A5D'; // Brand primary blue
             }
             
-            // Fix GlassCard backgrounds - make solid
+            // Fix GlassCard backgrounds - make solid white
             if (htmlEl.classList.contains('bg-background/50') || 
                 htmlEl.classList.contains('bg-card/50') ||
                 htmlEl.classList.contains('bg-card/30')) {
-              htmlEl.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-            }
-            
-            // Fix gradient underlines - simplify to solid
-            if (htmlEl.classList.contains('bg-gradient-to-r') && 
-                htmlEl.classList.contains('from-accent-orange')) {
-              htmlEl.style.background = 'linear-gradient(to right, #E65100, #1E6F50, transparent)';
+              htmlEl.style.backgroundColor = 'rgba(255, 255, 255, 0.97)';
+              htmlEl.style.backdropFilter = 'none';
             }
           });
         }
