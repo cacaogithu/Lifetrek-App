@@ -539,14 +539,6 @@ const PitchDeck = () => {
                 </div>
               ))}
             </div>
-            <div className="flex justify-center gap-6 mt-8">
-              <Button size="lg" className="text-xl px-12 py-6 bg-primary hover:bg-primary-dark">
-                Agendar Reunião
-              </Button>
-              <Button size="lg" variant="outline" className="text-xl px-12 py-6 border-2 border-primary/30 text-primary hover:bg-primary/5">
-                Enviar Requisitos
-              </Button>
-            </div>
           </div>
         </div>
       ),
