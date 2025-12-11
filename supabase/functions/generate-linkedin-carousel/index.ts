@@ -6,6 +6,88 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// --- EMBEDDED CONTEXTS ---
+
+const COMPANY_CONTEXT = `
+# Lifetrek Medical - Company Context & Brand Book
+**Version**: 3.0 (Comprehensive / Brand Book)
+
+## 1. Brand Identity & Voice
+**Mission**: "To lead in the manufacture of high-performance products... with an absolute commitment to life."
+**Tagline**: "Global Reach, Local Excellence."
+**Tone**: Technical, Ethical, Confident, Partnership-Oriented.
+**Key Themes**:
+- **Risk Reduction**: "Manufacturing Capabilities That De-Risk Your Supply Chain".
+- **Precision**: "Micron-level accuracy", "Zero-Defect Manufacturing".
+- **Compliance**: "Regulatory Confidence", "ISO 13485:2016", "ANVISA".
+- **Speed**: "Faster Time to Market".
+
+## 2. Infrastructure & Machinery (Technical Specs)
+Lifetrek operates a world-class facility in **Indaiatuba / SP, Brazil**.
+
+### CNC Manufacturing (Swiss-Type & Turning)
+*   **Citizen M32 (Swiss-Type CNC Lathe)**
+    *   *Specs*: 32mm bar capacity, 12-axis control, live tooling.
+    *   *Application*: Complex bone screws, intricate implants.
+*   **Citizen L20 (Swiss-Type CNC Lathe)**
+*   **Doosan Lynx 2100 (Turning Center)**
+*   **Tornos GT26 (Multi-Axis)**
+*   **FANUC Robodrill**
+*   **Walter Helitronic** (Tool Grinding)
+
+### Metrology & Quality Control
+*   **ZEISS Contura (3D CMM)**: Accuracy 1.9 + L/300 μm, fully automated.
+*   **Optical Comparator CNC**
+*   **Olympus Microscope** (Metallographic analysis)
+*   **Hardness Vickers** (Automated testing)
+
+### Finishing & Facilities
+*   **Electropolishing In-House**: Ra < 0.1μm mirror finish.
+*   **Laser Marking**: Fiber laser for UDI.
+*   **Cleanrooms**: Two ISO Class 7 cleanrooms.
+
+## 3. Product Catalog
+*   **Medical**: Spinal Systems, Trauma Fixation (Plates/Screws/Nails), Cranial, Extremities.
+*   **Surgical Instruments**: Drills, Reamers, Taps, Guides, Handles.
+*   **Dental**: Titanium Implants (Hex), Abutments, Tools.
+*   **Veterinary**: Orthopedic Plates (TPLO), Bone Screws.
+
+## 4. Client Portfolio
+FGM Dental Group, Neortho, Ultradent Products, Traumec, Razek, Vincula, CPMH, Evolve, GMI, HCS, Impol, Implanfix, IOL, Plenum, Medens, OBL Dental, Orthometric, Óssea, React, Russer, TechImport, Toride.
+
+## 5. Strategic Messaging
+*   **OEMs**: "Eliminate supplier risks. ISO 13485 certified quality system."
+*   **R&D**: "Accelerate product development. From ESD prototypes to mass production."
+*   **Proof Points**: 30+ years experience, 100% Quality Board, In-House Finishing.
+`;
+
+const LINKEDIN_BEST_PRACTICES = `
+# LinkedIn Best Practices (Summary)
+
+### Carousel Rules
+*   **Slides**: 5-10 slides (7 is sweet spot).
+*   **Dimensions**: 1080x1350px (Portrait) preferred.
+*   **Text**: Minimal text per slide (20-40 words max).
+*   **Contrast**: High contrast, readable fonts (30pt+).
+
+### Hook Formulas
+1.  **The Callout**: "[Audience]: If you're still [doing X], you're losing [specific loss]."
+2.  **The Counter-Intuitive**: "I stopped [common practice] and [unexpected result]."
+3.  **The Risk/Loss**: "[X] is costing [audience] [amount]."
+
+### Slide Structure
+*   **Slide 1 (Hook)**: One big promise/problem.
+*   **Slides 2-6 (Body)**: One key insight per slide. Numbered.
+*   **Slide 7 (CTA)**: Clear low-friction CTA (e.g., "Comment X").
+
+### Caption Structure
+1.  Hook (first 125 chars)
+2.  Expand on promise (2-3 sentences)
+3.  Tease content ("In this carousel...")
+4.  CTA
+5.  Hashtags (#MedTech #ISO13485 #PrecisionMachining)
+`;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -20,8 +102,8 @@ serve(async (req) => {
       proofPoints,
       ctaAction,
       format = "carousel",
-      wantImages = true, // Main branch feature
-      numberOfCarousels = 1 // Main branch feature
+      wantImages = true,
+      numberOfCarousels = 1
     } = await req.json();
 
     const isBatch = numberOfCarousels > 1;
@@ -38,7 +120,7 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Fetch available assets (HEAD feature)
+    // Fetch available assets
     const { data: assets, error: assetsError } = await supabase
       .from("content_assets")
       .select("id, filename, category, tags")
@@ -52,27 +134,28 @@ serve(async (req) => {
       `- [${a.category.toUpperCase()}] ID: ${a.id} (Tags: ${a.tags?.join(", ")}, Filename: ${a.filename})`
     ).join("\n") || "No assets available.";
 
-    // Combined System Prompt
-    const SYSTEM_PROMPT = `You are the LinkedIn Carousel Content Generator for Lifetrek Medical.
-    
-CONTEXT – LIFETREK MEDICAL
-- Industry: Precision CNC manufacturing for medical/dental/veterinary components.
-- Experience: 30+ years.
-- Certifications: ISO 13485, ANVISA.
-- Audience: medical device manufacturers, R&D directors, quality managers.
-- Voice: Technical but accessible, confident, partnership-oriented.
+    // Combined System Prompt with EMBEDDED CONTEXT
+    const SYSTEM_PROMPT = `You are the LinkedIn Carousel Content Generator for Lifetrek Medical, a senior content strategist assistant.
 
-ASSET AWARENESS:
-You have access to a library of approved brand assets. You should STRATEGICALLY select an existing asset if it matches the slide content perfectly.
-Available Assets:
+=== KNOWLEDGE BASE (COMPANY) ===
+${COMPANY_CONTEXT}
+
+=== KNOWLEDGE BASE (LINKEDIN BEST PRACTICES) ===
+${LINKEDIN_BEST_PRACTICES}
+
+=== ASSET LIBRARY ===
+You have access to a library of approved brand assets. STRATEGICALLY select an existing asset if it matches the slide content perfectly.
 ${assetsContext}
 
-Use 'backgroundType': 'asset' AND 'assetId' when an asset fits.
-Use 'backgroundType': 'generate' AND 'imageGenerationPrompt' when no asset fits.
+=== INSTRUCTIONS ===
+1. **Use the Hook Formulas** from the best practices.
+2. **Be Specific**: Use exact machine names (Citizen M32, Zeiss Contura) and client names where relevant to build authority.
+3. **Asset Usage**: Use 'backgroundType': 'asset' AND 'assetId' when an asset fits. Use 'backgroundType': 'generate' AND 'imageGenerationPrompt' when no asset fits.
+4. **Voice**: Technical but accessible, confident.
 
 BATCH GENERATION:
-If requested, you can generate multiple distinct carousels for a content calendar.
-`;
+If requested, generate multiple distinct carousels for a content calendar.
+    `;
 
     // Construct User Prompt
     let userPrompt = `Topic: ${topic}
@@ -86,7 +169,7 @@ ${ctaAction ? `CTA: ${ctaAction}` : ""}
     if (isBatch) {
       userPrompt += `\nGenerate ${numberOfCarousels} distinct carousels for a content calendar. Each should have a different angle.`;
     } else {
-      userPrompt += `\nGenerate a single high-impact carousel.`;
+      userPrompt += `\nGenerate a single high-impact carousel following the best practices structure.`;
     }
 
     // Define Tools
@@ -171,7 +254,6 @@ ${ctaAction ? `CTA: ${ctaAction}` : ""}
     // Process Images for ALL carousels
     for (const carousel of resultCarousels) {
       const processedSlides = [];
-      // Support single-image format if requested (legacy/main feature)
       const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
 
       for (const slide of slidesToProcess) {
@@ -186,7 +268,7 @@ ${ctaAction ? `CTA: ${ctaAction}` : ""}
           }
         }
 
-        // 2. Generate if needed (and wanted)
+        // 2. Generate if needed
         if (!imageUrl && wantImages && (slide.backgroundType === "generate" || !slide.assetId)) {
           try {
             const imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
@@ -217,10 +299,9 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
         processedSlides.push({ ...slide, imageUrl });
       }
       carousel.slides = processedSlides;
-      carousel.imageUrls = processedSlides.map(s => s.imageUrl); // Legacy support
+      carousel.imageUrls = processedSlides.map(s => s.imageUrl);
     }
 
-    // Return
     return new Response(
       JSON.stringify(isBatch ? { carousels: resultCarousels } : { carousel: resultCarousels[0] }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

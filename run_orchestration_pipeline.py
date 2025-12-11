@@ -45,6 +45,16 @@ def run_pipeline():
     except subprocess.CalledProcessError as e:
         print(f"⚠️ Warning: Email enrichment had issues: {e}")
 
+    # Step 0.9: Decision Maker Enrichment (Free Mode)
+    print("\n[STEP 0.9] Finding Decision Makers (Free Team Scraper)...")
+    try:
+        if os.path.exists("enrich_team_free.py"):
+             subprocess.run(["python3", "enrich_team_free.py"], check=True)
+        else:
+             print("⚠️ enrich_team_free.py not found, skipping.")
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Warning: Team enrichment had issues: {e}")
+
     # Step 1: Segmentation
     print("\n[STEP 1] Segmenting Leads...")
     try:

@@ -5,24 +5,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { 
-  Loader2, 
-  Users, 
-  Clock, 
-  AlertCircle, 
-  CheckCircle2, 
-  Mail, 
-  Phone, 
-  Building, 
+import {
+  Loader2,
+  Users,
+  Clock,
+  AlertCircle,
+  CheckCircle2,
+  Mail,
+  Phone,
+  Building,
   Calendar,
   TrendingUp,
   Star,
   ArrowRight,
   RefreshCw,
-  LogOut
+  LogOut,
+  Bot
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SalesAgentChat } from "@/components/SalesAgentChat";
 
 interface Lead {
   id: string;
@@ -116,7 +118,7 @@ export default function SalesEngineerDashboard() {
   const checkAdminAccess = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         navigate("/admin/login");
         return;
@@ -181,8 +183,8 @@ export default function SalesEngineerDashboard() {
     new: newLeads.length,
     highPriority: highPriorityLeads.length,
     last24h: recentLeads.length,
-    avgScore: leads.length > 0 
-      ? (leads.reduce((sum, l) => sum + (l.lead_score || 0), 0) / leads.length).toFixed(1) 
+    avgScore: leads.length > 0
+      ? (leads.reduce((sum, l) => sum + (l.lead_score || 0), 0) / leads.length).toFixed(1)
       : "0"
   };
 
@@ -264,8 +266,8 @@ export default function SalesEngineerDashboard() {
               minute: "2-digit"
             })}
           </span>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={() => navigate(`/admin?lead=${lead.id}`)}
             className="text-primary"
@@ -288,9 +290,9 @@ export default function SalesEngineerDashboard() {
             <p className="text-sm text-muted-foreground">Engenheiro de Vendas - Lifetrek Medical</p>
           </div>
           <div className="flex items-center gap-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={fetchLeads}
               disabled={refreshing}
             >
@@ -317,7 +319,7 @@ export default function SalesEngineerDashboard() {
               <p className="text-xs text-blue-600">Total de Leads</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100/50 border-yellow-200">
             <CardContent className="p-4 text-center">
               <Clock className="h-6 w-6 mx-auto mb-2 text-yellow-600" />
@@ -325,7 +327,7 @@ export default function SalesEngineerDashboard() {
               <p className="text-xs text-yellow-600">Novos</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-red-50 to-red-100/50 border-red-200">
             <CardContent className="p-4 text-center">
               <AlertCircle className="h-6 w-6 mx-auto mb-2 text-red-600" />
@@ -333,7 +335,7 @@ export default function SalesEngineerDashboard() {
               <p className="text-xs text-red-600">Alta Prioridade</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-green-50 to-green-100/50 border-green-200">
             <CardContent className="p-4 text-center">
               <CheckCircle2 className="h-6 w-6 mx-auto mb-2 text-green-600" />
@@ -341,7 +343,7 @@ export default function SalesEngineerDashboard() {
               <p className="text-xs text-green-600">Últimas 24h</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200">
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-6 w-6 mx-auto mb-2 text-purple-600" />
@@ -353,7 +355,7 @@ export default function SalesEngineerDashboard() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="action" className="space-y-4">
-          <TabsList className="grid w-full max-w-lg grid-cols-3">
+          <TabsList className="grid w-full max-w-2xl grid-cols-4">
             <TabsTrigger value="action" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
               Ação Pendente ({pendingAction.length})
@@ -365,6 +367,10 @@ export default function SalesEngineerDashboard() {
             <TabsTrigger value="recent" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               Recentes ({recentLeads.length})
+            </TabsTrigger>
+            <TabsTrigger value="assistant" className="flex items-center gap-2">
+              <Bot className="h-4 w-4" />
+              Assistente IA
             </TabsTrigger>
           </TabsList>
 
@@ -428,6 +434,7 @@ export default function SalesEngineerDashboard() {
             </Card>
           </TabsContent>
 
+
           <TabsContent value="recent">
             <Card>
               <CardHeader>
@@ -456,6 +463,12 @@ export default function SalesEngineerDashboard() {
                 </ScrollArea>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="assistant">
+            <div className="max-w-4xl mx-auto">
+              <SalesAgentChat />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
