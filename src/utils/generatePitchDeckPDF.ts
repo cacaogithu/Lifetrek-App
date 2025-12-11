@@ -92,18 +92,32 @@ export const generatePitchDeckPDF = async ({
         scale: 3, // Higher scale for better quality
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#003366', // Fallback background color matching primary
+        backgroundColor: null, // Let the slide define its own background
         logging: false,
         width: slideElement.offsetWidth,
         height: slideElement.offsetHeight,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
           // Apply PDF export mode to cloned document
-          const clonedSlide = clonedDoc.querySelector('[data-slide]');
+          const clonedSlide = clonedDoc.querySelector('[data-slide]') as HTMLElement;
           if (clonedSlide) {
             clonedSlide.classList.add('pdf-export-mode');
             // Also add to parent for proper cascade
             clonedSlide.parentElement?.classList.add('pdf-export-mode');
+            
+            // Detect if slide has dark or light background based on classes
+            const hasDarkBg = clonedSlide.classList.contains('bg-primary') ||
+                              clonedSlide.className.includes('from-primary/90') ||
+                              clonedSlide.className.includes('from-primary/80') ||
+                              (clonedSlide.style.backgroundImage && clonedSlide.querySelector('.text-white'));
+            
+            // Set appropriate background color fallback
+            if (hasDarkBg) {
+              clonedSlide.style.backgroundColor = '#003366';
+            } else {
+              // Light background slides
+              clonedSlide.style.backgroundColor = '#ffffff';
+            }
           }
           
           // Force remove backdrop-filter and fix gradient text from all elements
@@ -126,13 +140,13 @@ export const generatePitchDeckPDF = async ({
                 htmlEl.style.backgroundClip = 'border-box';
                 htmlEl.style.background = 'transparent';
                 (htmlEl.style as any).webkitTextFillColor = 'unset';
-                // Use white for dark backgrounds (most pitch deck slides)
-                htmlEl.style.color = '#ffffff';
+                // Use primary color for gradient text (dark blue)
+                htmlEl.style.color = '#004d99';
               }
               
               // Fix text-transparent
               if (htmlEl.classList.contains('text-transparent')) {
-                htmlEl.style.color = '#ffffff';
+                htmlEl.style.color = '#004d99';
               }
             }
           });

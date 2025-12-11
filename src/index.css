@@ -416,26 +416,44 @@ All colors MUST be HSL.
   }
 
   /* Fix gradient text - bg-clip-text is NOT supported by html2canvas */
+  /* Use primary blue color for gradient text on light backgrounds */
   .pdf-export-mode .bg-clip-text {
     -webkit-background-clip: border-box !important;
     background-clip: border-box !important;
     -webkit-text-fill-color: unset !important;
-    color: hsl(210 100% 28%) !important;
+    color: hsl(210 100% 30%) !important;
     background: transparent !important;
   }
 
   .pdf-export-mode .text-transparent {
-    color: hsl(210 100% 28%) !important;
+    color: hsl(210 100% 30%) !important;
   }
 
-  /* Ensure headings are visible on dark backgrounds */
+  /* Ensure headings are visible - primary color for light backgrounds */
   .pdf-export-mode .text-primary {
     color: hsl(210 100% 28%) !important;
   }
 
-  /* For slides with dark backgrounds, make text white */
-  .pdf-export-mode [data-slide] .bg-clip-text,
-  .pdf-export-mode [data-slide] .text-transparent {
-    color: hsl(0 0% 100%) !important;
+  /* Ensure muted foreground is visible */
+  .pdf-export-mode .text-muted-foreground {
+    color: hsl(215 25% 40%) !important;
+  }
+
+  /* Ensure foreground text is visible */
+  .pdf-export-mode .text-foreground {
+    color: hsl(215 30% 20%) !important;
+  }
+
+  /* GlassCard backgrounds - make them solid for PDF */
+  .pdf-export-mode .bg-background\/50 {
+    background-color: hsl(0 0% 100% / 0.95) !important;
+  }
+
+  .pdf-export-mode .bg-card\/50 {
+    background-color: hsl(0 0% 98% / 0.95) !important;
+  }
+
+  .pdf-export-mode .bg-card\/30 {
+    background-color: hsl(0 0% 98% / 0.9) !important;
   }
 }
