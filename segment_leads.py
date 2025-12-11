@@ -35,7 +35,15 @@ def segment_leads():
     }
     
     # Create clean DF
+    # Handle collision: If 'Lead_Score' is already in df, don't rename 'V2_Score' to it blindly
+    if 'Lead_Score' in df.columns:
+        if 'V2_Score' in cols_map:
+            del cols_map['V2_Score'] # Use the existing Lead_Score
+            
     clean_df = df.rename(columns=cols_map)
+    
+    # Remove duplicates if any slipped through (keep first)
+    clean_df = clean_df.loc[:, ~clean_df.columns.duplicated()]
     
     # Select only relevant columns
     desired_cols = [
