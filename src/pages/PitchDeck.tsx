@@ -74,7 +74,12 @@ const HeadingGradient = ({ children, className = "" }: { children: React.ReactNo
 const HeadingWithLine = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <h2 className={`text-6xl font-bold text-primary relative inline-block ${className}`}>
     {children}
-    <div className="absolute -bottom-2 left-0 w-40 h-1 bg-gradient-to-r from-accent-orange via-accent to-transparent" />
+    {/* Solid color segments for PDF compatibility */}
+    <div className="absolute -bottom-2 left-0 flex h-1">
+      <div className="w-12 bg-accent-orange" />
+      <div className="w-16 bg-accent" />
+      <div className="w-12 bg-accent/50" />
+    </div>
   </h2>
 );
 

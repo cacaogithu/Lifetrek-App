@@ -41,17 +41,16 @@ export const generatePitchDeckPDF = async ({
   disableAnimations,
   enableAnimations
 }: PDFGeneratorOptions): Promise<void> => {
-  // Apply PDF export mode to the entire slide container
-  const slideContainer = document.querySelector('[data-slide]')?.parentElement;
-  slideContainer?.classList.add('pdf-export-mode');
+  // Apply PDF export mode to document root for global CSS overrides
+  document.documentElement.classList.add('pdf-export-mode');
   
   // Disable animations for clean capture
   disableAnimations?.();
   
   // Wait for mode changes to take effect
-  await waitForDOMUpdate(200);
+  await waitForDOMUpdate(300);
   
-  // Create PDF with 16:9 landscape aspect ratio (A4 landscape dimensions)
+  // Create PDF with 16:9 landscape aspect ratio
   const pdf = new jsPDF({
     orientation: 'landscape',
     unit: 'mm',
@@ -69,7 +68,7 @@ export const generatePitchDeckPDF = async ({
       });
       
       // Wait for DOM to fully update
-      await waitForDOMUpdate(300);
+      await waitForDOMUpdate(400);
 
       // Find the slide element
       const slideElement = document.querySelector('[data-slide]') as HTMLElement;
@@ -83,85 +82,85 @@ export const generatePitchDeckPDF = async ({
       await waitForImages(slideElement);
       
       // Additional wait for fonts and styles
-      await waitForDOMUpdate(200);
+      await waitForDOMUpdate(300);
 
       onProgress?.(i + 1, totalSlides);
 
       // Capture slide as high-res canvas with improved settings
       const canvas = await html2canvas(slideElement, {
-        scale: 3, // Higher scale for better quality
+        scale: 2, // Good balance between quality and speed
         useCORS: true,
         allowTaint: true,
-        backgroundColor: null, // Let the slide define its own background
+        backgroundColor: '#ffffff',
         logging: false,
         width: slideElement.offsetWidth,
         height: slideElement.offsetHeight,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
-          // Apply PDF export mode to cloned document
+          // Add pdf-export-mode to cloned document
+          clonedDoc.documentElement.classList.add('pdf-export-mode');
+          
           const clonedSlide = clonedDoc.querySelector('[data-slide]') as HTMLElement;
           if (clonedSlide) {
-            clonedSlide.classList.add('pdf-export-mode');
-            // Also add to parent for proper cascade
-            clonedSlide.parentElement?.classList.add('pdf-export-mode');
-            
-            // Detect if slide has dark or light background based on classes
+            // Detect if slide has dark background
             const hasDarkBg = clonedSlide.classList.contains('bg-primary') ||
-                              clonedSlide.className.includes('from-primary/90') ||
-                              clonedSlide.className.includes('from-primary/80') ||
-                              (clonedSlide.style.backgroundImage && clonedSlide.querySelector('.text-white'));
+                              clonedSlide.className.includes('from-primary') ||
+                              clonedSlide.className.includes('bg-gradient-to-br');
             
-            // Set appropriate background color fallback
-            if (hasDarkBg) {
-              clonedSlide.style.backgroundColor = '#003366';
-            } else {
-              // Light background slides
-              clonedSlide.style.backgroundColor = '#ffffff';
-            }
+            clonedSlide.style.backgroundColor = hasDarkBg ? '#003366' : '#ffffff';
           }
           
-          // Force remove backdrop-filter and fix gradient text from all elements
+          // Process all elements for PDF compatibility
           const allElements = clonedDoc.querySelectorAll('*');
           allElements.forEach((el) => {
             const htmlEl = el as HTMLElement;
-            const computedStyle = window.getComputedStyle(htmlEl);
+            if (!htmlEl.style) return;
             
-            if (htmlEl.style) {
-              htmlEl.style.backdropFilter = 'none';
-              (htmlEl.style as any).webkitBackdropFilter = 'none';
-              htmlEl.style.animation = 'none';
-              htmlEl.style.transition = 'none';
-              
-              // Fix bg-clip-text elements (gradient text)
-              if (htmlEl.classList.contains('bg-clip-text') || 
-                  computedStyle.webkitBackgroundClip === 'text' ||
-                  (computedStyle as any).backgroundClip === 'text') {
-                htmlEl.style.webkitBackgroundClip = 'border-box';
-                htmlEl.style.backgroundClip = 'border-box';
-                htmlEl.style.background = 'transparent';
-                (htmlEl.style as any).webkitTextFillColor = 'unset';
-                // Use primary color for gradient text (dark blue)
-                htmlEl.style.color = '#004d99';
-              }
-              
-              // Fix text-transparent
-              if (htmlEl.classList.contains('text-transparent')) {
-                htmlEl.style.color = '#004d99';
-              }
+            // Remove problematic CSS properties
+            htmlEl.style.backdropFilter = 'none';
+            (htmlEl.style as any).webkitBackdropFilter = 'none';
+            htmlEl.style.animation = 'none';
+            htmlEl.style.transition = 'none';
+            
+            // Remove mask-image (not supported by html2canvas)
+            htmlEl.style.maskImage = 'none';
+            (htmlEl.style as any).webkitMaskImage = 'none';
+            
+            // Fix gradient text - replace with solid color
+            if (htmlEl.classList.contains('bg-clip-text') || 
+                htmlEl.classList.contains('text-transparent')) {
+              htmlEl.style.webkitBackgroundClip = 'border-box';
+              htmlEl.style.backgroundClip = 'border-box';
+              htmlEl.style.background = 'transparent';
+              (htmlEl.style as any).webkitTextFillColor = 'unset';
+              htmlEl.style.color = '#003A5D'; // Brand primary blue
+            }
+            
+            // Fix GlassCard backgrounds - make solid
+            if (htmlEl.classList.contains('bg-background/50') || 
+                htmlEl.classList.contains('bg-card/50') ||
+                htmlEl.classList.contains('bg-card/30')) {
+              htmlEl.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            }
+            
+            // Fix gradient underlines - simplify to solid
+            if (htmlEl.classList.contains('bg-gradient-to-r') && 
+                htmlEl.classList.contains('from-accent-orange')) {
+              htmlEl.style.background = 'linear-gradient(to right, #E65100, #1E6F50, transparent)';
             }
           });
         }
       });
 
-      // Use PNG for better gradient quality (vs JPEG compression artifacts)
-      const imgData = canvas.toDataURL('image/png');
+      // Use PNG for better quality
+      const imgData = canvas.toDataURL('image/png', 1.0);
 
       // Add new page for slides after the first
       if (i > 0) {
         pdf.addPage([pageWidth, pageHeight], 'landscape');
       }
 
-      // Add image to PDF - fill entire page
+      // Add image to PDF
       pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight, `slide_${i}`, 'FAST');
     }
 
@@ -173,7 +172,7 @@ export const generatePitchDeckPDF = async ({
     throw error;
   } finally {
     // Remove PDF export mode
-    slideContainer?.classList.remove('pdf-export-mode');
+    document.documentElement.classList.remove('pdf-export-mode');
     // Re-enable animations
     enableAnimations?.();
   }
