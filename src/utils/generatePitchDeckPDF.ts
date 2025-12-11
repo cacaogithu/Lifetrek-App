@@ -106,15 +106,34 @@ export const generatePitchDeckPDF = async ({
             clonedSlide.parentElement?.classList.add('pdf-export-mode');
           }
           
-          // Force remove backdrop-filter from all elements
+          // Force remove backdrop-filter and fix gradient text from all elements
           const allElements = clonedDoc.querySelectorAll('*');
           allElements.forEach((el) => {
             const htmlEl = el as HTMLElement;
+            const computedStyle = window.getComputedStyle(htmlEl);
+            
             if (htmlEl.style) {
               htmlEl.style.backdropFilter = 'none';
               (htmlEl.style as any).webkitBackdropFilter = 'none';
               htmlEl.style.animation = 'none';
               htmlEl.style.transition = 'none';
+              
+              // Fix bg-clip-text elements (gradient text)
+              if (htmlEl.classList.contains('bg-clip-text') || 
+                  computedStyle.webkitBackgroundClip === 'text' ||
+                  (computedStyle as any).backgroundClip === 'text') {
+                htmlEl.style.webkitBackgroundClip = 'border-box';
+                htmlEl.style.backgroundClip = 'border-box';
+                htmlEl.style.background = 'transparent';
+                (htmlEl.style as any).webkitTextFillColor = 'unset';
+                // Use white for dark backgrounds (most pitch deck slides)
+                htmlEl.style.color = '#ffffff';
+              }
+              
+              // Fix text-transparent
+              if (htmlEl.classList.contains('text-transparent')) {
+                htmlEl.style.color = '#ffffff';
+              }
             }
           });
         }
