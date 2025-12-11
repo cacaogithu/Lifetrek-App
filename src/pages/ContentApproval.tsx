@@ -1,666 +1,124 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  Clock, 
-  Eye, 
-  ThumbsUp, 
-  ThumbsDown, 
-  Edit,
-  ChevronDown,
-  ChevronRight,
-  User,
-  FileText,
-  ArrowLeft,
-  Mail,
-  Bot,
-  MessageSquare,
-  Linkedin,
-  Send,
-  Sparkles
-} from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Link } from 'react-router-dom';
-import { ContentPreview, ContentPreviewMini, getContentType } from '@/components/content/ContentPreview';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Copy, Check, FileText, Linkedin, Mail } from "lucide-react";
+import { toast } from "sonner";
+import { TEMPLATES_DATA } from "@/data/outreachTemplates";
 
-interface ContentApprovalRecord {
-  id: string;
-  template_id: string;
-  reviewer_name: string;
-  reviewer_email: string;
-  reviewer_type: string;
-  status: string;
-  comments: string;
-  approved_at: string;
-  created_at: string;
-}
+export default function ContentApproval() {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-interface ContentTemplate {
-  id: string;
-  category: string;
-  title: string;
-  description: string;
-  content: string;
-  language: string;
-  niche: string;
-  version: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  approvals?: ContentApprovalRecord[];
-  nelsonApproval?: ContentApprovalRecord;
-  rafaelApproval?: ContentApprovalRecord;
-}
-
-const categoryConfig: Record<string, { label: string; icon: React.ReactNode; color: string; order: number }> = {
-  email_reply: { 
-    label: 'Email Templates', 
-    icon: <Mail className="h-5 w-5" />, 
-    color: 'from-blue-500/20 to-blue-600/10 border-blue-500/30',
-    order: 1
-  },
-  cold_email: { 
-    label: 'Cold Emails', 
-    icon: <Send className="h-5 w-5" />, 
-    color: 'from-violet-500/20 to-violet-600/10 border-violet-500/30',
-    order: 2
-  },
-  linkedin_outreach: { 
-    label: 'LinkedIn Outreach', 
-    icon: <Linkedin className="h-5 w-5" />, 
-    color: 'from-sky-500/20 to-sky-600/10 border-sky-500/30',
-    order: 3
-  },
-  linkedin_carousel: { 
-    label: 'LinkedIn Carousels', 
-    icon: <Linkedin className="h-5 w-5" />, 
-    color: 'from-sky-500/20 to-sky-600/10 border-sky-500/30',
-    order: 4
-  },
-  carousel_content: { 
-    label: 'Conteúdo Carrossel', 
-    icon: <Sparkles className="h-5 w-5" />, 
-    color: 'from-pink-500/20 to-pink-600/10 border-pink-500/30',
-    order: 5
-  },
-  crm_agent: { 
-    label: 'AI Agent Prompts', 
-    icon: <Bot className="h-5 w-5" />, 
-    color: 'from-emerald-500/20 to-emerald-600/10 border-emerald-500/30',
-    order: 6
-  },
-  personalized_outreach: { 
-    label: 'Outreach Personalizado', 
-    icon: <MessageSquare className="h-5 w-5" />, 
-    color: 'from-orange-500/20 to-orange-600/10 border-orange-500/30',
-    order: 7
-  },
-};
-
-const nicheLabels: Record<string, string> = {
-  orthopedic: 'Ortopedia',
-  dental: 'Odontologia',
-  veterinary: 'Veterinária',
-  hospital: 'Hospital',
-  oem: 'OEM',
-  general: 'Geral',
-};
-
-// Helper to group templates by category
-const groupTemplatesByCategory = (templates: ContentTemplate[]) => {
-  const grouped: Record<string, ContentTemplate[]> = {};
-  templates.forEach(template => {
-    if (!grouped[template.category]) {
-      grouped[template.category] = [];
-    }
-    grouped[template.category].push(template);
-  });
-  
-  // Sort categories by order
-  return Object.entries(grouped).sort((a, b) => {
-    const orderA = categoryConfig[a[0]]?.order || 999;
-    const orderB = categoryConfig[b[0]]?.order || 999;
-    return orderA - orderB;
-  });
-};
-
-const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  draft: { 
-    label: 'Rascunho', 
-    color: 'bg-muted text-muted-foreground',
-    icon: <FileText className="h-3 w-3" />
-  },
-  pending_approval: { 
-    label: 'Aguardando', 
-    color: 'bg-amber-500/20 text-amber-600 border-amber-500/30',
-    icon: <Clock className="h-3 w-3" />
-  },
-  approved: { 
-    label: 'Aprovado', 
-    color: 'bg-emerald-500/20 text-emerald-600 border-emerald-500/30',
-    icon: <CheckCircle2 className="h-3 w-3" />
-  },
-  rejected: { 
-    label: 'Rejeitado', 
-    color: 'bg-destructive/20 text-destructive border-destructive/30',
-    icon: <XCircle className="h-3 w-3" />
-  },
-  changes_requested: { 
-    label: 'Mudanças', 
-    color: 'bg-orange-500/20 text-orange-600 border-orange-500/30',
-    icon: <Edit className="h-3 w-3" />
-  },
-};
-
-const reviewers = [
-  { id: 'nelson', name: 'Nelson', email: 'nelson@lifetrek.com.br' },
-  { id: 'rafael', name: 'Rafael', email: 'rafael@lifetrek.com.br' },
-];
-
-const ContentApproval = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedTemplate, setSelectedTemplate] = useState<ContentTemplate | null>(null);
-  const [selectedReviewer, setSelectedReviewer] = useState<string>('');
-  const [reviewComments, setReviewComments] = useState('');
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const queryClient = useQueryClient();
-
-  // Fetch templates with their approvals
-  const { data: templates, isLoading } = useQuery({
-    queryKey: ['content-templates-with-approvals', selectedCategory],
-    queryFn: async () => {
-      let query = supabase
-        .from('content_templates')
-        .select('*')
-        .order('updated_at', { ascending: false });
-
-      if (selectedCategory !== 'all') {
-        query = query.eq('category', selectedCategory);
-      }
-
-      const { data: templatesData, error: templatesError } = await query;
-      if (templatesError) throw templatesError;
-
-      // Fetch all approvals
-      const { data: approvalsData, error: approvalsError } = await supabase
-        .from('content_approvals')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (approvalsError) throw approvalsError;
-
-      // Map approvals to templates
-      return (templatesData as ContentTemplate[]).map(template => ({
-        ...template,
-        approvals: (approvalsData as ContentApprovalRecord[]).filter(a => a.template_id === template.id),
-        nelsonApproval: (approvalsData as ContentApprovalRecord[]).find(
-          a => a.template_id === template.id && a.reviewer_name.toLowerCase() === 'nelson'
-        ),
-        rafaelApproval: (approvalsData as ContentApprovalRecord[]).find(
-          a => a.template_id === template.id && a.reviewer_name.toLowerCase() === 'rafael'
-        ),
-      }));
-    },
-  });
-
-  // Submit approval mutation
-  const submitApprovalMutation = useMutation({
-    mutationFn: async ({ templateId, status }: { templateId: string; status: string }) => {
-      const reviewer = reviewers.find(r => r.id === selectedReviewer);
-      if (!reviewer) throw new Error('Selecione um revisor');
-
-      const { error } = await supabase
-        .from('content_approvals')
-        .insert({
-          template_id: templateId,
-          reviewer_name: reviewer.name,
-          reviewer_email: reviewer.email,
-          reviewer_type: 'internal',
-          status,
-          comments: reviewComments || null,
-          approved_at: status === 'approved' ? new Date().toISOString() : null,
-        });
-
-      if (error) throw error;
-
-      // Check if both reviewers approved
-      const { data: allApprovals } = await supabase
-        .from('content_approvals')
-        .select('*')
-        .eq('template_id', templateId);
-
-      const approvedCount = allApprovals?.filter(a => a.status === 'approved').length || 0;
-      
-      // Update template status based on approvals
-      let newStatus = 'pending_approval';
-      if (approvedCount >= 2) {
-        newStatus = 'approved';
-      } else if (status === 'rejected') {
-        newStatus = 'rejected';
-      } else if (status === 'changes_requested') {
-        newStatus = 'changes_requested';
-      } else if (approvedCount >= 1) {
-        newStatus = 'pending_approval';
-      }
-
-      await supabase
-        .from('content_templates')
-        .update({ status: newStatus })
-        .eq('id', templateId);
-    },
-    onSuccess: () => {
-      toast.success('Avaliação registrada!');
-      queryClient.invalidateQueries({ queryKey: ['content-templates-with-approvals'] });
-      setReviewComments('');
-      setSelectedTemplate(null);
-      setSelectedReviewer('');
-    },
-    onError: (error: Error) => {
-      toast.error(`Erro: ${error.message}`);
-    },
-  });
-
-  const toggleRow = (id: string) => {
-    const newExpanded = new Set(expandedRows);
-    if (newExpanded.has(id)) {
-      newExpanded.delete(id);
-    } else {
-      newExpanded.add(id);
-    }
-    setExpandedRows(newExpanded);
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    toast.success("Copiado para a área de transferência!");
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const getApprovalIcon = (approval?: ContentApprovalRecord) => {
-    if (!approval) return <div className="w-6 h-6 rounded-full bg-muted border-2 border-dashed border-muted-foreground/30" />;
-    
-    switch (approval.status) {
-      case 'approved':
-        return <CheckCircle2 className="w-6 h-6 text-emerald-500" />;
-      case 'rejected':
-        return <XCircle className="w-6 h-6 text-destructive" />;
-      case 'changes_requested':
-        return <Edit className="w-6 h-6 text-orange-500" />;
-      default:
-        return <Clock className="w-6 h-6 text-amber-500" />;
-    }
-  };
+  const industries = [
+    { id: 'orthopedic', label: 'Ortopedia' },
+    { id: 'dental', label: 'Odontologia' },
+    { id: 'veterinary', label: 'Veterinária' }
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto max-w-7xl px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link to="/admin">
-                <Button variant="ghost" size="icon">
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Aprovação de Conteúdo</h1>
-                <p className="text-sm text-muted-foreground">
-                  Revise e aprove templates de outreach • Nelson & Rafael
-                </p>
-              </div>
-            </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas</SelectItem>
-                {Object.entries(categoryConfig).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>{config.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+    <div className="container mx-auto max-w-6xl py-8 space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Biblioteca de Templates</h1>
+        <p className="text-muted-foreground">
+          Scripts de alta conversão para LinkedIn e Email. Copie, personalize e envie.
+        </p>
       </div>
 
-      {/* Main Content - Grouped by Category */}
-      <div className="container mx-auto max-w-7xl px-4 py-6 space-y-6">
-        {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">Carregando...</div>
-        ) : templates && templates.length > 0 ? (
-          groupTemplatesByCategory(templates).map(([category, categoryTemplates]) => {
-            const config = categoryConfig[category] || { 
-              label: category, 
-              icon: <FileText className="h-5 w-5" />, 
-              color: 'from-muted to-muted/50 border-border' 
-            };
-            
-            return (
-              <div key={category} className="space-y-3">
-                {/* Category Header */}
-                <div className={`flex items-center gap-3 p-4 rounded-lg border bg-gradient-to-r ${config.color}`}>
-                  <div className="p-2 rounded-md bg-background/80 border">
-                    {config.icon}
+      <Tabs defaultValue="orthopedic" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-8">
+          {industries.map((ind) => (
+            <TabsTrigger key={ind.id} value={ind.id} className="text-lg py-3">
+              {ind.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {industries.map((ind) => (
+          <TabsContent key={ind.id} value={ind.id} className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {/* LinkedIn Intro */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Linkedin className="h-4 w-4 text-blue-600" />
+                    LinkedIn Conexão (Intro)
+                  </CardTitle>
+                  <CardDescription>Primeira mensagem ao conectar.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-muted/50 p-4 rounded-md text-sm whitespace-pre-wrap font-mono">
+                    {TEMPLATES_DATA[ind.id as keyof typeof TEMPLATES_DATA].linkedin_intro}
                   </div>
-                  <div>
-                    <h2 className="text-lg font-semibold">{config.label}</h2>
-                    <p className="text-sm text-muted-foreground">
-                      {categoryTemplates.length} template{categoryTemplates.length !== 1 ? 's' : ''}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Category Table */}
-                <div className="border rounded-lg overflow-hidden bg-card">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-muted/30 hover:bg-muted/30">
-                        <TableHead className="w-8"></TableHead>
-                        <TableHead className="font-semibold">Título</TableHead>
-                        <TableHead className="font-semibold">Tipo</TableHead>
-                        <TableHead className="font-semibold">Nicho</TableHead>
-                        <TableHead className="font-semibold text-center">Status</TableHead>
-                        <TableHead className="font-semibold text-center">
-                          <div className="flex items-center justify-center gap-1">
-                            <User className="h-4 w-4" />
-                            Nelson
-                          </div>
-                        </TableHead>
-                        <TableHead className="font-semibold text-center">
-                          <div className="flex items-center justify-center gap-1">
-                            <User className="h-4 w-4" />
-                            Rafael
-                          </div>
-                        </TableHead>
-                        <TableHead className="font-semibold text-center">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {categoryTemplates.map((template) => (
-                        <>
-                          <TableRow 
-                            key={template.id}
-                            className="group hover:bg-muted/30 transition-colors"
-                          >
-                            <TableCell className="p-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6"
-                                onClick={() => toggleRow(template.id)}
-                              >
-                                {expandedRows.has(template.id) ? (
-                                  <ChevronDown className="h-4 w-4" />
-                                ) : (
-                                  <ChevronRight className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              <div className="max-w-[300px]">
-                                <p className="truncate">{template.title}</p>
-                                {template.description && (
-                                  <p className="text-xs text-muted-foreground truncate">
-                                    {template.description}
-                                  </p>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {(() => {
-                                const contentType = getContentType(template.content, template.category);
-                                return (
-                                  <Badge className={`${contentType.color} border text-[10px]`}>
-                                    <span className="flex items-center gap-1">
-                                      {contentType.icon}
-                                      {contentType.label}
-                                    </span>
-                                  </Badge>
-                                );
-                              })()}
-                            </TableCell>
-                            <TableCell>
-                              <span className="text-sm text-muted-foreground">
-                                {nicheLabels[template.niche] || template.niche || '—'}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Badge 
-                                className={`${statusConfig[template.status]?.color || 'bg-muted'} border`}
-                              >
-                                <span className="flex items-center gap-1">
-                                  {statusConfig[template.status]?.icon}
-                                  {statusConfig[template.status]?.label || template.status}
-                                </span>
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <div className="flex justify-center" title={template.nelsonApproval?.comments || 'Pendente'}>
-                                {getApprovalIcon(template.nelsonApproval)}
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <div className="flex justify-center" title={template.rafaelApproval?.comments || 'Pendente'}>
-                                {getApprovalIcon(template.rafaelApproval)}
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setSelectedTemplate(template)}
-                              >
-                                <Eye className="h-4 w-4 mr-1" />
-                                Revisar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                          {expandedRows.has(template.id) && (
-                            <TableRow className="bg-muted/20">
-                              <TableCell colSpan={8} className="p-4">
-                                <div className="flex items-start gap-4">
-                                  <div className="flex-1">
-                                    <ContentPreviewMini 
-                                      content={template.content} 
-                                      category={template.category} 
-                                    />
-                                  </div>
-                                  {template.approvals && template.approvals.length > 0 && (
-                                    <div className="w-72 space-y-2">
-                                      <p className="text-sm font-medium">Histórico de Aprovações</p>
-                                      <ScrollArea className="max-h-[280px]">
-                                        {template.approvals.map((approval: ContentApprovalRecord) => (
-                                          <div 
-                                            key={approval.id} 
-                                            className="text-xs bg-background/50 border rounded-md p-2 mb-2"
-                                          >
-                                            <div className="flex items-center justify-between mb-1">
-                                              <span className="font-medium">{approval.reviewer_name}</span>
-                                              <Badge variant="outline" className="text-[10px] px-1">
-                                                {approval.status}
-                                              </Badge>
-                                            </div>
-                                            {approval.comments && (
-                                              <p className="text-muted-foreground italic">
-                                                "{approval.comments}"
-                                              </p>
-                                            )}
-                                          </div>
-                                        ))}
-                                      </ScrollArea>
-                                    </div>
-                                  )}
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            Nenhum template encontrado
-          </div>
-        )}
-      </div>
-
-      {/* Review Dialog */}
-      <Dialog open={!!selectedTemplate} onOpenChange={() => setSelectedTemplate(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              {selectedTemplate?.title}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Content Preview */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex items-center gap-2">
-                <Badge variant="outline">
-                  {categoryConfig[selectedTemplate?.category || '']?.label || selectedTemplate?.category}
-                </Badge>
-                {selectedTemplate?.niche && (
-                  <Badge variant="secondary">
-                    {nicheLabels[selectedTemplate.niche] || selectedTemplate.niche}
-                  </Badge>
-                )}
-              </div>
-              {selectedTemplate && (
-                <ContentPreview 
-                  content={selectedTemplate.content} 
-                  category={selectedTemplate.category}
-                  title={selectedTemplate.title}
-                  maxHeight="500px"
-                  showTabs={true}
-                />
-              )}
-            </div>
-
-            {/* Approval Panel */}
-            <div className="space-y-4">
-              <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Quem está aprovando?</label>
-                  <Select value={selectedReviewer} onValueChange={setSelectedReviewer}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {reviewers.map(r => (
-                        <SelectItem key={r.id} value={r.id}>
-                          {r.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Comentários (opcional)</label>
-                  <Textarea
-                    placeholder="Adicione observações..."
-                    value={reviewComments}
-                    onChange={(e) => setReviewComments(e.target.value)}
-                    rows={3}
-                  />
-                </div>
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <Button
-                    className="w-full bg-emerald-600 hover:bg-emerald-700"
-                    onClick={() => selectedTemplate && submitApprovalMutation.mutate({ 
-                      templateId: selectedTemplate.id, 
-                      status: 'approved' 
-                    })}
-                    disabled={!selectedReviewer || submitApprovalMutation.isPending}
-                  >
-                    <ThumbsUp className="mr-2 h-4 w-4" />
-                    Aprovar
-                  </Button>
                   <Button
                     variant="outline"
-                    className="w-full border-orange-500/50 text-orange-600 hover:bg-orange-500/10"
-                    onClick={() => selectedTemplate && submitApprovalMutation.mutate({ 
-                      templateId: selectedTemplate.id, 
-                      status: 'changes_requested' 
-                    })}
-                    disabled={!selectedReviewer || submitApprovalMutation.isPending}
+                    className="w-full gap-2"
+                    onClick={() => handleCopy(TEMPLATES_DATA[ind.id as keyof typeof TEMPLATES_DATA].linkedin_intro, `${ind.id}-intro`)}
                   >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Solicitar Mudanças
+                    {copiedId === `${ind.id}-intro` ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copiedId === `${ind.id}-intro` ? "Copiado!" : "Copiar Script"}
                   </Button>
-                  <Button
-                    variant="destructive"
-                    className="w-full"
-                    onClick={() => selectedTemplate && submitApprovalMutation.mutate({ 
-                      templateId: selectedTemplate.id, 
-                      status: 'rejected' 
-                    })}
-                    disabled={!selectedReviewer || submitApprovalMutation.isPending}
-                  >
-                    <ThumbsDown className="mr-2 h-4 w-4" />
-                    Rejeitar
-                  </Button>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              {/* Current Approvals Status */}
-              <div className="border rounded-lg p-4 space-y-3">
-                <p className="text-sm font-medium">Status de Aprovação</p>
-                {reviewers.map(reviewer => {
-                  const approval = selectedTemplate?.approvals?.find(
-                    (a: ContentApprovalRecord) => a.reviewer_name.toLowerCase() === reviewer.id
-                  );
-                  return (
-                    <div key={reviewer.id} className="flex items-center gap-3">
-                      {getApprovalIcon(approval)}
-                      <div>
-                        <p className="text-sm font-medium">{reviewer.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {approval?.status === 'approved' ? 'Aprovado' :
-                           approval?.status === 'rejected' ? 'Rejeitado' :
-                           approval?.status === 'changes_requested' ? 'Pediu mudanças' :
-                           'Aguardando revisão'}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              {/* LinkedIn Follow-up */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Linkedin className="h-4 w-4 text-blue-600" />
+                    LinkedIn Follow-up
+                  </CardTitle>
+                  <CardDescription>3-5 dias sem resposta.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-muted/50 p-4 rounded-md text-sm whitespace-pre-wrap font-mono">
+                    {TEMPLATES_DATA[ind.id as keyof typeof TEMPLATES_DATA].linkedin_followup}
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full gap-2"
+                    onClick={() => handleCopy(TEMPLATES_DATA[ind.id as keyof typeof TEMPLATES_DATA].linkedin_followup, `${ind.id}-follow`)}
+                  >
+                    {copiedId === `${ind.id}-follow` ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copiedId === `${ind.id}-follow` ? "Copiado!" : "Copiar Script"}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Email Outreach */}
+              <Card className="md:col-span-2 lg:col-span-1 border-blue-100 dark:border-blue-900">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Mail className="h-4 w-4 text-violet-600" />
+                    Email Frio (Outreach)
+                  </CardTitle>
+                  <CardDescription>Primeiro email formal.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-muted/50 p-4 rounded-md text-sm whitespace-pre-wrap font-mono border-l-4 border-violet-500">
+                    {TEMPLATES_DATA[ind.id as keyof typeof TEMPLATES_DATA].email_outreach}
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full gap-2 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+                    onClick={() => handleCopy(TEMPLATES_DATA[ind.id as keyof typeof TEMPLATES_DATA].email_outreach, `${ind.id}-email`)}
+                  >
+                    {copiedId === `${ind.id}-email` ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copiedId === `${ind.id}-email` ? "Copiado!" : "Copiar Script"}
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
-};
-
-export default ContentApproval;
+}
