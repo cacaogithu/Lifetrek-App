@@ -414,4 +414,28 @@ All colors MUST be HSL.
   .pdf-export-mode .border-white\/30 {
     border-color: hsl(0 0% 100% / 0.3) !important;
   }
+
+  /* Fix gradient text - bg-clip-text is NOT supported by html2canvas */
+  .pdf-export-mode .bg-clip-text {
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    -webkit-text-fill-color: unset !important;
+    color: hsl(210 100% 28%) !important;
+    background: transparent !important;
+  }
+
+  .pdf-export-mode .text-transparent {
+    color: hsl(210 100% 28%) !important;
+  }
+
+  /* Ensure headings are visible on dark backgrounds */
+  .pdf-export-mode .text-primary {
+    color: hsl(210 100% 28%) !important;
+  }
+
+  /* For slides with dark backgrounds, make text white */
+  .pdf-export-mode [data-slide] .bg-clip-text,
+  .pdf-export-mode [data-slide] .text-transparent {
+    color: hsl(0 0% 100%) !important;
+  }
 }
