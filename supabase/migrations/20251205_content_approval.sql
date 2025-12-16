@@ -1,5 +1,5 @@
 -- Create content_templates table for storing prompts and templates
-CREATE TABLE public.content_templates (
+CREATE TABLE IF NOT EXISTS public.content_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   category TEXT NOT NULL, -- 'email_reply', 'linkedin_outreach', 'cold_email', 'carousel_content', 'crm_agent', 'personalized_outreach'
   title TEXT NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE public.content_templates (
 );
 
 -- Create content_approvals table for tracking approval workflow
-CREATE TABLE public.content_approvals (
+CREATE TABLE IF NOT EXISTS public.content_approvals (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   template_id UUID NOT NULL REFERENCES public.content_templates(id) ON DELETE CASCADE,
   reviewer_name TEXT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE public.content_approvals (
 );
 
 -- Create content_comments table for feedback
-CREATE TABLE public.content_comments (
+CREATE TABLE IF NOT EXISTS public.content_comments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   template_id UUID NOT NULL REFERENCES public.content_templates(id) ON DELETE CASCADE,
   approval_id UUID REFERENCES public.content_approvals(id) ON DELETE CASCADE,
@@ -44,61 +44,70 @@ ALTER TABLE public.content_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.content_approvals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.content_comments ENABLE ROW LEVEL SECURITY;
 
--- RLS policies for content_templates (allow public read for now, can be restricted later)
+-- RLS policies for content_templates
+DROP POLICY IF EXISTS "Anyone can view templates" ON public.content_templates;
 CREATE POLICY "Anyone can view templates"
 ON public.content_templates
 FOR SELECT
 USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can insert templates" ON public.content_templates;
 CREATE POLICY "Authenticated users can insert templates"
 ON public.content_templates
 FOR INSERT
 WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can update templates" ON public.content_templates;
 CREATE POLICY "Authenticated users can update templates"
 ON public.content_templates
 FOR UPDATE
 USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can delete templates" ON public.content_templates;
 CREATE POLICY "Authenticated users can delete templates"
 ON public.content_templates
 FOR DELETE
 USING (auth.role() = 'authenticated');
 
 -- RLS policies for content_approvals
+DROP POLICY IF EXISTS "Anyone can view approvals" ON public.content_approvals;
 CREATE POLICY "Anyone can view approvals"
 ON public.content_approvals
 FOR SELECT
 USING (true);
 
+DROP POLICY IF EXISTS "Anyone can insert approvals" ON public.content_approvals;
 CREATE POLICY "Anyone can insert approvals"
 ON public.content_approvals
 FOR INSERT
 WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Anyone can update approvals" ON public.content_approvals;
 CREATE POLICY "Anyone can update approvals"
 ON public.content_approvals
 FOR UPDATE
 USING (true);
 
 -- RLS policies for content_comments
+DROP POLICY IF EXISTS "Anyone can view comments" ON public.content_comments;
 CREATE POLICY "Anyone can view comments"
 ON public.content_comments
 FOR SELECT
 USING (true);
 
+DROP POLICY IF EXISTS "Anyone can insert comments" ON public.content_comments;
 CREATE POLICY "Anyone can insert comments"
 ON public.content_comments
 FOR INSERT
 WITH CHECK (true);
 
 -- Create indexes
-CREATE INDEX idx_content_templates_category ON public.content_templates(category);
-CREATE INDEX idx_content_templates_status ON public.content_templates(status);
-CREATE INDEX idx_content_templates_niche ON public.content_templates(niche);
-CREATE INDEX idx_content_approvals_template_id ON public.content_approvals(template_id);
-CREATE INDEX idx_content_approvals_status ON public.content_approvals(status);
-CREATE INDEX idx_content_comments_template_id ON public.content_comments(template_id);
+CREATE INDEX IF NOT EXISTS idx_content_templates_category ON public.content_templates(category);
+CREATE INDEX IF NOT EXISTS idx_content_templates_status ON public.content_templates(status);
+CREATE INDEX IF NOT EXISTS idx_content_templates_niche ON public.content_templates(niche);
+CREATE INDEX IF NOT EXISTS idx_content_approvals_template_id ON public.content_approvals(template_id);
+CREATE INDEX IF NOT EXISTS idx_content_approvals_status ON public.content_approvals(status);
+CREATE INDEX IF NOT EXISTS idx_content_comments_template_id ON public.content_comments(template_id);
 
 -- Create function to update timestamps
 CREATE OR REPLACE FUNCTION public.update_content_updated_at()
@@ -110,11 +119,13 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Create triggers for updated_at
+DROP TRIGGER IF EXISTS update_content_templates_updated_at ON public.content_templates;
 CREATE TRIGGER update_content_templates_updated_at
 BEFORE UPDATE ON public.content_templates
 FOR EACH ROW
 EXECUTE FUNCTION public.update_content_updated_at();
 
+DROP TRIGGER IF EXISTS update_content_approvals_updated_at ON public.content_approvals;
 CREATE TRIGGER update_content_approvals_updated_at
 BEFORE UPDATE ON public.content_approvals
 FOR EACH ROW
