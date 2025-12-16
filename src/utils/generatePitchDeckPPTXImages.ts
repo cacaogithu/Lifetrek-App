@@ -1,5 +1,6 @@
 import html2canvas from 'html2canvas';
 import pptxgen from 'pptxgenjs';
+import { flushSync } from 'react-dom';
 
 export interface PPTXImagesGeneratorOptions {
   totalSlides: number;
@@ -10,14 +11,27 @@ export interface PPTXImagesGeneratorOptions {
 }
 
 // Wait for slide to be fully rendered
-const waitForStableRender = (): Promise<void> => {
+const waitForStableRender = (ms: number = 200): Promise<void> => {
   return new Promise(resolve => {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        resolve();
+        setTimeout(resolve, ms);
       });
     });
   });
+};
+
+// Wait for all images to load
+const waitForImages = (element: HTMLElement): Promise<void> => {
+  const images = element.querySelectorAll('img');
+  const promises = Array.from(images).map(img => {
+    if (img.complete) return Promise.resolve();
+    return new Promise<void>((resolve) => {
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
+  });
+  return Promise.all(promises).then(() => {});
 };
 
 export const generatePitchDeckPPTXImages = async ({
@@ -44,14 +58,13 @@ export const generatePitchDeckPPTXImages = async ({
 
   try {
     for (let i = 0; i < totalSlides; i++) {
-      // Navigate to slide
-      setCurrentSlide(i);
+      // Navigate to slide with flushSync for immediate render
+      flushSync(() => {
+        setCurrentSlide(i);
+      });
       
-      // Minimal wait - just enough for React to render
-      await waitForStableRender();
-      await new Promise(resolve => setTimeout(resolve, 100)); // 100ms vs 600ms
-
-      onProgress?.(i + 1, totalSlides);
+      // Wait for DOM to fully update
+      await waitForStableRender(200);
 
       // Find the slide element
       const slideElement = document.querySelector('[data-slide]') as HTMLElement;
@@ -61,15 +74,60 @@ export const generatePitchDeckPPTXImages = async ({
         continue;
       }
 
+      // Wait for all images in slide to load
+      await waitForImages(slideElement);
+
+      onProgress?.(i + 1, totalSlides);
+
       // Capture slide as high-res canvas
       const canvas = await html2canvas(slideElement, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: null,
         logging: false,
         width: slideElement.offsetWidth,
-        height: slideElement.offsetHeight
+        height: slideElement.offsetHeight,
+        onclone: (clonedDoc) => {
+          const clonedSlide = clonedDoc.querySelector('[data-slide]') as HTMLElement;
+          if (clonedSlide) {
+            clonedSlide.classList.add('pdf-export-mode');
+            clonedSlide.parentElement?.classList.add('pdf-export-mode');
+            
+            // Detect if slide has dark or light background
+            const hasDarkBg = clonedSlide.className.includes('from-primary/90') ||
+                              clonedSlide.className.includes('from-primary/80');
+            
+            clonedSlide.style.backgroundColor = hasDarkBg ? '#003366' : '#ffffff';
+          }
+          
+          // Fix gradient text and backdrop filters
+          const allElements = clonedDoc.querySelectorAll('*');
+          allElements.forEach((el) => {
+            const htmlEl = el as HTMLElement;
+            const computedStyle = window.getComputedStyle(htmlEl);
+            
+            if (htmlEl.style) {
+              htmlEl.style.backdropFilter = 'none';
+              (htmlEl.style as any).webkitBackdropFilter = 'none';
+              htmlEl.style.animation = 'none';
+              htmlEl.style.transition = 'none';
+              
+              if (htmlEl.classList.contains('bg-clip-text') || 
+                  computedStyle.webkitBackgroundClip === 'text') {
+                htmlEl.style.webkitBackgroundClip = 'border-box';
+                htmlEl.style.backgroundClip = 'border-box';
+                htmlEl.style.background = 'transparent';
+                (htmlEl.style as any).webkitTextFillColor = 'unset';
+                htmlEl.style.color = '#004d99';
+              }
+              
+              if (htmlEl.classList.contains('text-transparent')) {
+                htmlEl.style.color = '#004d99';
+              }
+            }
+          });
+        }
       });
 
       // Convert canvas to JPEG for faster processing
