@@ -1,4 +1,4 @@
-project_id = "iijkbhiqcsvtnfernrbs"
+project_id = "vthutqgjrldmarqgxcou"
 
 [functions.send-contact-email]
 verify_jwt = false
@@ -19,7 +19,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-linkedin-carousel]
-verify_jwt = true
+verify_jwt = false
 
 [functions.calculate-lead-score]
 verify_jwt = true

@@ -7,11 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Loader2, ChevronLeft, ChevronRight, Download, Star, Trash2, History, Image as ImageIcon, Wand2, Layout, Save, RefreshCw } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Download, Star, Trash2, History, Image as ImageIcon, Wand2, Layout, Save, RefreshCw, Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SlideCanvas } from "@/components/carousel/SlideCanvas";
 import * as htmlToImage from "html-to-image";
 import JSZip from "jszip";
@@ -385,6 +387,14 @@ export default function LinkedInCarousel() {
             <p className="text-muted-foreground">Strategic B2B content generation</p>
           </div>
 
+          <Alert className="mb-6 bg-blue-50/50 border-blue-200">
+            <Info className="h-4 w-4 text-blue-600" />
+            <AlertTitle className="text-blue-800">Pro Tip</AlertTitle>
+            <AlertDescription className="text-blue-700">
+              Create educational slides that address specific customer pain points. Use the "Generate" tab to let AI build the structure, then customize the visuals.
+            </AlertDescription>
+          </Alert>
+
           {carouselResult && (
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => saveCarousel(carouselResult)}>
@@ -416,7 +426,19 @@ export default function LinkedInCarousel() {
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <Label>Topic</Label>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Label>Topic</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Try: "5 Myths about Swiss Machining" or "How to Reduce Implant Failures"</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                       <Input value={topic} onChange={e => setTopic(e.target.value)} placeholder="e.g. Reducing manufacturing defects" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">

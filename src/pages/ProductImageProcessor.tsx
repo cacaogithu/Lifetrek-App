@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { Loader2, Upload, Download, Sparkles, ArrowLeft, Check } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 interface ProcessedImage {
   id: string;
@@ -267,6 +269,18 @@ export default function ProductImageProcessor() {
         <h1 className="text-4xl font-bold mb-2">Otimização de Imagens de Produtos</h1>
         <p className="text-muted-foreground">Transforme suas fotos de produtos em imagens profissionais com IA</p>
       </div>
+
+      <Alert className="mb-8 bg-amber-50/50 border-amber-200">
+        <Info className="h-4 w-4 text-amber-600" />
+        <AlertTitle className="text-amber-800">Best Practices for Studio Quality</AlertTitle>
+        <AlertDescription className="text-amber-700 mt-1">
+          <ul className="list-disc pl-4 space-y-1 text-sm">
+            <li>Ensure the product is <strong>in focus</strong> before uploading. The AI can improve lighting but cannot fix blur.</li>
+            <li>Use simple backgrounds if possible to help the AI isolate the subject.</li>
+            <li>The "Analyze" step will automatically detect the material (e.g., Titanium, Steel) to apply the correct lighting reflections.</li>
+          </ul>
+        </AlertDescription>
+      </Alert>
 
       <Card className="p-6 mb-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">

@@ -26,7 +26,9 @@ import {
   Cog,
   Sparkles,
   Package,
+  Info,
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import { BlobBackground } from "@/components/BlobBackground";
 import { StatCard } from "@/components/StatCard";
@@ -355,7 +357,19 @@ const PitchDeck = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <img src={logo} alt="Lifetrek" className="h-8" />
-            <span className="text-sm text-muted-foreground">Sales Pitch Deck</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Sales Pitch Deck</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-4 w-4 text-muted-foreground/50 hover:text-muted-foreground transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Use arrow keys or swipe to navigate slides.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="outline" size="sm" disabled={isExporting}><Share2 className="w-4 h-4 mr-2" />Share</Button>
