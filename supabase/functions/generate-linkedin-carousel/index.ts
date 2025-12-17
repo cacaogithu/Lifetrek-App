@@ -8,6 +8,24 @@ const corsHeaders = {
 
 import { constructSystemPrompt, constructUserPrompt, getTools } from "./functions_logic.ts";
 
+// Type definitions
+interface CarouselSlide {
+  type: string;
+  headline: string;
+  body: string;
+  imageGenerationPrompt?: string;
+  backgroundType: string;
+  assetId?: string;
+  imageUrl?: string;
+}
+
+interface Carousel {
+  topic: string;
+  targetAudience: string;
+  slides: CarouselSlide[];
+  imageUrls?: string[];
+}
+
 // Serve handling...
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -121,18 +139,18 @@ serve(async (req) => {
       };
       
       // Simulate the structure downstream code expects
-      const resultCarousels = isBatch ? mockResponse.carousels : [mockResponse.carousel];
+      const resultCarousels: Carousel[] = isBatch ? (mockResponse.carousels || []) : [mockResponse.carousel!];
       
        // Process Images for ALL carousels (Mock implementation)
       for (const carousel of resultCarousels) {
-        const processedSlides = [];
+        const processedSlides: CarouselSlide[] = [];
         const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
 
         for (const slide of slidesToProcess) {
           processedSlides.push({ ...slide, imageUrl: "https://via.placeholder.com/800x400?text=Mock+Image" });
         }
         carousel.slides = processedSlides;
-        carousel.imageUrls = processedSlides.map((s: any) => s.imageUrl);
+        carousel.imageUrls = processedSlides.map((s) => s.imageUrl || "");
       }
 
       return new Response(
@@ -169,11 +187,11 @@ serve(async (req) => {
     const args = JSON.parse(toolCall.function.arguments);
 
     // Normalize to array
-    let resultCarousels = isBatch ? args.carousels : [args];
+    const resultCarousels: Carousel[] = isBatch ? args.carousels : [args];
 
     // Process Images for ALL carousels
     for (const carousel of resultCarousels) {
-      const processedSlides = [];
+      const processedSlides: CarouselSlide[] = [];
       const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
 
       for (const slide of slidesToProcess) {
@@ -219,7 +237,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
         processedSlides.push({ ...slide, imageUrl });
       }
       carousel.slides = processedSlides;
-      carousel.imageUrls = processedSlides.map(s => s.imageUrl);
+      carousel.imageUrls = processedSlides.map(s => s.imageUrl || "");
     }
 
     return new Response(
