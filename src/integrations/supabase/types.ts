@@ -349,6 +349,42 @@ export type Database = {
           },
         ]
       }
+      content_assets: {
+        Row: {
+          admin_user_id: string | null
+          category: string | null
+          content_type: string | null
+          created_at: string
+          file_path: string | null
+          filename: string
+          id: string
+          size: number | null
+          tags: string[] | null
+        }
+        Insert: {
+          admin_user_id?: string | null
+          category?: string | null
+          content_type?: string | null
+          created_at?: string
+          file_path?: string | null
+          filename: string
+          id?: string
+          size?: number | null
+          tags?: string[] | null
+        }
+        Update: {
+          admin_user_id?: string | null
+          category?: string | null
+          content_type?: string | null
+          created_at?: string
+          file_path?: string | null
+          filename?: string
+          id?: string
+          size?: number | null
+          tags?: string[] | null
+        }
+        Relationships: []
+      }
       content_approvals: {
         Row: {
           approved_at: string | null

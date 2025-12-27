@@ -1,134 +1,123 @@
 #!/usr/bin/env python3
 """
-Advanced Lead Scoring System
-Max score: 15 points across 10 factors
-Includes confidence score (0-100%) based on data completeness
+Advanced Lead Scoring (0-100 Scale)
+
+Scoring Rubric:
+----------------
+CONTACT INFO (Max 65)
+- Decision Maker Found: +20
+- Email Present: +20
+- LinkedIn Company URL: +15
+- Phone Number: +10
+
+COMPANY QUALITY (Max 35)
+- FDA/CE/Anvisa/ISO Certified: +10
+- Employee Count > 50: +10
+- Employee Count > 10: +5
+- Website Active (URL exists): +5
+- Description/Notes populated: +5
+
+Total Possible: 100
 """
 
+import os
 import pandas as pd
-import json
+import numpy as np
 
-INPUT_FILE = '/Users/rafaelalmeida/lifetrek-mirror/MASTER_ENRICHED_LEADS.csv'
+INPUT_FILE = "/Users/rafaelalmeida/lifetrek-mirror/MASTER_ENRICHED_LEADS.csv"
 
-def count_decision_makers(dm_json):
-    """Count decision makers from JSON string"""
-    if pd.isna(dm_json) or not dm_json:
-        return 0
+def has_value(val):
+    if pd.isna(val) or val == '' or str(val).lower() == 'nan':
+        return False
+    return True
+
+def clean_employees(val):
     try:
-        people = json.loads(dm_json)
-        return len(people) if isinstance(people, list) else 0
-    except:
-        return 0
-
-def compute_score(row):
-    """Compute lead score (max 15 points)"""
-    score = 0.0
-    
-    # 1. Email (3 points)
-    email = row.get('Email') or row.get('Scraped_Emails')
-    if isinstance(email, str) and email.strip() and '@' in email:
-        score += 3.0
-    
-    # 2. Decision Maker (2 points base)
-    dm_count = count_decision_makers(row.get('Decision_Makers_Deep'))
-    if dm_count > 0:
-        score += 2.0
-        # 3. Multiple DMs (+1 bonus)
-        if dm_count >= 2:
-            score += 1.0
-    
-    # 4. Phone Number (1 point)
-    phone = row.get('Phone')
-    if isinstance(phone, str) and phone.strip() and '+55' in phone:
-        score += 1.0
-    
-    # 5. LinkedIn Company (1 point)
-    linkedin_company = row.get('LinkedIn_Company')
-    if isinstance(linkedin_company, str) and linkedin_company.strip():
-        score += 1.0
-    
-    # 6. LinkedIn Person (2 points)
-    linkedin_person = row.get('LinkedIn_Person')
-    if isinstance(linkedin_person, str) and linkedin_person.strip():
-        score += 2.0
-    
-    # 7. FDA Certification (2 points)
-    if row.get('FDA_Certified') in [True, 'True', 'true', 1]:
-        score += 2.0
-    
-    # 8. CE Certification (2 points)
-    if row.get('CE_Certified') in [True, 'True', 'true', 1]:
-        score += 2.0
-    
-    # 9. Employee Count (1-2 points)
-    try:
-        emp = int(row.get('employees') or row.get('Employees') or 0)
-        if emp >= 200:
-            score += 2.0
-        elif emp >= 50:
-            score += 1.0
+        if pd.isna(val): return 0
+        s = str(val).lower().replace(',','').replace('.','')
+        # extract first number
+        import re
+        nums = re.findall(r'\d+', s)
+        if nums:
+            return int(nums[0])
     except:
         pass
-    
-    # 10. Website Quality (1 point)
-    website = row.get('Website')
-    if isinstance(website, str) and website.startswith('https://'):
-        score += 1.0
-    
-    return min(score, 15.0)
+    return 0
 
-def compute_confidence(row):
-    """Compute confidence score (0-100%) based on data completeness"""
-    total_fields = 10
-    filled_fields = 0
+def compute_score(row):
+    score = 0
     
-    # Check each key field
-    if row.get('Email') or row.get('Scraped_Emails'):
-        filled_fields += 1
-    if count_decision_makers(row.get('Decision_Makers_Deep')) > 0:
-        filled_fields += 1
-    if row.get('Phone'):
-        filled_fields += 1
-    if row.get('LinkedIn_Company'):
-        filled_fields += 1
-    if row.get('LinkedIn_Person'):
-        filled_fields += 1
-    if row.get('FDA_Certified') or row.get('CE_Certified'):
-        filled_fields += 1
-    if row.get('employees') or row.get('Employees'):
-        filled_fields += 1
-    if row.get('Website'):
-        filled_fields += 1
-    if row.get('City') or row.get('Cidade'):
-        filled_fields += 1
-    if row.get('State') or row.get('Estado'):
-        filled_fields += 1
-    
-    return int((filled_fields / total_fields) * 100)
+    # 1. Decision Maker (+20)
+    dm = row.get('Decision_Maker') or row.get('Decision_Makers')
+    if has_value(dm):
+        score += 20
+        
+    # 2. Email (+20)
+    email = row.get('Email') or row.get('Scraped_Emails')
+    if has_value(email):
+        score += 20
+        
+    # 3. LinkedIn Company (+15)
+    li_co = row.get('LinkedIn_Company')
+    if has_value(li_co) and 'linkedin.com' in str(li_co):
+        score += 15
+        
+    # 4. Phone (+10)
+    phone = row.get('Phone') or row.get('Telefone')
+    if has_value(phone):
+        score += 10
+        
+    # 5. Certifications (+10)
+    # Check multiple columns
+    is_cert = False
+    for col in ['FDA_Certified', 'CE_Certified', 'Anvisa', 'ISO_Certified']:
+        if row.get(col) in [True, 'True', 'true', 1, '1']:
+            is_cert = True
+            break
+    if is_cert:
+        score += 10
+        
+    # 6. Employees (+10 or +5)
+    emp_count = clean_employees(row.get('Employees') or row.get('employees'))
+    if emp_count > 50:
+        score += 10
+    elif emp_count > 10:
+        score += 5
+        
+    # 7. Website (+5) - implicit if we are scoring it, but check field
+    if has_value(row.get('Website')):
+        score += 5
+        
+    # 8. Description / Notes (+5)
+    notes = row.get('Perplexity_Notes') or row.get('Description')
+    if has_value(notes) and len(str(notes)) > 20:
+        score += 5
+        
+    return min(score, 100)
 
 def main():
-    print("=== ADVANCED LEAD SCORING ===")
-    
+    print("=== ADVANCED SCORING CALCULATION ===")
+    if not os.path.exists(INPUT_FILE):
+        print(f"[ERROR] File not found: {INPUT_FILE}")
+        return
+        
     df = pd.read_csv(INPUT_FILE)
     print(f"Loaded {len(df)} leads.")
     
-    # Compute scores
+    # Calculate Scores
     df['Lead_Score'] = df.apply(compute_score, axis=1)
-    df['Confidence_Score'] = df.apply(compute_confidence, axis=1)
     
-    # Save
+    # Statistics
+    avg_score = df['Lead_Score'].mean()
+    high_value_count = len(df[df['Lead_Score'] >= 70])
+    
+    print(f"✅ Recalculated Scores.")
+    print(f"   Average Score: {avg_score:.1f}")
+    print(f"   High Value (>70): {high_value_count}")
+    print(f"   Score Range: {df['Lead_Score'].min()} - {df['Lead_Score'].max()}")
+    
     df.to_csv(INPUT_FILE, index=False)
-    
-    # Stats
-    print(f"\n✅ Scoring complete!")
-    print(f"Score range: {df['Lead_Score'].min():.1f} - {df['Lead_Score'].max():.1f}")
-    print(f"Average score: {df['Lead_Score'].mean():.1f}")
-    print(f"Average confidence: {df['Confidence_Score'].mean():.0f}%")
-    print(f"\nScore distribution:")
-    print(f"  10-15 (Excellent): {len(df[df['Lead_Score'] >= 10])}")
-    print(f"  7-9 (Good): {len(df[(df['Lead_Score'] >= 7) & (df['Lead_Score'] < 10)])}")
-    print(f"  4-6 (Fair): {len(df[(df['Lead_Score'] >= 4) & (df['Lead_Score'] < 7)])}")
-    print(f"  0-3 (Low): {len(df[df['Lead_Score'] < 4])}")
+    print(f"💾 Saved to {INPUT_FILE}")
 
 if __name__ == "__main__":
     main()

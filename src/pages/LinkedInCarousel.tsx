@@ -12,11 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { SlideCanvas } from "@/components/carousel/SlideCanvas";
+import { SlideCanvas, SlideLayout } from "@/components/carousel/SlideCanvas";
 import * as htmlToImage from "html-to-image";
 import JSZip from "jszip";
+import jsPDF from "jspdf";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CarouselSlide {
   headline: string;
@@ -25,6 +28,7 @@ interface CarouselSlide {
   imageUrl?: string;
   assetId?: string;
   backgroundType?: "asset" | "generate";
+  layout?: SlideLayout;
 }
 
 interface CarouselResult {
@@ -54,11 +58,16 @@ export default function LinkedInCarousel() {
   // Workflow State
   const [currentStep, setCurrentStep] = useState<"content" | "design">("content");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [carouselResult, setCarouselResult] = useState<CarouselResult | null>(null);
+  const [carouselResults, setCarouselResults] = useState<CarouselResult[]>([]);
+  const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0); 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
   const [carouselToDelete, setCarouselToDelete] = useState<string | null>(null);
   const [currentCarouselId, setCurrentCarouselId] = useState<string | null>(null);
+  
+  // Batch State
+  const [numberOfCarousels, setNumberOfCarousels] = useState(1);
+  const [currentTheme, setCurrentTheme] = useState<"corporate" | "modern" | "bold">("corporate");
 
   // Design State
   const slideRef = useRef<HTMLDivElement>(null);
@@ -123,9 +132,23 @@ export default function LinkedInCarousel() {
   };
 
   const fetchAssets = async () => {
-    // content_assets table não existe ainda - desabilitado por enquanto
-    // Para habilitar, criar a tabela content_assets no banco
-    setAvailableAssets([]);
+    try {
+      const { data, error } = await supabase
+        .from("content_assets" as any)
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        // Graceful fallback if table doesn't exist or other error
+        console.warn("Could not fetch assets:", error.message);
+        setAvailableAssets([]);
+        return;
+      }
+      setAvailableAssets(data || []);
+    } catch (error) {
+      console.error("Error fetching assets:", error);
+      setAvailableAssets([]);
+    }
   };
 
   const saveCarousel = async (result: CarouselResult) => {
@@ -196,13 +219,14 @@ export default function LinkedInCarousel() {
       imageUrl: s.imageUrl || (carousel.image_urls?.[idx] || "")
     }));
 
-    setCarouselResult({
+    setCarouselResults([{
       id: carousel.id,
       topic: carousel.topic,
       targetAudience: carousel.target_audience,
       slides: normalizedSlides,
       caption: carousel.caption,
-    });
+    }]);
+    setCurrentCarouselIndex(0);
     setCurrentSlide(0);
     setCurrentCarouselId(carousel.id);
     setCurrentStep("design");
@@ -226,6 +250,7 @@ export default function LinkedInCarousel() {
           proofPoints,
           ctaAction,
           format,
+          numberOfCarousels,
         },
       });
 
@@ -235,11 +260,12 @@ export default function LinkedInCarousel() {
         return;
       }
 
-      setCarouselResult(data.carousel);
+      setCarouselResults(data.carousels || (data.carousel ? [data.carousel] : []));
+      setCurrentCarouselIndex(0);
       setCurrentSlide(0);
       setCurrentStep("design");
       setCurrentCarouselId(null); // New generation, new ID needed eventually
-      toast.success("Content generated! Now moving to design.");
+      toast.success(`Generated ${data.carousels?.length || 1} carousel(s)!`);
     } catch (error: any) {
       console.error("Error generating carousel:", error);
       toast.error(error.message || "Failed to generate carousel");
@@ -249,45 +275,37 @@ export default function LinkedInCarousel() {
   };
 
   const handleUpdateSlideImage = (url: string) => {
-    if (!carouselResult) return;
-    const newSlides = [...carouselResult.slides];
+    if (!carouselResults[currentCarouselIndex]) return;
+    const newResults = [...carouselResults];
+    const newSlides = [...newResults[currentCarouselIndex].slides];
     newSlides[currentSlide] = { ...newSlides[currentSlide], imageUrl: url };
-    setCarouselResult({ ...carouselResult, slides: newSlides });
+    newResults[currentCarouselIndex] = { ...newResults[currentCarouselIndex], slides: newSlides };
+    setCarouselResults(newResults);
   };
 
   const handleExportImages = async () => {
-    if (!carouselResult || !exportRef.current) return;
+    const activeCarousel = carouselResults[currentCarouselIndex];
+    if (!activeCarousel) return;
 
     setDesignLoading(true);
     const zip = new JSZip();
 
     try {
-      // We need to render each slide and capture it
-      // Since we only render one slide at a time currently, this approach is tricky.
-      // Better approach: Iterate state, render, wait, capture.
-      // Or render ALL slides in a hidden container. 
-      // Let's go with hidden container logic implicitly or just loop through current slide for quick prototype
-
-      // Actually, to get high res, we should use the hidden exportRef which we will update cyclically
-      // But React state updates are async. 
-      // We will loop, waiting for a brief tick.
-
-      // This is complex. Simplest MVP: Export CURRENT slide.
-      // User asked for "Carousel Generator", implying bulk.
-      // Let's rely on user exporting one by one OR implement a proper "download all" which renders a hidden list.
-
-      // Let's modify the JSX to include a "Hidden Render Area" where we map ALL slides
-      // and capture them.
-
-      const slides = carouselResult.slides;
-      const promises = slides.map(async (slide, index) => {
-        // We need to target the SPECIFIC element for this slide.
-        // We will render them all in a hidden div with IDs.
+      // Use hidden container method
+      const promises = activeCarousel.slides.map(async (slide, index) => {
         const elementId = `export-slide-${index}`;
         const node = document.getElementById(elementId);
-        if (!node) return null;
+        if (!node) {
+            console.error(`Node not found: ${elementId}`);
+            return null;
+        }
 
-        const dataUrl = await htmlToImage.toPng(node as HTMLElement, { pixelRatio: 2 });
+        // Wait a bit for images to load if needed, or retry
+        // toPng can be flaky if images aren't fully loaded
+        const dataUrl = await htmlToImage.toPng(node as HTMLElement, { 
+            pixelRatio: 2,
+            cacheBust: true,
+        });
         return { name: `slide-${index + 1}.png`, data: dataUrl };
       });
 
@@ -295,20 +313,18 @@ export default function LinkedInCarousel() {
 
       results.forEach(res => {
         if (res) {
-          // Remove data:image/png;base64,
           const data = res.data.split(',')[1];
           zip.file(res.name, data, { base64: true });
         }
       });
 
-      // Also add caption
-      zip.file("caption.txt", carouselResult.caption);
+      zip.file("caption.txt", activeCarousel.caption);
 
       const content = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(content);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `carousel-${carouselResult.topic.replace(/\s+/g, '-').toLowerCase()}.zip`;
+      a.download = `carousel-${activeCarousel.topic.replace(/\s+/g, '-').toLowerCase()}.zip`;
       a.click();
       URL.revokeObjectURL(url);
       toast.success("Downloaded all slides!");
@@ -318,6 +334,79 @@ export default function LinkedInCarousel() {
       toast.error("Failed to export images");
     } finally {
       setDesignLoading(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    const activeCarousel = carouselResults[currentCarouselIndex];
+    if (!activeCarousel) return;
+
+    setDesignLoading(true);
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: [1080, 1350] // Standard LinkedIn Portrait
+    });
+
+    try {
+      const slides = activeCarousel.slides;
+      
+      for (let i = 0; i < slides.length; i++) {
+        const elementId = `export-slide-${i}`;
+        const node = document.getElementById(elementId);
+        if (!node) continue;
+
+        // Capture slide
+        const dataUrl = await htmlToImage.toPng(node as HTMLElement, { 
+            pixelRatio: 2,
+            cacheBust: true,
+        });
+
+        if (i > 0) pdf.addPage([1080, 1350]);
+        pdf.addImage(dataUrl, "PNG", 0, 0, 1080, 1350);
+      }
+
+      pdf.save(`carousel-${activeCarousel.topic.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+      toast.success("PDF Downloaded!");
+
+    } catch (error) {
+      console.error("PDF Export error", error);
+      toast.error("Failed to export PDF");
+    } finally {
+      setDesignLoading(false);
+    }
+  };
+
+  const handleRegenerateImage = async () => {
+    const activeCarousel = carouselResults[currentCarouselIndex];
+    if (!activeCarousel) return;
+    
+    setDesignLoading(true);
+    try {
+        const slide = activeCarousel.slides[currentSlide];
+        
+        const { data, error } = await supabase.functions.invoke("generate-linkedin-carousel", {
+            body: {
+                mode: "image_only",
+                headline: slide.headline,
+                body: slide.body,
+                imagePrompt: slide.imageUrl ? "Variation of existing visual" : "Professional medical visual"
+            }
+        });
+
+        if (error) throw error;
+        if (data.imageUrl) {
+            handleUpdateSlideImage(data.imageUrl);
+            toast.success("Image regenerated!");
+        } else {
+             throw new Error("No image returned");
+        }
+
+    } catch (error) {
+        console.error("Regen error:", error);
+        toast.error("Failed to regenerate image");
+    } finally {
+        setDesignLoading(false);
     }
   };
 
@@ -341,7 +430,7 @@ export default function LinkedInCarousel() {
       const { error } = await supabase.from("linkedin_carousels").delete().eq("id", carouselToDelete);
       if (error) throw error;
       if (currentCarouselId === carouselToDelete) {
-        setCarouselResult(null);
+        setCarouselResults([]);
         setCurrentCarouselId(null);
         setCurrentStep("content");
       }
@@ -384,22 +473,72 @@ export default function LinkedInCarousel() {
             </AlertDescription>
           </Alert>
 
-          {carouselResult && (
+          {carouselResults.length > 0 && (
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => saveCarousel(carouselResult)}>
+              <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                        <Layout className="h-4 w-4" />
+                        Preview Experience
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-[90vh] w-auto p-0 bg-transparent border-0 shadow-none flex items-center justify-center">
+                    <div className="relative w-[50vh] h-[62.5vh] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                        <SlideCanvas 
+                            mode="preview" 
+                            slide={carouselResults[currentCarouselIndex].slides[currentSlide]} 
+                            aspectRatio="portrait"
+                            theme={currentTheme}
+                            layout={carouselResults[currentCarouselIndex].slides[currentSlide].layout}
+                            className="w-full h-full"
+                        />
+                        {/* Overlay Controls for Preview */}
+                        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/50 to-transparent flex justify-between items-center opacity-0 hover:opacity-100 transition-opacity">
+                            <Button 
+                                variant="secondary" size="icon" className="rounded-full h-8 w-8"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCurrentSlide(Math.max(0, currentSlide - 1));
+                                }}
+                                disabled={currentSlide === 0}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="text-white text-xs font-medium drop-shadow-md">
+                                {currentSlide + 1} / {carouselResults[currentCarouselIndex].slides.length}
+                            </span>
+                             <Button 
+                                variant="secondary" size="icon" className="rounded-full h-8 w-8"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCurrentSlide(Math.min(carouselResults[currentCarouselIndex].slides.length - 1, currentSlide + 1));
+                                }}
+                                disabled={currentSlide === carouselResults[currentCarouselIndex].slides.length - 1}
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                </DialogContent>
+              </Dialog>
+              <Button variant="outline" onClick={() => saveCarousel(carouselResults[currentCarouselIndex])}>
                 <Save className="mr-2 h-4 w-4" />
                 Save Project
               </Button>
-              <Button onClick={handleExportImages} disabled={designLoading}>
+              <Button onClick={handleExportPDF} disabled={designLoading} variant="secondary">
                 {designLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Download className="mr-2 h-4 w-4" />}
-                Export All
+                Export PDF
+              </Button>
+              <Button onClick={handleExportImages} disabled={designLoading}>
+                {designLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <ImageIcon className="mr-2 h-4 w-4" />}
+                Export Images
               </Button>
             </div>
           )}
         </div>
 
         {/* Workflow Tabs (Stepper) */}
-        {!carouselResult && (
+        {carouselResults.length === 0 && (
           <Tabs defaultValue="generate" className="w-full">
             <TabsList className="grid w-full grid-cols-2 max-w-md mb-8">
               <TabsTrigger value="generate">Create New</TabsTrigger>
@@ -458,6 +597,22 @@ export default function LinkedInCarousel() {
                       <Textarea value={painPoint} onChange={e => setPainPoint(e.target.value)} />
                     </div>
                     {/* Advanced optional fields could be collapsed */}
+                    
+                    <div className="space-y-2">
+                        <Label>Number of Options (Batch)</Label>
+                        <div className="flex items-center gap-4">
+                            <Input 
+                                type="number" 
+                                min={1} 
+                                max={5} 
+                                value={numberOfCarousels} 
+                                onChange={e => setNumberOfCarousels(parseInt(e.target.value))} 
+                                className="max-w-[100px]"
+                            />
+                            <span className="text-sm text-muted-foreground">Generate multiple variations to choose from.</span>
+                        </div>
+                    </div>
+
                     <Button onClick={handleGenerate} disabled={isGenerating} className="w-full" size="lg">
                       {isGenerating ? <Loader2 className="animate-spin mr-2" /> : <Wand2 className="mr-2 h-4 w-4" />}
                       Generate Content Strategy
@@ -489,7 +644,32 @@ export default function LinkedInCarousel() {
         )}
 
         {/* WORKSPACE AREA */}
-        {carouselResult && (
+        {isGenerating ? (
+           <div className="grid lg:grid-cols-[300px_1fr_300px] gap-8 h-[calc(100vh-200px)]">
+             <Card className="h-full">
+               <CardHeader><Skeleton className="h-4 w-[150px]" /></CardHeader>
+               <CardContent className="space-y-4">
+                 {[1,2,3,4,5].map(i => <Skeleton key={i} className="h-20 w-full" />)}
+               </CardContent>
+             </Card>
+             <div className="h-full flex items-center justify-center bg-accent/20 rounded-xl p-8">
+               <div className="space-y-4 w-full max-w-[600px]">
+                 <Skeleton className="aspect-square w-full rounded-sm" />
+                 <div className="flex justify-between">
+                   <Skeleton className="h-10 w-10 rounded-full" />
+                   <Skeleton className="h-4 w-[200px]" />
+                   <Skeleton className="h-10 w-10 rounded-full" />
+                 </div>
+               </div>
+             </div>
+             <Card className="h-full">
+               <CardHeader><Skeleton className="h-4 w-[150px]" /></CardHeader>
+               <CardContent className="grid grid-cols-2 gap-2">
+                 {[1,2,3,4,5,6].map(i => <Skeleton key={i} className="aspect-square w-full" />)}
+               </CardContent>
+             </Card>
+           </div>
+        ) : carouselResults.length > 0 && (
           <div className="grid lg:grid-cols-[300px_1fr_300px] gap-8 h-[calc(100vh-200px)]">
 
             {/* LEFT PANEL: Slides List */}
@@ -498,7 +678,55 @@ export default function LinkedInCarousel() {
                 <CardTitle className="text-sm">Slides Content</CardTitle>
               </CardHeader>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {carouselResult.slides.map((slide, idx) => (
+                
+                {/* Batch Selector & Theme Control */}
+                {carouselResults.length > 0 && (
+                  <div className="mb-6 space-y-4">
+                     <div className="flex items-center justify-between">
+                        <Label className="text-xs font-semibold uppercase text-muted-foreground">Variations</Label>
+                        <Select value={currentTheme} onValueChange={(v: any) => setCurrentTheme(v)}>
+                            <SelectTrigger className="w-[140px] h-8 text-xs">
+                                <SelectValue placeholder="Theme" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="corporate">Corporate</SelectItem>
+                                <SelectItem value="modern">Modern</SelectItem>
+                                <SelectItem value="bold">Bold</SelectItem>
+                            </SelectContent>
+                        </Select>
+                     </div>
+
+                     {carouselResults.length > 1 && (
+                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                            {carouselResults.map((result, idx) => (
+                                <div 
+                                    key={idx}
+                                    onClick={() => { setCurrentCarouselIndex(idx); setCurrentSlide(0); }}
+                                    className={`relative flex-shrink-0 w-24 aspect-[4/5] rounded-md overflow-hidden cursor-pointer border-2 transition-all group ${currentCarouselIndex === idx ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-primary/50'}`}
+                                >
+                                    <div className="absolute inset-0 pointer-events-none transform scale-[0.25] origin-top-left w-[400%] h-[400%]">
+                                         <SlideCanvas 
+                                            mode="preview" 
+                                            slide={result.slides[0]} 
+                                            aspectRatio="portrait"
+                                            theme={currentTheme}
+                                            layout={result.slides[0].layout}
+                                         />
+                                    </div>
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                                    {currentCarouselIndex === idx && (
+                                        <div className="absolute top-1 right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center text-[10px] text-white">
+                                            ✓
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                     )}
+                  </div>
+                )}
+
+                {carouselResults[currentCarouselIndex].slides.map((slide, idx) => (
                   <div
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
@@ -513,7 +741,7 @@ export default function LinkedInCarousel() {
                 ))}
                 <div className="pt-4 border-t">
                   <h4 className="text-xs font-bold mb-2">Caption</h4>
-                  <p className="text-xs text-muted-foreground line-clamp-6">{carouselResult.caption}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-6">{carouselResults[currentCarouselIndex].caption}</p>
                 </div>
               </div>
             </Card>
@@ -523,16 +751,18 @@ export default function LinkedInCarousel() {
               <div className="w-full max-w-[600px] shadow-2xl rounded-sm overflow-hidden ring-1 ring-slate-900/5">
                 <SlideCanvas
                   mode="preview"
-                  slide={carouselResult.slides[currentSlide]}
+                  slide={carouselResults[currentCarouselIndex].slides[currentSlide]}
                   aspectRatio="square"
+                  theme={currentTheme}
+                  layout={carouselResults[currentCarouselIndex].slides[currentSlide].layout}
                 />
               </div>
 
               {/* Hidden Export Area */}
               <div className="absolute top-0 left-0 overflow-hidden w-0 h-0 opacity-0 pointer-events-none">
-                {carouselResult.slides.map((s, idx) => (
+                {carouselResults[currentCarouselIndex].slides.map((s, idx) => (
                   <div id={`export-slide-${idx}`} key={idx}>
-                    <SlideCanvas mode="export" slide={s} aspectRatio="square" />
+                    <SlideCanvas mode="export" slide={s} aspectRatio="square" theme={currentTheme} layout={s.layout} />
                   </div>
                 ))}
               </div>
@@ -542,8 +772,8 @@ export default function LinkedInCarousel() {
                 <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))} disabled={currentSlide === 0}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-sm font-medium">Slide {currentSlide + 1} of {carouselResult.slides.length}</span>
-                <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.min(carouselResult.slides.length - 1, currentSlide + 1))} disabled={currentSlide === carouselResult.slides.length - 1}>
+                <span className="text-sm font-medium">Slide {currentSlide + 1} of {carouselResults[currentCarouselIndex].slides.length}</span>
+                <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.min(carouselResults[currentCarouselIndex].slides.length - 1, currentSlide + 1))} disabled={currentSlide === carouselResults[currentCarouselIndex].slides.length - 1}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -586,7 +816,7 @@ export default function LinkedInCarousel() {
                   <div className="space-y-4">
                     <p className="text-sm text-muted-foreground">Regenerate the image for this slide using AI.</p>
                     {/* We could add prompt override here */}
-                    <Button className="w-full" variant="secondary">
+                    <Button className="w-full" variant="secondary" onClick={handleRegenerateImage} disabled={designLoading}>
                       <RefreshCw className="mr-2 h-4 w-4" />
                       Regenerate Image
                     </Button>
