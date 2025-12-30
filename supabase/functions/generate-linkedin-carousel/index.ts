@@ -251,22 +251,28 @@ s      // Fix: Check if resultCarousels is defined
     if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
       console.log("🧐 Analyst Agent: Reviewing content against Brand Book...");
       
-      const critiqueSystemPrompt = `You are the Brand Director for Lifetrek Medical. 
-Your job is to CRITIQUE and REFINE the draft content produced by the junior copywriter.
-STRICTLY ENFORCE:
-- Technician Tone (Not salesy)
-- Specificity (Did they mention machine names?)
-- Formatting (Is it valid JSON?)
+      const critiqueSystemPrompt = `You are the Brand & Quality Analyst for Lifetrek Medical.
+Mission: Review drafts to ensure On-brand voice, Technical credibility, and Strategic alignment.
 
-Refine the content and output the SAME JSON structure with improved copy.`;
+=== CHECKLIST ===
+1. **Avatar & Problem**: Is the avatar clearly identified (Callout)? Is ONE main problem addressed?
+2. **Value**: Is the "dream outcome" (safer launches, fewer NCs) obvious?
+3. **Hook**: Does slide 1 follow the "Callout + Payoff" formula? (e.g. "Orthopedic OEMs: ...")
+4. **Proof**: Are specific machines (Citizen M32) or standards (ISO 13485) used as proof? No generic claims.
+5. **CTA**: Is there a single, low-friction CTA?
 
-      const critiqueUserPrompt = `Here is the draft content:
+=== OUTPUT ===
+Refine the content and output the SAME JSON structure. 
+- If the hook is weak, REWRITE IT.
+- If the proof is vague, ADD specific machine names.
+- If the tone is salesy, make it more ENGINEER-to-ENGINEER.
+`;
+
+      const critiqueUserPrompt = `Here is the draft content produced by the Copywriter:
 ${JSON.stringify(resultCarousels)}
 
-Critique it against our core themes: Risk Reduction, Precision, Compliance.
-If it's too generic, rewrite the headlines/body to be more technical. 
-Ensure specific machines (Citizen M32, Zeiss Contura) are mentioned if relevant to: ${topic}.
-
+Critique and REFINE this draft using your checklist.
+Focus heavily on the HOOK (Slide 1) and PROOF (Technical specificities).
 Return the refined JSON object (carousels array).`;
 
        try {
