@@ -33,6 +33,9 @@ const AssetLibrary = lazy(() => import("./pages/AssetLibrary"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const SalesEngineerDashboard = lazy(() => import("./pages/SalesEngineerDashboard"));
 const ContentApproval = lazy(() => import("./pages/ContentApproval"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 
 const queryClient = new QueryClient();
 
@@ -56,6 +59,8 @@ const App = () => (
                     <Route path="/capabilities" element={<Capabilities />} />
                     <Route path="/clients" element={<Clients />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route path="/assessment" element={<Assessment />} />
                     <Route path="/calculator" element={<Calculator />} />
                     <Route path="/admin" element={<Admin />} />
@@ -67,6 +72,7 @@ const App = () => (
                     <Route path="/pitch-deck" element={<PitchDeck />} />
                     <Route path="/ev" element={<SalesEngineerDashboard />} />
                     <Route path="/admin/content-approval" element={<ContentApproval />} />
+                    <Route path="/admin/blog" element={<AdminBlog />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
