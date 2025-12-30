@@ -283,7 +283,7 @@ export default function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/20 to-secondary/30 relative overflow-hidden">
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/10 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div ref={benefitsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("home.whyChoose.title")}</h2>
@@ -292,20 +292,20 @@ export default function Home() {
             </p>
           </div>
           <div ref={benefitsStagger.containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <div className={`glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-primary group stagger-item ${benefitsStagger.visibleItems[0] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-primary to-transparent animate-pulse-glow"></div>
+            <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[0] ? 'visible' : ''}`}>
+              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-primary"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-primary transition-colors">{t("home.benefits.speed")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.speed.text")}</p>
             </div>
 
-            <div className={`glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-accent group stagger-item ${benefitsStagger.visibleItems[1] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-accent to-transparent animate-pulse-glow"></div>
+            <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[1] ? 'visible' : ''}`}>
+              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-accent"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent transition-colors">{t("home.benefits.compliance")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.compliance.text")}</p>
             </div>
 
-            <div className={`glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-accent-orange group stagger-item ${benefitsStagger.visibleItems[2] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-accent-orange to-transparent animate-pulse-glow"></div>
+            <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[2] ? 'visible' : ''}`}>
+              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-accent-orange"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent-orange transition-colors">{t("home.benefits.precision")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.precision.text")}</p>
             </div>
@@ -314,31 +314,36 @@ export default function Home() {
       </section>
 
       {/* Products Preview Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/30 to-background">
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/10 to-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={productsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("products.title")}</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto animate-float"></div>
+            {/* 3-segment underline: blue | green | orange */}
+            <div className="flex justify-center gap-1 mt-2">
+              <div className="w-8 h-1 rounded-full bg-primary"></div>
+              <div className="w-8 h-1 rounded-full bg-accent"></div>
+              <div className="w-8 h-1 rounded-full bg-accent-orange"></div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 max-w-6xl mx-auto mb-12 sm:mb-16">
-            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-primary/20 transition-all hover:-translate-y-2">
+            <div className="group relative overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)] hover:-translate-y-2 transition-all duration-500">
               <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-primary/80 flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.instruments.title")}</h3>
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent/20 transition-all hover:-translate-y-2">
+            <div className="group relative overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)] hover:-translate-y-2 transition-all duration-500">
               <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-gradient-to-t from-accent via-accent/70 to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-accent/80 flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.medical.title")}</h3>
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent/20 transition-all hover:-translate-y-2">
+            <div className="group relative overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)] hover:-translate-y-2 transition-all duration-500">
               <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-gradient-to-t from-accent-orange via-accent to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-accent-orange/80 flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
@@ -346,7 +351,7 @@ export default function Home() {
 
           <div className="text-center">
             <Link to="/products#top">
-              <Button size="lg" className="hover:scale-105 transition-transform shadow-xl">
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary-hover shadow-[var(--shadow-elevated)] rounded-xl px-8">
                 {t("nav.products")}
               </Button>
             </Link>
