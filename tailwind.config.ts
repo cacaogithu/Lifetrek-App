@@ -6,6 +6,16 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    "bg-accent-orange",
+    "text-accent-orange",
+    "border-accent-orange",
+    "from-accent-orange",
+    "to-accent-orange",
+    "via-accent-orange",
+    "hover:text-accent-orange",
+    "group-hover:text-accent-orange",
+  ],
   prefix: "",
   theme: {
     container: {
