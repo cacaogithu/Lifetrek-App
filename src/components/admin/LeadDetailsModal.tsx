@@ -9,7 +9,6 @@ import { LeadPriorityIndicator } from "./LeadPriorityIndicator";
 import { Badge } from "@/components/ui/badge";
 import { AISuggestionCard } from "./AISuggestionCard";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, Building2, Calendar, FileText } from "lucide-react";
@@ -35,16 +34,16 @@ interface Lead {
 }
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
-  dental_implants: "Implantes Dentários",
-  orthopedic_implants: "Implantes Ortopédicos",
-  spinal_implants: "Implantes Espinhais",
-  veterinary_implants: "Implantes Veterinários",
-  surgical_instruments: "Instrumentos Cirúrgicos",
-  micro_precision_parts: "Peças de Micro Precisão",
-  custom_tooling: "Ferramental Customizado",
-  medical_devices: "Dispositivos Médicos",
-  measurement_tools: "Ferramentas de Medição",
-  other_medical: "Outros Médicos",
+  dental_implants: "Dental Implants",
+  orthopedic_implants: "Orthopedic Implants",
+  spinal_implants: "Spinal Implants",
+  veterinary_implants: "Veterinary Implants",
+  surgical_instruments: "Surgical Instruments",
+  micro_precision_parts: "Micro Precision Parts",
+  custom_tooling: "Custom Tooling",
+  medical_devices: "Medical Devices",
+  measurement_tools: "Measurement Tools",
+  other_medical: "Other Medical",
 };
 
 interface LeadDetailsModalProps {
@@ -113,8 +112,8 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
       if (error) throw error;
 
       toast({
-        title: "Lead atualizado",
-        description: "As alterações foram salvas com sucesso.",
+        title: "Lead updated",
+        description: "Changes have been saved successfully.",
       });
 
       onUpdate();
@@ -123,8 +122,8 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
       console.error('Error updating lead:', error);
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Falha ao atualizar lead. Tente novamente.",
+        title: "Error",
+        description: "Failed to update lead. Please try again.",
       });
     } finally {
       setIsSaving(false);
@@ -136,7 +135,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            Detalhes do Lead
+            Lead Details
             <LeadStatusBadge status={lead.status} />
             <LeadPriorityIndicator priority={lead.priority} />
           </DialogTitle>
@@ -145,16 +144,16 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
         <div className="space-y-6">
           {/* Contact Information */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Informações de Contato</h3>
+            <h3 className="font-semibold text-lg">Contact Information</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Nome</Label>
+                <Label className="text-muted-foreground">Name</Label>
                 <p className="font-medium">{lead.name}</p>
               </div>
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
-                  Empresa
+                  Company
                 </Label>
                 <p className="font-medium">{lead.company || '-'}</p>
               </div>
@@ -170,7 +169,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Phone className="h-4 w-4" />
-                  Telefone
+                  Phone
                 </Label>
                 <a href={`tel:${lead.phone}`} className="text-primary hover:underline">
                   {lead.phone}
@@ -185,7 +184,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               <h3 className="font-semibold text-lg">Lead Score</h3>
               <div className="border rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold">Score Total</span>
+                  <span className="text-lg font-semibold">Total Score</span>
                   <Badge 
                     variant={
                       lead.lead_score >= 80 ? "default" : 
@@ -252,10 +251,10 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
 
           {/* Project Details */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Detalhes do Projeto</h3>
+            <h3 className="font-semibold text-lg">Project Details</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 space-y-2">
-                <Label className="text-muted-foreground">Tipos de Projeto</Label>
+                <Label className="text-muted-foreground">Project Types</Label>
                 <div className="flex flex-wrap gap-2">
                   {lead.project_types.map((type) => (
                     <Badge key={type} variant="secondary">
@@ -265,18 +264,18 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Volume Anual</Label>
+                <Label className="text-muted-foreground">Annual Volume</Label>
                 <p className="font-medium">{lead.annual_volume || '-'}</p>
               </div>
               <div className="col-span-2 space-y-2">
-                <Label className="text-muted-foreground">Requisitos Técnicos</Label>
+                <Label className="text-muted-foreground">Technical Requirements</Label>
                 <p className="whitespace-pre-wrap">{lead.technical_requirements}</p>
               </div>
               {lead.message && (
                 <div className="col-span-2 space-y-2">
                   <Label className="text-muted-foreground flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    Mensagem
+                    Message
                   </Label>
                   <p className="whitespace-pre-wrap">{lead.message}</p>
                 </div>
@@ -291,16 +290,16 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  Criado em
+                  Created
                 </Label>
-                <p>{format(new Date(lead.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
+                <p>{format(new Date(lead.created_at), "MM/dd/yyyy 'at' HH:mm")}</p>
               </div>
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  Atualizado em
+                  Updated
                 </Label>
-                <p>{format(new Date(lead.updated_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
+                <p>{format(new Date(lead.updated_at), "MM/dd/yyyy 'at' HH:mm")}</p>
               </div>
             </div>
           </div>
@@ -308,7 +307,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
           {/* AI Suggestions and Research */}
           {!isLoadingAI && (aiSuggestion || companyResearch) && (
             <div className="space-y-4 border-t pt-4">
-              <h3 className="font-semibold text-lg">Inteligência Artificial</h3>
+              <h3 className="font-semibold text-lg">Artificial Intelligence</h3>
               <AISuggestionCard 
                 suggestion={aiSuggestion}
                 research={companyResearch}
@@ -319,7 +318,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
 
           {/* Management */}
           <div className="space-y-4 border-t pt-4">
-            <h3 className="font-semibold text-lg">Gestão</h3>
+            <h3 className="font-semibold text-lg">Management</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Status</Label>
@@ -328,35 +327,35 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new">Novo</SelectItem>
-                    <SelectItem value="contacted">Contatado</SelectItem>
-                    <SelectItem value="in_progress">Em Progresso</SelectItem>
-                    <SelectItem value="quoted">Cotado</SelectItem>
-                    <SelectItem value="closed">Fechado</SelectItem>
-                    <SelectItem value="rejected">Rejeitado</SelectItem>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="contacted">Contacted</SelectItem>
+                    <SelectItem value="in_progress">In Progress</SelectItem>
+                    <SelectItem value="quoted">Quoted</SelectItem>
+                    <SelectItem value="closed">Closed</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Prioridade</Label>
+                <Label>Priority</Label>
                 <Select value={priority} onValueChange={(value: any) => setPriority(value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">Baixa</SelectItem>
-                    <SelectItem value="medium">Média</SelectItem>
-                    <SelectItem value="high">Alta</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Notas Administrativas</Label>
+              <Label>Admin Notes</Label>
               <Textarea
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder="Adicione notas sobre este lead..."
+                placeholder="Add notes about this lead..."
                 rows={4}
               />
             </div>
@@ -365,10 +364,10 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
           {/* Actions */}
           <div className="flex justify-end gap-2 border-t pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
+              Cancel
             </Button>
             <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Salvando..." : "Salvar Alterações"}
+              {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>

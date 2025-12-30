@@ -68,7 +68,7 @@ export const ProductGallery = () => {
       setImages(data || []);
     } catch (error) {
       console.error("Error fetching images:", error);
-      toast.error("Erro ao carregar galeria");
+      toast.error("Error loading gallery");
     } finally {
       setLoading(false);
     }
@@ -107,10 +107,10 @@ export const ProductGallery = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      toast.success("Download iniciado");
+      toast.success("Download started");
     } catch (error) {
       console.error("Error downloading:", error);
-      toast.error("Erro ao baixar imagem");
+      toast.error("Error downloading image");
     }
   };
 
@@ -139,11 +139,11 @@ export const ProductGallery = () => {
       if (dbError) throw dbError;
 
       setImages(prev => prev.filter(img => img.id !== imageId));
-      toast.success("Imagem removida");
+      toast.success("Image removed");
       setImageToDelete(null);
     } catch (error) {
       console.error("Error deleting image:", error);
-      toast.error("Erro ao remover imagem");
+      toast.error("Error removing image");
     }
   };
 
@@ -161,10 +161,10 @@ export const ProductGallery = () => {
           img.id === imageId ? { ...img, is_featured: !currentValue } : img
         )
       );
-      toast.success(!currentValue ? "Marcado como destaque" : "Removido dos destaques");
+      toast.success(!currentValue ? "Marked as featured" : "Removed from featured");
     } catch (error) {
       console.error("Error toggling featured:", error);
-      toast.error("Erro ao atualizar");
+      toast.error("Error updating");
     }
   };
 
@@ -212,19 +212,19 @@ export const ProductGallery = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Categorias</p>
+            <p className="text-sm text-muted-foreground">Categories</p>
             <p className="text-2xl font-bold">{categories.length}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Marcas</p>
+            <p className="text-sm text-muted-foreground">Brands</p>
             <p className="text-2xl font-bold">{brands.length}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Destaques</p>
+            <p className="text-sm text-muted-foreground">Featured</p>
             <p className="text-2xl font-bold">{stats.featured}</p>
           </CardContent>
         </Card>
@@ -235,7 +235,7 @@ export const ProductGallery = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nome, descrição, marca..."
+            placeholder="Search by name, description, brand..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -243,10 +243,10 @@ export const ProductGallery = () => {
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
           <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Categoria" />
+            <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas Categorias</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
             {categories.map(cat => (
               <SelectItem key={cat} value={cat}>{cat}</SelectItem>
             ))}
@@ -254,10 +254,10 @@ export const ProductGallery = () => {
         </Select>
         <Select value={brandFilter} onValueChange={setBrandFilter}>
           <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Marca" />
+            <SelectValue placeholder="Brand" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas Marcas</SelectItem>
+            <SelectItem value="all">All Brands</SelectItem>
             {brands.map(brand => (
               <SelectItem key={brand} value={brand!}>{brand}</SelectItem>
             ))}
@@ -268,7 +268,7 @@ export const ProductGallery = () => {
       {/* Gallery Grid */}
       {filteredImages.length === 0 ? (
         <Card className="p-12 text-center">
-          <p className="text-muted-foreground">Nenhuma imagem encontrada</p>
+          <p className="text-muted-foreground">No images found</p>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -330,7 +330,7 @@ export const ProductGallery = () => {
                     variant="outline"
                     onClick={() => handleEdit(image)}
                   >
-                    Editar
+                    Edit
                   </Button>
                   <Button
                     size="sm"
@@ -364,56 +364,56 @@ export const ProductGallery = () => {
                   beforeImage={selectedImage.original_url}
                   afterImage={selectedImage.enhanced_url}
                   beforeLabel="Original"
-                  afterLabel="Otimizada"
+                  afterLabel="Enhanced"
                 />
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-semibold mb-2">Informações</h4>
+                    <h4 className="font-semibold mb-2">Information</h4>
                     <dl className="space-y-2 text-sm">
                       <div>
-                        <dt className="text-muted-foreground">Categoria</dt>
+                        <dt className="text-muted-foreground">Category</dt>
                         <dd>{selectedImage.category}</dd>
                       </div>
                       {selectedImage.brand && (
                         <div>
-                          <dt className="text-muted-foreground">Marca</dt>
+                          <dt className="text-muted-foreground">Brand</dt>
                           <dd>{selectedImage.brand}</dd>
                         </div>
                       )}
                       {selectedImage.model && (
                         <div>
-                          <dt className="text-muted-foreground">Modelo</dt>
+                          <dt className="text-muted-foreground">Model</dt>
                           <dd>{selectedImage.model}</dd>
                         </div>
                       )}
                       {selectedImage.description && (
                         <div>
-                          <dt className="text-muted-foreground">Descrição</dt>
+                          <dt className="text-muted-foreground">Description</dt>
                           <dd>{selectedImage.description}</dd>
                         </div>
                       )}
                     </dl>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-2">Detalhes Técnicos</h4>
+                    <h4 className="font-semibold mb-2">Technical Details</h4>
                     <dl className="space-y-2 text-sm">
                       <div>
-                        <dt className="text-muted-foreground">Arquivo Original</dt>
+                        <dt className="text-muted-foreground">Original File</dt>
                         <dd className="truncate">{selectedImage.original_filename}</dd>
                       </div>
                       {selectedImage.file_size && (
                         <div>
-                          <dt className="text-muted-foreground">Tamanho</dt>
+                          <dt className="text-muted-foreground">Size</dt>
                           <dd>{(selectedImage.file_size / 1024 / 1024).toFixed(2)} MB</dd>
                         </div>
                       )}
                       <div>
-                        <dt className="text-muted-foreground">Processado em</dt>
-                        <dd>{new Date(selectedImage.created_at).toLocaleDateString('pt-BR')}</dd>
+                        <dt className="text-muted-foreground">Processed on</dt>
+                        <dd>{new Date(selectedImage.created_at).toLocaleDateString()}</dd>
                       </div>
                       {selectedImage.custom_prompt && (
                         <div>
-                          <dt className="text-muted-foreground">Prompt Customizado</dt>
+                          <dt className="text-muted-foreground">Custom Prompt</dt>
                           <dd className="text-xs">{selectedImage.custom_prompt}</dd>
                         </div>
                       )}
@@ -440,15 +440,15 @@ export const ProductGallery = () => {
       <AlertDialog open={!!imageToDelete} onOpenChange={() => setImageToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogTitle>Confirm deletion</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. A imagem será permanentemente removida do storage e do banco de dados.
+              This action cannot be undone. The image will be permanently removed from storage and database.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={() => imageToDelete && deleteImage(imageToDelete)}>
-              Excluir
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

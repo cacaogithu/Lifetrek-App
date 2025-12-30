@@ -368,7 +368,7 @@ export default function Admin() {
             </TabsTrigger>
             <TabsTrigger value="gallery">
               <Images className="mr-2 h-4 w-4" />
-              Galeria
+              Gallery
             </TabsTrigger>
             <TabsTrigger value="linkedin">
               <Presentation className="mr-2 h-4 w-4" />
@@ -388,10 +388,10 @@ export default function Admin() {
                 <div>
                   <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-primary" />
-                    Otimizador de Imagens de Produtos com IA
+                    AI Product Image Optimizer
                   </h3>
                   <p className="text-muted-foreground mb-4">
-                    Transforme suas fotos de produtos em imagens profissionais usando IA avançada
+                    Transform your product photos into professional images using advanced AI
                   </p>
                 </div>
                 <Button 
@@ -399,7 +399,7 @@ export default function Admin() {
                   className="ml-4"
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
-                  Acessar
+                  Access
                 </Button>
               </div>
             </Card>
@@ -464,7 +464,7 @@ export default function Admin() {
             <div className="space-y-6">
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-6 w-6 text-primary" />
-                <h2 className="text-2xl font-bold">Análise Avançada de Leads</h2>
+                <h2 className="text-2xl font-bold">Advanced Lead Analytics</h2>
               </div>
 
               {/* Analytics Filters */}
@@ -496,7 +496,7 @@ export default function Admin() {
             
             <Card>
               <CardHeader>
-                <CardTitle>Filtros</CardTitle>
+                <CardTitle>Filters</CardTitle>
               </CardHeader>
               <CardContent>
                 <LeadFilters
@@ -512,9 +512,9 @@ export default function Admin() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Todos os Leads ({filteredLeads.length})</CardTitle>
+                <CardTitle>All Leads ({filteredLeads.length})</CardTitle>
                 <CardDescription>
-                  Gerencie e acompanhe todos os leads recebidos pelo formulário de contato
+                  Manage and track all leads received through the contact form
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -531,14 +531,14 @@ export default function Admin() {
           <TabsContent value="gallery" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-3xl font-bold">Galeria de Produtos</h2>
+                <h2 className="text-3xl font-bold">Product Gallery</h2>
                 <p className="text-muted-foreground">
-                  Todas as imagens processadas com IA
+                  All AI-processed images
                 </p>
               </div>
               <Button onClick={() => navigate('/admin/image-processor')}>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Processar Novas Imagens
+                Process New Images
               </Button>
             </div>
             
@@ -787,14 +787,14 @@ export default function Admin() {
         <AlertDialog open={!!leadToDelete} onOpenChange={() => setLeadToDelete(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+              <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
               <AlertDialogDescription>
-                Tem certeza que deseja excluir este lead? Esta ação não pode ser desfeita.
+                Are you sure you want to delete this lead? This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteLead}>Excluir</AlertDialogAction>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteLead}>Delete</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
