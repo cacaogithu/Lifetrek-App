@@ -24,7 +24,7 @@ export default function About() {
     description: t("about.values.innovation.text"),
     borderColor: "border-accent-orange",
     iconBg: "bg-accent-orange",
-    textColor: "bg-gradient-to-r from-orange to-orange-500 bg-clip-text text-transparent"
+    textColor: "bg-gradient-to-r from-accent-orange to-accent-orange bg-clip-text text-transparent"
   }, {
     title: t("about.values.ethics"),
     description: t("about.values.ethics.text"),
