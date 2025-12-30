@@ -17,7 +17,7 @@ export const LeadsStats = ({ totalLeads, newLeads, pendingLeads, conversionRate 
       description: "Todos os leads recebidos"
     },
     {
-      title: "Leads Novos",
+      title: "Novos Leads",
       value: newLeads,
       icon: UserPlus,
       description: "Últimas 24 horas"

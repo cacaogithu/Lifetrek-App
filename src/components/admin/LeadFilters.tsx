@@ -35,21 +35,21 @@ export const LeadFilters = ({
           <SelectValue placeholder="Todos os status" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">Todos os status</SelectItem>
+          <SelectItem value="all">Todos os Status</SelectItem>
           <SelectItem value="new">Novo</SelectItem>
           <SelectItem value="contacted">Contatado</SelectItem>
-          <SelectItem value="in_progress">Em Progresso</SelectItem>
-          <SelectItem value="quoted">Cotado</SelectItem>
+          <SelectItem value="in_progress">Em Andamento</SelectItem>
+          <SelectItem value="quoted">Orçado</SelectItem>
           <SelectItem value="closed">Fechado</SelectItem>
           <SelectItem value="rejected">Rejeitado</SelectItem>
         </SelectContent>
       </Select>
       <Select value={priorityFilter} onValueChange={onPriorityChange}>
         <SelectTrigger className="w-full md:w-[180px]">
-          <SelectValue placeholder="Todas prioridades" />
+          <SelectValue placeholder="Todas as prioridades" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">Todas prioridades</SelectItem>
+          <SelectItem value="all">Todas as Prioridades</SelectItem>
           <SelectItem value="low">Baixa</SelectItem>
           <SelectItem value="medium">Média</SelectItem>
           <SelectItem value="high">Alta</SelectItem>

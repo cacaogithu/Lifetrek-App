@@ -9,7 +9,6 @@ import { LeadPriorityIndicator } from "./LeadPriorityIndicator";
 import { Badge } from "@/components/ui/badge";
 import { AISuggestionCard } from "./AISuggestionCard";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, Building2, Calendar, FileText } from "lucide-react";
@@ -40,8 +39,8 @@ const PROJECT_TYPE_LABELS: Record<string, string> = {
   spinal_implants: "Implantes Espinhais",
   veterinary_implants: "Implantes Veterinários",
   surgical_instruments: "Instrumentos Cirúrgicos",
-  micro_precision_parts: "Peças de Micro Precisão",
-  custom_tooling: "Ferramental Customizado",
+  micro_precision_parts: "Micro Precisão",
+  custom_tooling: "Ferramentas Sob Medida",
   medical_devices: "Dispositivos Médicos",
   measurement_tools: "Ferramentas de Medição",
   other_medical: "Outros Médicos",
@@ -182,10 +181,10 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
           {/* Lead Score Section */}
           {lead.lead_score !== null && (
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Lead Score</h3>
+              <h3 className="font-semibold text-lg">Pontuação do Lead</h3>
               <div className="border rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold">Score Total</span>
+                  <span className="text-lg font-semibold">Pontuação Total</span>
                   <Badge 
                     variant={
                       lead.lead_score >= 80 ? "default" : 
@@ -198,7 +197,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                       ""
                     }`}
                   >
-                    {lead.lead_score >= 80 ? "🔥 HOT" : lead.lead_score >= 60 ? "⚡ WARM" : "❄️ COLD"} - {lead.lead_score}/100
+                    {lead.lead_score >= 80 ? "🔥 QUENTE" : lead.lead_score >= 60 ? "⚡ MORNO" : "❄️ FRIO"} - {lead.lead_score}/100
                   </Badge>
                 </div>
                 
@@ -206,41 +205,41 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                   <div className="grid grid-cols-2 gap-3 pt-3 border-t">
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Company Size</span>
+                        <span className="text-muted-foreground">Porte da Empresa</span>
                         <span className="font-medium">{lead.score_breakdown.companySize}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Industry Match</span>
+                        <span className="text-muted-foreground">Match de Indústria</span>
                         <span className="font-medium">{lead.score_breakdown.industryMatch}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Website Quality</span>
+                        <span className="text-muted-foreground">Qualidade do Site</span>
                         <span className="font-medium">{lead.score_breakdown.websiteQuality}/20</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">LinkedIn Presence</span>
+                        <span className="text-muted-foreground">Presença LinkedIn</span>
                         <span className="font-medium">{lead.score_breakdown.linkedinPresence}/20</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Urgency</span>
+                        <span className="text-muted-foreground">Urgência</span>
                         <span className="font-medium">{lead.score_breakdown.urgency}/2</span>
                       </div>
                     </div>
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Project Complexity</span>
+                        <span className="text-muted-foreground">Complexidade do Projeto</span>
                         <span className="font-medium">{lead.score_breakdown.projectComplexity}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Annual Volume</span>
+                        <span className="text-muted-foreground">Volume Anual</span>
                         <span className="font-medium">{lead.score_breakdown.annualVolume}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Technical Detail</span>
+                        <span className="text-muted-foreground">Detalhe Técnico</span>
                         <span className="font-medium">{lead.score_breakdown.technicalDetail}/5</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Form Completeness</span>
+                        <span className="text-muted-foreground">Completude do Form</span>
                         <span className="font-medium">{lead.score_breakdown.completeness}/3</span>
                       </div>
                     </div>
@@ -286,21 +285,21 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
 
           {/* Timeline */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Timeline</h3>
+            <h3 className="font-semibold text-lg">Cronograma</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   Criado em
                 </Label>
-                <p>{format(new Date(lead.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
+                <p>{format(new Date(lead.created_at), "dd/MM/yyyy 'às' HH:mm")}</p>
               </div>
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   Atualizado em
                 </Label>
-                <p>{format(new Date(lead.updated_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
+                <p>{format(new Date(lead.updated_at), "dd/MM/yyyy 'às' HH:mm")}</p>
               </div>
             </div>
           </div>
@@ -319,7 +318,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
 
           {/* Management */}
           <div className="space-y-4 border-t pt-4">
-            <h3 className="font-semibold text-lg">Gestão</h3>
+            <h3 className="font-semibold text-lg">Gerenciamento</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Status</Label>
@@ -330,8 +329,8 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                   <SelectContent>
                     <SelectItem value="new">Novo</SelectItem>
                     <SelectItem value="contacted">Contatado</SelectItem>
-                    <SelectItem value="in_progress">Em Progresso</SelectItem>
-                    <SelectItem value="quoted">Cotado</SelectItem>
+                    <SelectItem value="in_progress">Em Andamento</SelectItem>
+                    <SelectItem value="quoted">Orçado</SelectItem>
                     <SelectItem value="closed">Fechado</SelectItem>
                     <SelectItem value="rejected">Rejeitado</SelectItem>
                   </SelectContent>
@@ -352,11 +351,11 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Notas Administrativas</Label>
+              <Label>Notas do Admin</Label>
               <Textarea
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder="Adicione notas sobre este lead..."
+                placeholder="Adicionar notas sobre este lead..."
                 rows={4}
               />
             </div>

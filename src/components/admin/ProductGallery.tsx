@@ -246,7 +246,7 @@ export const ProductGallery = () => {
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas Categorias</SelectItem>
+            <SelectItem value="all">Todas as Categorias</SelectItem>
             {categories.map(cat => (
               <SelectItem key={cat} value={cat}>{cat}</SelectItem>
             ))}
@@ -257,7 +257,7 @@ export const ProductGallery = () => {
             <SelectValue placeholder="Marca" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas Marcas</SelectItem>
+            <SelectItem value="all">Todas as Marcas</SelectItem>
             {brands.map(brand => (
               <SelectItem key={brand} value={brand!}>{brand}</SelectItem>
             ))}
@@ -364,7 +364,7 @@ export const ProductGallery = () => {
                   beforeImage={selectedImage.original_url}
                   afterImage={selectedImage.enhanced_url}
                   beforeLabel="Original"
-                  afterLabel="Otimizada"
+                  afterLabel="Aprimorada"
                 />
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
@@ -413,7 +413,7 @@ export const ProductGallery = () => {
                       </div>
                       {selectedImage.custom_prompt && (
                         <div>
-                          <dt className="text-muted-foreground">Prompt Customizado</dt>
+                          <dt className="text-muted-foreground">Prompt Personalizado</dt>
                           <dd className="text-xs">{selectedImage.custom_prompt}</dd>
                         </div>
                       )}
@@ -442,7 +442,7 @@ export const ProductGallery = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação não pode ser desfeita. A imagem será permanentemente removida do storage e do banco de dados.
+              Esta ação não pode ser desfeita. A imagem será permanentemente removida do armazenamento e banco de dados.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
