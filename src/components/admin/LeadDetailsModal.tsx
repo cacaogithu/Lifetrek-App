@@ -34,16 +34,16 @@ interface Lead {
 }
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
-  dental_implants: "Dental Implants",
-  orthopedic_implants: "Orthopedic Implants",
-  spinal_implants: "Spinal Implants",
-  veterinary_implants: "Veterinary Implants",
-  surgical_instruments: "Surgical Instruments",
-  micro_precision_parts: "Micro Precision Parts",
-  custom_tooling: "Custom Tooling",
-  medical_devices: "Medical Devices",
-  measurement_tools: "Measurement Tools",
-  other_medical: "Other Medical",
+  dental_implants: "Implantes Dentários",
+  orthopedic_implants: "Implantes Ortopédicos",
+  spinal_implants: "Implantes Espinhais",
+  veterinary_implants: "Implantes Veterinários",
+  surgical_instruments: "Instrumentos Cirúrgicos",
+  micro_precision_parts: "Micro Precisão",
+  custom_tooling: "Ferramentas Sob Medida",
+  medical_devices: "Dispositivos Médicos",
+  measurement_tools: "Ferramentas de Medição",
+  other_medical: "Outros Médicos",
 };
 
 interface LeadDetailsModalProps {
@@ -112,8 +112,8 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
       if (error) throw error;
 
       toast({
-        title: "Lead updated",
-        description: "Changes have been saved successfully.",
+        title: "Lead atualizado",
+        description: "As alterações foram salvas com sucesso.",
       });
 
       onUpdate();
@@ -122,8 +122,8 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
       console.error('Error updating lead:', error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to update lead. Please try again.",
+        title: "Erro",
+        description: "Falha ao atualizar lead. Tente novamente.",
       });
     } finally {
       setIsSaving(false);
@@ -135,7 +135,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            Lead Details
+            Detalhes do Lead
             <LeadStatusBadge status={lead.status} />
             <LeadPriorityIndicator priority={lead.priority} />
           </DialogTitle>
@@ -144,16 +144,16 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
         <div className="space-y-6">
           {/* Contact Information */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Contact Information</h3>
+            <h3 className="font-semibold text-lg">Informações de Contato</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Name</Label>
+                <Label className="text-muted-foreground">Nome</Label>
                 <p className="font-medium">{lead.name}</p>
               </div>
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
-                  Company
+                  Empresa
                 </Label>
                 <p className="font-medium">{lead.company || '-'}</p>
               </div>
@@ -169,7 +169,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Phone className="h-4 w-4" />
-                  Phone
+                  Telefone
                 </Label>
                 <a href={`tel:${lead.phone}`} className="text-primary hover:underline">
                   {lead.phone}
@@ -181,10 +181,10 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
           {/* Lead Score Section */}
           {lead.lead_score !== null && (
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Lead Score</h3>
+              <h3 className="font-semibold text-lg">Pontuação do Lead</h3>
               <div className="border rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold">Total Score</span>
+                  <span className="text-lg font-semibold">Pontuação Total</span>
                   <Badge 
                     variant={
                       lead.lead_score >= 80 ? "default" : 
@@ -197,7 +197,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                       ""
                     }`}
                   >
-                    {lead.lead_score >= 80 ? "🔥 HOT" : lead.lead_score >= 60 ? "⚡ WARM" : "❄️ COLD"} - {lead.lead_score}/100
+                    {lead.lead_score >= 80 ? "🔥 QUENTE" : lead.lead_score >= 60 ? "⚡ MORNO" : "❄️ FRIO"} - {lead.lead_score}/100
                   </Badge>
                 </div>
                 
@@ -205,41 +205,41 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                   <div className="grid grid-cols-2 gap-3 pt-3 border-t">
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Company Size</span>
+                        <span className="text-muted-foreground">Porte da Empresa</span>
                         <span className="font-medium">{lead.score_breakdown.companySize}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Industry Match</span>
+                        <span className="text-muted-foreground">Match de Indústria</span>
                         <span className="font-medium">{lead.score_breakdown.industryMatch}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Website Quality</span>
+                        <span className="text-muted-foreground">Qualidade do Site</span>
                         <span className="font-medium">{lead.score_breakdown.websiteQuality}/20</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">LinkedIn Presence</span>
+                        <span className="text-muted-foreground">Presença LinkedIn</span>
                         <span className="font-medium">{lead.score_breakdown.linkedinPresence}/20</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Urgency</span>
+                        <span className="text-muted-foreground">Urgência</span>
                         <span className="font-medium">{lead.score_breakdown.urgency}/2</span>
                       </div>
                     </div>
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Project Complexity</span>
+                        <span className="text-muted-foreground">Complexidade do Projeto</span>
                         <span className="font-medium">{lead.score_breakdown.projectComplexity}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Annual Volume</span>
+                        <span className="text-muted-foreground">Volume Anual</span>
                         <span className="font-medium">{lead.score_breakdown.annualVolume}/15</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Technical Detail</span>
+                        <span className="text-muted-foreground">Detalhe Técnico</span>
                         <span className="font-medium">{lead.score_breakdown.technicalDetail}/5</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Form Completeness</span>
+                        <span className="text-muted-foreground">Completude do Form</span>
                         <span className="font-medium">{lead.score_breakdown.completeness}/3</span>
                       </div>
                     </div>
@@ -251,10 +251,10 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
 
           {/* Project Details */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Project Details</h3>
+            <h3 className="font-semibold text-lg">Detalhes do Projeto</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 space-y-2">
-                <Label className="text-muted-foreground">Project Types</Label>
+                <Label className="text-muted-foreground">Tipos de Projeto</Label>
                 <div className="flex flex-wrap gap-2">
                   {lead.project_types.map((type) => (
                     <Badge key={type} variant="secondary">
@@ -264,18 +264,18 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Annual Volume</Label>
+                <Label className="text-muted-foreground">Volume Anual</Label>
                 <p className="font-medium">{lead.annual_volume || '-'}</p>
               </div>
               <div className="col-span-2 space-y-2">
-                <Label className="text-muted-foreground">Technical Requirements</Label>
+                <Label className="text-muted-foreground">Requisitos Técnicos</Label>
                 <p className="whitespace-pre-wrap">{lead.technical_requirements}</p>
               </div>
               {lead.message && (
                 <div className="col-span-2 space-y-2">
                   <Label className="text-muted-foreground flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    Message
+                    Mensagem
                   </Label>
                   <p className="whitespace-pre-wrap">{lead.message}</p>
                 </div>
@@ -285,21 +285,21 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
 
           {/* Timeline */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Timeline</h3>
+            <h3 className="font-semibold text-lg">Cronograma</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  Created
+                  Criado em
                 </Label>
-                <p>{format(new Date(lead.created_at), "MM/dd/yyyy 'at' HH:mm")}</p>
+                <p>{format(new Date(lead.created_at), "dd/MM/yyyy 'às' HH:mm")}</p>
               </div>
               <div className="space-y-2">
                 <Label className="text-muted-foreground flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  Updated
+                  Atualizado em
                 </Label>
-                <p>{format(new Date(lead.updated_at), "MM/dd/yyyy 'at' HH:mm")}</p>
+                <p>{format(new Date(lead.updated_at), "dd/MM/yyyy 'às' HH:mm")}</p>
               </div>
             </div>
           </div>
@@ -307,7 +307,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
           {/* AI Suggestions and Research */}
           {!isLoadingAI && (aiSuggestion || companyResearch) && (
             <div className="space-y-4 border-t pt-4">
-              <h3 className="font-semibold text-lg">Artificial Intelligence</h3>
+              <h3 className="font-semibold text-lg">Inteligência Artificial</h3>
               <AISuggestionCard 
                 suggestion={aiSuggestion}
                 research={companyResearch}
@@ -318,7 +318,7 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
 
           {/* Management */}
           <div className="space-y-4 border-t pt-4">
-            <h3 className="font-semibold text-lg">Management</h3>
+            <h3 className="font-semibold text-lg">Gerenciamento</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Status</Label>
@@ -327,35 +327,35 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new">New</SelectItem>
-                    <SelectItem value="contacted">Contacted</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="quoted">Quoted</SelectItem>
-                    <SelectItem value="closed">Closed</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="new">Novo</SelectItem>
+                    <SelectItem value="contacted">Contatado</SelectItem>
+                    <SelectItem value="in_progress">Em Andamento</SelectItem>
+                    <SelectItem value="quoted">Orçado</SelectItem>
+                    <SelectItem value="closed">Fechado</SelectItem>
+                    <SelectItem value="rejected">Rejeitado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Priority</Label>
+                <Label>Prioridade</Label>
                 <Select value={priority} onValueChange={(value: any) => setPriority(value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="low">Baixa</SelectItem>
+                    <SelectItem value="medium">Média</SelectItem>
+                    <SelectItem value="high">Alta</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Admin Notes</Label>
+              <Label>Notas do Admin</Label>
               <Textarea
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder="Add notes about this lead..."
+                placeholder="Adicionar notas sobre este lead..."
                 rows={4}
               />
             </div>
@@ -364,10 +364,10 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
           {/* Actions */}
           <div className="flex justify-end gap-2 border-t pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              Cancelar
             </Button>
             <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? "Salvando..." : "Salvar Alterações"}
             </Button>
           </div>
         </div>

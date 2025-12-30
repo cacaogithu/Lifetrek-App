@@ -14,16 +14,16 @@ interface ProjectTypeDistributionProps {
 }
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
-  dental_implants: "Dental Implants",
-  orthopedic_implants: "Orthopedic Implants",
-  spinal_implants: "Spinal Implants",
-  veterinary_implants: "Veterinary Implants",
-  surgical_instruments: "Surgical Instruments",
-  micro_precision_parts: "Micro Precision Parts",
-  custom_tooling: "Custom Tooling",
-  medical_devices: "Medical Devices",
-  measurement_tools: "Measurement Tools",
-  other_medical: "Other Medical",
+  dental_implants: "Implantes Dentários",
+  orthopedic_implants: "Implantes Ortopédicos",
+  spinal_implants: "Implantes Espinhais",
+  veterinary_implants: "Implantes Veterinários",
+  surgical_instruments: "Instrumentos Cirúrgicos",
+  micro_precision_parts: "Micro Precisão",
+  custom_tooling: "Ferramentas Sob Medida",
+  medical_devices: "Dispositivos Médicos",
+  measurement_tools: "Ferramentas de Medição",
+  other_medical: "Outros Médicos",
 };
 
 export const ProjectTypeDistribution = ({ data }: ProjectTypeDistributionProps) => {
@@ -36,11 +36,11 @@ export const ProjectTypeDistribution = ({ data }: ProjectTypeDistributionProps) 
 
   const chartConfig = {
     total: {
-      label: "Total Leads",
+      label: "Total de Leads",
       color: "hsl(var(--primary))",
     },
     converted: {
-      label: "Converted",
+      label: "Convertidos",
       color: "hsl(var(--success))",
     },
   };
@@ -48,9 +48,9 @@ export const ProjectTypeDistribution = ({ data }: ProjectTypeDistributionProps) 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Distribution by Project Type</CardTitle>
+        <CardTitle>Distribuição por Tipo de Projeto</CardTitle>
         <CardDescription>
-          Lead analysis by project category and conversion rate
+          Análise de leads por categoria de projeto e taxa de conversão
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -72,9 +72,9 @@ export const ProjectTypeDistribution = ({ data }: ProjectTypeDistributionProps) 
                     labelFormatter={(value) => `${value}`}
                     formatter={(value, name) => {
                       if (name === "rate") {
-                        return [`${value}%`, "Conversion Rate"];
+                        return [`${value}%`, "Taxa de Conversão"];
                       }
-                      return [value, name === "total" ? "Total" : "Converted"];
+                      return [value, name === "total" ? "Total" : "Convertidos"];
                     }}
                   />
                 }
