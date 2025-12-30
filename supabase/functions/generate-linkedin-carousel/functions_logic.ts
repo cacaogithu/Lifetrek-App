@@ -134,10 +134,11 @@ const slideSchema = {
         assetId: { type: "string" },
         imageGenerationPrompt: { type: "string" },
         // DESIGNER AGENT FIELDS
-        visual_concept: { type: "string", description: "Designer's visual concept for this slide (e.g. 'Photo of CMM probe...')." },
-        brand_notes: { type: "string", description: "Design notes (e.g. 'Logo top right, heavy contrast')." }
+        visual_concept: { type: "string", description: "Designer's visual concept." },
+        brand_notes: { type: "string", description: "Design notes." },
+        textPlacement: { type: "string", enum: ["clean", "burned_in"], description: "Strategist decision: 'clean' (no text in image, just background) or 'burned_in' (render headline TEXT inside the image)." }
     },
-    required: ["type", "headline", "body", "backgroundType"]
+    required: ["type", "headline", "body", "backgroundType", "textPlacement"]
 };
 
 export function getTools(isBatch: boolean): any[] {
@@ -180,10 +181,7 @@ export function constructSystemPrompt(assetsContext: string): string {
     return `You are the Lead LinkedIn Copywriter AND Visual Designer for Lifetrek Medical.
     
 === YOUR JOB ===
-Turn strategy briefs into killer LinkedIn posts/carousels that:
-- Hook the right people (Callout + Payoff).
-- Teach something concrete (Risk Reduction, Precision).
-- Drive high-quality conversations.
+Turn strategy briefs into killer LinkedIn posts/carousels.
 
 === KNOWLEDGE BASE (COMPANY) ===
 ${COMPANY_CONTEXT}
@@ -194,20 +192,32 @@ ${KILLER_HOOKS_PLAYBOOK}
 === ASSET LIBRARY ===
 ${assetsContext}
 
+=== INSTRUCTIONS (STRATEGIST MODE - "The Manager") ===
+If the user provides a generic THEME (e.g. "Spinal Screws"):
+1.  **Analyze**: Check Company Context.
+2.  **Generate Angles**: Create 3 distinct angles (Myth-Busting, Deep Dive, Social Proof).
+3.  **TEXT STRATEGY**: For each slide, decide on \`textPlacement\`:
+    *   **'clean'**: Standard. Abstract background. Text is overlayed by the frontend web-app.
+    *   **'burned_in'**: "Billboard Mode". The text is PART OF THE IMAGE (e.g. a warning sign, a big bold statement). Use this for Hooks or strong statements.
+
 === INSTRUCTIONS (COPYWRITER MODE) ===
-1. **HOOKS (Slide 1)**: Must use the "Callout + Payoff" formula. (e.g., "Orthopedic OEMs: How to de-risk your spinal screw supply chain").
-2. **BODY**: Clear structure (Problem -> Insight -> Fix). Concrete technical examples (Citizen M32, ISO 13485) without jargon overload.
-3. **TONE**: Senior Engineer/BD. Focus on outcomes (fewer NCs, faster launch), not generic "quality".
-4. **CTA**: Low friction ask tied to the topic.
+1.  **TEXT RULES**:
+    *   **Slide Body**: < 15 words.
+    *   **Post Caption**: Storytelling, rich details.
+2.  **HOOKS**: Callout + Payoff.
 
 === INSTRUCTIONS (DESIGNER MODE) ===
-For each slide, you must also provide:
-- **visual_concept**: What should be shown? (e.g. "Close up of titanium swarf", "CMM text report").
-- **brand_notes**: Layout instructions (e.g. "Use high contrast, logo in corner").
-- **imageGenerationPrompt**: A specific brief for the image generator if no asset is used.
+For each slide, provide \`visual_concept\` and \`imageGenerationPrompt\`.
+**CRITICAL: Respect \`textPlacement\`!**
+- IF \`textPlacement\` == 'clean':
+    *   **Rule**: Create a clean, high-impact visual backdrop.
+    *   **Prompt**: "Abstract medical background, macro titanium, high-end professional aesthetic."
+- IF \`textPlacement\` == 'burned_in':
+    *   **Rule**: RENDER THE HEADLINE TEXT IN THE IMAGE using the font 'Inter' (Bold). Text must be strictly white on dark or black on light.
+    *   **Prompt**: "Professional medical image featuring the text '\${headline}' written on a glossy surface/sign. High contrast High-Contrast Black/White styling."
 
 === RULES ===
 - Use 'backgroundType': 'asset' AND 'assetId' when an asset fits perfectly.
-- Use 'backgroundType': 'generate' when you need a custom visual based on your 'visual_concept'.
+- Use 'backgroundType': 'generate' when you need a custom visual.
 `;
 }
