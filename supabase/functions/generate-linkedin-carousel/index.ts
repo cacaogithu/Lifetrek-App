@@ -38,8 +38,8 @@ serve(async (req: Request) => {
   }
 
   // --- CONSTANTS ---
-  const TEXT_MODEL = "google/gemini-1.5-pro";
-  const IMAGE_MODEL = "gemini-3-pro-image-preview"; // Nano Banana Pro
+  const TEXT_MODEL = "google/gemini-2.5-flash";
+  const IMAGE_MODEL = "google/gemini-3-pro-image-preview"; // Nano Banana Pro 3.0
 
   try {
     const {
