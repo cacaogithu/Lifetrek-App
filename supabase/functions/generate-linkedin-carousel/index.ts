@@ -1,5 +1,9 @@
+// @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// @ts-ignore
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+
+declare const Deno: any;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,7 +31,7 @@ interface Carousel {
 }
 
 // Serve handling...
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -42,12 +46,50 @@ serve(async (req) => {
       ctaAction,
       format = "carousel",
       wantImages = true,
-      numberOfCarousels = 1
+      numberOfCarousels = 1,
+      mode = "generate", // 'generate' or 'image_only'
+      // For image_only mode
+      headline,
+      body: slideBody,
+      imagePrompt
     } = await req.json();
 
     const isBatch = numberOfCarousels > 1;
 
-    console.log("Generating LinkedIn content:", { topic, targetAudience, format, wantImages, numberOfCarousels });
+    console.log("Generating LinkedIn content:", { topic, targetAudience, format, wantImages, numberOfCarousels, mode });
+
+    // --- HANDLE IMAGE ONLY MODE ---
+    if (mode === "image_only") {
+         const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+         if (!LOVABLE_API_KEY) throw new Error("Missing Lovable Key");
+
+         const finalPrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
+HEADLINE: ${headline}
+CONTEXT: ${slideBody}
+VISUAL DESCRIPTION: ${imagePrompt || "Professional medical manufacturing scene"}
+STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
+
+        const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+            model: "google/gemini-2.5-flash-image",
+            messages: [
+                { role: "system", content: "You are a professional medical designer." },
+                { role: "user", content: finalPrompt }
+            ],
+            modalities: ["image", "text"]
+            }),
+        });
+        const imgData = await imgRes.json();
+        const imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+        
+        return new Response(
+            JSON.stringify({ imageUrl }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+    }
+
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -69,7 +111,7 @@ serve(async (req) => {
       console.error("Error fetching assets:", assetsError);
     }
 
-    const assetsContext = assets?.map(a =>
+    const assetsContext = assets?.map((a: any) =>
       `- [${a.category.toUpperCase()}] ID: ${a.id} (Tags: ${a.tags?.join(", ")}, Filename: ${a.filename})`
     ).join("\n") || "No assets available.";
 
@@ -142,6 +184,20 @@ serve(async (req) => {
       const resultCarousels: Carousel[] = isBatch ? (mockResponse.carousels || []) : [mockResponse.carousel!];
       
        // Process Images for ALL carousels (Mock implementation)
+s      // Fix: Check if resultCarousels is defined
+      if (resultCarousels) {
+        for (const carousel of resultCarousels) {
+            if (!carousel) continue;
+            const processedSlides: any[] = [];
+            const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
+
+            for (const slide of slidesToProcess) {
+            processedSlides.push({ ...slide, imageUrl: "https://via.placeholder.com/800x400?text=Mock+Image" });
+            }
+            carousel.slides = processedSlides;
+            // Fix: Assign to carousel with correct type
+            (carousel as any).imageUrls = processedSlides.map((s: any) => s.imageUrl);
+        }
       for (const carousel of resultCarousels) {
         const processedSlides: CarouselSlide[] = [];
         const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
@@ -154,7 +210,7 @@ serve(async (req) => {
       }
 
       return new Response(
-        JSON.stringify(isBatch ? { carousels: resultCarousels } : { carousel: resultCarousels[0] }),
+        JSON.stringify(isBatch ? { carousels: resultCarousels } : { carousel: resultCarousels ? resultCarousels[0] : null }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -187,6 +243,71 @@ serve(async (req) => {
     const args = JSON.parse(toolCall.function.arguments);
 
     // Normalize to array
+    let resultCarousels = isBatch ? args.carousels : [args];
+    if (!resultCarousels) resultCarousels = []; // Safety check
+
+    // --- CRITIQUE LOOP (BRAND ANALYST) ---
+    // Only run if not in mock mode and not image_only
+    if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
+      console.log("🧐 Analyst Agent: Reviewing content against Brand Book...");
+      
+      const critiqueSystemPrompt = `You are the Brand Director for Lifetrek Medical. 
+Your job is to CRITIQUE and REFINE the draft content produced by the junior copywriter.
+STRICTLY ENFORCE:
+- Technician Tone (Not salesy)
+- Specificity (Did they mention machine names?)
+- Formatting (Is it valid JSON?)
+
+Refine the content and output the SAME JSON structure with improved copy.`;
+
+      const critiqueUserPrompt = `Here is the draft content:
+${JSON.stringify(resultCarousels)}
+
+Critique it against our core themes: Risk Reduction, Precision, Compliance.
+If it's too generic, rewrite the headlines/body to be more technical. 
+Ensure specific machines (Citizen M32, Zeiss Contura) are mentioned if relevant to: ${topic}.
+
+Return the refined JSON object (carousels array).`;
+
+       try {
+         const critiqueRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "google/gemini-2.5-flash",
+              messages: [
+                { role: "system", content: critiqueSystemPrompt },
+                { role: "user", content: critiqueUserPrompt }
+              ],
+               // We reuse the same tool definition to force structured output
+               tools: tools,
+               tool_choice: { type: "function", function: { name: isBatch ? "create_batch_carousels" : "create_carousel" } },
+            }),
+         });
+         
+         const critiqueData = await critiqueRes.json();
+         const refinedToolCall = critiqueData.choices?.[0]?.message?.tool_calls?.[0];
+         
+         if (refinedToolCall) {
+            const refinedArgs = JSON.parse(refinedToolCall.function.arguments);
+            const refinedCarousels = isBatch ? refinedArgs.carousels : [refinedArgs];
+            if (refinedCarousels && refinedCarousels.length > 0) {
+               console.log("✅ Content refined by Analyst Agent.");
+               resultCarousels = refinedCarousels;
+            }
+         }
+       } catch (e) {
+         console.warn("⚠️ Analyst Agent critique failed, using original draft:", e);
+       }
+    }
+
+    // Process Images for ALL carousels
+    // Fix: Explicitly type carousel as any to allow adding imageUrls
+    for (const carousel of (resultCarousels as any[])) {
+      if (!carousel) continue;
+
+      const processedSlides = [];
+      const slidesToProcess = format === "single-image" && carousel.slides?.length > 0 ? [carousel.slides[0]] : (carousel.slides || []);
     const resultCarousels: Carousel[] = isBatch ? args.carousels : [args];
 
     // Process Images for ALL carousels
@@ -237,6 +358,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
         processedSlides.push({ ...slide, imageUrl });
       }
       carousel.slides = processedSlides;
+      carousel.imageUrls = processedSlides.map((s: any) => s.imageUrl);
       carousel.imageUrls = processedSlides.map(s => s.imageUrl || "");
     }
 

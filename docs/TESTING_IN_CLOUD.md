@@ -20,13 +20,37 @@ python3 tests/e2e/test_api_response.py
 
 ## Option 2: Prompting Lovable (The Agent)
 
-If you want the Lovable AI to verify things for you, you can use these prompts in the Lovable Chat:
+You can copy and paste these prompts directly into the Lovable chat to have it handle the deployment and verification for you.
 
-### To Deploy & Verify
-> "I've pushed fixes to the Supabase migrations and Edge Functions (including a fix for the `generate-linkedin-carousel` function). Please deploy these changes to the live environment."
+### Prompt 1: Deploy & Verify Function Health
+Use this to ensure the code changes (migrations + edge function) are working correctly in production.
 
-### To specificially test the function (if they have a testing tool)
-> "Can you verify if the `generate-linkedin-carousel` Edge Function is healthy? Please check the latest logs for any 500 errors."
+> "I have merged a PR that fixes Supabase migrations (idempotency) and updates the `generate-linkedin-carousel` function.
+>
+> Please **deploy these changes** to the live environment. After deployment, **verify the `generate-linkedin-carousel` function** by checking:
+> 1. Are there any errors in the Edge Function logs?
+> 2. Can you trigger a test invocation ensuring the `LOVABLE_API_KEY` is correctly picked up (not the mock one)?
+> 3. Confirm that the migration for `content_templates` and `admin_users` was applied successfully without 'relation already exists' errors."
 
-### To implement a cloud-native test
-> "Please create a Deno test file in `supabase/functions/tests/` that invokes the `generate-linkedin-carousel` function and asserts it returns a valid JSON structure. This way we can run the test inside the CI/CD pipeline."
+### Prompt 2: Optimize Carousel Content
+Use this if you want Lovable to improve the *quality* of the AI generation, now that the *infrastructure* is fixed.
+
+> "Now that the `generate-linkedin-carousel` function is working, I want to **optimize the output quality**.
+>
+> Please review the `SYSTEM_PROMPT` in `supabase/functions/generate-linkedin-carousel/functions_logic.ts` (or `index.ts`) and:
+> 1. Improve the instructions for 'Hooks' to be more viral/engaging.
+> 2. Ensure the 'Voice and Tone' strictly enforces short, punchy sentences (under 20 words).
+> 3. Add a rule to formatted output: The 'slides' content should always include a standardized 'Intro' and 'Outro' slide structure.
+>
+> Apply these changes and deploy."
+
+### Prompt 3: Cloud-Native Testing
+Use this if you want Lovable to create a robust testing suite inside the cloud project itself.
+
+> "Please create a **Deno test suite** in `supabase/functions/tests/carousel_test.ts`.
+> The test should:
+> 1. invoke the `generate-linkedin-carousel` function using a real payload.
+> 2. Assert that the returned JSON contains a `carousels` array.
+> 3. Validate that each slide has a 'headline' and 'body'.
+>
+> Once created, please run this test in the CI/CD pipeline to ensure no regressions."

@@ -103,23 +103,23 @@ def run_smart_enrichment():
     print(f"Loaded {len(df)} leads.")
     
     # 1. Targeting Strategy
-    # Priority: High Score (> 4) AND Missing Decision Maker
+    # Priority: High Score (> 50) AND Missing Decision Maker (Lead_Score is 0-100)
     # Ensure Score column is numeric
-    if 'V2_Score' in df.columns:
-        df['V2_Score'] = pd.to_numeric(df['V2_Score'], errors='coerce').fillna(0)
+    if 'Lead_Score' in df.columns:
+        df['Lead_Score'] = pd.to_numeric(df['Lead_Score'], errors='coerce').fillna(0)
     else:
-        df['V2_Score'] = 0
+        df['Lead_Score'] = 0
         
     # Check "Decision_Maker" column
     if 'Decision_Maker' not in df.columns:
         df['Decision_Maker'] = None
         
     missing_dm = df['Decision_Maker'].isna() | (df['Decision_Maker'] == '')
-    high_score = df['V2_Score'] >= 4.0
+    high_score = df['Lead_Score'] >= 50
     
     targets = df[missing_dm & high_score]
     
-    print(f"Found {len(targets)} High Priority Targets (Score >= 4 + Missing DM)")
+    print(f"Found {len(targets)} High Priority Targets (Score >= 50 + Missing DM)")
     
     if len(targets) == 0:
         # Fallback to just missing DM if we have budget

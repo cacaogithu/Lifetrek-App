@@ -52,31 +52,50 @@ FGM Dental Group, Neortho, Ultradent Products, Traumec, Razek, Vincula, CPMH, Ev
 *   **Proof Points**: 30+ years experience, 100% Quality Board, In-House Finishing.
 `;
 
+export const KILLER_HOOKS_PLAYBOOK = `
+# "Killer Hooks" Playbook (Acquisition.com Principles)
+
+## DEFINITION
+A Hook is a mini-sale of attention. It must have two parts:
+1. **The Callout**: Makes the avatar think "That's me" (e.g., "Orthopedic OEMs").
+2. **The Condition for Value**: Implies what they get (e.g., "Reduce recall risk").
+
+## TYPES OF VERBAL HOOKS (MIX THESE)
+1. **Labels**: "{Avatar}, {strong promise}" (e.g., "Dental Clinic Owners: Double your booking rate").
+2. **Yes-Questions**: "Would you {huge benefit} in {short time}?"
+3. **Open Questions**: "Which would you rather be: {A} or {B}?"
+4. **Conditionals**: "If you're a {avatar} and you {do X}, you'll {get Y}."
+5. **Strong Statements**: "The smartest thing you can do today as a {avatar}..."
+6. **Command/Direct**: "Read this if you're tired of {pain}."
+7. **Narratives**: "One day I was {situation} and then {unexpected result}..."
+8. **Lists**: "{N} ways you're {wasting money} as a {avatar}."
+
+## QUALITY CHECKLIST
+*   Does it explicitly call out the audience?
+*   Does it imply a clear benefit or avoided pain?
+*   Is it under 15 words?
+`;
+
 export const LINKEDIN_BEST_PRACTICES = `
-# LinkedIn Best Practices (Summary)
+# LinkedIn Best Practices (Carousel Structure)
 
 ### Carousel Rules
 *   **Slides**: 5-10 slides (7 is sweet spot).
-*   **Dimensions**: 1080x1350px (Portrait) preferred.
-*   **Text**: Minimal text per slide (20-40 words max).
-*   **Contrast**: High contrast, readable fonts (30pt+).
-
-### Hook Formulas
-1.  **The Callout**: "[Audience]: If you're still [doing X], you're losing [specific loss]."
-2.  **The Counter-Intuitive**: "I stopped [common practice] and [unexpected result]."
-3.  **The Risk/Loss**: "[X] is costing [audience] [amount]."
+*   **Dimensions**: 1080x1350px (Portrait).
+*   **Text**: Minimal text (20-40 words max).
+*   **Contrast**: High contrast, readable fonts.
 
 ### Slide Structure
-*   **Slide 1 (Hook)**: One big promise/problem.
-*   **Slides 2-6 (Body)**: One key insight per slide. Numbered.
-*   **Slide 7 (CTA)**: Clear low-friction CTA (e.g., "Comment X").
+*   **Slide 1 (Hook)**: MUST use a formula from the KILLER HOOKS PLAYBOOK.
+*   **Slides 2-6 (Body)**: One key insight per slide.
+*   **Slide 7 (CTA)**: Clear low-friction CTA.
 
 ### Caption Structure
 1.  Hook (first 125 chars)
-2.  Expand on promise (2-3 sentences)
-3.  Tease content ("In this carousel...")
+2.  Expand on promise
+3.  Tease content
 4.  CTA
-5.  Hashtags (#MedTech #ISO13485 #PrecisionMachining)
+5.  Hashtags
 `;
 
 export function constructSystemPrompt(assetsContext: string): string {
@@ -85,6 +104,9 @@ export function constructSystemPrompt(assetsContext: string): string {
 === KNOWLEDGE BASE (COMPANY) ===
 ${COMPANY_CONTEXT}
 
+=== KNOWLEDGE BASE (KILLER HOOKS PLAYBOOK) ===
+${KILLER_HOOKS_PLAYBOOK}
+
 === KNOWLEDGE BASE (LINKEDIN BEST PRACTICES) ===
 ${LINKEDIN_BEST_PRACTICES}
 
@@ -92,14 +114,20 @@ ${LINKEDIN_BEST_PRACTICES}
 You have access to a library of approved brand assets. STRATEGICALLY select an existing asset if it matches the slide content perfectly.
 ${assetsContext}
 
-=== INSTRUCTIONS ===
-1. **Use the Hook Formulas** from the best practices.
-2. **Be Specific**: Use exact machine names (Citizen M32, Zeiss Contura) and client names where relevant to build authority.
-3. **Asset Usage**: Use 'backgroundType': 'asset' AND 'assetId' when an asset fits. Use 'backgroundType': 'generate' AND 'imageGenerationPrompt' when no asset fits.
-4. **Voice**: Technical but accessible, confident.
+=== INSTRUCTIONS (BRAND GUARDIAN MODE) ===
+1. **HOOKS ARE CRITICAL**: Slide 1 MUST be a "Killer Hook" from the playbook. It MUST explicitly call out the target audience and promise value.
+2. **VOICE & TONE**: You are the voice of Lifetrek Medical.
+   - **DO**: Be Technical, Ethical, Confident, and Partnership-Oriented.
+   - **DO**: Use specific machine names (Citizen M32, Zeiss Contura) to prove authority.
+   - **DON'T**: Be "salesy", "hype-y", or use generic marketing fluff. Avoid emojis in headlines.
+   - **FOCUS**: Risk Reduction, Precision, Compliance (ISO 13485), and Speed.
+3. **ASSET USAGE**:
+   - Use 'backgroundType': 'asset' AND 'assetId' when an asset fits the context.
+   - Use 'backgroundType': 'generate' AND 'imageGenerationPrompt' when no asset fits.
+4. **FORMAT**: Ensure the output is valid JSON matching the tool definition.
 
 BATCH GENERATION:
-If requested, generate multiple distinct carousels for a content calendar.
+If requested, generate multiple distinct carousels for a content calendar. Each topic must address a different angle of the brand (e.g., one Technical, one Strategic, one about Compliance).
     `;
 }
 
