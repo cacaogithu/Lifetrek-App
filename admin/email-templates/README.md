@@ -233,3 +233,243 @@ Para dúvidas sobre os templates:
 
 **Última atualização:** Dezembro 2024  
 **Mantido por:** Equipe Lifetrek Medical
+
+---
+
+## 🎯 Sales Engineer Usage Guide (English)
+
+### CRITICAL: Every Email Must Be Personalized
+
+**Never send a template as-is.** Each email requires company-specific research and customization.
+
+### Before Sending ANY Email
+
+Complete this pre-send checklist:
+
+- [ ] **Company Website Reviewed** (5-10 min)
+  - Note 2-3 specific products/services they offer
+  - Identify their target market (OEM, distributor, end-user)
+  - Check for recent news/press releases (Google News search)
+  
+- [ ] **LinkedIn Research** (5 min)
+  - Company page: employee count, recent posts, growth signals
+  - Decision maker profile: background, recent activity, common connections
+  
+- [ ] **Competitive Context** (2 min)
+  - Who are they likely using now?
+  - What pain points might they have?
+  - How does Lifetrek differentiate?
+
+### Template-Specific Personalization Guide
+
+#### Cold Email  - Orthopedic (`cold-email-orthopedic.html`)
+
+**When to use:**
+- Orthopedic implant manufacturers (trauma, spine, joints)
+- Companies producing screws, plates, rods, cages, instruments
+- Lead mentions "orthopedic", "spinal", "trauma" in industry field
+
+**Required personalizations:**
+
+1. **Opening line (Line 1):**
+   - ❌ Generic: "We work with medical device companies..."
+   - ✅ Specific: "I noticed [Company] manufactures titanium pedicle screws for cervical fusion procedures..."
+   - **How to find:** Look at their website product page, note specific product names
+
+2. **Pain point (Mid-section):**
+   -Match their likely challenge:
+     - High-scrap rates with complex geometries → "reduce scrap from 15% to <3%"
+     - Tight tolerances for FDA compliance → "consistently hit ±0.0001" tolerances"
+     - Material challenges (titanium, PEEK) → "extensive experience with biocompatible materials"
+
+3. **Proof point (Value props section):**
+   - If they mention ISO 13485: Highlight "We're ISO 13485 certified..."
+   - If they're OEM: "We've helped OEMs reduce lead times by 40%..."
+   - If they're startup: "We work with emerging companies, flexible MOQs..."
+
+4. **CTA alignment:**
+   - OEM → "Quick call to discuss your production challenges?"
+   - Distributor → "See our capabilities deck for your product line?"
+   - In-house manufacturing → "Review specifications together?"
+
+**Example good personalization:**
+```
+Subject: ISO 13485 partner for titanium spinal screws
+
+Hi [First Name],
+
+I noticed [Company] manufactures polyaxial pedicle screw systems for lumbar fusion - 
+a product line where precision and biocompatibility are non-negotiable.
+
+We're an ISO 13485-certified precision machine shop specializing in complex orthopedic 
+components. We've helped similar OEMs reduce scrap rates from 12% to under 3% on 
+titanium Grade 5 screws with your exact tolerance requirements.
+
+Would a 15-minute call make sense to explore if we could support your production?
+
+Best,
+[Your Name]
+```
+
+---
+
+#### Cold Email - Dental (`cold-email-dental.html`)
+
+**When to use:**
+- Dental implant manufacturers
+- Abutment, healing cap, prosthetic component producers
+- Companies in orthodontics, restorative dentistry
+
+**Key differences from orthopedic:**
+- Focus on biocompatible materials: titanium, zirconia, PEEK
+- Mention surface treatments and coatings if applicable
+- Highlight high-volume production capabilities (dental is often higher volume)
+
+**Personalization points:**
+Same structure as orthopedic, but dental-specific examples:
+- "I saw [Company] produces zirconia abutments for multi-unit restorations..."
+- "implant systems compatible with Nobel Biocare platforms..."
+- "tight tolerances required for proper seating and osseointegration..."
+
+---
+
+#### Follow-Up Template (`follow-up-template.html`)
+
+**When to use:**
+- 5-7 business days after initial email (no response)
+- After a discovery call (confirming next steps)
+- After sending proposal (checking in)
+
+**Personalization strategy:**
+
+1. **Reference previous context:**
+   - "Following up on my email about [specific topic]..."
+   - "After our call about [specific pain point]..."
+
+2. **Add NEW value:**
+   - Share a relevant case study
+   - Link to an article/resource
+   - Offer a specific insight about their market
+
+3. **Keep it SHORT:**
+   - 3-4 sentences max
+   - Single clear CTA
+   - No pressure, just helpfulness
+
+**Example:**
+```
+Subject: Quick follow-up - [Company] spinal screw production
+
+Hi [Name],
+
+Quick follow-up on my email about supporting your titanium screw production.
+
+I just came across this case study of a similar OEM we helped reduce their cycle 
+time by 35% on polyaxial screw assemblies - thought it might be relevant: [link]
+
+Still interested in a brief call to explore fit?
+
+Best,
+[Your Name]
+```
+
+---
+
+#### Reply - Inbound Inquiry (`reply-inbound-inquiry.html`)
+
+**When to use:**
+- Lead contacted you (form submission, email, LinkedIn)
+- Response time: < 4 hours (same business day)
+
+**Key principles:**
+- Thank them for reaching out
+- Acknowledge their specific inquiry
+- Ask clarifying questions to qualify
+- Provide next steps
+
+**Qualifying questions to include:**
+- "What volumes are you currently producing?"
+- "What tolerances are required?"
+- "What material(s)?"
+- "What's driving the inquiry? (new product, current vendor issues, capacity)"
+- "Timeline for decision?"
+
+---
+
+### Common Mistakes to Avoid
+
+❌ **Sending template without personalization**
+- Results in low response rates, damages credibility
+
+❌ **Generic opening lines**
+- "We specialize in medical device manufacturing..." (they don't care about you yet)
+- Better: "I noticed you manufacture X, which requires Y..."
+
+❌ **Too much about Lifetrek, not enough about them**
+- Focus: 70% about their needs/challenges, 30% about how you can help
+
+❌ **Multiple CTAs in one email**
+- Pick ONE: schedule call OR see deck OR answer question
+- Multiple CTAs = analysis paralysis
+
+❌ **Promising timelines/specs without engineering review**
+- Never say "We can deliver in 2 weeks" or "We can hit those tolerances"
+- Always: "Let me review with our engineering team and get back to you"
+
+---
+
+### Response Handling
+
+**If they respond positively:**
+- Reply within 2 hours
+- Suggest 2-3 specific meeting times
+- Share meeting link (Calendly, Google Meet)
+
+**If they respond with objections:**
+- Acknowledge concern
+- Ask clarifying questions
+- Provide relevant case study or proof point
+- Don't argue - seek to understand
+
+**If they say "not interested":**
+- Thank them for responding
+- Ask if you can follow up in 6 months
+- Request feedback (why not a fit?)
+- Update CRM to "Do Not Contact" if they request
+
+**If they ask for pricing:**
+- Never quote without specs
+- Response: "To provide accurate pricing, I'd need to understand your specific requirements. Could we schedule a quick call to review specifications?"
+
+---
+
+### Metrics to Track
+
+For each template, track:
+- **Send volume**
+- **Open rate** (if using tracking)
+- **Response rate** (% who reply)
+- **Meeting rate** (% who schedule call)
+- **Conversion rate** (% who become opportunities)
+
+Use this data to:
+- Identify which templates perform best
+- A/B test subject lines
+- Refine personalization approaches
+- Share learnings with team
+
+---
+
+### Quick Reference: Personalization Variables
+
+Replace these placeholders in every template:
+
+| Placeholder | Example | Where to Find |
+|-------------|---------|---------------|
+| `[NOME]` / `[First Name]` | "John" | LinkedIn, company website team page |
+| `[EMPRESA]` / `[Company]` | "Acme Medical Devices" | Email signature, website |
+| `[Product/line]` | "titanium spinal screws" | Website products page |
+| `[Market/niche]` | "orthopedic trauma systems" | Website, LinkedIn, press releases |
+| `[Certification]` | "ISO 13485" | Website footer, about page |
+| `[Pain point]` | "reducing scrap rates" | Industry knowledge, LinkedIn posts |
+
