@@ -6,8 +6,8 @@ import os
 
 # Configuration
 API_KEY = "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"
-INPUT_FILE = "MASTER_ENRICHED_LEADS.csv"
-OUTPUT_FILE = "MASTER_ENRICHED_LEADS.csv"
+INPUT_FILE = "../../.tmp/MASTER_ENRICHED_LEADS.csv"
+OUTPUT_FILE = "../../.tmp/MASTER_ENRICHED_LEADS.csv"
 MODEL = "sonar"
 
 def query_perplexity(company_name, website):

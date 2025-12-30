@@ -17,8 +17,8 @@ import json
 # Uses the same API key as existing similar scripts
 API_KEY = "AIzaSyD77EtOG-LLgVz_avv_1Q4sq2h6tm3tWuE"
 
-OUTPUT_FILE = "new_leads_advanced.csv"
-MASTER_FILE = "MASTER_ENRICHED_LEADS.csv"
+OUTPUT_FILE = "../../.tmp/new_leads_advanced.csv"
+MASTER_FILE = "../../.tmp/MASTER_ENRICHED_LEADS.csv"
 
 # Major Economic Hubs in Brazil
 CITIES = [
@@ -123,7 +123,7 @@ def search_google_places(query, api_key, max_pages=3):
     return results
 
 # ================= HISTORY TRACKING =================
-HISTORY_FILE = "scraped_queries_history.json"
+HISTORY_FILE = "../../.tmp/scraped_queries_history.json"
 
 def load_history():
     if os.path.exists(HISTORY_FILE):

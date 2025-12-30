@@ -233,6 +233,70 @@ export default function LinkedInCarousel() {
     toast.success("Carousel loaded");
   };
 
+  // Plan Mode State
+  const [plans, setPlans] = useState<CarouselResult[]>([]);
+  const [viewMode, setViewMode] = useState<"input" | "plan_selection" | "editor">("input");
+
+  const handleCreatePlan = async () => {
+    if (!topic || !targetAudience) {
+      toast.error("Please fill in Topic and Target Audience");
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-linkedin-carousel", {
+        body: {
+            topic,
+            targetAudience,
+            painPoint,
+            desiredOutcome,
+            proofPoints,
+            ctaAction,
+            format,
+            numberOfCarousels: 3, // Force 3 options for planning
+            mode: "plan"
+        },
+      });
+      if (error) throw error;
+      setPlans(data.carousels || []);
+      setViewMode("plan_selection");
+      toast.success("Strategy options generated! Choose one to produce.");
+    } catch (error: any) {
+        toast.error("Failed to generate plan");
+    } finally {
+        setIsGenerating(false);
+    }
+  };
+
+  const handleProduceFromPlan = async (selectedPlan: CarouselResult) => {
+     setIsGenerating(true);
+     try {
+       // Use the plan's specific topic/angle
+       const { data, error } = await supabase.functions.invoke("generate-linkedin-carousel", {
+        body: {
+            topic: selectedPlan.topic, // The specific angle from strategist
+            targetAudience: selectedPlan.targetAudience,
+            painPoint, // Keep original context
+            desiredOutcome,
+            proofPoints,
+            ctaAction,
+            format,
+            numberOfCarousels: 1,
+            mode: "generate"
+        },
+      });
+      if (error) throw error;
+      setCarouselResults(data.carousels || [data.carousel]);
+      setViewMode("editor");
+      setCurrentStep("design");
+      toast.success("Carousel produced!");
+     } catch (error) {
+         toast.error("Production failed");
+     } finally {
+         setIsGenerating(false);
+     }
+  };
+
   const handleGenerate = async () => {
     if (!topic || !targetAudience || !painPoint) {
       toast.error("Please fill in at least Topic, Target Audience, and Pain Point");
@@ -264,7 +328,8 @@ export default function LinkedInCarousel() {
       setCurrentCarouselIndex(0);
       setCurrentSlide(0);
       setCurrentStep("design");
-      setCurrentCarouselId(null); // New generation, new ID needed eventually
+      setViewMode("editor");
+      setCurrentCarouselId(null); 
       toast.success(`Generated ${data.carousels?.length || 1} carousel(s)!`);
     } catch (error: any) {
       console.error("Error generating carousel:", error);
@@ -613,10 +678,19 @@ export default function LinkedInCarousel() {
                         </div>
                     </div>
 
-                    <Button onClick={handleGenerate} disabled={isGenerating} className="w-full" size="lg">
-                      {isGenerating ? <Loader2 className="animate-spin mr-2" /> : <Wand2 className="mr-2 h-4 w-4" />}
-                      Gerar Estratégia de Conteúdo
-                    </Button>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Button onClick={handleCreatePlan} disabled={isGenerating} variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 items-center">
+                            {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Layout className="mb-1 h-5 w-5" />}
+                            <span className="font-semibold">Generate Strategy Plan</span>
+                            <span className="text-xs font-normal opacity-70">Review 3 options first</span>
+                        </Button>
+
+                        <Button onClick={handleGenerate} disabled={isGenerating} size="lg" className="h-auto py-4 flex flex-col gap-1 items-center bg-gradient-to-r from-primary to-blue-600 hover:to-blue-700">
+                             {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Wand2 className="mb-1 h-5 w-5" />}
+                             <span className="font-semibold">Quick Generate</span>
+                             <span className="text-xs font-normal opacity-70">Autopilot Mode</span>
+                        </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -668,6 +742,56 @@ export default function LinkedInCarousel() {
                  {[1,2,3,4,5,6].map(i => <Skeleton key={i} className="aspect-square w-full" />)}
                </CardContent>
              </Card>
+           </div>
+        ) : viewMode === "plan_selection" && plans.length > 0 ? (
+           <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-3xl font-bold">Select Strategy</h2>
+                    <p className="text-muted-foreground">The Strategist Agent has proposed 3 distinct angles.</p>
+                  </div>
+                  <Button variant="ghost" onClick={() => setViewMode("input")}>Cancel</Button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 {plans.map((plan, idx) => (
+                    <Card key={idx} className="hover:border-primary cursor-pointer transition-all hover:shadow-lg flex flex-col">
+                       <CardHeader className="bg-muted/30 pb-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <Badge variant="outline" className="bg-background">Option {idx + 1}</Badge>
+                             {idx === 0 && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Recommended</Badge>}
+                          </div>
+                          <CardTitle className="text-xl leading-tight">{plan.topic}</CardTitle>
+                          <CardDescription className="line-clamp-2 mt-2">{plan.targetAudience}</CardDescription>
+                       </CardHeader>
+                       <CardContent className="space-y-6 flex-1 pt-6">
+                          <div className="bg-accent/10 p-3 rounded-lg border border-accent/20">
+                             <span className="text-xs font-bold uppercase text-muted-foreground block mb-1">The Hook</span>
+                             <p className="font-medium text-sm leading-relaxed">"{plan.slides[0]?.headline}"</p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                             <span className="text-xs font-bold uppercase text-muted-foreground">Flow</span>
+                             <div className="space-y-2">
+                                {plan.slides.slice(0, 3).map((s, i) => (
+                                    <div key={i} className="flex items-center gap-2 text-xs">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                                        <span className="truncate opacity-80">{s.headline}</span>
+                                    </div>
+                                ))}
+                                {plan.slides.length > 3 && <div className="text-xs text-muted-foreground pl-3.5 italic">...and {plan.slides.length - 3} more</div>}
+                             </div>
+                          </div>
+                       </CardContent>
+                       <div className="p-6 pt-0 mt-auto">
+                        <Button className="w-full gap-2" onClick={() => handleProduceFromPlan(plan)}>
+                             <Wand2 className="h-4 w-4" />
+                             Select & Produce Assets
+                          </Button>
+                       </div>
+                    </Card>
+                 ))}
+              </div>
            </div>
         ) : carouselResults.length > 0 && (
           <div className="grid lg:grid-cols-[300px_1fr_300px] gap-8 h-[calc(100vh-200px)]">

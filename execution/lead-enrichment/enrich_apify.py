@@ -26,7 +26,7 @@ if not APIFY_TOKEN:
     print("❌ ERROR: APIFY_API_TOKEN not found in .env")
     sys.exit(1)
 
-INPUT_FILE = "MASTER_ENRICHED_LEADS.csv" # Default, can be overridden
+INPUT_FILE = "../../.tmp/MASTER_ENRICHED_LEADS.csv" # Default, can be overridden
 
 def get_batches(lst, n):
     """Yield successive n-sized chunks from lst."""

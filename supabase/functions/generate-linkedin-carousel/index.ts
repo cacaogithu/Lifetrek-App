@@ -28,6 +28,7 @@ interface Carousel {
   targetAudience: string;
   slides: CarouselSlide[];
   imageUrls?: string[];
+  caption?: string; 
 }
 
 // Serve handling...
@@ -35,6 +36,10 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // --- CONSTANTS ---
+  const TEXT_MODEL = "google/gemini-1.5-pro";
+  const IMAGE_MODEL = "gemini-3-pro-image-preview"; // Nano Banana Pro
 
   try {
     const {
@@ -47,16 +52,16 @@ serve(async (req: Request) => {
       format = "carousel",
       wantImages = true,
       numberOfCarousels = 1,
-      mode = "generate", // 'generate' or 'image_only'
+      mode = "generate", // 'generate', 'image_only', 'plan'
       // For image_only mode
       headline,
       body: slideBody,
       imagePrompt
     } = await req.json();
 
-    const isBatch = numberOfCarousels > 1;
+    const isBatch = (numberOfCarousels > 1) || (mode === 'plan'); // Plan mode always implies batch of options
 
-    console.log("Generating LinkedIn content:", { topic, targetAudience, format, wantImages, numberOfCarousels, mode });
+    console.log("Generating LinkedIn content:", { topic, mode, isBatch });
 
     // --- HANDLE IMAGE ONLY MODE ---
     if (mode === "image_only") {
@@ -73,7 +78,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
             method: "POST",
             headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
             body: JSON.stringify({
-            model: "google/gemini-2.5-flash-image",
+            model: IMAGE_MODEL,
             messages: [
                 { role: "system", content: "You are a professional medical designer." },
                 { role: "user", content: finalPrompt }
@@ -107,114 +112,25 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
       .select("id, filename, category, tags")
       .limit(50);
 
-    if (assetsError) {
-      console.error("Error fetching assets:", assetsError);
-    }
-
     const assetsContext = assets?.map((a: any) =>
       `- [${a.category.toUpperCase()}] ID: ${a.id} (Tags: ${a.tags?.join(", ")}, Filename: ${a.filename})`
     ).join("\n") || "No assets available.";
-
-// --- EMBEDDED CONTEXTS ---
 
     // Combined System Prompt with EMBEDDED CONTEXT
     const SYSTEM_PROMPT = constructSystemPrompt(assetsContext);
 
     // Construct User Prompt
-    const userPrompt = constructUserPrompt(topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, isBatch, numberOfCarousels);
+    let userPrompt = constructUserPrompt(topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, isBatch, numberOfCarousels);
+    
+    // --- PLAN MODE ADJUSTMENT ---
+    if (mode === 'plan') {
+        userPrompt += "\n\nIMPORTANT: The user wants to see 3 DISTINCT STRATEGIC ANGLES/PLANS for this topic. Generate 3 variants (Batch Mode) so the user can choose the best one. Focus on the HEADLINES and HOOKS diffentiation.";
+    }
 
     // Define Tools
     const tools = getTools(isBatch);
 
     // Call AI
-    if (LOVABLE_API_KEY === "mock-key-for-testing") {
-      console.log("Using MOCK AI response for local testing");
-      const mockResponse = isBatch ? {
-        carousels: [{
-          topic: topic,
-          targetAudience: targetAudience,
-          slides: [
-            {
-              type: "hook",
-              headline: "Mock Hook Headline",
-              body: "This is a mock slide body for local testing.",
-              imageGenerationPrompt: "Mock image prompt",
-              backgroundType: "generate"
-            },
-            {
-              type: "content",
-              headline: "Mock Content Slide",
-              body: "Simulated content for testing flow.",
-              imageGenerationPrompt: "Mock image 2",
-              backgroundType: "generate"
-            }
-          ]
-        }]
-      } : {
-        carousel: {
-          topic: topic,
-          targetAudience: targetAudience,
-          slides: [
-            {
-              type: "hook",
-              headline: "Mock Hook Headline",
-              body: "This is a mock slide body for local testing.",
-              imageGenerationPrompt: "Mock image prompt",
-              backgroundType: "generate"
-            },
-            {
-              type: "content",
-              headline: "Mock Content Slide",
-              body: "Simulated content for testing flow.",
-              imageGenerationPrompt: "Mock image 2",
-              backgroundType: "generate"
-            }
-          ]
-        }
-      };
-
-      // Mock tool call structure that the code expects
-      const mockToolCall = {
-        function: {
-          arguments: JSON.stringify(mockResponse)
-        }
-      };
-      
-      // Simulate the structure downstream code expects
-      const resultCarousels: Carousel[] = isBatch ? (mockResponse.carousels || []) : [mockResponse.carousel!];
-      
-       // Process Images for ALL carousels (Mock implementation)
-s      // Fix: Check if resultCarousels is defined
-      if (resultCarousels) {
-        for (const carousel of resultCarousels) {
-            if (!carousel) continue;
-            const processedSlides: any[] = [];
-            const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
-
-            for (const slide of slidesToProcess) {
-            processedSlides.push({ ...slide, imageUrl: "https://via.placeholder.com/800x400?text=Mock+Image" });
-            }
-            carousel.slides = processedSlides;
-            // Fix: Assign to carousel with correct type
-            (carousel as any).imageUrls = processedSlides.map((s: any) => s.imageUrl);
-        }
-      for (const carousel of resultCarousels) {
-        const processedSlides: CarouselSlide[] = [];
-        const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
-
-        for (const slide of slidesToProcess) {
-          processedSlides.push({ ...slide, imageUrl: "https://via.placeholder.com/800x400?text=Mock+Image" });
-        }
-        carousel.slides = processedSlides;
-        carousel.imageUrls = processedSlides.map((s) => s.imageUrl || "");
-      }
-
-      return new Response(
-        JSON.stringify(isBatch ? { carousels: resultCarousels } : { carousel: resultCarousels ? resultCarousels[0] : null }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -222,7 +138,7 @@ s      // Fix: Check if resultCarousels is defined
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: TEXT_MODEL,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userPrompt },
@@ -246,27 +162,42 @@ s      // Fix: Check if resultCarousels is defined
     let resultCarousels = isBatch ? args.carousels : [args];
     if (!resultCarousels) resultCarousels = []; // Safety check
 
+    // If Mode is 'plan', we return here WITHOUT generating images or running critique.
+    // The user just wants to see the text plans.
+    if (mode === 'plan') {
+         return new Response(
+            JSON.stringify({ carousels: resultCarousels, mode: 'plan_results' }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+    }
+
     // --- CRITIQUE LOOP (BRAND ANALYST) ---
     // Only run if not in mock mode and not image_only
     if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
       console.log("🧐 Analyst Agent: Reviewing content against Brand Book...");
       
-      const critiqueSystemPrompt = `You are the Brand Director for Lifetrek Medical. 
-Your job is to CRITIQUE and REFINE the draft content produced by the junior copywriter.
-STRICTLY ENFORCE:
-- Technician Tone (Not salesy)
-- Specificity (Did they mention machine names?)
-- Formatting (Is it valid JSON?)
+      const critiqueSystemPrompt = `You are the Brand & Quality Analyst for Lifetrek Medical.
+Mission: Review drafts to ensure On-brand voice, Technical credibility, and Strategic alignment.
 
-Refine the content and output the SAME JSON structure with improved copy.`;
+=== CHECKLIST ===
+1. **Avatar & Problem**: Is the avatar clearly identified (Callout)? Is ONE main problem addressed?
+2. **Value**: Is the "dream outcome" (safer launches, fewer NCs) obvious?
+3. **Hook**: Does slide 1 follow the "Callout + Payoff" formula? (e.g. "Orthopedic OEMs: ...")
+4. **Proof**: Are specific machines (Citizen M32) or standards (ISO 13485) used as proof? No generic claims.
+5. **CTA**: Is there a single, low-friction CTA?
 
-      const critiqueUserPrompt = `Here is the draft content:
+=== OUTPUT ===
+Refine the content and output the SAME JSON structure. 
+- If the hook is weak, REWRITE IT.
+- If the proof is vague, ADD specific machine names.
+- If the tone is salesy, make it more ENGINEER-to-ENGINEER.
+`;
+
+      const critiqueUserPrompt = `Here is the draft content produced by the Copywriter:
 ${JSON.stringify(resultCarousels)}
 
-Critique it against our core themes: Risk Reduction, Precision, Compliance.
-If it's too generic, rewrite the headlines/body to be more technical. 
-Ensure specific machines (Citizen M32, Zeiss Contura) are mentioned if relevant to: ${topic}.
-
+Critique and REFINE this draft using your checklist.
+Focus heavily on the HOOK (Slide 1) and PROOF (Technical specificities).
 Return the refined JSON object (carousels array).`;
 
        try {
@@ -274,7 +205,7 @@ Return the refined JSON object (carousels array).`;
             method: "POST",
             headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
             body: JSON.stringify({
-              model: "google/gemini-2.5-flash",
+              model: TEXT_MODEL,
               messages: [
                 { role: "system", content: critiqueSystemPrompt },
                 { role: "user", content: critiqueUserPrompt }
@@ -308,12 +239,6 @@ Return the refined JSON object (carousels array).`;
 
       const processedSlides = [];
       const slidesToProcess = format === "single-image" && carousel.slides?.length > 0 ? [carousel.slides[0]] : (carousel.slides || []);
-    const resultCarousels: Carousel[] = isBatch ? args.carousels : [args];
-
-    // Process Images for ALL carousels
-    for (const carousel of resultCarousels) {
-      const processedSlides: CarouselSlide[] = [];
-      const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
 
       for (const slide of slidesToProcess) {
         let imageUrl = "";
@@ -330,19 +255,26 @@ Return the refined JSON object (carousels array).`;
         // 2. Generate if needed
         if (!imageUrl && wantImages && (slide.backgroundType === "generate" || !slide.assetId)) {
           try {
-            const imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
+            let imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
 HEADLINE: ${slide.headline}
 CONTEXT: ${slide.body}
 VISUAL DESCRIPTION: ${slide.imageGenerationPrompt || "Professional medical manufacturing scene"}
 STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
 
+            // Handling Text Placement Strategy (Strategist Decision)
+            if (slide.textPlacement === "burned_in") {
+                imagePrompt += `\nIMPORTANT: You MUST render the headline text ("${slide.headline}") CLEARLY and LEGIBLY inside the image. Integrated professional typography.`;
+            } else {
+                imagePrompt += `\nIMPORTANT: Create a clean, abstract background optimized for professional presentation.`;
+            }
+
             const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
               method: "POST",
               headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
               body: JSON.stringify({
-                model: "google/gemini-2.5-flash-image",
+                model: IMAGE_MODEL, // Nano Banana Pro 3.0
                 messages: [
-                  { role: "system", content: "You are a professional medical designer." },
+                  { role: "system", content: "You are an expert design agent using Gemini 3 Pro (Nano Banana). You excel at high-fidelity text rendering." },
                   { role: "user", content: imagePrompt }
                 ],
                 modalities: ["image", "text"]
@@ -358,8 +290,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
         processedSlides.push({ ...slide, imageUrl });
       }
       carousel.slides = processedSlides;
-      carousel.imageUrls = processedSlides.map((s: any) => s.imageUrl);
-      carousel.imageUrls = processedSlides.map(s => s.imageUrl || "");
+      carousel.imageUrls = processedSlides.map((s: any) => s.imageUrl || "");
     }
 
     return new Response(

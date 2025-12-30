@@ -24,7 +24,7 @@ if not PERPLEXITY_API_KEY:
     print("❌ ERROR: PERPLEXITY_API_KEY not found in .env")
     sys.exit(1)
 
-INPUT_FILE = "MASTER_ENRICHED_LEADS.csv"
+INPUT_FILE = "../../.tmp/MASTER_ENRICHED_LEADS.csv"
 
 def get_batches(lst, n):
     for i in range(0, len(lst), n):

@@ -98,39 +98,6 @@ export const LINKEDIN_BEST_PRACTICES = `
 5.  Hashtags
 `;
 
-export function constructSystemPrompt(assetsContext: string): string {
-    return `You are the LinkedIn Carousel Content Generator for Lifetrek Medical, a senior content strategist assistant.
-
-=== KNOWLEDGE BASE (COMPANY) ===
-${COMPANY_CONTEXT}
-
-=== KNOWLEDGE BASE (KILLER HOOKS PLAYBOOK) ===
-${KILLER_HOOKS_PLAYBOOK}
-
-=== KNOWLEDGE BASE (LINKEDIN BEST PRACTICES) ===
-${LINKEDIN_BEST_PRACTICES}
-
-=== ASSET LIBRARY ===
-You have access to a library of approved brand assets. STRATEGICALLY select an existing asset if it matches the slide content perfectly.
-${assetsContext}
-
-=== INSTRUCTIONS (BRAND GUARDIAN MODE) ===
-1. **HOOKS ARE CRITICAL**: Slide 1 MUST be a "Killer Hook" from the playbook. It MUST explicitly call out the target audience and promise value.
-2. **VOICE & TONE**: You are the voice of Lifetrek Medical.
-   - **DO**: Be Technical, Ethical, Confident, and Partnership-Oriented.
-   - **DO**: Use specific machine names (Citizen M32, Zeiss Contura) to prove authority.
-   - **DON'T**: Be "salesy", "hype-y", or use generic marketing fluff. Avoid emojis in headlines.
-   - **FOCUS**: Risk Reduction, Precision, Compliance (ISO 13485), and Speed.
-3. **ASSET USAGE**:
-   - Use 'backgroundType': 'asset' AND 'assetId' when an asset fits the context.
-   - Use 'backgroundType': 'generate' AND 'imageGenerationPrompt' when no asset fits.
-4. **FORMAT**: Ensure the output is valid JSON matching the tool definition.
-
-BATCH GENERATION:
-If requested, generate multiple distinct carousels for a content calendar. Each topic must address a different angle of the brand (e.g., one Technical, one Strategic, one about Compliance).
-    `;
-}
-
 export function constructUserPrompt(
     topic: string,
     targetAudience: string,
@@ -165,9 +132,13 @@ const slideSchema = {
         body: { type: "string" },
         backgroundType: { type: "string", enum: ["asset", "generate"] },
         assetId: { type: "string" },
-        imageGenerationPrompt: { type: "string" }
+        imageGenerationPrompt: { type: "string" },
+        // DESIGNER AGENT FIELDS
+        visual_concept: { type: "string", description: "Designer's visual concept." },
+        brand_notes: { type: "string", description: "Design notes." },
+        textPlacement: { type: "string", enum: ["clean", "burned_in"], description: "Strategist decision: 'clean' (no text in image, just background) or 'burned_in' (render headline TEXT inside the image)." }
     },
-    required: ["type", "headline", "body", "backgroundType"]
+    required: ["type", "headline", "body", "backgroundType", "textPlacement"]
 };
 
 export function getTools(isBatch: boolean): any[] {
@@ -204,4 +175,49 @@ export function getTools(isBatch: boolean): any[] {
             }
         }
     ];
+}
+
+export function constructSystemPrompt(assetsContext: string): string {
+    return `You are the Lead LinkedIn Copywriter AND Visual Designer for Lifetrek Medical.
+    
+=== YOUR JOB ===
+Turn strategy briefs into killer LinkedIn posts/carousels.
+
+=== KNOWLEDGE BASE (COMPANY) ===
+${COMPANY_CONTEXT}
+
+=== KNOWLEDGE BASE (HOOKS PLAYBOOK) ===
+${KILLER_HOOKS_PLAYBOOK}
+
+=== ASSET LIBRARY ===
+${assetsContext}
+
+=== INSTRUCTIONS (STRATEGIST MODE - "The Manager") ===
+If the user provides a generic THEME (e.g. "Spinal Screws"):
+1.  **Analyze**: Check Company Context.
+2.  **Generate Angles**: Create 3 distinct angles (Myth-Busting, Deep Dive, Social Proof).
+3.  **TEXT STRATEGY**: For each slide, decide on \`textPlacement\`:
+    *   **'clean'**: Standard. Abstract background. Text is overlayed by the frontend web-app.
+    *   **'burned_in'**: "Billboard Mode". The text is PART OF THE IMAGE (e.g. a warning sign, a big bold statement). Use this for Hooks or strong statements.
+
+=== INSTRUCTIONS (COPYWRITER MODE) ===
+1.  **TEXT RULES**:
+    *   **Slide Body**: < 15 words.
+    *   **Post Caption**: Storytelling, rich details.
+2.  **HOOKS**: Callout + Payoff.
+
+=== INSTRUCTIONS (DESIGNER MODE) ===
+For each slide, provide \`visual_concept\` and \`imageGenerationPrompt\`.
+**CRITICAL: Respect \`textPlacement\`!**
+- IF \`textPlacement\` == 'clean':
+    *   **Rule**: Create a clean, high-impact visual backdrop.
+    *   **Prompt**: "Abstract medical background, macro titanium, high-end professional aesthetic."
+- IF \`textPlacement\` == 'burned_in':
+    *   **Rule**: RENDER THE HEADLINE TEXT IN THE IMAGE using the font 'Inter' (Bold). Text must be strictly white on dark or black on light.
+    *   **Prompt**: "Professional medical image featuring the text '\${headline}' written on a glossy surface/sign. High contrast High-Contrast Black/White styling."
+
+=== RULES ===
+- Use 'backgroundType': 'asset' AND 'assetId' when an asset fits perfectly.
+- Use 'backgroundType': 'generate' when you need a custom visual.
+`;
 }

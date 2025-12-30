@@ -120,5 +120,5 @@ if __name__ == "__main__":
             
     # Save
     df = pd.DataFrame(all_leads)
-    df.to_csv('new_leads_google_places.csv', index=False)
+    df.to_csv('../../.tmp/new_leads_google_places.csv', index=False)
     print(f"\n✅ Generated {len(df)} NEW leads in new_leads_google_places.csv")
