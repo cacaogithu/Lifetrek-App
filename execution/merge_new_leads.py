@@ -25,14 +25,14 @@ except:
 
 # Source B: Google Places (Advanced)
 try:
-    advanced_df = pd.read_csv('new_leads_advanced.csv')
+    advanced_df = pd.read_csv('../.tmp/new_leads_advanced.csv')
     print(f"Advanced Places Leads loaded: {len(advanced_df)} records")
 except:
     advanced_df = pd.DataFrame()
     
 # Source C: Perplexity Discovery
 try:
-    perplexity_df = pd.read_csv('new_leads_perplexity_discovery.csv')
+    perplexity_df = pd.read_csv('../.tmp/new_leads_perplexity_discovery.csv')
     print(f"Perplexity Discovery Leads loaded: {len(perplexity_df)} records")
 except:
     perplexity_df = pd.DataFrame()

@@ -37,4 +37,4 @@ def analyze_enrichment(file_path):
         print(f"Error analyzing file: {e}")
 
 if __name__ == "__main__":
-    analyze_enrichment('MASTER_ENRICHED_LEADS.csv')
+    analyze_enrichment('../.tmp/MASTER_ENRICHED_LEADS.csv')

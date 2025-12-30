@@ -9,7 +9,7 @@ import json
 import time
 
 API_KEY = "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"
-OUTPUT_FILE = "new_leads_perplexity_discovery.csv"
+OUTPUT_FILE = "../.tmp/new_leads_perplexity_discovery.csv"
 MODEL = "sonar"
 
 # Niche Prompts to discover "Hidden Gems"

@@ -42,7 +42,7 @@ try:
     print(f"✅ Extracted {len(results)} items")
     
     # Save to inspect
-    with open('linkedin_test_results.json', 'w') as f:
+    with open('../.tmp/linkedin_test_results.json', 'w') as f:
         json.dump(results, f, indent=2)
         
 except Exception as e:
