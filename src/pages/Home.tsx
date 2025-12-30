@@ -336,9 +336,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent-orange/20 transition-all hover:-translate-y-2">
+            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent/20 transition-all hover:-translate-y-2">
               <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-gradient-to-t from-accent-orange via-accent-orange/70 to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-gradient-to-t from-accent-orange via-accent to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
