@@ -11,28 +11,28 @@ interface LeadsStatsProps {
 export const LeadsStats = ({ totalLeads, newLeads, pendingLeads, conversionRate }: LeadsStatsProps) => {
   const stats = [
     {
-      title: "Total de Leads",
+      title: "Total Leads",
       value: totalLeads,
       icon: Users,
-      description: "Todos os leads recebidos"
+      description: "All leads received"
     },
     {
-      title: "Leads Novos",
+      title: "New Leads",
       value: newLeads,
       icon: UserPlus,
-      description: "Últimas 24 horas"
+      description: "Last 24 hours"
     },
     {
-      title: "Em Andamento",
+      title: "In Progress",
       value: pendingLeads,
       icon: Clock,
-      description: "Aguardando ação"
+      description: "Awaiting action"
     },
     {
-      title: "Taxa de Conversão",
+      title: "Conversion Rate",
       value: `${conversionRate.toFixed(1)}%`,
       icon: TrendingUp,
-      description: "Leads fechados"
+      description: "Closed leads"
     }
   ];
 

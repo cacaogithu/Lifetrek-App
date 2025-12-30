@@ -8,9 +8,9 @@ interface LeadPriorityIndicatorProps {
 
 export const LeadPriorityIndicator = ({ priority }: LeadPriorityIndicatorProps) => {
   const configs = {
-    low: { icon: ArrowDown, className: 'text-green-500', label: 'Baixa' },
-    medium: { icon: Minus, className: 'text-yellow-500', label: 'Média' },
-    high: { icon: ArrowUp, className: 'text-red-500', label: 'Alta' }
+    low: { icon: ArrowDown, className: 'text-green-500', label: 'Low' },
+    medium: { icon: Minus, className: 'text-yellow-500', label: 'Medium' },
+    high: { icon: ArrowUp, className: 'text-red-500', label: 'High' }
   };
 
   const config = configs[priority] || configs.medium;

@@ -4,7 +4,6 @@ import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadPriorityIndicator } from "./LeadPriorityIndicator";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 interface LeadAnalytics {
   id: string;
@@ -27,45 +26,45 @@ interface LeadAnalyticsTableProps {
 }
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
-  dental_implants: "Implantes Dentários",
-  orthopedic_implants: "Implantes Ortopédicos",
-  spinal_implants: "Implantes Espinhais",
-  veterinary_implants: "Implantes Veterinários",
-  surgical_instruments: "Instrumentos Cirúrgicos",
-  micro_precision_parts: "Micro Precisão",
-  custom_tooling: "Ferramental",
-  medical_devices: "Dispositivos",
-  measurement_tools: "Medição",
-  other_medical: "Outros",
+  dental_implants: "Dental Implants",
+  orthopedic_implants: "Orthopedic Implants",
+  spinal_implants: "Spinal Implants",
+  veterinary_implants: "Veterinary Implants",
+  surgical_instruments: "Surgical Instruments",
+  micro_precision_parts: "Micro Precision",
+  custom_tooling: "Custom Tooling",
+  medical_devices: "Medical Devices",
+  measurement_tools: "Measurement Tools",
+  other_medical: "Other Medical",
 };
 
 export const LeadAnalyticsTable = ({ data, onViewDetails }: LeadAnalyticsTableProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Análise Detalhada de Leads</CardTitle>
+        <CardTitle>Detailed Lead Analytics</CardTitle>
         <CardDescription>
-          Visualização completa dos leads com tipos de projeto e métricas
+          Complete view of leads with project types and metrics
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Empresa</TableHead>
-              <TableHead>Tipos de Projeto</TableHead>
-              <TableHead>Volume Anual</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Company</TableHead>
+              <TableHead>Project Types</TableHead>
+              <TableHead>Annual Volume</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Prioridade</TableHead>
-              <TableHead>Data</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center text-muted-foreground">
-                  Nenhum lead encontrado
+                  No leads found
                 </TableCell>
               </TableRow>
             ) : (
@@ -94,7 +93,7 @@ export const LeadAnalyticsTable = ({ data, onViewDetails }: LeadAnalyticsTablePr
                     <LeadPriorityIndicator priority={lead.priority} />
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {format(new Date(lead.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                    {format(new Date(lead.created_at), "MM/dd/yyyy")}
                   </TableCell>
                 </TableRow>
               ))
