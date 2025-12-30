@@ -104,6 +104,11 @@ def main():
     # 3. Merge Fast Results
     merge_deltas()
     
+    # --- NEW: Advanced Scraper Layers ---
+    run_script('enrich_apify.py')
+    run_script('enrich_perplexity.py')
+    # ------------------------------------
+
     # 4. Advanced Scoring (Intermediate)
     run_script('score_leads_advanced.py')
     

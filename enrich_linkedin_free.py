@@ -93,6 +93,23 @@ def process_row(row):
                         time.sleep(1)  # Rate limit Google searches
         except:
             pass
+            
+    # Fallback: Check simple 'Decision_Maker' string column
+    if not person_url:
+        dm_str = row.get('Decision_Maker')
+        if dm_str and not pd.isna(dm_str) and isinstance(dm_str, str):
+            # Parse first person from "Name - Title; Name 2 - Title 2"
+            first_person = dm_str.split(';')[0].strip()
+            # Remove title if present (split by ' - ' or just take first few words)
+            if ' - ' in first_person:
+                name = first_person.split(' - ')[0].strip()
+            else:
+                name = first_person
+                
+            if name and len(name) > 3:
+                 print(f"   [Fallback] Searching for: {name}")
+                 person_url = search_person_linkedin(name, company)
+                 time.sleep(1)
     
     return idx, verified_company_url, person_url
 

@@ -219,6 +219,61 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     let resultCarousels = isBatch ? args.carousels : [args];
     if (!resultCarousels) resultCarousels = []; // Safety check
 
+    // --- CRITIQUE LOOP (BRAND ANALYST) ---
+    // Only run if not in mock mode and not image_only
+    if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
+      console.log("🧐 Analyst Agent: Reviewing content against Brand Book...");
+      
+      const critiqueSystemPrompt = `You are the Brand Director for Lifetrek Medical. 
+Your job is to CRITIQUE and REFINE the draft content produced by the junior copywriter.
+STRICTLY ENFORCE:
+- Technician Tone (Not salesy)
+- Specificity (Did they mention machine names?)
+- Formatting (Is it valid JSON?)
+
+Refine the content and output the SAME JSON structure with improved copy.`;
+
+      const critiqueUserPrompt = `Here is the draft content:
+${JSON.stringify(resultCarousels)}
+
+Critique it against our core themes: Risk Reduction, Precision, Compliance.
+If it's too generic, rewrite the headlines/body to be more technical. 
+Ensure specific machines (Citizen M32, Zeiss Contura) are mentioned if relevant to: ${topic}.
+
+Return the refined JSON object (carousels array).`;
+
+       try {
+         const critiqueRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "google/gemini-2.5-flash",
+              messages: [
+                { role: "system", content: critiqueSystemPrompt },
+                { role: "user", content: critiqueUserPrompt }
+              ],
+               // We reuse the same tool definition to force structured output
+               tools: tools,
+               tool_choice: { type: "function", function: { name: isBatch ? "create_batch_carousels" : "create_carousel" } },
+            }),
+         });
+         
+         const critiqueData = await critiqueRes.json();
+         const refinedToolCall = critiqueData.choices?.[0]?.message?.tool_calls?.[0];
+         
+         if (refinedToolCall) {
+            const refinedArgs = JSON.parse(refinedToolCall.function.arguments);
+            const refinedCarousels = isBatch ? refinedArgs.carousels : [refinedArgs];
+            if (refinedCarousels && refinedCarousels.length > 0) {
+               console.log("✅ Content refined by Analyst Agent.");
+               resultCarousels = refinedCarousels;
+            }
+         }
+       } catch (e) {
+         console.warn("⚠️ Analyst Agent critique failed, using original draft:", e);
+       }
+    }
+
     // Process Images for ALL carousels
     // Fix: Explicitly type carousel as any to allow adding imageUrls
     for (const carousel of (resultCarousels as any[])) {

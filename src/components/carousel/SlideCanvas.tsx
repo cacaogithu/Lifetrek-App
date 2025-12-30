@@ -19,14 +19,22 @@ interface ThemeColors {
     borderColor: string;
 }
 
+// LIFETREK BRAND IDENTITY (Visual Lock)
+const LIFETREK_COLORS = {
+    DEEP_BLUE: "hsl(210 100% 18%)",
+    TECH_GREEN: "hsl(142 70% 35%)",
+    ACCENT_ORANGE: "hsl(25 90% 52%)",
+    TEXT_WHITE: "hsl(0 0% 100%)",
+};
+
 const THEMES: Record<SlideTheme, ThemeColors> = {
     corporate: {
-        background: "hsl(210 100% 18%)", // Deep Blue
-        text: "hsl(0 0% 100%)",
-        accent: "hsl(142 70% 35%)", // Tech Green
-        accentSecondary: "hsl(25 90% 52%)", // Orange
-        overlay: "linear-gradient(135deg, hsl(210 100% 18%) 0%, hsl(210 100% 28%) 100%)",
-        overlayGradient: "linear-gradient(to top, hsl(210 100% 18% / 0.95) 0%, hsl(210 100% 18% / 0.6) 40%, hsl(210 100% 18% / 0.3) 100%)",
+        background: LIFETREK_COLORS.DEEP_BLUE,
+        text: LIFETREK_COLORS.TEXT_WHITE,
+        accent: LIFETREK_COLORS.TECH_GREEN,
+        accentSecondary: LIFETREK_COLORS.ACCENT_ORANGE,
+        overlay: `linear-gradient(135deg, ${LIFETREK_COLORS.DEEP_BLUE} 0%, hsl(210 100% 28%) 100%)`,
+        overlayGradient: `linear-gradient(to top, ${LIFETREK_COLORS.DEEP_BLUE.replace(")", " / 0.95)")} 0%, ${LIFETREK_COLORS.DEEP_BLUE.replace(")", " / 0.6)")} 40%, ${LIFETREK_COLORS.DEEP_BLUE.replace(")", " / 0.3)")} 100%)`,
         badgeBg: "hsl(0 0% 100% / 0.15)",
         badgeText: "white",
         cardBg: "hsl(0 0% 100% / 0.15)",
