@@ -169,7 +169,7 @@ export default function LinkedInCarousel() {
         format: result.format || format,
         image_urls: result.slides.map(s => s.imageUrl || ""),
         generation_settings: {
-          model: "google/gemini-2.5-flash-image",
+          model: "google/gemini-3-pro-image-preview",
           timestamp: new Date().toISOString()
         }
       };
