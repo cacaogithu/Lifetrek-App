@@ -31,9 +31,9 @@ interface AISuggestionCardProps {
 }
 
 const priorityConfig = {
-  low: { color: "bg-blue-500/10 text-blue-700", label: "Low" },
-  medium: { color: "bg-yellow-500/10 text-yellow-700", label: "Medium" },
-  high: { color: "bg-red-500/10 text-red-700", label: "High" },
+  low: { color: "bg-blue-500/10 text-blue-700", label: "Baixa" },
+  medium: { color: "bg-yellow-500/10 text-yellow-700", label: "Média" },
+  high: { color: "bg-red-500/10 text-red-700", label: "Alta" },
 };
 
 export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggestionCardProps) => {
@@ -45,15 +45,15 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
       toast({
-        title: "Copied!",
-        description: `${field} copied to clipboard`,
+        title: "Copiado!",
+        description: `${field} copiado para a área de transferência`,
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to copy to clipboard",
+        title: "Erro",
+        description: "Falha ao copiar para a área de transferência",
       });
     }
   };
@@ -77,30 +77,30 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Brain className="h-5 w-5 text-blue-600" />
-              Company Research
+              Pesquisa da Empresa
             </CardTitle>
-            <CardDescription>Automatically collected information</CardDescription>
+            <CardDescription>Informações coletadas automaticamente</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Domain</p>
+              <p className="text-sm font-medium text-muted-foreground">Domínio</p>
               <p className="text-sm">{research.domain}</p>
             </div>
             {research.company_name && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Company Name</p>
+                <p className="text-sm font-medium text-muted-foreground">Nome da Empresa</p>
                 <p className="text-sm">{research.company_name}</p>
               </div>
             )}
             {research.industry && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Industry</p>
+                <p className="text-sm font-medium text-muted-foreground">Indústria</p>
                 <Badge variant="secondary">{research.industry}</Badge>
               </div>
             )}
             {research.linkedin_info && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">LinkedIn Information</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Informações do LinkedIn</p>
                 <p className="text-sm text-muted-foreground line-clamp-3">{research.linkedin_info}</p>
               </div>
             )}
@@ -116,10 +116,10 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Brain className="h-5 w-5 text-purple-600" />
-                  AI Response Suggestion
+                  Sugestão de Resposta IA
                 </CardTitle>
                 <CardDescription>
-                  Generated on {format(new Date(suggestion.created_at), "MM/dd/yyyy 'at' HH:mm")}
+                  Gerado em {format(new Date(suggestion.created_at), "dd/MM/yyyy 'às' HH:mm")}
                 </CardDescription>
               </div>
               <Badge className={priorityConfig[suggestion.priority_level].color}>
@@ -131,13 +131,13 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
             {/* Subject Line */}
             <div className="bg-white p-4 rounded-lg border">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-medium text-muted-foreground">SUGGESTED SUBJECT</p>
+                <p className="text-xs font-medium text-muted-foreground">ASSUNTO SUGERIDO</p>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(suggestion.subject_line, "Subject")}
+                  onClick={() => copyToClipboard(suggestion.subject_line, "Assunto")}
                 >
-                  {copiedField === "Subject" ? (
+                  {copiedField === "Assunto" ? (
                     <CheckCircle className="h-4 w-4 text-green-600" />
                   ) : (
                     <Copy className="h-4 w-4" />
@@ -150,13 +150,13 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
             {/* Email Body */}
             <div className="bg-white p-4 rounded-lg border">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-medium text-muted-foreground">EMAIL BODY</p>
+                <p className="text-xs font-medium text-muted-foreground">CORPO DO EMAIL</p>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(suggestion.email_body, "Email Body")}
+                  onClick={() => copyToClipboard(suggestion.email_body, "Corpo do Email")}
                 >
-                  {copiedField === "Email Body" ? (
+                  {copiedField === "Corpo do Email" ? (
                     <CheckCircle className="h-4 w-4 text-green-600" />
                   ) : (
                     <Copy className="h-4 w-4" />
@@ -173,7 +173,7 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
               <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
                 <div className="flex items-center gap-2 mb-3">
                   <Lightbulb className="h-4 w-4 text-amber-600" />
-                  <p className="text-xs font-semibold text-amber-900">KEY POINTS TO HIGHLIGHT</p>
+                  <p className="text-xs font-semibold text-amber-900">PONTOS-CHAVE A DESTACAR</p>
                 </div>
                 <ul className="space-y-2">
                   {suggestion.key_points.map((point, index) => (
@@ -190,14 +190,14 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
             <div className="flex items-center justify-between pt-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                <span>Suggested follow-up:</span>
+                <span>Follow-up sugerido:</span>
                 <Badge variant="outline">
-                  {format(new Date(suggestion.follow_up_date), "MM/dd/yyyy")}
+                  {format(new Date(suggestion.follow_up_date), "dd/MM/yyyy")}
                 </Badge>
               </div>
               <Button onClick={openEmailClient} className="gap-2">
                 <AlertCircle className="h-4 w-4" />
-                Open in Email
+                Abrir no Email
               </Button>
             </div>
           </CardContent>

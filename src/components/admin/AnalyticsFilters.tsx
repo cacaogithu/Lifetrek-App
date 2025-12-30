@@ -21,17 +21,17 @@ interface AnalyticsFiltersProps {
 }
 
 const PROJECT_TYPE_OPTIONS = [
-  { value: "all", label: "All Types" },
-  { value: "dental_implants", label: "Dental Implants" },
-  { value: "orthopedic_implants", label: "Orthopedic Implants" },
-  { value: "spinal_implants", label: "Spinal Implants" },
-  { value: "veterinary_implants", label: "Veterinary Implants" },
-  { value: "surgical_instruments", label: "Surgical Instruments" },
-  { value: "micro_precision_parts", label: "Micro Precision Parts" },
-  { value: "custom_tooling", label: "Custom Tooling" },
-  { value: "medical_devices", label: "Medical Devices" },
-  { value: "measurement_tools", label: "Measurement Tools" },
-  { value: "other_medical", label: "Other Medical" },
+  { value: "all", label: "Todos os Tipos" },
+  { value: "dental_implants", label: "Implantes Dentários" },
+  { value: "orthopedic_implants", label: "Implantes Ortopédicos" },
+  { value: "spinal_implants", label: "Implantes Espinhais" },
+  { value: "veterinary_implants", label: "Implantes Veterinários" },
+  { value: "surgical_instruments", label: "Instrumentos Cirúrgicos" },
+  { value: "micro_precision_parts", label: "Micro Precisão" },
+  { value: "custom_tooling", label: "Ferramentas Sob Medida" },
+  { value: "medical_devices", label: "Dispositivos Médicos" },
+  { value: "measurement_tools", label: "Ferramentas de Medição" },
+  { value: "other_medical", label: "Outros Médicos" },
 ];
 
 export const AnalyticsFilters = ({
@@ -49,7 +49,7 @@ export const AnalyticsFilters = ({
       <CardContent className="pt-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
-            <Label>Period</Label>
+            <Label>Período</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -63,14 +63,14 @@ export const AnalyticsFilters = ({
                   {dateRange?.from ? (
                     dateRange.to ? (
                       <>
-                        {format(dateRange.from, "MM/dd/yy")} -{" "}
-                        {format(dateRange.to, "MM/dd/yy")}
+                        {format(dateRange.from, "dd/MM/yy")} -{" "}
+                        {format(dateRange.to, "dd/MM/yy")}
                       </>
                     ) : (
-                      format(dateRange.from, "MM/dd/yyyy")
+                      format(dateRange.from, "dd/MM/yyyy")
                     )
                   ) : (
-                    <span>Select period</span>
+                    <span>Selecionar período</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -89,7 +89,7 @@ export const AnalyticsFilters = ({
           </div>
 
           <div className="space-y-2">
-            <Label>Project Type</Label>
+            <Label>Tipo de Projeto</Label>
             <Select value={projectType} onValueChange={onProjectTypeChange}>
               <SelectTrigger>
                 <SelectValue />
@@ -111,28 +111,28 @@ export const AnalyticsFilters = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="new">New</SelectItem>
-                <SelectItem value="contacted">Contacted</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="quoted">Quoted</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="new">Novo</SelectItem>
+                <SelectItem value="contacted">Contatado</SelectItem>
+                <SelectItem value="in_progress">Em Andamento</SelectItem>
+                <SelectItem value="quoted">Orçado</SelectItem>
+                <SelectItem value="closed">Fechado</SelectItem>
+                <SelectItem value="rejected">Rejeitado</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>Priority</Label>
+            <Label>Prioridade</Label>
             <Select value={priority} onValueChange={onPriorityChange}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="all">Todas</SelectItem>
+                <SelectItem value="low">Baixa</SelectItem>
+                <SelectItem value="medium">Média</SelectItem>
+                <SelectItem value="high">Alta</SelectItem>
               </SelectContent>
             </Select>
           </div>

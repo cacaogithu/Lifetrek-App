@@ -7,16 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
-  dental_implants: "Dental Implants",
-  orthopedic_implants: "Orthopedic Implants",
-  spinal_implants: "Spinal Implants",
-  veterinary_implants: "Veterinary Implants",
-  surgical_instruments: "Surgical Instruments",
-  micro_precision_parts: "Micro Precision",
-  custom_tooling: "Custom Tooling",
-  medical_devices: "Medical Devices",
-  measurement_tools: "Measurement Tools",
-  other_medical: "Other Medical",
+  dental_implants: "Implantes Dentários",
+  orthopedic_implants: "Implantes Ortopédicos",
+  spinal_implants: "Implantes Espinhais",
+  veterinary_implants: "Implantes Veterinários",
+  surgical_instruments: "Instrumentos Cirúrgicos",
+  micro_precision_parts: "Micro Precisão",
+  custom_tooling: "Ferramentas Sob Medida",
+  medical_devices: "Dispositivos Médicos",
+  measurement_tools: "Ferramentas de Medição",
+  other_medical: "Outros Médicos",
 };
 
 interface Lead {
@@ -51,23 +51,23 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Score</TableHead>
-            <TableHead>Priority</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Company</TableHead>
+            <TableHead>Pontuação</TableHead>
+            <TableHead>Prioridade</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>Empresa</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Project Types</TableHead>
+            <TableHead>Telefone</TableHead>
+            <TableHead>Tipos de Projeto</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>Data</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {leads.length === 0 ? (
             <TableRow>
               <TableCell colSpan={10} className="text-center text-muted-foreground">
-                No leads found
+                Nenhum lead encontrado
               </TableCell>
             </TableRow>
           ) : (
@@ -115,7 +115,7 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
                   <LeadStatusBadge status={lead.status} />
                 </TableCell>
                 <TableCell>
-                  {format(new Date(lead.created_at), "MM/dd/yyyy HH:mm")}
+                  {format(new Date(lead.created_at), "dd/MM/yyyy HH:mm")}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
