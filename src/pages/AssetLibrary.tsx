@@ -32,7 +32,7 @@ export default function AssetLibrary() {
 
     const fetchAssets = async () => {
         try {
-            let query = supabase.from("content_assets" as any).select("*").order("created_at", { ascending: false });
+            let query = supabase.from("content_assets").select("*").order("created_at", { ascending: false });
             const { data, error } = await query;
 
             if (error) throw error;
@@ -76,7 +76,7 @@ export default function AssetLibrary() {
 
             // Insert into DB
             const { error: dbError } = await supabase
-                .from("content_assets" as any)
+                .from("content_assets")
                 .insert([{
                     filename: fileName,
                     file_path: fileName, // Using filename as path for simplicity in bucket root
@@ -102,7 +102,7 @@ export default function AssetLibrary() {
         try {
             // Delete from DB
             const { error: dbError } = await supabase
-                .from("content_assets" as any)
+                .from("content_assets")
                 .delete()
                 .eq("id", id);
 
@@ -129,8 +129,8 @@ export default function AssetLibrary() {
     };
 
     const filteredAssets = assets.filter(asset =>
-        asset.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        asset.category.toLowerCase().includes(searchTerm.toLowerCase())
+        asset.filename?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (asset.category || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
