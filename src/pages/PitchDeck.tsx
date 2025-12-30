@@ -594,6 +594,13 @@ const PitchDeck = () => {
     }
   }, [currentSlide]);
 
+  const goToSlide = useCallback((index: number) => {
+    if (index !== currentSlide && index >= 0 && index < slides.length) {
+      setDirection(index > currentSlide ? 1 : -1);
+      setCurrentSlide(index);
+    }
+  }, [currentSlide, slides.length]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
