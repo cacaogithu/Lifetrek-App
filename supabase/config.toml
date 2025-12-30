@@ -1,4 +1,4 @@
-project_id = "vthutqgjrldmarqgxcou"
+project_id = "iijkbhiqcsvtnfernrbs"
 
 [functions.send-contact-email]
 verify_jwt = false
@@ -28,4 +28,7 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.generate-blog-post]
+verify_jwt = true
+
+[functions.sales-engineer-agent]
 verify_jwt = true

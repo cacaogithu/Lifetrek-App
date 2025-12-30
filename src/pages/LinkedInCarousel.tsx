@@ -41,6 +41,26 @@ interface CarouselResult {
   imageUrls?: string[]; // Legacy support
 }
 
+interface CarouselHistoryItem {
+  id: string;
+  admin_user_id: string;
+  topic: string;
+  target_audience: string;
+  pain_point: string | null;
+  desired_outcome: string | null;
+  proof_points: string | null;
+  cta_action: string | null;
+  slides: unknown;
+  caption: string;
+  format: string | null;
+  image_urls: unknown;
+  is_favorite: boolean | null;
+  created_at: string;
+  updated_at: string;
+  generation_settings: unknown;
+  performance_metrics: unknown;
+}
+
 export default function LinkedInCarousel() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -61,7 +81,7 @@ export default function LinkedInCarousel() {
   const [carouselResults, setCarouselResults] = useState<CarouselResult[]>([]);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0); 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
+  const [carouselHistory, setCarouselHistory] = useState<CarouselHistoryItem[]>([]);
   const [carouselToDelete, setCarouselToDelete] = useState<string | null>(null);
   const [currentCarouselId, setCurrentCarouselId] = useState<string | null>(null);
   
@@ -134,7 +154,7 @@ export default function LinkedInCarousel() {
   const fetchAssets = async () => {
     try {
       const { data, error } = await supabase
-        .from("content_assets" as any)
+        .from("content_assets")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -169,7 +189,7 @@ export default function LinkedInCarousel() {
         format: result.format || format,
         image_urls: result.slides.map(s => s.imageUrl || ""),
         generation_settings: {
-          model: "google/gemini-2.5-flash-image",
+          model: "google/gemini-3-pro-image-preview",
           timestamp: new Date().toISOString()
         }
       };
@@ -230,7 +250,8 @@ export default function LinkedInCarousel() {
     setCurrentSlide(0);
     setCurrentCarouselId(carousel.id);
     setCurrentStep("design");
-    toast.success("Carousel loaded");
+    setViewMode("editor");
+    toast.success("Carrossel carregado");
   };
 
   // Plan Mode State
@@ -508,9 +529,10 @@ export default function LinkedInCarousel() {
     }
   };
 
-  const assetsByCategory = availableAssets.reduce((acc: any, asset) => {
-    if (!acc[asset.category]) acc[asset.category] = [];
-    acc[asset.category].push(asset);
+  const assetsByCategory = availableAssets.reduce<Record<string, typeof availableAssets>>((acc, asset) => {
+    const category = asset.category || "uncategorized";
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(asset);
     return acc;
   }, {});
 
@@ -681,14 +703,14 @@ export default function LinkedInCarousel() {
                     <div className="grid grid-cols-2 gap-4">
                         <Button onClick={handleCreatePlan} disabled={isGenerating} variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 items-center">
                             {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Layout className="mb-1 h-5 w-5" />}
-                            <span className="font-semibold">Generate Strategy Plan</span>
-                            <span className="text-xs font-normal opacity-70">Review 3 options first</span>
+                            <span className="font-semibold">Gerar Plano Estratégico</span>
+                            <span className="text-xs font-normal opacity-70">Revisar 3 opções primeiro</span>
                         </Button>
 
                         <Button onClick={handleGenerate} disabled={isGenerating} size="lg" className="h-auto py-4 flex flex-col gap-1 items-center bg-gradient-to-r from-primary to-blue-600 hover:to-blue-700">
                              {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Wand2 className="mb-1 h-5 w-5" />}
-                             <span className="font-semibold">Quick Generate</span>
-                             <span className="text-xs font-normal opacity-70">Autopilot Mode</span>
+                             <span className="font-semibold">Geração Rápida</span>
+                             <span className="text-xs font-normal opacity-70">Modo Automático</span>
                         </Button>
                     </div>
                   </div>
@@ -745,12 +767,12 @@ export default function LinkedInCarousel() {
            </div>
         ) : viewMode === "plan_selection" && plans.length > 0 ? (
            <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h2 className="text-3xl font-bold">Select Strategy</h2>
-                    <p className="text-muted-foreground">The Strategist Agent has proposed 3 distinct angles.</p>
-                  </div>
-                  <Button variant="ghost" onClick={() => setViewMode("input")}>Cancel</Button>
+               <div className="flex items-center justify-between mb-8">
+                   <div>
+                     <h2 className="text-3xl font-bold">Selecionar Estratégia</h2>
+                     <p className="text-muted-foreground">O Agente Estrategista propôs 3 ângulos distintos.</p>
+                   </div>
+                  <Button variant="ghost" onClick={() => setViewMode("input")}>Cancelar</Button>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -758,20 +780,20 @@ export default function LinkedInCarousel() {
                     <Card key={idx} className="hover:border-primary cursor-pointer transition-all hover:shadow-lg flex flex-col">
                        <CardHeader className="bg-muted/30 pb-4">
                           <div className="flex justify-between items-start mb-2">
-                            <Badge variant="outline" className="bg-background">Option {idx + 1}</Badge>
-                             {idx === 0 && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Recommended</Badge>}
+                             <Badge variant="outline" className="bg-background">Opção {idx + 1}</Badge>
+                              {idx === 0 && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Recomendado</Badge>}
                           </div>
                           <CardTitle className="text-xl leading-tight">{plan.topic}</CardTitle>
                           <CardDescription className="line-clamp-2 mt-2">{plan.targetAudience}</CardDescription>
                        </CardHeader>
                        <CardContent className="space-y-6 flex-1 pt-6">
-                          <div className="bg-accent/10 p-3 rounded-lg border border-accent/20">
-                             <span className="text-xs font-bold uppercase text-muted-foreground block mb-1">The Hook</span>
-                             <p className="font-medium text-sm leading-relaxed">"{plan.slides[0]?.headline}"</p>
-                          </div>
-                          
-                          <div className="space-y-2">
-                             <span className="text-xs font-bold uppercase text-muted-foreground">Flow</span>
+                           <div className="bg-accent/10 p-3 rounded-lg border border-accent/20">
+                              <span className="text-xs font-bold uppercase text-muted-foreground block mb-1">O Gancho</span>
+                              <p className="font-medium text-sm leading-relaxed">"{plan.slides?.[0]?.headline || 'Sem título'}"</p>
+                           </div>
+                           
+                           <div className="space-y-2">
+                              <span className="text-xs font-bold uppercase text-muted-foreground">Estrutura</span>
                              <div className="space-y-2">
                                 {plan.slides.slice(0, 3).map((s, i) => (
                                     <div key={i} className="flex items-center gap-2 text-xs">
@@ -779,14 +801,14 @@ export default function LinkedInCarousel() {
                                         <span className="truncate opacity-80">{s.headline}</span>
                                     </div>
                                 ))}
-                                {plan.slides.length > 3 && <div className="text-xs text-muted-foreground pl-3.5 italic">...and {plan.slides.length - 3} more</div>}
+                                {plan.slides.length > 3 && <div className="text-xs text-muted-foreground pl-3.5 italic">...e mais {plan.slides.length - 3}</div>}
                              </div>
                           </div>
                        </CardContent>
                        <div className="p-6 pt-0 mt-auto">
                         <Button className="w-full gap-2" onClick={() => handleProduceFromPlan(plan)}>
                              <Wand2 className="h-4 w-4" />
-                             Select & Produce Assets
+                             Selecionar & Produzir Ativos
                           </Button>
                        </div>
                     </Card>
@@ -828,14 +850,16 @@ export default function LinkedInCarousel() {
                                     onClick={() => { setCurrentCarouselIndex(idx); setCurrentSlide(0); }}
                                     className={`relative flex-shrink-0 w-24 aspect-[4/5] rounded-md overflow-hidden cursor-pointer border-2 transition-all group ${currentCarouselIndex === idx ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-primary/50'}`}
                                 >
-                                    <div className="absolute inset-0 pointer-events-none transform scale-[0.25] origin-top-left w-[400%] h-[400%]">
-                                         <SlideCanvas 
-                                            mode="preview" 
-                                            slide={result.slides[0]} 
-                                            aspectRatio="portrait"
-                                            theme={currentTheme}
-                                            layout={result.slides[0].layout}
-                                         />
+                                     <div className="absolute inset-0 pointer-events-none transform scale-[0.25] origin-top-left w-[400%] h-[400%]">
+                                         {result.slides?.length > 0 && (
+                                           <SlideCanvas 
+                                              mode="preview" 
+                                              slide={result.slides[0]} 
+                                              aspectRatio="portrait"
+                                              theme={currentTheme}
+                                              layout={result.slides[0]?.layout}
+                                           />
+                                         )}
                                     </div>
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                                     {currentCarouselIndex === idx && (
@@ -915,7 +939,7 @@ export default function LinkedInCarousel() {
                 </TabsList>
 
                 <TabsContent value="assets" className="flex-1 overflow-y-auto p-4">
-                  {Object.entries(assetsByCategory).map(([cat, assets]: [string, any[]]) => (
+                  {Object.entries(assetsByCategory).map(([cat, assets]) => (
                     <div key={cat} className="mb-6">
                       <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-3">{cat}</h4>
                       <div className="grid grid-cols-2 gap-2">
@@ -923,9 +947,15 @@ export default function LinkedInCarousel() {
                           <div
                             key={asset.id}
                             className="aspect-square bg-muted rounded overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all relative group"
-                            onClick={() => handleUpdateSlideImage(asset.public_url)}
+                            onClick={() => asset.public_url && handleUpdateSlideImage(asset.public_url)}
                           >
-                            <img src={asset.public_url} className="w-full h-full object-cover" loading="lazy" />
+                            {asset.public_url ? (
+                              <img src={asset.public_url} className="w-full h-full object-cover" loading="lazy" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                <ImageIcon className="h-6 w-6" />
+                              </div>
+                            )}
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                               <span className="text-xs text-white font-medium">Usar</span>
                             </div>
