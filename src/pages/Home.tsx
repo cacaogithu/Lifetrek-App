@@ -241,7 +241,7 @@ export default function Home() {
             <div className="glass-card-strong p-8 rounded-xl text-center transform transition-all duration-700 hover:scale-105" style={{
             animationDelay: "400ms"
           }}>
-              <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-accent-orange to-primary bg-clip-text text-transparent animate-pulse-glow">
+              <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-orange to-primary bg-clip-text text-transparent animate-pulse-glow">
                 100%
               </div>
               <div className="text-base md:text-lg font-semibold text-foreground">
@@ -305,7 +305,7 @@ export default function Home() {
             </div>
 
             <div className={`glass-card text-center p-10 rounded-2xl hover:scale-105 transition-all duration-500 border-t-4 border-accent-orange group stagger-item ${benefitsStagger.visibleItems[2] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-accent-orange to-transparent animate-pulse-glow"></div>
+              <div className="absolute top-0 left-10 w-12 h-1 bg-gradient-to-r from-orange to-transparent animate-pulse-glow"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent-orange transition-colors">{t("home.benefits.precision")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.precision.text")}</p>
             </div>
@@ -318,7 +318,7 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={productsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("products.title")}</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto animate-float"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-orange mx-auto animate-float"></div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 max-w-6xl mx-auto mb-12 sm:mb-16">
@@ -338,7 +338,7 @@ export default function Home() {
 
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent-orange/20 transition-all hover:-translate-y-2">
               <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-gradient-to-t from-accent-orange via-accent-orange/70 to-transparent flex items-end p-8">
+              <div className="absolute inset-0 bg-gradient-to-t from-orange via-orange/70 to-transparent flex items-end p-8">
                 <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
@@ -375,7 +375,7 @@ export default function Home() {
         <div className="relative container mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             <div className="text-center lg:text-left">
-              <div className="w-24 h-1 bg-gradient-to-r from-accent-orange via-primary-foreground to-accent mb-6 mx-auto lg:mx-0"></div>
+              <div className="w-24 h-1 bg-gradient-to-r from-orange via-primary-foreground to-accent mb-6 mx-auto lg:mx-0"></div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-primary-foreground">
                 {t("home.finalCta.title")}
               </h2>
