@@ -296,35 +296,35 @@ export default function Admin() {
 
   const stats = [
     {
-      title: "Total Companies",
+      title: "Total de Empresas",
       value: analytics.total_companies,
       icon: Users,
       color: "text-blue-500",
       bg: "bg-blue-500/10",
     },
     {
-      title: "Chatbot Interactions",
+      title: "Interações Chatbot",
       value: analytics.chatbot_interactions,
       icon: MessageSquare,
       color: "text-green-500",
       bg: "bg-green-500/10",
     },
     {
-      title: "Form Submissions",
+      title: "Envios de Formulário",
       value: analytics.form_submissions,
       icon: FileText,
       color: "text-purple-500",
       bg: "bg-purple-500/10",
     },
     {
-      title: "Lead Magnets Used",
+      title: "Lead Magnets Usados",
       value: analytics.lead_magnets,
       icon: TrendingUp,
       color: "text-orange-500",
       bg: "bg-orange-500/10",
     },
     {
-      title: "Consultations Scheduled",
+      title: "Consultas Agendadas",
       value: analytics.consultations,
       icon: Calendar,
       color: "text-pink-500",
@@ -335,9 +335,9 @@ export default function Admin() {
   const getEventLabel = (type: string) => {
     const labels: Record<string, string> = {
       chatbot_interaction: "Chatbot",
-      form_submission: "Form",
+      form_submission: "Formulário",
       lead_magnet_usage: "Lead Magnet",
-      consultation_scheduled: "Consultation",
+      consultation_scheduled: "Consulta",
     };
     return labels[type] || type;
   };
@@ -347,12 +347,12 @@ export default function Admin() {
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Internal management portal</p>
+            <h1 className="text-4xl font-bold mb-2">Painel Administrativo</h1>
+            <p className="text-muted-foreground">Portal de gestão interna</p>
           </div>
           <Button onClick={handleLogout} variant="outline">
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            Sair
           </Button>
         </div>
 
@@ -368,7 +368,7 @@ export default function Admin() {
             </TabsTrigger>
             <TabsTrigger value="gallery">
               <Images className="mr-2 h-4 w-4" />
-              Gallery
+              Galeria
             </TabsTrigger>
             <TabsTrigger value="linkedin">
               <Presentation className="mr-2 h-4 w-4" />
@@ -388,10 +388,10 @@ export default function Admin() {
                 <div>
                   <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-primary" />
-                    AI Product Image Optimizer
+                    Otimizador de Imagens IA
                   </h3>
                   <p className="text-muted-foreground mb-4">
-                    Transform your product photos into professional images using advanced AI
+                    Transforme suas fotos de produtos em imagens profissionais usando IA avançada
                   </p>
                 </div>
                 <Button 
@@ -399,7 +399,7 @@ export default function Admin() {
                   className="ml-4"
                 >
                   <Sparkles className="mr-2 h-4 w-4" />
-                  Access
+                  Acessar
                 </Button>
               </div>
             </Card>
@@ -423,15 +423,15 @@ export default function Admin() {
 
             {/* Recent Events */}
             <Card className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Recent Events</h2>
+              <h2 className="text-2xl font-bold mb-6">Eventos Recentes</h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-4">Type</th>
-                      <th className="text-left py-3 px-4">Company</th>
+                      <th className="text-left py-3 px-4">Tipo</th>
+                      <th className="text-left py-3 px-4">Empresa</th>
                       <th className="text-left py-3 px-4">Email</th>
-                      <th className="text-left py-3 px-4">Date</th>
+                      <th className="text-left py-3 px-4">Data</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -464,7 +464,7 @@ export default function Admin() {
             <div className="space-y-6">
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-6 w-6 text-primary" />
-                <h2 className="text-2xl font-bold">Advanced Lead Analytics</h2>
+                <h2 className="text-2xl font-bold">Analytics Avançado de Leads</h2>
               </div>
 
               {/* Analytics Filters */}
@@ -496,7 +496,7 @@ export default function Admin() {
             
             <Card>
               <CardHeader>
-                <CardTitle>Filters</CardTitle>
+                <CardTitle>Filtros</CardTitle>
               </CardHeader>
               <CardContent>
                 <LeadFilters
@@ -512,9 +512,9 @@ export default function Admin() {
 
             <Card>
               <CardHeader>
-                <CardTitle>All Leads ({filteredLeads.length})</CardTitle>
+                <CardTitle>Todos os Leads ({filteredLeads.length})</CardTitle>
                 <CardDescription>
-                  Manage and track all leads received through the contact form
+                  Gerencie e acompanhe todos os leads recebidos pelo formulário de contato
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -531,14 +531,14 @@ export default function Admin() {
           <TabsContent value="gallery" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-3xl font-bold">Product Gallery</h2>
+                <h2 className="text-3xl font-bold">Galeria de Produtos</h2>
                 <p className="text-muted-foreground">
-                  All AI-processed images
+                  Todas as imagens processadas por IA
                 </p>
               </div>
               <Button onClick={() => navigate('/admin/image-processor')}>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Process New Images
+                Processar Novas Imagens
               </Button>
             </div>
             
@@ -549,15 +549,15 @@ export default function Admin() {
           <TabsContent value="linkedin">
             <Card>
               <CardHeader>
-                <CardTitle>LinkedIn Carousel Generator</CardTitle>
+                <CardTitle>Gerador de Carrossel LinkedIn</CardTitle>
                 <CardDescription>
-                  Create high-converting LinkedIn carousels using Hormozi's proven frameworks
+                  Crie carrosséis de alta conversão usando frameworks comprovados de Hormozi
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button onClick={() => navigate("/admin/linkedin-carousel")} className="w-full">
                   <Presentation className="h-4 w-4 mr-2" />
-                  Open Carousel Generator
+                  Abrir Gerador de Carrossel
                 </Button>
               </CardContent>
             </Card>

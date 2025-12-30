@@ -460,16 +460,16 @@ export default function LinkedInCarousel() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              LinkedIn Carousel Studio
+              Estúdio de Carrossel LinkedIn
             </h1>
-            <p className="text-muted-foreground">Strategic B2B content generation</p>
+            <p className="text-muted-foreground">Geração estratégica de conteúdo B2B</p>
           </div>
 
           <Alert className="mb-6 bg-blue-50/50 border-blue-200">
             <Info className="h-4 w-4 text-blue-600" />
-            <AlertTitle className="text-blue-800">Pro Tip</AlertTitle>
+            <AlertTitle className="text-blue-800">Dica Pro</AlertTitle>
             <AlertDescription className="text-blue-700">
-              Create educational slides that address specific customer pain points. Use the "Generate" tab to let AI build the structure, then customize the visuals.
+              Crie slides educativos que abordem dores específicas dos clientes. Use a aba "Gerar" para deixar a IA construir a estrutura, depois personalize os visuais.
             </AlertDescription>
           </Alert>
 
@@ -479,7 +479,7 @@ export default function LinkedInCarousel() {
                 <DialogTrigger asChild>
                     <Button variant="outline" className="gap-2">
                         <Layout className="h-4 w-4" />
-                        Preview Experience
+                        Visualizar Experiência
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-[90vh] w-auto p-0 bg-transparent border-0 shadow-none flex items-center justify-center">
@@ -523,15 +523,15 @@ export default function LinkedInCarousel() {
               </Dialog>
               <Button variant="outline" onClick={() => saveCarousel(carouselResults[currentCarouselIndex])}>
                 <Save className="mr-2 h-4 w-4" />
-                Save Project
+                Salvar Projeto
               </Button>
               <Button onClick={handleExportPDF} disabled={designLoading} variant="secondary">
                 {designLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Download className="mr-2 h-4 w-4" />}
-                Export PDF
+                Exportar PDF
               </Button>
               <Button onClick={handleExportImages} disabled={designLoading}>
                 {designLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <ImageIcon className="mr-2 h-4 w-4" />}
-                Export Images
+                Exportar Imagens
               </Button>
             </div>
           )}
@@ -541,65 +541,65 @@ export default function LinkedInCarousel() {
         {carouselResults.length === 0 && (
           <Tabs defaultValue="generate" className="w-full">
             <TabsList className="grid w-full grid-cols-2 max-w-md mb-8">
-              <TabsTrigger value="generate">Create New</TabsTrigger>
-              <TabsTrigger value="history">History</TabsTrigger>
+              <TabsTrigger value="generate">Criar Novo</TabsTrigger>
+              <TabsTrigger value="history">Histórico</TabsTrigger>
             </TabsList>
 
             <TabsContent value="generate">
               <Card className="max-w-3xl mx-auto">
                 <CardHeader>
-                  <CardTitle>Content Brief</CardTitle>
-                  <CardDescription>Define the strategic goal of your carousel.</CardDescription>
+                  <CardTitle>Briefing de Conteúdo</CardTitle>
+                  <CardDescription>Defina o objetivo estratégico do seu carrossel.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <Label>Topic</Label>
+                        <Label>Tópico</Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="h-3 w-3 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Try: "5 Myths about Swiss Machining" or "How to Reduce Implant Failures"</p>
+                              <p>Tente: "5 Mitos sobre Usinagem Suíça" ou "Como Reduzir Falhas em Implantes"</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                      <Input value={topic} onChange={e => setTopic(e.target.value)} placeholder="e.g. Reducing manufacturing defects" />
+                      <Input value={topic} onChange={e => setTopic(e.target.value)} placeholder="ex: Reduzindo defeitos de fabricação" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Target Audience</Label>
+                        <Label>Público Alvo</Label>
                         <Select value={targetAudience} onValueChange={setTargetAudience}>
-                          <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                          <SelectTrigger><SelectValue placeholder="Selecionar..." /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Orthopedic manufacturers">Orthopedic manufacturers</SelectItem>
-                            <SelectItem value="Medical device R&D">Medical device R&D</SelectItem>
-                            <SelectItem value="Quality managers">Quality managers</SelectItem>
+                            <SelectItem value="Fabricantes ortopédicos">Fabricantes ortopédicos</SelectItem>
+                            <SelectItem value="P&D de dispositivos médicos">P&D de dispositivos médicos</SelectItem>
+                            <SelectItem value="Gestores de qualidade">Gestores de qualidade</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
-                        <Label>Format</Label>
+                        <Label>Formato</Label>
                         <Select value={format} onValueChange={(v: any) => setFormat(v)}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="carousel">Carousel (PDF/Images)</SelectItem>
-                            <SelectItem value="single-image">Single Post</SelectItem>
+                            <SelectItem value="carousel">Carrossel (PDF/Imagens)</SelectItem>
+                            <SelectItem value="single-image">Post Único</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                     <div>
-                      <Label>Pain Point</Label>
+                      <Label>Dor do Cliente</Label>
                       <Textarea value={painPoint} onChange={e => setPainPoint(e.target.value)} />
                     </div>
                     {/* Advanced optional fields could be collapsed */}
                     
                     <div className="space-y-2">
-                        <Label>Number of Options (Batch)</Label>
+                        <Label>Número de Opções (Lote)</Label>
                         <div className="flex items-center gap-4">
                             <Input 
                                 type="number" 
@@ -609,13 +609,13 @@ export default function LinkedInCarousel() {
                                 onChange={e => setNumberOfCarousels(parseInt(e.target.value))} 
                                 className="max-w-[100px]"
                             />
-                            <span className="text-sm text-muted-foreground">Generate multiple variations to choose from.</span>
+                            <span className="text-sm text-muted-foreground">Gere múltiplas variações para escolher.</span>
                         </div>
                     </div>
 
                     <Button onClick={handleGenerate} disabled={isGenerating} className="w-full" size="lg">
                       {isGenerating ? <Loader2 className="animate-spin mr-2" /> : <Wand2 className="mr-2 h-4 w-4" />}
-                      Generate Content Strategy
+                      Gerar Estratégia de Conteúdo
                     </Button>
                   </div>
                 </CardContent>
@@ -628,7 +628,7 @@ export default function LinkedInCarousel() {
                   <Card key={h.id} className="cursor-pointer hover:border-primary transition-colors" onClick={() => loadCarousel(h)}>
                     <CardHeader className="p-4">
                       <CardTitle className="text-base truncate">{h.topic}</CardTitle>
-                      <CardDescription className="text-xs">{new Date(h.created_at).toLocaleDateString()}</CardDescription>
+                      <CardDescription className="text-xs">{new Date(h.created_at).toLocaleDateString('pt-BR')}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-4 pt-0 flex justify-between">
                       <Badge variant="secondary">{h.format}</Badge>
@@ -675,7 +675,7 @@ export default function LinkedInCarousel() {
             {/* LEFT PANEL: Slides List */}
             <Card className="h-full flex flex-col overflow-hidden">
               <CardHeader className="py-4">
-                <CardTitle className="text-sm">Slides Content</CardTitle>
+                <CardTitle className="text-sm">Conteúdo dos Slides</CardTitle>
               </CardHeader>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 
@@ -683,15 +683,15 @@ export default function LinkedInCarousel() {
                 {carouselResults.length > 0 && (
                   <div className="mb-6 space-y-4">
                      <div className="flex items-center justify-between">
-                        <Label className="text-xs font-semibold uppercase text-muted-foreground">Variations</Label>
+                        <Label className="text-xs font-semibold uppercase text-muted-foreground">Variações</Label>
                         <Select value={currentTheme} onValueChange={(v: any) => setCurrentTheme(v)}>
                             <SelectTrigger className="w-[140px] h-8 text-xs">
-                                <SelectValue placeholder="Theme" />
+                                <SelectValue placeholder="Tema" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="corporate">Corporate</SelectItem>
-                                <SelectItem value="modern">Modern</SelectItem>
-                                <SelectItem value="bold">Bold</SelectItem>
+                                <SelectItem value="corporate">Corporativo</SelectItem>
+                                <SelectItem value="modern">Moderno</SelectItem>
+                                <SelectItem value="bold">Ousado</SelectItem>
                             </SelectContent>
                         </Select>
                      </div>
@@ -740,7 +740,7 @@ export default function LinkedInCarousel() {
                   </div>
                 ))}
                 <div className="pt-4 border-t">
-                  <h4 className="text-xs font-bold mb-2">Caption</h4>
+                  <h4 className="text-xs font-bold mb-2">Legenda</h4>
                   <p className="text-xs text-muted-foreground line-clamp-6">{carouselResults[currentCarouselIndex].caption}</p>
                 </div>
               </div>
@@ -772,7 +772,7 @@ export default function LinkedInCarousel() {
                 <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))} disabled={currentSlide === 0}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-sm font-medium">Slide {currentSlide + 1} of {carouselResults[currentCarouselIndex].slides.length}</span>
+                <span className="text-sm font-medium">Slide {currentSlide + 1} de {carouselResults[currentCarouselIndex].slides.length}</span>
                 <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.min(carouselResults[currentCarouselIndex].slides.length - 1, currentSlide + 1))} disabled={currentSlide === carouselResults[currentCarouselIndex].slides.length - 1}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -782,12 +782,12 @@ export default function LinkedInCarousel() {
             {/* RIGHT PANEL: Design Tools */}
             <Card className="h-full flex flex-col overflow-hidden">
               <CardHeader className="py-4">
-                <CardTitle className="text-sm">Design Assets</CardTitle>
+                <CardTitle className="text-sm">Recursos de Design</CardTitle>
               </CardHeader>
               <Tabs defaultValue="assets" className="flex-1 flex flex-col">
                 <TabsList className="mx-4">
-                  <TabsTrigger value="assets" className="flex-1">Library</TabsTrigger>
-                  <TabsTrigger value="generate" className="flex-1">Generate</TabsTrigger>
+                  <TabsTrigger value="assets" className="flex-1">Biblioteca</TabsTrigger>
+                  <TabsTrigger value="generate" className="flex-1">Gerar</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="assets" className="flex-1 overflow-y-auto p-4">
@@ -803,7 +803,7 @@ export default function LinkedInCarousel() {
                           >
                             <img src={asset.public_url} className="w-full h-full object-cover" loading="lazy" />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                              <span className="text-xs text-white font-medium">Use</span>
+                              <span className="text-xs text-white font-medium">Usar</span>
                             </div>
                           </div>
                         ))}
@@ -814,11 +814,11 @@ export default function LinkedInCarousel() {
 
                 <TabsContent value="generate" className="flex-1 p-4">
                   <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">Regenerate the image for this slide using AI.</p>
+                    <p className="text-sm text-muted-foreground">Regenere a imagem deste slide usando IA.</p>
                     {/* We could add prompt override here */}
                     <Button className="w-full" variant="secondary" onClick={handleRegenerateImage} disabled={designLoading}>
                       <RefreshCw className="mr-2 h-4 w-4" />
-                      Regenerate Image
+                      Regenerar Imagem
                     </Button>
                   </div>
                 </TabsContent>
@@ -830,12 +830,12 @@ export default function LinkedInCarousel() {
         <AlertDialog open={!!carouselToDelete} onOpenChange={() => setCarouselToDelete(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete Project?</AlertDialogTitle>
-              <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+              <AlertDialogTitle>Excluir Projeto?</AlertDialogTitle>
+              <AlertDialogDescription>Esta ação não pode ser desfeita.</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={deleteCarousel}>Delete</AlertDialogAction>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={deleteCarousel}>Excluir</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
