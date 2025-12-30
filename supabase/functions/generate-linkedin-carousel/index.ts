@@ -12,6 +12,24 @@ const corsHeaders = {
 
 import { constructSystemPrompt, constructUserPrompt, getTools } from "./functions_logic.ts";
 
+// Type definitions
+interface CarouselSlide {
+  type: string;
+  headline: string;
+  body: string;
+  imageGenerationPrompt?: string;
+  backgroundType: string;
+  assetId?: string;
+  imageUrl?: string;
+}
+
+interface Carousel {
+  topic: string;
+  targetAudience: string;
+  slides: CarouselSlide[];
+  imageUrls?: string[];
+}
+
 // Serve handling...
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -163,10 +181,10 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
       };
       
       // Simulate the structure downstream code expects
-      const resultCarousels = isBatch ? mockResponse.carousels : [mockResponse.carousel];
+      const resultCarousels: Carousel[] = isBatch ? (mockResponse.carousels || []) : [mockResponse.carousel!];
       
        // Process Images for ALL carousels (Mock implementation)
-      // Fix: Check if resultCarousels is defined
+s      // Fix: Check if resultCarousels is defined
       if (resultCarousels) {
         for (const carousel of resultCarousels) {
             if (!carousel) continue;
@@ -180,6 +198,15 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
             // Fix: Assign to carousel with correct type
             (carousel as any).imageUrls = processedSlides.map((s: any) => s.imageUrl);
         }
+      for (const carousel of resultCarousels) {
+        const processedSlides: CarouselSlide[] = [];
+        const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
+
+        for (const slide of slidesToProcess) {
+          processedSlides.push({ ...slide, imageUrl: "https://via.placeholder.com/800x400?text=Mock+Image" });
+        }
+        carousel.slides = processedSlides;
+        carousel.imageUrls = processedSlides.map((s) => s.imageUrl || "");
       }
 
       return new Response(
@@ -281,6 +308,12 @@ Return the refined JSON object (carousels array).`;
 
       const processedSlides = [];
       const slidesToProcess = format === "single-image" && carousel.slides?.length > 0 ? [carousel.slides[0]] : (carousel.slides || []);
+    const resultCarousels: Carousel[] = isBatch ? args.carousels : [args];
+
+    // Process Images for ALL carousels
+    for (const carousel of resultCarousels) {
+      const processedSlides: CarouselSlide[] = [];
+      const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
 
       for (const slide of slidesToProcess) {
         let imageUrl = "";
@@ -326,6 +359,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
       }
       carousel.slides = processedSlides;
       carousel.imageUrls = processedSlides.map((s: any) => s.imageUrl);
+      carousel.imageUrls = processedSlides.map(s => s.imageUrl || "");
     }
 
     return new Response(

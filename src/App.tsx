@@ -75,7 +75,7 @@ const App = () => (
             <Footer />
             <MobileNav />
             <ScrollToTop />
-            <AIChatbot />
+            {/* <AIChatbot /> - Temporarily hidden, keeping code for later use */}
           </div>
         </BrowserRouter>
       </LanguageProvider>
