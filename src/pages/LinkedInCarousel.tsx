@@ -134,7 +134,7 @@ export default function LinkedInCarousel() {
   const fetchAssets = async () => {
     try {
       const { data, error } = await supabase
-        .from("content_assets" as any)
+        .from("content_assets")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -509,8 +509,9 @@ export default function LinkedInCarousel() {
   };
 
   const assetsByCategory = availableAssets.reduce((acc: any, asset) => {
-    if (!acc[asset.category]) acc[asset.category] = [];
-    acc[asset.category].push(asset);
+    const category = asset.category || "uncategorized";
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(asset);
     return acc;
   }, {});
 
@@ -681,14 +682,14 @@ export default function LinkedInCarousel() {
                     <div className="grid grid-cols-2 gap-4">
                         <Button onClick={handleCreatePlan} disabled={isGenerating} variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 items-center">
                             {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Layout className="mb-1 h-5 w-5" />}
-                            <span className="font-semibold">Generate Strategy Plan</span>
-                            <span className="text-xs font-normal opacity-70">Review 3 options first</span>
+                            <span className="font-semibold">Gerar Plano Estratégico</span>
+                            <span className="text-xs font-normal opacity-70">Revisar 3 opções primeiro</span>
                         </Button>
 
                         <Button onClick={handleGenerate} disabled={isGenerating} size="lg" className="h-auto py-4 flex flex-col gap-1 items-center bg-gradient-to-r from-primary to-blue-600 hover:to-blue-700">
                              {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Wand2 className="mb-1 h-5 w-5" />}
-                             <span className="font-semibold">Quick Generate</span>
-                             <span className="text-xs font-normal opacity-70">Autopilot Mode</span>
+                             <span className="font-semibold">Geração Rápida</span>
+                             <span className="text-xs font-normal opacity-70">Modo Automático</span>
                         </Button>
                     </div>
                   </div>
@@ -745,12 +746,12 @@ export default function LinkedInCarousel() {
            </div>
         ) : viewMode === "plan_selection" && plans.length > 0 ? (
            <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h2 className="text-3xl font-bold">Select Strategy</h2>
-                    <p className="text-muted-foreground">The Strategist Agent has proposed 3 distinct angles.</p>
-                  </div>
-                  <Button variant="ghost" onClick={() => setViewMode("input")}>Cancel</Button>
+               <div className="flex items-center justify-between mb-8">
+                   <div>
+                     <h2 className="text-3xl font-bold">Selecionar Estratégia</h2>
+                     <p className="text-muted-foreground">O Agente Estrategista propôs 3 ângulos distintos.</p>
+                   </div>
+                  <Button variant="ghost" onClick={() => setViewMode("input")}>Cancelar</Button>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -758,20 +759,20 @@ export default function LinkedInCarousel() {
                     <Card key={idx} className="hover:border-primary cursor-pointer transition-all hover:shadow-lg flex flex-col">
                        <CardHeader className="bg-muted/30 pb-4">
                           <div className="flex justify-between items-start mb-2">
-                            <Badge variant="outline" className="bg-background">Option {idx + 1}</Badge>
-                             {idx === 0 && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Recommended</Badge>}
+                             <Badge variant="outline" className="bg-background">Opção {idx + 1}</Badge>
+                              {idx === 0 && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Recomendado</Badge>}
                           </div>
                           <CardTitle className="text-xl leading-tight">{plan.topic}</CardTitle>
                           <CardDescription className="line-clamp-2 mt-2">{plan.targetAudience}</CardDescription>
                        </CardHeader>
                        <CardContent className="space-y-6 flex-1 pt-6">
                           <div className="bg-accent/10 p-3 rounded-lg border border-accent/20">
-                             <span className="text-xs font-bold uppercase text-muted-foreground block mb-1">The Hook</span>
+                             <span className="text-xs font-bold uppercase text-muted-foreground block mb-1">O Gancho</span>
                              <p className="font-medium text-sm leading-relaxed">"{plan.slides[0]?.headline}"</p>
                           </div>
                           
                           <div className="space-y-2">
-                             <span className="text-xs font-bold uppercase text-muted-foreground">Flow</span>
+                             <span className="text-xs font-bold uppercase text-muted-foreground">Fluxo</span>
                              <div className="space-y-2">
                                 {plan.slides.slice(0, 3).map((s, i) => (
                                     <div key={i} className="flex items-center gap-2 text-xs">
@@ -779,14 +780,14 @@ export default function LinkedInCarousel() {
                                         <span className="truncate opacity-80">{s.headline}</span>
                                     </div>
                                 ))}
-                                {plan.slides.length > 3 && <div className="text-xs text-muted-foreground pl-3.5 italic">...and {plan.slides.length - 3} more</div>}
+                                {plan.slides.length > 3 && <div className="text-xs text-muted-foreground pl-3.5 italic">...e mais {plan.slides.length - 3}</div>}
                              </div>
                           </div>
                        </CardContent>
                        <div className="p-6 pt-0 mt-auto">
                         <Button className="w-full gap-2" onClick={() => handleProduceFromPlan(plan)}>
                              <Wand2 className="h-4 w-4" />
-                             Select & Produce Assets
+                             Selecionar & Produzir
                           </Button>
                        </div>
                     </Card>

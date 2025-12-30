@@ -112,9 +112,16 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
       .select("id, filename, category, tags")
       .limit(50);
 
-    const assetsContext = assets?.map((a: any) =>
-      `- [${a.category.toUpperCase()}] ID: ${a.id} (Tags: ${a.tags?.join(", ")}, Filename: ${a.filename})`
-    ).join("\n") || "No assets available.";
+    // Log and handle assets error gracefully
+    if (assetsError) {
+      console.warn("Could not fetch assets (non-fatal):", assetsError.message, assetsError.code);
+    }
+
+    const assetsContext = assets?.map((a: any) => {
+      const category = a.category || "general";
+      const tags = Array.isArray(a.tags) ? a.tags.join(", ") : "none";
+      return `- [${category.toUpperCase()}] ID: ${a.id} (Tags: ${tags}, Filename: ${a.filename})`;
+    }).join("\n") || "No assets available. AI will generate all images.";
 
     // Combined System Prompt with EMBEDDED CONTEXT
     const SYSTEM_PROMPT = constructSystemPrompt(assetsContext);
@@ -299,9 +306,17 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     );
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Edge function error:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+      timestamp: new Date().toISOString()
+    });
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : "An internal error occurred",
+        details: "Check edge function logs for more information"
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
