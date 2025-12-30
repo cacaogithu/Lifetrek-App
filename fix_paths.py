@@ -3,10 +3,10 @@
 Path Fixer for Reorganized Project Structure
 
 This script updates hardcoded CSV/JSON file paths in Python scripts
-after reorganization. It changes paths from:
-  - "MASTER_ENRICHED_LEADS.csv" 
+after reorganization into subdirectories. It changes paths from:
+  - "../.tmp/MASTER_ENRICHED_LEADS.csv" 
 to:
-  - "../.tmp/MASTER_ENRICHED_LEADS.csv"
+  - "../../.tmp/MASTER_ENRICHED_LEADS.csv"
 
 Usage:
   python fix_paths.py --dry-run   # Preview changes
@@ -59,16 +59,18 @@ def fix_paths_in_file(filepath, dry_run=True):
     
     # Fix each known temporary file
     for tmp_file in TMP_FILES:
-        # Pattern: "filename.csv" or 'filename.csv' (not already with path)
-        patterns = [
-            (f'"{tmp_file}"', f'"../.tmp/{tmp_file}"'),
-            (f"'{tmp_file}'", f"'../.tmp/{tmp_file}'"),
-        ]
+        # Pattern: "../.tmp/filename" -> "../../.tmp/filename" (for subdirectories)
+        old_pattern = f'"../.tmp/{tmp_file}"'
+        new_pattern = f'"../../.tmp/{tmp_file}"'
+        if old_pattern in content:
+            content = content.replace(old_pattern, new_pattern)
+            changes_made.append(f"  {old_pattern} → {new_pattern}")
         
-        for old, new in patterns:
-            if old in content:
-                content = content.replace(old, new)
-                changes_made.append(f"  {old} → {new}")
+        old_pattern_single = f"'../.tmp/{tmp_file}'"
+        new_pattern_single = f"'../../.tmp/{tmp_file}'"
+        if old_pattern_single in content:
+            content = content.replace(old_pattern_single, new_pattern_single)
+            changes_made.append(f"  {old_pattern_single} → {new_pattern_single}")
     
     if changes_made:
         if not dry_run:
@@ -96,11 +98,13 @@ def main():
     
     total_files_updated = 0
     
-    for py_file in sorted(execution_dir.glob("*.py")):
+    # Scan all subdirectories
+    for py_file in sorted(execution_dir.rglob("*.py")):
         changes = fix_paths_in_file(py_file, dry_run=args.dry_run)
         if changes:
             total_files_updated += 1
-            print(f"{'[WOULD UPDATE]' if args.dry_run else '[UPDATED]'} {py_file.name}:")
+            rel_path = py_file.relative_to(execution_dir)
+            print(f"{'[WOULD UPDATE]' if args.dry_run else '[UPDATED]'} {rel_path}:")
             for change in changes[:5]:  # Show first 5 changes
                 print(change)
             if len(changes) > 5:

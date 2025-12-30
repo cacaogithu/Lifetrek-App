@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-FILE = '../.tmp/MASTER_ENRICHED_LEADS.csv'
+FILE = '../../.tmp/MASTER_ENRICHED_LEADS.csv'
 
 if not os.path.exists(FILE):
     print("Master file not found.")
