@@ -314,44 +314,44 @@ export default function Home() {
       </section>
 
       {/* Products Preview Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-secondary/10 to-background">
+      <section className="py-24 sm:py-32 md:py-40 bg-gradient-to-b from-secondary/5 to-background">
         <div className="container mx-auto px-4 sm:px-6">
-          <div ref={productsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("products.title")}</h2>
+          <div ref={productsAnimation.elementRef} className={`text-center mb-16 sm:mb-20 md:mb-24 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary">{t("products.title")}</h2>
             {/* 3-segment underline: blue | green | orange */}
-            <div className="flex justify-center gap-1 mt-2">
-              <div className="w-8 h-1 rounded-full bg-primary"></div>
-              <div className="w-8 h-1 rounded-full bg-accent"></div>
-              <div className="w-8 h-1 rounded-full bg-accent-orange"></div>
+            <div className="flex justify-center gap-1.5 mt-4">
+              <div className="w-12 h-1.5 rounded-full bg-primary"></div>
+              <div className="w-12 h-1.5 rounded-full bg-accent"></div>
+              <div className="w-12 h-1.5 rounded-full bg-accent-orange"></div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 max-w-6xl mx-auto mb-12 sm:mb-16">
-            <div className="group relative overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)] hover:-translate-y-2 transition-all duration-500">
-              <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-primary/80 flex items-end p-8">
-                <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.instruments.title")}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 max-w-7xl mx-auto mb-16 sm:mb-20 md:mb-24">
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
+              <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent flex items-end p-10">
+                <h3 className="text-2xl font-bold text-primary-foreground group-hover:translate-y-[-4px] transition-transform">{t("products.instruments.title")}</h3>
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)] hover:-translate-y-2 transition-all duration-500">
-              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-accent/80 flex items-end p-8">
-                <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.medical.title")}</h3>
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
+              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
+              <div className="absolute inset-0 bg-gradient-to-t from-accent/90 via-accent/50 to-transparent flex items-end p-10">
+                <h3 className="text-2xl font-bold text-primary-foreground group-hover:translate-y-[-4px] transition-transform">{t("products.medical.title")}</h3>
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)] hover:-translate-y-2 transition-all duration-500">
-              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
-              <div className="absolute inset-0 bg-accent-orange/80 flex items-end p-8">
-                <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
+              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#E65100]/90 via-[#E65100]/50 to-transparent flex items-end p-10">
+                <h3 className="text-2xl font-bold text-primary-foreground group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="text-center pt-4">
             <Link to="/products#top">
-              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary-hover shadow-[var(--shadow-elevated)] rounded-xl px-8">
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary-hover shadow-[var(--shadow-elevated)] rounded-xl px-10 py-6 text-lg">
                 {t("nav.products")}
               </Button>
             </Link>
