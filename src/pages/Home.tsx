@@ -292,20 +292,26 @@ export default function Home() {
             </p>
           </div>
           <div ref={benefitsStagger.containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[0] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl bg-gradient-to-r from-primary via-primary to-primary/70"></div>
+            <div className={`relative bg-gradient-to-b from-card via-card to-secondary/30 text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[0] ? 'visible' : ''}`}>
+              {/* Accent segment with glow */}
+              <div className="absolute top-0 left-8 w-20 h-1.5 rounded-b-full bg-gradient-to-r from-primary via-primary to-primary/60"></div>
+              <div className="absolute top-0 left-8 w-20 h-3 rounded-b-full bg-primary/40 blur-md"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-primary transition-colors">{t("home.benefits.speed")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.speed.text")}</p>
             </div>
 
-            <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[1] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl bg-gradient-to-r from-accent via-accent to-accent/70"></div>
+            <div className={`relative bg-gradient-to-b from-card via-card to-secondary/30 text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[1] ? 'visible' : ''}`}>
+              {/* Accent segment with glow */}
+              <div className="absolute top-0 left-8 w-20 h-1.5 rounded-b-full bg-gradient-to-r from-accent via-accent to-accent/60"></div>
+              <div className="absolute top-0 left-8 w-20 h-3 rounded-b-full bg-accent/40 blur-md"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent transition-colors">{t("home.benefits.compliance")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.compliance.text")}</p>
             </div>
 
-            <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[2] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl bg-gradient-to-r from-[#E65100] via-[#E65100] to-[#E65100]/70"></div>
+            <div className={`relative bg-gradient-to-b from-card via-card to-secondary/30 text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[2] ? 'visible' : ''}`}>
+              {/* Accent segment with glow */}
+              <div className="absolute top-0 left-8 w-20 h-1.5 rounded-b-full bg-gradient-to-r from-[#E65100] via-[#E65100] to-[#E65100]/60"></div>
+              <div className="absolute top-0 left-8 w-20 h-3 rounded-b-full bg-[#E65100]/40 blur-md"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent-orange transition-colors">{t("home.benefits.precision")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.precision.text")}</p>
             </div>
@@ -329,22 +335,31 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 max-w-7xl mx-auto mb-16 sm:mb-20 md:mb-24">
             <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
               <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent flex items-end p-10">
-                <h3 className="text-2xl font-bold text-primary-foreground group-hover:translate-y-[-4px] transition-transform">{t("products.instruments.title")}</h3>
+              {/* Layered overlay: dark base + brand tint */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-primary/20 to-transparent mix-blend-multiply"></div>
+              <div className="absolute inset-0 flex items-end p-10">
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.instruments.title")}</h3>
               </div>
             </div>
 
             <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
               <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
-              <div className="absolute inset-0 bg-gradient-to-t from-accent/90 via-accent/50 to-transparent flex items-end p-10">
-                <h3 className="text-2xl font-bold text-primary-foreground group-hover:translate-y-[-4px] transition-transform">{t("products.medical.title")}</h3>
+              {/* Layered overlay: dark base + brand tint */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-accent/60 via-accent/20 to-transparent mix-blend-multiply"></div>
+              <div className="absolute inset-0 flex items-end p-10">
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
 
             <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
               <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#E65100]/90 via-[#E65100]/50 to-transparent flex items-end p-10">
-                <h3 className="text-2xl font-bold text-primary-foreground group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
+              {/* Layered overlay: dark base + brand tint */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#E65100]/60 via-[#E65100]/20 to-transparent mix-blend-multiply"></div>
+              <div className="absolute inset-0 flex items-end p-10">
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
           </div>
