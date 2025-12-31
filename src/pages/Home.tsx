@@ -293,19 +293,19 @@ export default function Home() {
           </div>
           <div ref={benefitsStagger.containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[0] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-primary"></div>
+              <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl bg-gradient-to-r from-primary via-primary to-primary/70"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-primary transition-colors">{t("home.benefits.speed")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.speed.text")}</p>
             </div>
 
             <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[1] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-accent"></div>
+              <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl bg-gradient-to-r from-accent via-accent to-accent/70"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent transition-colors">{t("home.benefits.compliance")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.compliance.text")}</p>
             </div>
 
             <div className={`relative bg-card text-center p-10 rounded-3xl shadow-[var(--shadow-elevated)] border border-border/20 hover:-translate-y-1 transition-all duration-500 group stagger-item ${benefitsStagger.visibleItems[2] ? 'visible' : ''}`}>
-              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-accent-orange"></div>
+              <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl bg-gradient-to-r from-[#E65100] via-[#E65100] to-[#E65100]/70"></div>
               <h3 className="text-xl font-semibold mb-3 mt-4 group-hover:text-accent-orange transition-colors">{t("home.benefits.precision")}</h3>
               <p className="text-muted-foreground leading-relaxed">{t("home.benefits.precision.text")}</p>
             </div>
@@ -318,11 +318,11 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={productsAnimation.elementRef} className={`text-center mb-16 sm:mb-20 md:mb-24 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary">{t("products.title")}</h2>
-            {/* 3-segment underline: blue | green | orange */}
+            {/* 3-segment underline: blue | green | orange with gradients */}
             <div className="flex justify-center gap-1.5 mt-4">
-              <div className="w-12 h-1.5 rounded-full bg-primary"></div>
-              <div className="w-12 h-1.5 rounded-full bg-accent"></div>
-              <div className="w-12 h-1.5 rounded-full bg-accent-orange"></div>
+              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-primary to-primary/80"></div>
+              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-accent to-accent/80"></div>
+              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-[#E65100] to-[#E65100]/80"></div>
             </div>
           </div>
 
