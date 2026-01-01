@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({
-  default: module.DNA3D
-})));
+
+const DNA3D = lazy(() => import("@/components/3d/DNA3D").then(module => ({ default: module.DNA3D })));
 import medicalImplantsDiagram from "@/assets/products/medical-implants-diagram.webp";
 import dentalImplantsDiagram from "@/assets/products/dental-implants-diagram.webp";
 import factoryHeroFull from "@/assets/facility/factory-hero-full.svg";
@@ -23,9 +22,7 @@ import embutidora from "@/assets/metrology/embutidora.webp";
 import { useEffect } from "react";
 // DNA3D now lazy loaded at top of file
 // Lazy load 3D components for better mobile performance
-const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({
-  default: module.MedicalGlobe
-})));
+const MedicalGlobe = lazy(() => import("@/components/3d/MedicalGlobe").then(module => ({ default: module.MedicalGlobe })));
 import { EquipmentCarousel } from "@/components/EquipmentCarousel";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -58,6 +55,7 @@ import techimport from "@/assets/clients/techimport-new.png";
 import toride from "@/assets/clients/toride-new.png";
 import ultradent from "@/assets/clients/ultradent-new.png";
 import vincula from "@/assets/clients/vincula-new.png";
+
 export default function Home() {
   const {
     t
@@ -180,19 +178,25 @@ export default function Home() {
     width: 128,
     height: 64
   }];
+  
   useEffect(() => {
     // Performance monitoring
     if (typeof window !== 'undefined' && 'performance' in window) {
       performance.mark('hero-loaded');
     }
   }, []);
+  
   return <div className="min-h-screen">
       <div id="top" />
       {/* Hero Section - Factory Exterior Background */}
       <section className="relative h-[600px] sm:h-[700px] lg:h-[800px] overflow-hidden">
         {/* Factory Photo Background */}
         <div className="absolute inset-0">
-          <img src={factoryHeroFull} alt="Lifetrek Medical factory exterior - Modern industrial facility" className="w-full h-full object-cover object-center" />
+          <img 
+            src={factoryHeroFull} 
+            alt="Lifetrek Medical factory exterior - Modern industrial facility" 
+            className="w-full h-full object-cover object-center"
+          />
         </div>
         
         {/* Blue Gradient Overlay - Left to Right */}
@@ -279,7 +283,7 @@ export default function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/10 relative overflow-hidden my-[10px]">
+      <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/10 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div ref={benefitsAnimation.elementRef} className={`text-center mb-12 sm:mb-16 scroll-reveal ${benefitsAnimation.isVisible ? 'visible' : ''}`}>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">{t("home.whyChoose.title")}</h2>
@@ -319,43 +323,29 @@ export default function Home() {
       <section className="py-24 sm:py-32 md:py-40 bg-gradient-to-b from-secondary/5 to-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={productsAnimation.elementRef} className={`text-center mb-16 sm:mb-20 md:mb-24 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary">{t("products.title")}</h2>
-            {/* 3-segment underline: blue | green | orange with gradients */}
-            <div className="flex justify-center gap-1.5 mt-4">
-              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-primary to-primary/80"></div>
-              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-accent to-accent/80"></div>
-              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-[#E65100] to-[#E65100]/80"></div>
-            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-primary">{t("products.title")}</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 max-w-7xl mx-auto mb-16 sm:mb-20 md:mb-24">
-            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
-              <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
-              {/* Layered overlay: dark base + brand tint */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-primary/20 to-transparent mix-blend-multiply"></div>
-              <div className="absolute inset-0 flex items-end p-10">
-                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.instruments.title")}</h3>
+            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-primary/20 transition-all hover:-translate-y-2">
+              <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-transparent flex items-end p-8">
+                <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.instruments.title")}</h3>
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
-              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
-              {/* Layered overlay: dark base + brand tint */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-accent/60 via-accent/20 to-transparent mix-blend-multiply"></div>
-              <div className="absolute inset-0 flex items-end p-10">
-                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
+            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent/20 transition-all hover:-translate-y-2">
+              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
+              <div className="absolute inset-0 bg-gradient-to-t from-accent via-accent/70 to-transparent flex items-end p-8">
+                <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
-              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
-              {/* Layered overlay: dark base + brand tint */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#E65100]/60 via-[#E65100]/20 to-transparent mix-blend-multiply"></div>
-              <div className="absolute inset-0 flex items-end p-10">
-                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
+            <div className="group relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-accent-orange/20 transition-all hover:-translate-y-2">
+              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-64 sm:h-80 object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="320" />
+              <div className="absolute inset-0 bg-gradient-to-t from-accent-orange via-accent-orange/70 to-transparent flex items-end p-8">
+                <h3 className="text-xl font-bold text-primary-foreground group-hover:scale-105 transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
           </div>
