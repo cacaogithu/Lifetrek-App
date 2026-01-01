@@ -44,8 +44,7 @@ export function useBlogAnalytics(postId?: string) {
     };
 
     const recordView = async () => {
-      // Cast to any because types are not yet generated for the new table
-      const { data } = await (supabase.from('blog_analytics' as any)).insert({
+      const { data } = await supabase.from('blog_analytics').insert({
         post_id: postId,
         session_id: sessionId!,
         user_email: userEmail,
@@ -57,7 +56,7 @@ export function useBlogAnalytics(postId?: string) {
         viewed_at: new Date().toISOString(),
         time_on_page: 0,
         scroll_depth: 0
-      }).select().single();
+      }).select('id').single();
 
       if (data) {
         analyticsIdRef.current = data.id;
@@ -95,11 +94,10 @@ export function useBlogAnalytics(postId?: string) {
       
       const timeOnPage = Math.round((Date.now() - startTime) / 1000);
       
-      // Cast to any because types are not yet generated for the new table
-      (supabase.from('blog_analytics' as any)).update({
+      supabase.from('blog_analytics').update({
         time_on_page: timeOnPage,
         scroll_depth: maxScroll
-      }).eq('id', analyticsIdRef.current).then(({ error }: any) => {
+      }).eq('id', analyticsIdRef.current).then(({ error }) => {
          if (error) console.error("Error updating analytics:", error);
       });
     };
@@ -114,10 +112,9 @@ export function useBlogAnalytics(postId?: string) {
   
   // Helper to track CTA clicks
   const trackCtaClick = async () => {
-    // Note: We track based on the current session and post
     if (!postId || !sessionIdRef.current) return;
     
-    await (supabase.from('blog_analytics' as any)).update({
+    await supabase.from('blog_analytics').update({
         cta_clicked: true
     }).match({ 
         session_id: sessionIdRef.current, 
