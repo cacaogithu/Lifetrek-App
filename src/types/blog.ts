@@ -49,3 +49,43 @@ export interface BlogPostInsert {
 export interface BlogPostUpdate extends Partial<BlogPostInsert> {
   id: string;
 }
+
+export interface BlogAnalyticsEvent {
+  id: string;
+  post_id: string;
+  session_id: string;
+  user_email: string | null;
+  company_domain: string | null;
+  viewed_at: string;
+  time_on_page: number;
+  scroll_depth: number;
+  cta_clicked: boolean;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  created_at: string;
+}
+
+export interface NewsDigest {
+  id: string;
+  content: string;
+  sources: string[] | null;
+  customer_interests: string[] | null;
+  search_query: string | null;
+  generated_at: string;
+  created_at: string;
+}
+
+export interface ContentPerformanceStats {
+  post_id: string;
+  post_title: string;
+  post_slug: string;
+  category_name: string;
+  total_views: number;
+  unique_sessions: number;
+  avg_time_on_page: number;
+  avg_scroll_depth: number;
+  cta_click_rate: number;
+  conversion_count: number;
+  performance_score: number;
+}
