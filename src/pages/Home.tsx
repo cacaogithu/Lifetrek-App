@@ -323,65 +323,43 @@ export default function Home() {
       <section className="py-24 sm:py-32 md:py-40 bg-gradient-to-b from-secondary/5 to-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={productsAnimation.elementRef} className={`text-center mb-16 sm:mb-20 md:mb-24 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-foreground">{t("products.title")}</h2>
-            {/* Single blue underline */}
-            <div className="flex justify-center mt-4">
-              <div className="w-24 h-1 rounded-full bg-primary"></div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary">{t("products.title")}</h2>
+            {/* 3-segment underline: blue | green | orange with gradients */}
+            <div className="flex justify-center gap-1.5 mt-4">
+              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-primary to-primary/80"></div>
+              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-accent to-accent/80"></div>
+              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-[#E65100] to-[#E65100]/80"></div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto mb-16 sm:mb-20 md:mb-24">
-            {/* Surgical Instruments Card - Blue duotone */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-sky-200 via-primary/70 to-primary">
-              <img 
-                src={surgicalInstruments} 
-                alt="Precision surgical instruments manufactured with advanced CNC technology" 
-                className="absolute inset-0 w-full h-full object-contain object-top pt-8 px-8 group-hover:scale-105 transition-transform duration-700"
-                style={{ filter: 'grayscale(100%) sepia(100%) saturate(300%) hue-rotate(180deg) brightness(0.9)' }}
-                loading="lazy" 
-                width="400" 
-                height="320" 
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-md">
-                  {t("products.instruments.title")}
-                </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 max-w-7xl mx-auto mb-16 sm:mb-20 md:mb-24">
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
+              <img src={surgicalInstruments} alt="Precision surgical instruments manufactured with advanced CNC technology" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
+              {/* Layered overlay: dark base + brand tint */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-primary/20 to-transparent mix-blend-multiply"></div>
+              <div className="absolute inset-0 flex items-end p-10">
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.instruments.title")}</h3>
               </div>
             </div>
 
-            {/* Orthopedic Implants Card - Green duotone */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-emerald-200 via-accent/70 to-accent">
-              <img 
-                src={medicalImplantsDiagram} 
-                alt="Medical orthopedic implants and surgical instruments product range" 
-                className="absolute inset-0 w-full h-full object-contain object-center pt-8 px-8 group-hover:scale-105 transition-transform duration-700"
-                style={{ filter: 'grayscale(100%) sepia(100%) saturate(300%) hue-rotate(90deg) brightness(0.9)' }}
-                loading="lazy" 
-                width="400" 
-                height="320" 
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-md">
-                  {t("products.medical.title")}
-                </h3>
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
+              <img src={medicalImplantsDiagram} alt="Medical orthopedic implants and surgical instruments product range" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
+              {/* Layered overlay: dark base + brand tint */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-accent/60 via-accent/20 to-transparent mix-blend-multiply"></div>
+              <div className="absolute inset-0 flex items-end p-10">
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
 
-            {/* Dental Implants Card - Orange duotone */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-orange-200 via-accent-orange/70 to-accent-orange">
-              <img 
-                src={dentalImplantsDiagram} 
-                alt="Dental implants and prosthetic components for dental applications" 
-                className="absolute inset-0 w-full h-full object-contain object-center pt-8 px-8 group-hover:scale-105 transition-transform duration-700"
-                style={{ filter: 'grayscale(100%) sepia(100%) saturate(400%) hue-rotate(330deg) brightness(0.95)' }}
-                loading="lazy" 
-                width="400" 
-                height="320" 
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-md">
-                  {t("products.dental.title")}
-                </h3>
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500">
+              <img src={dentalImplantsDiagram} alt="Dental implants and prosthetic components for dental applications" className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" width="400" height="384" />
+              {/* Layered overlay: dark base + brand tint */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#E65100]/60 via-[#E65100]/20 to-transparent mix-blend-multiply"></div>
+              <div className="absolute inset-0 flex items-end p-10">
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">{t("products.dental.title")}</h3>
               </div>
             </div>
           </div>
