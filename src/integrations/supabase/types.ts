@@ -135,6 +135,71 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_analytics: {
+        Row: {
+          company_domain: string | null
+          created_at: string
+          cta_clicked: boolean | null
+          id: string
+          post_id: string | null
+          referrer: string | null
+          scroll_depth: number | null
+          session_id: string
+          time_on_page: number | null
+          updated_at: string
+          user_email: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          viewed_at: string
+        }
+        Insert: {
+          company_domain?: string | null
+          created_at?: string
+          cta_clicked?: boolean | null
+          id?: string
+          post_id?: string | null
+          referrer?: string | null
+          scroll_depth?: number | null
+          session_id: string
+          time_on_page?: number | null
+          updated_at?: string
+          user_email?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          company_domain?: string | null
+          created_at?: string
+          cta_clicked?: boolean | null
+          id?: string
+          post_id?: string | null
+          referrer?: string | null
+          scroll_depth?: number | null
+          session_id?: string
+          time_on_page?: number | null
+          updated_at?: string
+          user_email?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_analytics_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_categories: {
         Row: {
           created_at: string
@@ -158,6 +223,83 @@ export type Database = {
           slug?: string
         }
         Relationships: []
+      }
+      blog_lead_attribution: {
+        Row: {
+          avg_scroll_depth: number | null
+          avg_time_on_page: number | null
+          company_domain: string | null
+          company_name: string | null
+          converted_to_lead_at: string | null
+          created_at: string
+          crm_lead_id: string | null
+          deal_closed_at: string | null
+          deal_stage: string | null
+          deal_value: number | null
+          favorite_category: string | null
+          favorite_keywords: string[] | null
+          first_blog_post: string | null
+          first_visited_at: string | null
+          id: string
+          lead_email: string
+          lead_source: string | null
+          total_cta_clicks: number | null
+          total_posts_viewed: number | null
+          updated_at: string
+        }
+        Insert: {
+          avg_scroll_depth?: number | null
+          avg_time_on_page?: number | null
+          company_domain?: string | null
+          company_name?: string | null
+          converted_to_lead_at?: string | null
+          created_at?: string
+          crm_lead_id?: string | null
+          deal_closed_at?: string | null
+          deal_stage?: string | null
+          deal_value?: number | null
+          favorite_category?: string | null
+          favorite_keywords?: string[] | null
+          first_blog_post?: string | null
+          first_visited_at?: string | null
+          id?: string
+          lead_email: string
+          lead_source?: string | null
+          total_cta_clicks?: number | null
+          total_posts_viewed?: number | null
+          updated_at?: string
+        }
+        Update: {
+          avg_scroll_depth?: number | null
+          avg_time_on_page?: number | null
+          company_domain?: string | null
+          company_name?: string | null
+          converted_to_lead_at?: string | null
+          created_at?: string
+          crm_lead_id?: string | null
+          deal_closed_at?: string | null
+          deal_stage?: string | null
+          deal_value?: number | null
+          favorite_category?: string | null
+          favorite_keywords?: string[] | null
+          first_blog_post?: string | null
+          first_visited_at?: string | null
+          id?: string
+          lead_email?: string
+          lead_source?: string | null
+          total_cta_clicks?: number | null
+          total_posts_viewed?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_lead_attribution_first_blog_post_fkey"
+            columns: ["first_blog_post"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       blog_posts: {
         Row: {
@@ -629,6 +771,39 @@ export type Database = {
         }
         Relationships: []
       }
+      news_digest: {
+        Row: {
+          blog_posts_created: string[] | null
+          content: string
+          created_at: string
+          customer_interests: string[] | null
+          generated_at: string
+          id: string
+          search_query: string | null
+          sources: string[] | null
+        }
+        Insert: {
+          blog_posts_created?: string[] | null
+          content: string
+          created_at?: string
+          customer_interests?: string[] | null
+          generated_at?: string
+          id?: string
+          search_query?: string | null
+          sources?: string[] | null
+        }
+        Update: {
+          blog_posts_created?: string[] | null
+          content?: string
+          created_at?: string
+          customer_interests?: string[] | null
+          generated_at?: string
+          id?: string
+          search_query?: string | null
+          sources?: string[] | null
+        }
+        Relationships: []
+      }
       processed_product_images: {
         Row: {
           brand: string | null
@@ -818,6 +993,16 @@ export type Database = {
       }
     }
     Functions: {
+      extract_domain_from_email: { Args: { email: string }; Returns: string }
+      get_top_customer_interests: {
+        Args: { limit_count?: number }
+        Returns: {
+          avg_engagement_score: number
+          keyword: string
+          post_count: number
+          total_views: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
