@@ -334,51 +334,60 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 max-w-7xl mx-auto mb-16 sm:mb-20 md:mb-24">
             {/* Surgical Instruments Card - Blue gradient */}
-            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500 h-80 sm:h-96 bg-gradient-to-b from-sky-100 via-primary/40 to-primary">
-              <img 
-                src={surgicalInstruments} 
-                alt="Precision surgical instruments manufactured with advanced CNC technology" 
-                className="absolute inset-0 w-full h-full object-contain object-center p-8 group-hover:scale-105 transition-transform duration-700" 
-                loading="lazy" 
-                width="400" 
-                height="384" 
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-primary/80 to-transparent">
-                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500 bg-gradient-to-b from-sky-50 via-primary/30 to-primary">
+              {/* White image container that blends into gradient */}
+              <div className="relative h-52 sm:h-60 mx-4 mt-4 rounded-2xl bg-white/90 backdrop-blur-sm overflow-hidden">
+                <img 
+                  src={surgicalInstruments} 
+                  alt="Precision surgical instruments manufactured with advanced CNC technology" 
+                  className="w-full h-full object-contain object-center p-4 group-hover:scale-105 transition-transform duration-700" 
+                  loading="lazy" 
+                  width="400" 
+                  height="240" 
+                />
+              </div>
+              <div className="p-6 pt-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-2px] transition-transform leading-tight">
                   {t("products.instruments.title")}
                 </h3>
               </div>
             </div>
 
             {/* Orthopedic Implants Card - Green gradient */}
-            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500 h-80 sm:h-96 bg-gradient-to-b from-emerald-100 via-accent/40 to-accent">
-              <img 
-                src={medicalImplantsDiagram} 
-                alt="Medical orthopedic implants and surgical instruments product range" 
-                className="absolute inset-0 w-full h-full object-contain object-center p-8 group-hover:scale-105 transition-transform duration-700" 
-                loading="lazy" 
-                width="400" 
-                height="384" 
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-accent/80 to-transparent">
-                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">
-                  {t("products.orthopedic.title")}
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500 bg-gradient-to-b from-emerald-50 via-accent/30 to-accent">
+              {/* White image container that blends into gradient */}
+              <div className="relative h-52 sm:h-60 mx-4 mt-4 rounded-2xl bg-white/90 backdrop-blur-sm overflow-hidden">
+                <img 
+                  src={medicalImplantsDiagram} 
+                  alt="Medical orthopedic implants and surgical instruments product range" 
+                  className="w-full h-full object-contain object-center p-4 group-hover:scale-105 transition-transform duration-700" 
+                  loading="lazy" 
+                  width="400" 
+                  height="240" 
+                />
+              </div>
+              <div className="p-6 pt-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-2px] transition-transform leading-tight">
+                  {t("products.medical.title")}
                 </h3>
               </div>
             </div>
 
             {/* Dental Implants Card - Orange gradient */}
-            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500 h-80 sm:h-96 bg-gradient-to-b from-orange-100 via-accent-orange/40 to-accent-orange">
-              <img 
-                src={dentalImplantsDiagram} 
-                alt="Dental implants and prosthetic components for dental applications" 
-                className="absolute inset-0 w-full h-full object-contain object-center p-8 group-hover:scale-105 transition-transform duration-700" 
-                loading="lazy" 
-                width="400" 
-                height="384" 
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-accent-orange/80 to-transparent">
-                <h3 className="text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-4px] transition-transform">
+            <div className="group relative overflow-hidden rounded-3xl shadow-[var(--shadow-elevated)] hover:-translate-y-3 transition-all duration-500 bg-gradient-to-b from-orange-50 via-accent-orange/30 to-accent-orange">
+              {/* White image container that blends into gradient */}
+              <div className="relative h-52 sm:h-60 mx-4 mt-4 rounded-2xl bg-white/90 backdrop-blur-sm overflow-hidden">
+                <img 
+                  src={dentalImplantsDiagram} 
+                  alt="Dental implants and prosthetic components for dental applications" 
+                  className="w-full h-full object-contain object-center p-4 group-hover:scale-105 transition-transform duration-700" 
+                  loading="lazy" 
+                  width="400" 
+                  height="240" 
+                />
+              </div>
+              <div className="p-6 pt-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg group-hover:translate-y-[-2px] transition-transform leading-tight">
                   {t("products.dental.title")}
                 </h3>
               </div>
