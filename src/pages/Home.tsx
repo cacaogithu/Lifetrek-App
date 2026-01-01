@@ -332,18 +332,16 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto mb-16 sm:mb-20 md:mb-24">
             {/* Surgical Instruments Card - Blue duotone */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-sky-100 via-primary/60 to-primary">
-              {/* Duotone image - blends with gradient */}
+            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-sky-200 via-primary/70 to-primary">
               <img 
                 src={surgicalInstruments} 
                 alt="Precision surgical instruments manufactured with advanced CNC technology" 
-                className="absolute inset-0 w-full h-full object-contain object-top pt-6 px-6 mix-blend-multiply opacity-80 group-hover:scale-105 transition-transform duration-700" 
+                className="absolute inset-0 w-full h-full object-contain object-top pt-8 px-8 group-hover:scale-105 transition-transform duration-700"
+                style={{ filter: 'grayscale(100%) sepia(100%) saturate(300%) hue-rotate(180deg) brightness(0.9)' }}
                 loading="lazy" 
                 width="400" 
                 height="320" 
               />
-              {/* Color overlay for duotone effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-primary/40 to-primary/60 mix-blend-overlay"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-md">
                   {t("products.instruments.title")}
@@ -352,18 +350,16 @@ export default function Home() {
             </div>
 
             {/* Orthopedic Implants Card - Green duotone */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-emerald-100 via-accent/60 to-accent">
-              {/* Duotone image - blends with gradient */}
+            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-emerald-200 via-accent/70 to-accent">
               <img 
                 src={medicalImplantsDiagram} 
                 alt="Medical orthopedic implants and surgical instruments product range" 
-                className="absolute inset-0 w-full h-full object-contain object-center pt-6 px-6 mix-blend-multiply opacity-80 group-hover:scale-105 transition-transform duration-700" 
+                className="absolute inset-0 w-full h-full object-contain object-center pt-8 px-8 group-hover:scale-105 transition-transform duration-700"
+                style={{ filter: 'grayscale(100%) sepia(100%) saturate(300%) hue-rotate(90deg) brightness(0.9)' }}
                 loading="lazy" 
                 width="400" 
                 height="320" 
               />
-              {/* Color overlay for duotone effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-accent/20 via-accent/40 to-accent/60 mix-blend-overlay"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-md">
                   {t("products.medical.title")}
@@ -372,18 +368,16 @@ export default function Home() {
             </div>
 
             {/* Dental Implants Card - Orange duotone */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-orange-100 via-accent-orange/60 to-accent-orange">
-              {/* Duotone image - blends with gradient */}
+            <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:-translate-y-2 transition-all duration-500 h-72 sm:h-80 bg-gradient-to-b from-orange-200 via-accent-orange/70 to-accent-orange">
               <img 
                 src={dentalImplantsDiagram} 
                 alt="Dental implants and prosthetic components for dental applications" 
-                className="absolute inset-0 w-full h-full object-contain object-center pt-6 px-6 mix-blend-multiply opacity-80 group-hover:scale-105 transition-transform duration-700" 
+                className="absolute inset-0 w-full h-full object-contain object-center pt-8 px-8 group-hover:scale-105 transition-transform duration-700"
+                style={{ filter: 'grayscale(100%) sepia(100%) saturate(400%) hue-rotate(330deg) brightness(0.95)' }}
                 loading="lazy" 
                 width="400" 
                 height="320" 
               />
-              {/* Color overlay for duotone effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-accent-orange/20 via-accent-orange/40 to-accent-orange/60 mix-blend-overlay"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-md">
                   {t("products.dental.title")}
