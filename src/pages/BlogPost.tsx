@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
 import { useBlogPost } from "@/hooks/useBlogPosts";
+import { useBlogAnalytics } from "@/hooks/useBlogAnalytics";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +13,7 @@ import { toast } from "sonner";
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading, error } = useBlogPost(slug || "");
+  const { trackCtaClick } = useBlogAnalytics(post?.id);
 
   const estimateReadTime = (content: string) => {
     const wordsPerMinute = 200;
@@ -210,7 +212,7 @@ const BlogPost = () => {
             <p className="text-muted-foreground mb-8">
               Entre em contato para discutir seu projeto e descobrir como podemos ajudar.
             </p>
-            <Link to="/contact">
+            <Link to="/contact" onClick={() => trackCtaClick()}>
               <Button size="lg">Fale Conosco</Button>
             </Link>
           </div>
