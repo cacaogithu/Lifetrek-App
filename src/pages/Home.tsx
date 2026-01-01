@@ -323,13 +323,8 @@ export default function Home() {
       <section className="py-24 sm:py-32 md:py-40 bg-gradient-to-b from-secondary/5 to-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div ref={productsAnimation.elementRef} className={`text-center mb-16 sm:mb-20 md:mb-24 scroll-reveal ${productsAnimation.isVisible ? 'visible' : ''}`}>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-primary">{t("products.title")}</h2>
-            {/* 3-segment underline: blue | green | orange with gradients */}
-            <div className="flex justify-center gap-1.5 mt-4">
-              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-primary to-primary/80"></div>
-              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-accent to-accent/80"></div>
-              <div className="w-12 h-1.5 rounded-full bg-gradient-to-r from-[#E65100] to-[#E65100]/80"></div>
-            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-primary">{t("products.title")}</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary via-accent to-accent-orange mx-auto mb-4 animate-float"></div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 max-w-7xl mx-auto mb-16 sm:mb-20 md:mb-24">
