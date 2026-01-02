@@ -73,22 +73,36 @@ async function verifyAdmin(authHeader: string | null): Promise<boolean> {
 
 // Input validation
 function validateInput(data: unknown): { imageUrl: string } | null {
-  if (!data || typeof data !== 'object') return null;
+  console.log('validateInput called, data type:', typeof data);
   
-  const obj = data as Record<string, unknown>;
-  
-  if (typeof obj.imageUrl !== 'string') return null;
-  
-  const imageUrl = obj.imageUrl.trim();
-  
-  // Validate URL format (must be http/https or data URL)
-  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:image/')) {
+  if (!data || typeof data !== 'object') {
+    console.log('Invalid: data is not an object');
     return null;
   }
   
-  // Limit URL length
-  if (imageUrl.length > 50000) return null;
+  const obj = data as Record<string, unknown>;
   
+  if (typeof obj.imageUrl !== 'string') {
+    console.log('Invalid: imageUrl is not a string, got:', typeof obj.imageUrl);
+    return null;
+  }
+  
+  const imageUrl = obj.imageUrl.trim();
+  console.log('imageUrl length:', imageUrl.length, 'starts with:', imageUrl.substring(0, 30));
+  
+  // Validate URL format (must be http/https or data URL)
+  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:image/')) {
+    console.log('Invalid: URL does not start with http/https/data:image');
+    return null;
+  }
+  
+  // Limit URL length to 10MB for base64 images
+  if (imageUrl.length > 10000000) {
+    console.log('Invalid: URL too long:', imageUrl.length);
+    return null;
+  }
+  
+  console.log('Input validation passed');
   return { imageUrl };
 }
 
