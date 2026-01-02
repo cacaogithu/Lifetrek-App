@@ -75,6 +75,7 @@ interface SlideCanvasProps {
         headline: string;
         body: string;
         imageUrl?: string;
+        textPlacement?: "burned_in" | "overlay";
     };
     className?: string;
     aspectRatio?: "square" | "portrait";
@@ -90,6 +91,29 @@ export const SlideCanvas = forwardRef<HTMLDivElement, SlideCanvasProps>(
 
         const isExport = mode === "export";
         const currentTheme = THEMES[theme];
+        const isBurnedIn = slide.textPlacement === "burned_in";
+
+        // If burned_in, render ONLY the image without any text/badges/overlays
+        if (isBurnedIn && slide.imageUrl) {
+            return (
+                <div
+                    ref={ref}
+                    className={containerClasses}
+                    style={{
+                        width: isExport ? "1080px" : "100%",
+                        height: isExport ? "1080px" : "auto",
+                        backgroundColor: currentTheme.background,
+                    }}
+                >
+                    <img
+                        src={slide.imageUrl}
+                        alt={slide.headline}
+                        className="w-full h-full object-contain"
+                        crossOrigin="anonymous"
+                    />
+                </div>
+            );
+        }
 
         // Brand type labels
         const typeLabels: Record<string, string> = {

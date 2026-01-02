@@ -137,6 +137,11 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     // Define Tools
     const tools = getTools(isBatch);
 
+    // === STRATEGIST AGENT ===
+    const strategistStartTime = Date.now();
+    console.log("📝 [STRATEGIST] Starting content generation...");
+    console.log(`📝 [STRATEGIST] Topic: "${topic}", Audience: "${targetAudience}", Mode: ${mode}`);
+
     // Call AI
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -155,7 +160,10 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
       }),
     });
 
+    const strategistTime = Date.now() - strategistStartTime;
+
     if (!response.ok) {
+      console.error(`❌ [STRATEGIST] API error: ${response.status}`);
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again in a few seconds." }),
@@ -181,9 +189,16 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     let resultCarousels = isBatch ? args.carousels : [args];
     if (!resultCarousels) resultCarousels = []; // Safety check
 
+    console.log(`⏱️ [STRATEGIST] Response received in ${strategistTime}ms`);
+    console.log(`📄 [STRATEGIST] Generated ${resultCarousels.length} carousel(s) with ${resultCarousels[0]?.slides?.length || 0} slides each`);
+    if (resultCarousels[0]?.slides?.[0]) {
+      console.log(`📄 [STRATEGIST] Hook headline: "${resultCarousels[0].slides[0].headline?.substring(0, 50)}..."`);
+    }
+
     // If Mode is 'plan', we return here WITHOUT generating images or running critique.
     // The user just wants to see the text plans.
     if (mode === 'plan') {
+         console.log(`✅ [PLAN MODE] Returning ${resultCarousels.length} strategy options (no images/critique)`);
          return new Response(
             JSON.stringify({ carousels: resultCarousels, mode: 'plan_results' }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -193,7 +208,9 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     // --- CRITIQUE LOOP (BRAND ANALYST) ---
     // Only run if not in mock mode and not image_only
     if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
-      console.log("🧐 Analyst Agent: Reviewing content against Brand Book...");
+      const analystStartTime = Date.now();
+      console.log("🧐 [ANALYST] Starting brand review...");
+      console.log(`🧐 [ANALYST] Reviewing ${resultCarousels.length} carousel(s) against Brand Book checklist`);
       
       const critiqueSystemPrompt = `You are the Brand & Quality Analyst for Lifetrek Medical.
 Mission: Review drafts to ensure On-brand voice, Technical credibility, and Strategic alignment.
@@ -235,11 +252,13 @@ Return the refined JSON object (carousels array).`;
             }),
          });
 
+         const analystTime = Date.now() - analystStartTime;
+
          if (!critiqueRes.ok) {
            if (critiqueRes.status === 429 || critiqueRes.status === 402) {
-             console.warn(`Critique API rate limit/payment issue: ${critiqueRes.status}`);
+             console.warn(`❌ [ANALYST] Rate limit/payment issue: ${critiqueRes.status}`);
            } else {
-             console.warn(`Critique API error: ${critiqueRes.status}`);
+             console.warn(`❌ [ANALYST] API error: ${critiqueRes.status}`);
            }
          }
          
@@ -250,12 +269,26 @@ Return the refined JSON object (carousels array).`;
             const refinedArgs = JSON.parse(refinedToolCall.function.arguments);
             const refinedCarousels = isBatch ? refinedArgs.carousels : [refinedArgs];
             if (refinedCarousels && refinedCarousels.length > 0) {
-               console.log("✅ Content refined by Analyst Agent.");
+               // Log changes made by analyst
+               const originalHook = resultCarousels[0]?.slides?.[0]?.headline || "";
+               const refinedHook = refinedCarousels[0]?.slides?.[0]?.headline || "";
+               const hookChanged = originalHook !== refinedHook;
+               
+               console.log(`⏱️ [ANALYST] Response received in ${analystTime}ms`);
+               console.log(`✅ [ANALYST] Content refined. Changes:`);
+               if (hookChanged) {
+                 console.log(`   - Hook REWRITTEN: "${originalHook.substring(0, 40)}..." → "${refinedHook.substring(0, 40)}..."`);
+               } else {
+                 console.log(`   - Hook unchanged (already strong)`);
+               }
+               
                resultCarousels = refinedCarousels;
             }
+         } else {
+           console.log(`⏱️ [ANALYST] Response received in ${analystTime}ms (no changes)`);
          }
        } catch (e) {
-         console.warn("⚠️ Analyst Agent critique failed, using original draft:", e);
+         console.warn("⚠️ [ANALYST] Critique failed, using original draft:", e);
        }
     }
 

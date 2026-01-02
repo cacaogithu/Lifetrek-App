@@ -29,6 +29,7 @@ interface CarouselSlide {
   assetId?: string;
   backgroundType?: "asset" | "generate";
   layout?: SlideLayout;
+  textPlacement?: "burned_in" | "overlay";
 }
 
 interface CarouselResult {
