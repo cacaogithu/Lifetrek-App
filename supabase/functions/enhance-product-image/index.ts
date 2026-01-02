@@ -8,29 +8,61 @@ const corsHeaders = {
 };
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_PUBLISHABLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY')!;
 
-// Verify user is admin
+// Verify user is admin - check both admin_users table and user_roles table
 async function verifyAdmin(authHeader: string | null): Promise<boolean> {
-  if (!authHeader) return false;
+  console.log('verifyAdmin called, authHeader exists:', !!authHeader);
+  
+  if (!authHeader) {
+    console.log('No auth header provided');
+    return false;
+  }
   
   try {
     const token = authHeader.replace('Bearer ', '');
+    console.log('Token extracted, length:', token.length);
+    
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: `Bearer ${token}` } }
     });
     
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) return false;
+    // Pass token explicitly to avoid "Auth session missing!" error
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    console.log('getUser result - user:', user?.id, 'error:', userError?.message);
     
-    const { data: adminData } = await supabase
+    if (userError || !user) {
+      console.log('User verification failed');
+      return false;
+    }
+    
+    // Check admin_users table first
+    const { data: adminData, error: adminError } = await supabase
       .from('admin_users')
       .select('id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
     
-    return !!adminData;
-  } catch {
+    console.log('admin_users query - data:', adminData, 'error:', adminError?.message);
+    
+    if (adminData) {
+      console.log('User is admin via admin_users table');
+      return true;
+    }
+    
+    // Also check user_roles table for admin role
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+    
+    console.log('user_roles query - data:', roleData, 'error:', roleError?.message);
+    
+    return !!roleData;
+  } catch (e) {
+    console.error('Exception in verifyAdmin:', e);
     return false;
   }
 }
