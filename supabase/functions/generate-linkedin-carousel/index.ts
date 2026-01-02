@@ -259,77 +259,158 @@ Return the refined JSON object (carousels array).`;
        }
     }
 
-    // Process Images for ALL carousels
-    // Fix: Explicitly type carousel as any to allow adding imageUrls
-    for (const carousel of (resultCarousels as any[])) {
-      if (!carousel) continue;
+    // === PARALLEL IMAGE PROCESSING ===
+    console.log(`🖼️ Starting parallel image processing for ${resultCarousels.length} carousels...`);
+    const imageStartTime = Date.now();
 
-      const processedSlides = [];
-      const slidesToProcess = format === "single-image" && carousel.slides?.length > 0 ? [carousel.slides[0]] : (carousel.slides || []);
-
-      for (const slide of slidesToProcess) {
-        let imageUrl = "";
-
-        // 1. Try Asset
-        if (slide.backgroundType === "asset" && slide.assetId) {
+    // Helper function to generate a single image with retry
+    async function generateSlideImage(slide: any): Promise<string> {
+      // 1. Try Asset first
+      if (slide.backgroundType === "asset" && slide.assetId) {
+        try {
           const { data: assetData } = await supabase.from("content_assets").select("filename").eq("id", slide.assetId).single();
           if (assetData) {
             const { data: publicUrlData } = supabase.storage.from("content-assets").getPublicUrl(assetData.filename);
-            imageUrl = publicUrlData.publicUrl;
+            if (publicUrlData?.publicUrl) {
+              console.log(`✅ Using asset for slide: ${slide.headline?.substring(0, 25)}...`);
+              return publicUrlData.publicUrl;
+            }
           }
+        } catch (e) {
+          console.warn(`Asset fetch failed for ${slide.assetId}:`, e);
         }
+      }
 
-        // 2. Generate if needed
-        if (!imageUrl && wantImages && (slide.backgroundType === "generate" || !slide.assetId)) {
-          try {
-            let imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
+      // 2. Generate new image if needed
+      if (!wantImages || (slide.backgroundType !== "generate" && slide.assetId)) {
+        return "";
+      }
+
+      const maxRetries = 2;
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          let imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
 HEADLINE: ${slide.headline}
 CONTEXT: ${slide.body}
 VISUAL DESCRIPTION: ${slide.imageGenerationPrompt || "Professional medical manufacturing scene"}
 STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
 
-            // Handling Text Placement Strategy (Strategist Decision)
-            if (slide.textPlacement === "burned_in") {
-                imagePrompt += `\nIMPORTANT: You MUST render the headline text ("${slide.headline}") CLEARLY and LEGIBLY inside the image. Integrated professional typography.`;
-            } else {
-                imagePrompt += `\nIMPORTANT: Create a clean, abstract background optimized for professional presentation.`;
-            }
+          if (slide.textPlacement === "burned_in") {
+            imagePrompt += `\nIMPORTANT: Render the headline text ("${slide.headline}") CLEARLY inside the image.`;
+          } else {
+            imagePrompt += `\nIMPORTANT: Create a clean, abstract background optimized for professional presentation.`;
+          }
 
-            const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: IMAGE_MODEL, // Nano Banana Pro 3.0
-                messages: [
-                  { role: "system", content: "You are an expert design agent using Gemini 3 Pro (Nano Banana). You excel at high-fidelity text rendering." },
-                  { role: "user", content: imagePrompt }
-                ],
-                modalities: ["image", "text"]
-              }),
-            });
-            
-            if (!imgRes.ok) {
-              if (imgRes.status === 429) {
-                console.warn("Image generation rate limited, skipping this slide");
-              } else if (imgRes.status === 402) {
-                console.warn("Image generation payment required, skipping this slide");
-              } else {
-                console.warn(`Image generation error: ${imgRes.status}`);
+          console.log(`🎨 Generating image for: ${slide.headline?.substring(0, 30)}... (attempt ${attempt + 1})`);
+          
+          const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: IMAGE_MODEL,
+              messages: [
+                { role: "system", content: "You are an expert design agent. Create high-fidelity professional images." },
+                { role: "user", content: imagePrompt }
+              ],
+              modalities: ["image", "text"]
+            }),
+          });
+          
+          if (!imgRes.ok) {
+            if (imgRes.status === 429 || imgRes.status === 402) {
+              console.warn(`Rate limit/payment issue (${imgRes.status}), attempt ${attempt + 1}`);
+              if (attempt < maxRetries) {
+                await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+                continue;
               }
-            } else {
-              const imgData = await imgRes.json();
-              imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
             }
-          } catch (e) {
-            console.error("Image gen error", e);
+            throw new Error(`Image API error: ${imgRes.status}`);
+          }
+
+          const imgData = await imgRes.json();
+          const imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+          
+          if (imageUrl) {
+            console.log(`✅ Image generated for: ${slide.headline?.substring(0, 25)}...`);
+            return imageUrl;
+          }
+        } catch (e) {
+          console.error(`Image gen attempt ${attempt + 1} failed:`, e);
+          if (attempt < maxRetries) {
+            await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
           }
         }
-
-        processedSlides.push({ ...slide, imageUrl });
       }
-      carousel.slides = processedSlides;
-      carousel.imageUrls = processedSlides.map((s: any) => s.imageUrl || "");
+      return "";
     }
+
+    // Collect all slides needing processing
+    interface SlideTask {
+      carouselIndex: number;
+      slideIndex: number;
+      slide: any;
+    }
+    
+    const allSlideTasks: SlideTask[] = [];
+    (resultCarousels as any[]).forEach((carousel, carouselIndex) => {
+      if (!carousel?.slides) return;
+      const slidesToProcess = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
+      slidesToProcess.forEach((slide: any, slideIndex: number) => {
+        if (slide) {
+          allSlideTasks.push({ carouselIndex, slideIndex, slide });
+        }
+      });
+    });
+
+    console.log(`📊 Total slides to process: ${allSlideTasks.length}`);
+
+    // Process in parallel batches (concurrency limit = 5)
+    const CONCURRENCY_LIMIT = 5;
+    const imageResults: { carouselIndex: number; slideIndex: number; imageUrl: string }[] = [];
+
+    for (let i = 0; i < allSlideTasks.length; i += CONCURRENCY_LIMIT) {
+      const batch = allSlideTasks.slice(i, i + CONCURRENCY_LIMIT);
+      console.log(`⚡ Processing batch ${Math.floor(i / CONCURRENCY_LIMIT) + 1}/${Math.ceil(allSlideTasks.length / CONCURRENCY_LIMIT)} (${batch.length} images)`);
+      
+      const batchPromises = batch.map(async (task) => {
+        const imageUrl = await generateSlideImage(task.slide);
+        return { carouselIndex: task.carouselIndex, slideIndex: task.slideIndex, imageUrl };
+      });
+
+      const batchResults = await Promise.allSettled(batchPromises);
+      
+      batchResults.forEach((result, idx) => {
+        if (result.status === "fulfilled") {
+          imageResults.push(result.value);
+        } else {
+          console.error(`Slide image failed:`, result.reason);
+          imageResults.push({
+            carouselIndex: batch[idx].carouselIndex,
+            slideIndex: batch[idx].slideIndex,
+            imageUrl: ""
+          });
+        }
+      });
+    }
+
+    // Apply results back to carousels
+    imageResults.forEach(({ carouselIndex, slideIndex, imageUrl }) => {
+      const carousel = (resultCarousels as any[])[carouselIndex];
+      if (carousel?.slides?.[slideIndex]) {
+        carousel.slides[slideIndex].imageUrl = imageUrl;
+      }
+    });
+
+    // Update imageUrls array for each carousel
+    (resultCarousels as any[]).forEach((carousel) => {
+      if (carousel?.slides) {
+        carousel.imageUrls = carousel.slides.map((s: any) => s.imageUrl || "");
+      }
+    });
+
+    const imageTime = Date.now() - imageStartTime;
+    const successCount = imageResults.filter(r => r.imageUrl).length;
+    console.log(`✅ Image processing complete: ${successCount}/${allSlideTasks.length} images in ${imageTime}ms`);
 
     return new Response(
       JSON.stringify(isBatch ? { carousels: resultCarousels } : { carousel: resultCarousels[0] }),
