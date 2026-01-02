@@ -319,19 +319,24 @@ Return the refined JSON object (carousels array).`;
         return "";
       }
 
+      // Lifetrek logo URL for brand consistency
+      const LIFETREK_LOGO_URL = "https://iijkbhiqcsvtnfernrbs.supabase.co/storage/v1/object/public/product-images/lifetrek-logo-white.png";
+
       const maxRetries = 2;
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
-          let imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
+          let imagePrompt = `Create a professional LinkedIn carousel slide image for Lifetrek Medical (1080x1350px portrait).
 HEADLINE: ${slide.headline}
 CONTEXT: ${slide.body}
 VISUAL DESCRIPTION: ${slide.imageGenerationPrompt || "Professional medical manufacturing scene"}
-STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
+STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.
+
+BRANDING REQUIREMENT: Include the Lifetrek Medical logo (provided as reference image) in the BOTTOM RIGHT CORNER of the image. The logo should be small (approximately 80-100px wide), subtle but visible, with appropriate padding from the edges.`;
 
           if (slide.textPlacement === "burned_in") {
-            imagePrompt += `\nIMPORTANT: Render the headline text ("${slide.headline}") CLEARLY inside the image.`;
+            imagePrompt += `\n\nTEXT REQUIREMENT: Render the headline text ("${slide.headline}") CLEARLY and PROMINENTLY inside the image. Use bold white text on dark areas or black text on light areas for maximum contrast.`;
           } else {
-            imagePrompt += `\nIMPORTANT: Create a clean, abstract background optimized for professional presentation.`;
+            imagePrompt += `\n\nBACKGROUND REQUIREMENT: Create a clean, abstract background optimized for text overlay. Leave space for text to be added later.`;
           }
 
           console.log(`🎨 Generating image for: ${slide.headline?.substring(0, 30)}... (attempt ${attempt + 1})`);
@@ -342,8 +347,14 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
             body: JSON.stringify({
               model: IMAGE_MODEL,
               messages: [
-                { role: "system", content: "You are an expert design agent. Create high-fidelity professional images." },
-                { role: "user", content: imagePrompt }
+                { role: "system", content: "You are an expert design agent specializing in professional LinkedIn carousel images. Create high-fidelity, brand-consistent images." },
+                { 
+                  role: "user", 
+                  content: [
+                    { type: "text", text: imagePrompt },
+                    { type: "image_url", image_url: { url: LIFETREK_LOGO_URL } }
+                  ]
+                }
               ],
               modalities: ["image", "text"]
             }),
