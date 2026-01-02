@@ -172,6 +172,7 @@ OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment
         model: 'google/gemini-2.5-flash-image-preview',
         messages: [
           {
+            role: 'user',
             content: [
               {
                 type: 'text',
