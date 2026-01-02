@@ -168,10 +168,10 @@ OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        // IMPORTANT: use provider-qualified model id so the gateway returns an image payload
         model: 'google/gemini-2.5-flash-image-preview',
         messages: [
           {
-            role: 'user',
             content: [
               {
                 type: 'text',
