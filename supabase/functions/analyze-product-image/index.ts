@@ -12,37 +12,60 @@ const supabaseAnonKey = Deno.env.get('SUPABASE_PUBLISHABLE_KEY') || Deno.env.get
 
 // Verify user is admin - check both admin_users table (legacy) and user_roles table
 async function verifyAdmin(authHeader: string | null): Promise<boolean> {
-  if (!authHeader) return false;
+  console.log('verifyAdmin called, authHeader exists:', !!authHeader);
+  
+  if (!authHeader) {
+    console.log('No auth header provided');
+    return false;
+  }
   
   try {
     const token = authHeader.replace('Bearer ', '');
+    console.log('Token extracted, length:', token.length);
+    console.log('supabaseUrl:', supabaseUrl);
+    console.log('supabaseAnonKey exists:', !!supabaseAnonKey);
+    
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: `Bearer ${token}` } }
     });
     
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) return false;
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    console.log('getUser result - user:', user?.id, 'error:', userError?.message);
+    
+    if (userError || !user) {
+      console.log('User verification failed');
+      return false;
+    }
     
     // Check admin_users table first (user can see their own record)
-    const { data: adminData } = await supabase
+    const { data: adminData, error: adminError } = await supabase
       .from('admin_users')
       .select('id')
       .eq('user_id', user.id)
       .maybeSingle();
     
-    if (adminData) return true;
+    console.log('admin_users query - data:', adminData, 'error:', adminError?.message);
+    
+    if (adminData) {
+      console.log('User is admin via admin_users table');
+      return true;
+    }
     
     // Also check user_roles table for admin role
-    const { data: roleData } = await supabase
+    const { data: roleData, error: roleError } = await supabase
       .from('user_roles')
       .select('id')
       .eq('user_id', user.id)
       .eq('role', 'admin')
       .maybeSingle();
     
-    return !!roleData;
+    console.log('user_roles query - data:', roleData, 'error:', roleError?.message);
+    
+    const isAdmin = !!roleData;
+    console.log('Final admin check result:', isAdmin);
+    return isAdmin;
   } catch (e) {
-    console.error('Error verifying admin:', e);
+    console.error('Exception in verifyAdmin:', e);
     return false;
   }
 }
@@ -69,6 +92,9 @@ function validateInput(data: unknown): { imageUrl: string } | null {
 }
 
 serve(async (req) => {
+  console.log('Request received, method:', req.method);
+  console.log('ENV check - SUPABASE_URL:', !!supabaseUrl, 'ANON_KEY:', !!supabaseAnonKey);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
