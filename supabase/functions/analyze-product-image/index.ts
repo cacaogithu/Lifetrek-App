@@ -29,7 +29,8 @@ async function verifyAdmin(authHeader: string | null): Promise<boolean> {
       global: { headers: { Authorization: `Bearer ${token}` } }
     });
     
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    // In server-side contexts, pass the JWT explicitly to avoid "Auth session missing!"
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     console.log('getUser result - user:', user?.id, 'error:', userError?.message);
     
     if (userError || !user) {
