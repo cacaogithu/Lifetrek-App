@@ -206,10 +206,26 @@ OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment
 
     const data = await response.json();
     
-    // Extract the generated image from the response
-    const enhancedImageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    console.log('AI response structure:', JSON.stringify({
+      hasChoices: !!data.choices,
+      choicesLength: data.choices?.length,
+      messageKeys: data.choices?.[0]?.message ? Object.keys(data.choices[0].message) : [],
+      hasImages: !!data.choices?.[0]?.message?.images,
+      imagesLength: data.choices?.[0]?.message?.images?.length
+    }));
+    
+    // Extract the generated image from the response - check multiple possible paths
+    let enhancedImageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    // Fallback: check if images array contains direct URLs
+    if (!enhancedImageUrl && data.choices?.[0]?.message?.images?.[0]) {
+      const imageData = data.choices[0].message.images[0];
+      enhancedImageUrl = imageData.url || imageData.image_url?.url || (typeof imageData === 'string' ? imageData : null);
+      console.log('Trying fallback image extraction:', !!enhancedImageUrl);
+    }
 
     if (!enhancedImageUrl) {
+      console.error('Full AI response:', JSON.stringify(data).slice(0, 2000));
       throw new Error('No image returned from AI');
     }
 
