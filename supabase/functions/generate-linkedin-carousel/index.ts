@@ -319,9 +319,6 @@ Return the refined JSON object (carousels array).`;
         return "";
       }
 
-      // Lifetrek logo URL for brand consistency
-      const LIFETREK_LOGO_URL = "https://iijkbhiqcsvtnfernrbs.supabase.co/storage/v1/object/public/product-images/lifetrek-logo-white.png";
-
       const maxRetries = 2;
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
@@ -331,7 +328,9 @@ CONTEXT: ${slide.body}
 VISUAL DESCRIPTION: ${slide.imageGenerationPrompt || "Professional medical manufacturing scene"}
 STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.
 
-BRANDING REQUIREMENT: Include the Lifetrek Medical logo (provided as reference image) in the BOTTOM RIGHT CORNER of the image. The logo should be small (approximately 80-100px wide), subtle but visible, with appropriate padding from the edges.`;
+BRANDING REQUIREMENT: Include the Lifetrek Medical logo in the BOTTOM RIGHT CORNER of the image.
+Logo description: A teal/green circular emblem (hex #14b8a6) containing a stylized "V" or implant shape in white, followed by the text "LIFETREK" in bold white Inter font, with "MEDICAL" in smaller letters below.
+The logo should be small (approximately 80-100px wide), subtle but clearly visible, with ~20px padding from edges.`;
 
           if (slide.textPlacement === "burned_in") {
             imagePrompt += `\n\nTEXT REQUIREMENT: Render the headline text ("${slide.headline}") CLEARLY and PROMINENTLY inside the image. Use bold white text on dark areas or black text on light areas for maximum contrast.`;
@@ -346,21 +345,14 @@ BRANDING REQUIREMENT: Include the Lifetrek Medical logo (provided as reference i
             headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
             body: JSON.stringify({
               model: IMAGE_MODEL,
-              messages: [
-                { role: "system", content: "You are an expert design agent specializing in professional LinkedIn carousel images. Create high-fidelity, brand-consistent images." },
-                { 
-                  role: "user", 
-                  content: [
-                    { type: "text", text: imagePrompt },
-                    { type: "image_url", image_url: { url: LIFETREK_LOGO_URL } }
-                  ]
-                }
-              ],
+              messages: [{ role: "user", content: imagePrompt }],
               modalities: ["image", "text"]
             }),
           });
           
           if (!imgRes.ok) {
+            const errorText = await imgRes.text();
+            console.error(`❌ Image API error ${imgRes.status}: ${errorText.substring(0, 500)}`);
             if (imgRes.status === 429 || imgRes.status === 402) {
               console.warn(`Rate limit/payment issue (${imgRes.status}), attempt ${attempt + 1}`);
               if (attempt < maxRetries) {
