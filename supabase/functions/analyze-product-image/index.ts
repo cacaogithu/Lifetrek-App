@@ -10,7 +10,7 @@ const corsHeaders = {
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
-// Verify user is admin
+// Verify user is admin - check both admin_users table (legacy) and user_roles table
 async function verifyAdmin(authHeader: string | null): Promise<boolean> {
   if (!authHeader) return false;
   
@@ -23,14 +23,26 @@ async function verifyAdmin(authHeader: string | null): Promise<boolean> {
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) return false;
     
+    // Check admin_users table first (user can see their own record)
     const { data: adminData } = await supabase
       .from('admin_users')
       .select('id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
     
-    return !!adminData;
-  } catch {
+    if (adminData) return true;
+    
+    // Also check user_roles table for admin role
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+    
+    return !!roleData;
+  } catch (e) {
+    console.error('Error verifying admin:', e);
     return false;
   }
 }
