@@ -169,7 +169,7 @@ OUTPUT GOAL: Magazine-quality product photography suitable for medical equipment
       },
       body: JSON.stringify({
         // IMPORTANT: use provider-qualified model id so the gateway returns an image payload
-        model: 'google/gemini-2.5-flash-image-preview',
+        model: 'google/gemini-3-pro-image-preview',
         messages: [
           {
             role: 'user',
