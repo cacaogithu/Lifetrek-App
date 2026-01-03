@@ -624,12 +624,17 @@ export default function LinkedInCarousel() {
           </div>
 
           {/* Export Actions - only show when we have results */}
-          {carouselResults.length > 0 && viewMode === "editor" && (
+          {carouselResults.length > 0 && carouselResults[currentCarouselIndex]?.slides && viewMode === "editor" && (
             <div className="flex flex-wrap gap-2">
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => saveCarousel(carouselResults[currentCarouselIndex])}
+                onClick={() => {
+                  const activeCarousel = carouselResults[currentCarouselIndex];
+                  if (activeCarousel) {
+                    saveCarousel(activeCarousel);
+                  }
+                }}
               >
                 <Save className="mr-2 h-4 w-4" />
                 Salvar
@@ -888,7 +893,7 @@ export default function LinkedInCarousel() {
                  ))}
               </div>
            </div>
-        ) : carouselResults.length > 0 && (
+        ) : carouselResults.length > 0 && carouselResults[currentCarouselIndex]?.slides && (
           <div className="grid lg:grid-cols-[300px_1fr_300px] gap-8 h-[calc(100vh-200px)]">
 
             {/* LEFT PANEL: Slides List */}
@@ -947,7 +952,7 @@ export default function LinkedInCarousel() {
                   </div>
                 )}
 
-                {carouselResults[currentCarouselIndex].slides.map((slide, idx) => (
+                {carouselResults[currentCarouselIndex]?.slides?.map((slide, idx) => (
                   <div
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
@@ -962,7 +967,7 @@ export default function LinkedInCarousel() {
                 ))}
                 <div className="pt-4 border-t">
                   <h4 className="text-xs font-bold mb-2">Legenda</h4>
-                  <p className="text-xs text-muted-foreground line-clamp-6">{carouselResults[currentCarouselIndex].caption}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-6">{carouselResults[currentCarouselIndex]?.caption}</p>
                 </div>
               </div>
             </Card>
@@ -970,13 +975,15 @@ export default function LinkedInCarousel() {
             {/* CENTER PANEL: Canvas */}
             <div className="h-full flex flex-col items-center justify-center bg-accent/20 rounded-xl p-8 relative">
               <div className="w-full max-w-[600px] shadow-2xl rounded-sm overflow-hidden ring-1 ring-slate-900/5">
-                <SlideCanvas
-                  mode="preview"
-                  slide={carouselResults[currentCarouselIndex].slides[currentSlide]}
-                  aspectRatio="square"
-                  theme={currentTheme}
-                  layout={carouselResults[currentCarouselIndex].slides[currentSlide].layout}
-                />
+                {carouselResults[currentCarouselIndex]?.slides?.[currentSlide] && (
+                  <SlideCanvas
+                    mode="preview"
+                    slide={carouselResults[currentCarouselIndex].slides[currentSlide]}
+                    aspectRatio="square"
+                    theme={currentTheme}
+                    layout={carouselResults[currentCarouselIndex].slides[currentSlide].layout}
+                  />
+                )}
               </div>
 
               {/* Hidden Export Area - positioned offscreen with real dimensions for capture */}
@@ -990,7 +997,7 @@ export default function LinkedInCarousel() {
                 }}
                 aria-hidden="true"
               >
-                {carouselResults[currentCarouselIndex].slides.map((s, idx) => (
+                {carouselResults[currentCarouselIndex]?.slides?.map((s, idx) => (
                   <div 
                     id={`export-slide-${idx}`} 
                     key={idx}
@@ -1010,8 +1017,8 @@ export default function LinkedInCarousel() {
                 <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))} disabled={currentSlide === 0}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-sm font-medium">Slide {currentSlide + 1} de {carouselResults[currentCarouselIndex].slides.length}</span>
-                <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.min(carouselResults[currentCarouselIndex].slides.length - 1, currentSlide + 1))} disabled={currentSlide === carouselResults[currentCarouselIndex].slides.length - 1}>
+                <span className="text-sm font-medium">Slide {currentSlide + 1} de {carouselResults[currentCarouselIndex]?.slides?.length || 0}</span>
+                <Button variant="outline" size="icon" onClick={() => setCurrentSlide(Math.min((carouselResults[currentCarouselIndex]?.slides?.length || 1) - 1, currentSlide + 1))} disabled={currentSlide === (carouselResults[currentCarouselIndex]?.slides?.length || 1) - 1}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
