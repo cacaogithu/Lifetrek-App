@@ -191,7 +191,7 @@ export async function executeToolCall(
       return await searchProducts(params, supabase);
     
     case "generate_image":
-      return await generateImage(params, lovableApiKey);
+      return await generateImage(params, lovableApiKey, supabase);
     
     case "search_assets":
       return await searchAssets(params, supabase);
@@ -415,14 +415,31 @@ async function searchProducts(
   };
 }
 
-// Generate image with Nano Banana
+// Generate image with Nano Banana + Multimodal RAG (logo + products)
 async function generateImage(
   params: { prompt: string; headline: string; body_text: string; style?: string; slide_type?: string },
-  lovableApiKey: string
+  lovableApiKey: string,
+  supabase: any
 ): Promise<any> {
   const style = params.style || "client_perspective";
   const slideType = params.slide_type || "content";
   
+  // Fetch logo from company_assets
+  const { data: logoAsset } = await supabase
+    .from("company_assets")
+    .select("url")
+    .eq("type", "logo")
+    .single();
+
+  // Fetch visible product images for visual reference
+  const { data: products } = await supabase
+    .from("processed_product_images")
+    .select("name, enhanced_url, category")
+    .eq("is_visible", true)
+    .limit(2);
+
+  console.log(`🎨 [DESIGNER] Creating image with references: { logo: ${!!logoAsset?.url}, productCount: ${products?.length || 0} }`);
+
   const styleDirections: Record<string, string> = {
     client_perspective: "Show the CLIENT'S experience - engineers inspecting precision parts, quality managers reviewing documentation, cleanroom production",
     technical_proof: "Close-up of precision machinery, ZEISS CMM measurements, ISO certifications displayed prominently",
@@ -441,7 +458,7 @@ async function generateImage(
   const maxBodyWords = slideType === "hook" ? 8 : slideType === "cta" ? 10 : 15;
   const truncatedBody = truncateToWords(params.body_text, maxBodyWords);
 
-  const fullPrompt = `Create a premium LinkedIn carousel slide (1080x1080) for B2B medical device industry.
+  let fullPrompt = `Create a premium LinkedIn carousel slide (1080x1080) for B2B medical device industry.
 
 PERSPECTIVE: ${styleDirections[style] || styleDirections.client_perspective}
 
@@ -453,7 +470,6 @@ ${truncatedBody ? `BODY TEXT (burn into image, SMALLER white text below headline
 VISUAL STYLE:
 - Premium feel: deep blue gradient (#003052 to #004080), white text, green accent (#228B22)
 - Editorial, informative, NOT salesy
-- Lifetrek branding subtle (small "LM" logo bottom-right)
 - HIGH CONTRAST text must be CLEARLY READABLE
 - MINIMAL text - let the visual speak
 
@@ -461,12 +477,49 @@ LAYOUT:
 - Center-focused: Large, bold headline (Inter Bold equivalent)
 - Below headline: Green accent line
 - Below line: Short body text if needed (Inter Regular)
-- Bottom-right: Small "LM" logo
+- Bottom-right: Company logo (use the EXACT attached logo image)
 
 CRITICAL: Keep text MINIMAL. The headline is the star. Body text should be very short or omitted if headline is strong enough.
 The text MUST be part of the image (burned in), not overlaid.`;
 
+  // Add visual references notes
+  if (logoAsset?.url) {
+    fullPrompt += "\n\nATTACHED: Company logo - use this EXACT logo in bottom-right corner of the image.";
+  }
+  if (products?.length) {
+    fullPrompt += `\n\nATTACHED: ${products.length} product reference images. These are real medical device products - use their style/aesthetic as inspiration.`;
+  }
+
   try {
+    // Build multimodal content array
+    type ContentPart = 
+      | { type: "text"; text: string }
+      | { type: "image_url"; image_url: { url: string } };
+
+    const userContent: ContentPart[] = [
+      { type: "text", text: fullPrompt }
+    ];
+
+    // Add logo as visual reference
+    if (logoAsset?.url) {
+      userContent.push({
+        type: "image_url",
+        image_url: { url: logoAsset.url }
+      });
+    }
+
+    // Add product images as visual reference (max 2)
+    if (products?.length) {
+      for (const product of products.slice(0, 2)) {
+        if (product.enhanced_url) {
+          userContent.push({
+            type: "image_url",
+            image_url: { url: product.enhanced_url }
+          });
+        }
+      }
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -475,7 +528,7 @@ The text MUST be part of the image (burned in), not overlaid.`;
       },
       body: JSON.stringify({
         model: "google/gemini-3-pro-image-preview",
-        messages: [{ role: "user", content: fullPrompt }],
+        messages: [{ role: "user", content: userContent }],
         modalities: ["image", "text"],
       }),
     });
