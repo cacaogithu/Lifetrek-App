@@ -104,6 +104,8 @@ export default function LinkedInCarousel() {
   const [currentPreview, setCurrentPreview] = useState<string>("");
   const [strategistOutput, setStrategistOutput] = useState<string>("");
   const [analystOutput, setAnalystOutput] = useState<string>("");
+  const [designerOutput, setDesignerOutput] = useState<string>("");
+  const [agentStatus, setAgentStatus] = useState<{ agent: string; status: string; message: string } | undefined>();
 
   useEffect(() => {
     checkAdminAccess();
@@ -465,21 +467,41 @@ export default function LinkedInCarousel() {
               setCurrentPreview(data.content || "");
               break;
 
+            case "agent_status":
+              // Real-time agent status updates
+              setAgentStatus({ 
+                agent: data.agent, 
+                status: data.status, 
+                message: data.message 
+              });
+              break;
+
             case "strategist_result":
               // Store full strategist output
               if (data.fullOutput) {
                 setStrategistOutput(data.fullOutput);
                 setCurrentPreview("");
+                setAgentStatus(undefined);
               } else if (data.preview) {
                 setCurrentPreview(`Hook: ${data.preview}`);
               }
               break;
 
             case "analyst_result":
+            case "copywriter_result":
               // Store full analyst/copywriter output
               if (data.fullOutput) {
                 setAnalystOutput(data.fullOutput);
                 setCurrentPreview("");
+                setAgentStatus(undefined);
+              }
+              break;
+
+            case "designer_result":
+              // Store full designer output
+              if (data.fullOutput) {
+                setDesignerOutput(data.fullOutput);
+                setAgentStatus(undefined);
               }
               break;
 
@@ -487,7 +509,7 @@ export default function LinkedInCarousel() {
               setGenerationSteps((prev) =>
                 prev.map((s) =>
                   s.id === "images"
-                    ? { ...s, content: `${data.completed}/${data.total} imagens` }
+                    ? { ...s, content: `${data.completed || data.slideIndex + 1}/${data.total} imagens` }
                     : s
                 )
               );
@@ -992,6 +1014,8 @@ export default function LinkedInCarousel() {
                         currentOutput={currentPreview}
                         strategistFullOutput={strategistOutput}
                         analystFullOutput={analystOutput}
+                        designerFullOutput={designerOutput}
+                        agentStatus={agentStatus}
                       />
                     </div>
                   )}
