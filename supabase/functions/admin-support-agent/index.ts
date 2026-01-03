@@ -222,16 +222,90 @@ serve(async (req) => {
     try {
         const { messages } = await req.json();
         const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+        const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+        const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-        if (!LOVABLE_API_KEY) {
-            throw new Error("Missing LOVABLE_API_KEY");
+        if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+            throw new Error("Missing required environment variables");
         }
 
-        console.log("Processing admin support request with context length:", ADMIN_CONTEXT.length);
+        console.log("🤖 [ADMIN SUPPORT] Processing request with RAG...");
+
+        // Initialize Supabase client for RAG
+        const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+        // ============= RAG: FETCH REAL-TIME DATA =============
+        console.log("📊 [RAG] Fetching real-time admin data...");
+
+        // Fetch recent leads with stats
+        const { data: recentLeads, error: leadsError } = await supabase
+            .from("contact_leads")
+            .select("id, name, company, project_type, status, priority, lead_score, created_at")
+            .order("created_at", { ascending: false })
+            .limit(10);
+
+        // Fetch lead status distribution
+        const { data: statusStats } = await supabase
+            .from("contact_leads")
+            .select("status");
+
+        // Count leads by status
+        const statusCounts = statusStats?.reduce((acc: any, lead: any) => {
+            acc[lead.status] = (acc[lead.status] || 0) + 1;
+            return acc;
+        }, {}) || {};
+
+        // Fetch recent blog posts
+        const { data: recentBlogs } = await supabase
+            .from("blog_posts")
+            .select("id, title, slug, published, created_at, views")
+            .order("created_at", { ascending: false })
+            .limit(5);
+
+        // Fetch admin users for context
+        const { data: adminUsers } = await supabase
+            .from("admin_users")
+            .select("id, user_id")
+            .limit(10);
+
+        // Build RAG context from real-time data
+        const ragContext = `
+=== REAL-TIME ADMIN DATA (RAG) ===
+
+## Recent Leads (Last 10):
+${recentLeads?.map((lead: any, idx: number) =>
+    `${idx + 1}. ${lead.name} (${lead.company || 'N/A'}) - Status: ${lead.status} | Priority: ${lead.priority || 'N/A'} | Score: ${lead.lead_score || 'N/A'} | Project: ${lead.project_type || 'N/A'}`
+).join('\n') || 'No recent leads found'}
+
+## Lead Pipeline Summary:
+- Total Leads: ${statusStats?.length || 0}
+- New: ${statusCounts.new || 0}
+- Contacted: ${statusCounts.contacted || 0}
+- In Progress: ${statusCounts.in_progress || 0}
+- Quoted: ${statusCounts.quoted || 0}
+- Closed: ${statusCounts.closed || 0}
+- Rejected: ${statusCounts.rejected || 0}
+
+## Recent Blog Posts:
+${recentBlogs?.map((blog: any, idx: number) =>
+    `${idx + 1}. "${blog.title}" (${blog.published ? 'Published' : 'Draft'}) - Views: ${blog.views || 0} - Slug: /blog/${blog.slug}`
+).join('\n') || 'No blog posts found'}
+
+## Active Admin Users:
+- Total active admins: ${adminUsers?.length || 0}
+
+=== END REAL-TIME DATA ===
+`;
+
+        console.log("✅ [RAG] Data fetched successfully");
+        console.log(`📊 [RAG] Loaded ${recentLeads?.length || 0} leads, ${recentBlogs?.length || 0} blogs, ${adminUsers?.length || 0} admins`);
+
+        // Combine static context with RAG data
+        const fullContext = `${ADMIN_CONTEXT}\n\n${ragContext}`;
 
         const systemMessage = {
             role: "system",
-            content: ADMIN_CONTEXT
+            content: fullContext
         };
 
         // Combine system message with user history
