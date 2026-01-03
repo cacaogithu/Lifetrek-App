@@ -417,10 +417,11 @@ async function searchProducts(
 
 // Generate image with Nano Banana
 async function generateImage(
-  params: { prompt: string; headline: string; body_text: string; style?: string },
+  params: { prompt: string; headline: string; body_text: string; style?: string; slide_type?: string },
   lovableApiKey: string
 ): Promise<any> {
   const style = params.style || "client_perspective";
+  const slideType = params.slide_type || "content";
   
   const styleDirections: Record<string, string> = {
     client_perspective: "Show the CLIENT'S experience - engineers inspecting precision parts, quality managers reviewing documentation, cleanroom production",
@@ -429,28 +430,40 @@ async function generateImage(
     product_showcase: "Elegant product photography of medical implants or instruments on premium surface",
   };
 
+  // Truncate body text to max 15 words to avoid cluttered images
+  const truncateToWords = (text: string, maxWords: number): string => {
+    const words = text.split(/\s+/);
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(" ") + "...";
+  };
+
+  // Adjust text density based on slide type
+  const maxBodyWords = slideType === "hook" ? 8 : slideType === "cta" ? 10 : 15;
+  const truncatedBody = truncateToWords(params.body_text, maxBodyWords);
+
   const fullPrompt = `Create a premium LinkedIn carousel slide (1080x1080) for B2B medical device industry.
 
 PERSPECTIVE: ${styleDirections[style] || styleDirections.client_perspective}
 
 CONTEXT: ${params.prompt}
 
-HEADLINE (burn into image, large white text): "${params.headline}"
-BODY TEXT (burn into image, smaller white text below headline): "${params.body_text}"
+HEADLINE (burn into image, LARGE white bold text, centered): "${params.headline}"
+${truncatedBody ? `BODY TEXT (burn into image, SMALLER white text below headline, max 2 lines): "${truncatedBody}"` : ""}
 
 VISUAL STYLE:
 - Premium feel: deep blue gradient (#003052 to #004080), white text, green accent (#228B22)
 - Editorial, informative, NOT salesy
 - Lifetrek branding subtle (small "LM" logo bottom-right)
 - HIGH CONTRAST text must be CLEARLY READABLE
+- MINIMAL text - let the visual speak
 
 LAYOUT:
-- Top: Small badge with slide type
-- Center: Large, bold headline (Inter Bold equivalent)
+- Center-focused: Large, bold headline (Inter Bold equivalent)
 - Below headline: Green accent line
-- Below line: Body text (Inter Regular)
-- Bottom: "Lifetrek Medical" footer
+- Below line: Short body text if needed (Inter Regular)
+- Bottom-right: Small "LM" logo
 
+CRITICAL: Keep text MINIMAL. The headline is the star. Body text should be very short or omitted if headline is strong enough.
 The text MUST be part of the image (burned in), not overlaid.`;
 
   try {
