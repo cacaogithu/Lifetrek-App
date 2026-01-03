@@ -349,6 +349,46 @@ STRATEGY BRIEF:
         
         return results
 
+    def execute_news_generation(self):
+        """Execute weekly news generation workflow"""
+        print(f"\n{'='*60}")
+        print(f"📰 Generating Weekly News Update")
+        print(f"{'='*60}")
+        
+        try:
+            print(f"  🤖 Requesting News Generation from Edge Function...")
+            # We use a generic topic key to trigger the news flow if the edge function logic relies on it,
+            # but importantly we send 'generateNews': True (mapped from my manual request here)
+            # Actually, looking at the Edge Function, it checks `generateNews` param.
+            
+            response = requests.post(
+                f'{self.supabase_url}/functions/v1/generate-blog-post',
+                headers={
+                    'Authorization': f'Bearer {self.supabase_key}',
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    'generateNews': True,
+                    'topic': "Update Semanal da Indústria",
+                    'category': "mercado"
+                },
+                timeout=120
+            ) 
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"  ✅ News Generated: '{data.get('title')}'")
+                
+                # Save
+                self.save_to_database(data, "mercado")
+                self.save_to_markdown(data)
+                print(f"✅ SUCCESS: Weekly news generated!\n")
+            else:
+                print(f"❌ News Generation Failed: {response.text}")
+                
+        except Exception as e:
+            print(f"❌ News Workflow Failed: {str(e)}")
+
 
 def main():
     parser = argparse.ArgumentParser(description='Generate blog content for Lifetrek Medical')
