@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,73 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isRecoveryMode, setIsRecoveryMode] = useState(false);
+
+  useEffect(() => {
+    // Check if this is a password recovery redirect
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const type = hashParams.get('type');
+    const accessToken = hashParams.get('access_token');
+    
+    console.log("[AdminLogin] 🔍 Verificando URL hash:", window.location.hash);
+    console.log("[AdminLogin] - type:", type);
+    console.log("[AdminLogin] - access_token:", accessToken ? "PRESENTE" : "AUSENTE");
+    
+    if (type === 'recovery' && accessToken) {
+      console.log("[AdminLogin] 🔑 MODO RECUPERAÇÃO ATIVADO");
+      setIsRecoveryMode(true);
+      toast.info("Digite sua nova senha abaixo.");
+    }
+
+    // Listen for auth state changes (handles the recovery session)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("[AdminLogin] 🔄 Auth event:", event);
+      if (event === 'PASSWORD_RECOVERY') {
+        console.log("[AdminLogin] 🔑 PASSWORD_RECOVERY event recebido");
+        setIsRecoveryMode(true);
+        toast.info("Digite sua nova senha.");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    console.log("[AdminLogin] 🔄 Atualizando senha...");
+    
+    try {
+      const { error } = await supabase.auth.updateUser({ 
+        password: newPassword 
+      });
+      
+      if (error) {
+        console.error("[AdminLogin] ❌ Erro ao atualizar senha:", error.message);
+        toast.error(error.message);
+        return;
+      }
+      
+      console.log("[AdminLogin] ✅ Senha atualizada com sucesso!");
+      toast.success("Senha atualizada! Faça login com sua nova senha.");
+      setIsRecoveryMode(false);
+      setNewPassword("");
+      
+      // Clear the hash from URL
+      window.history.replaceState(null, '', window.location.pathname);
+      
+      // Sign out so they can log in fresh
+      await supabase.auth.signOut();
+    } catch (error: any) {
+      console.error("[AdminLogin] ❌ Erro:", error.message);
+      toast.error(error.message || "Erro ao atualizar senha");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,24 +173,75 @@ export default function AdminLogin() {
 
   const handlePasswordReset = async () => {
     if (!email) {
-      toast.error("Please enter your email address");
+      toast.error("Por favor, digite seu email");
       return;
     }
     
     setLoading(true);
+    console.log("[AdminLogin] 📧 Enviando email de reset para:", email);
+    
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/admin/login`,
       });
       
-      if (error) throw error;
-      toast.success("Password reset email sent! Check your inbox.");
+      if (error) {
+        console.error("[AdminLogin] ❌ Erro no reset:", error.message);
+        throw error;
+      }
+      
+      console.log("[AdminLogin] ✅ Email de reset enviado!");
+      toast.success("Email de recuperação enviado! Verifique sua caixa de entrada.");
     } catch (error: any) {
-      toast.error(error.message || "Failed to send reset email");
+      toast.error(error.message || "Erro ao enviar email de reset");
     } finally {
       setLoading(false);
     }
   };
+
+  // Recovery mode UI
+  if (isRecoveryMode) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 px-4">
+        <Card className="w-full max-w-md p-8">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Shield className="h-8 w-8 text-primary" />
+            </div>
+            <h1 className="text-3xl font-bold mb-2 text-foreground">Nova Senha</h1>
+            <p className="text-foreground/70 text-center text-base">
+              Digite sua nova senha abaixo
+            </p>
+          </div>
+
+          <form onSubmit={handlePasswordUpdate} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="newPassword" className="text-foreground font-medium">Nova Senha</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                minLength={6}
+                className="h-12"
+                aria-label="Nova senha"
+              />
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full h-12 text-base" 
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : "Salvar Nova Senha"}
+            </Button>
+          </form>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 px-4">
