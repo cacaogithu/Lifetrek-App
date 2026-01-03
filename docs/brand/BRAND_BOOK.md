@@ -399,6 +399,35 @@ Valuing every team member, client, and partner. We foster collaborative environm
 
 ---
 
+## Tactical Messaging Bank (Copy & Paste)
+
+Use these pre-approved claims for sales emails, landing pages, and pitch decks. They are designed to be declarative and high-impact.
+
+### 1. Dream Outcome Claims
+*   **"Eliminate Import Dependency"**: Switch to local, audit-ready manufacturing and cut supply chain risks.
+*   **"Boardroom-Safe Supply Chain"**: Remove 'risky supplier' from your quarterly meeting agenda.
+*   **"The 100% Auditable Factory"**: Local production with Swiss-German standards you can visit and verify.
+*   **"Seamless Flow"**: From R&D to specific sterilization without bottlenecks.
+*   **"Engineer's Freedom"**: Launch new designs without hearing 'your supplier can't make this'.
+*   **"Unlock Working Capital"**: Cut 20–30% of capital tied up in slow-moving import stock.
+
+### 2. Proof Points (Trust Builders)
+*   **"Zero-Risk Partner"**: ISO 13485 Certified + ANVISA Approved + CMM Zeiss Quality Assurance.
+*   **"Trusted by Leaders"**: Manufacturing partner for FGM, GMI, Ultradent, and other market leaders.
+*   **"Inspection-Ready Reports"**: Our dimensional reports reduce your incoming inspection workload by 80%.
+*   **"The 7-Point Validation"**: We pass the strictest OEM validation checklists.
+*   **"Proven Migration"**: Succesfully migrated 12+ clients from importers to local Lifetrek production.
+*   **"Infrastructure"**: Swiss-type CNC lathes and Class 7 Cleanrooms.
+
+### 3. Speed & Efficiency Hooks
+*   **"30 vs 90 Days"**: Production in 30 days locally vs 90 days importing.
+*   **"Rapid Prototyping Cells"**: Test new geometries in days, not weeks.
+*   **"Emergency Response"**: We are 1 flight away, not an ocean away.
+*   **"Single-Source Simplicity"**: Machining, finishing, and metrology under one roof. No coordinating 4 vendors.
+*   **"Engineering Extension"**: We act as an extension of your technical team, not just a job shop.
+
+---
+
 ## Mission & Vision
 
 ### Mission Statement

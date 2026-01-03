@@ -1,4 +1,34 @@
 
+export const VALUE_PROPOSITION_FRAMEWORK = `
+# Value Proposition Framework (Alex Hormozi)
+
+## 1. Dream Outcome (The Perfect Scenario)
+*   "How would your operation look if you no longer depended on imports for critical components?"
+*   "The vision: 100% auditable supply chain, local, with Swiss-German standards."
+*   "From concept to patient: A flow without bottlenecks between R&D, machining, and sterilization."
+*   "The engineer's dream: Launching new designs without hearing 'your supplier can't make this'."
+*   "Unlock Cash Flow: Cut 20–30% of capital tied up in imported stock."
+
+## 2. Perceived Likelihood of Achievement (Proof)
+*   "Why ISO 13485 + ANVISA + CMM Zeiss make Lifetrek a safe bet, not an experiment."
+*   "What we learned creating for FGM, GMI, Ultradent, and others – and how that reduces your risk."
+*   "From part to report: How our dimensional reports reduce your receiving inspection workload."
+*   "Technical Tour: Inside the Swiss lathes, CMM, and cleanrooms backing our quality."
+
+## 3. Time Delay (Speed to Value)
+*   "Importing in 90 days vs Local production in 30."
+*   "Rapid Prototyping: Test new geometries without blocking registration schedules."
+*   "Why being 1 flight away changes emergency response."
+*   "Shorten the cycle from 'new drawing' to 'validated product'."
+
+## 4. Effort & Sacrifice (Ease of Use)
+*   "All in one place: Machining, finishing, metrology, cleanroom – no coordinating 4 vendors."
+*   "Fewer crisis meetings, more engineering."
+*   "Ready-made documentation (ISO 13485) simplifying internal/ANVISA audits."
+*   "Stop 'babysitting' suppliers."
+*   "On-demand supply model: Smaller, recurrent batches."
+`;
+
 export const COMPANY_CONTEXT = `
 # Lifetrek Medical - Company Context & Brand Book
 **Version**: 3.0 (Comprehensive / Brand Book)
@@ -185,6 +215,9 @@ Turn strategy briefs into killer LinkedIn posts/carousels.
 
 === KNOWLEDGE BASE (COMPANY) ===
 ${COMPANY_CONTEXT}
+
+=== KNOWLEDGE BASE (VALUE PROPS) ===
+${VALUE_PROPOSITION_FRAMEWORK}
 
 === KNOWLEDGE BASE (HOOKS PLAYBOOK) ===
 ${KILLER_HOOKS_PLAYBOOK}

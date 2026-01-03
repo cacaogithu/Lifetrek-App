@@ -120,7 +120,46 @@ We serve leading manufacturers and OEMs globally.
 
 ---
 
-## 6. AI Agent Guidelines
+## 6. Value Proposition Framework (Alex Hormozi)
+
+### 1. Dream Outcome – O "mundo ideal" do cliente
+Foco: mostrar o cenário perfeito que eles querem e que você viabiliza.
+*   "Como seria sua operação se você não dependesse mais de importação para componentes críticos?"
+*   "O que muda na sua empresa quando ‘fornecedor de risco’ deixa de ser pauta na reunião de diretoria?"
+*   "A visão de futuro: cadeia de suprimentos 100% auditável, local e com padrão suíço-alemão."
+*   "Do conceito ao implante no paciente: como seria um fluxo sem gargalos entre P&D, usinagem e esterilização?"
+*   "O sonho do engenheiro: lançar design novo sem ouvir 'seu fornecedor não consegue fabricar isso'."
+*   "Como seria seu caixa se você pudesse cortar 20–30% do capital parado em estoque de peças importadas?"
+
+### 2. Perceived Likelihood of Achievement – "isso vai DAR CERTO comigo?"
+Foco: prova, casos, métricas e certificações que deixam claro que você entrega o que promete.
+*   "Por que ISO 13485 + ANVISA + CMM Zeiss fazem da Lifetrek uma aposta segura, não um experimento."
+*   "O que aprendemos fabricando para FGM, GMI, Ultradent e outros líderes – e como isso reduz seu risco."
+*   "Da peça ao laudo: como nossos relatórios dimensionais tiram trabalho da sua inspeção de recebimento."
+*   "Checklist de homologação: 7 sinais de que um fornecedor local realmente aguenta seu projeto."
+*   "De 'fornecedor teste' a parceiro estratégico: mini-caso de um cliente que migrou de importado para Lifetrek."
+*   "Tour técnico pela Lifetrek: por dentro dos tornos suíços, CMM e salas limpas que sustentam nossa qualidade."
+
+### 3. Time Delay – Quão rápido eles enxergam valor
+Foco: lead time, velocidade de protótipo, agilidade de mudança.
+*   "Da cotação ao primeiro lote: linha do tempo real de um projeto de implante ortopédico na Lifetrek."
+*   "Importar em 90 dias vs produzir local em 30: mapa comparativo de lead time e riscos."
+*   "Como estruturamos células de prototipagem rápida para seu P&D testar novas geometrias sem travar o cronograma de registro."
+*   "Por que estar a 1 voo de distância do seu fornecedor muda completamente a resposta a urgências."
+*   "3 ajustes de processo que encurtam o ciclo entre 'novo desenho' e 'produto validado em sala limpa'."
+
+### 4. Effort & Sacrifice – Quanto trabalho e dor eles evitam
+Foco: O que fica mais simples, leve e previsível quando eles trabalham com você.
+*   "Tudo em um só lugar: usinagem, acabamento, metrologia e sala limpa sem você ter que coordenar 4 fornecedores."
+*   "Menos reuniões de crise, mais engenharia: como um fornecedor estável libera tempo do seu time técnico."
+*   "Como a documentação pronta (ISO 13485) simplifica suas auditorias internas e ANVISA."
+*   "Parar de 'cuidar' de fornecedor: o que acontece quando a usinagem vira parte do seu time, não um problema."
+*   "Modelo de fornecimento sob demanda: programando lotes menores e recorrentes para você não virar gestor de estoque."
+*   "Co-engenharia na prática: exemplos de ajustes de desenho que reduziram custo e complexidade sem sobrecarregar seu time."
+
+---
+
+## 7. AI Agent Guidelines
 *   **When engaging a Sales Lead**: Always ask for "Technical Requirements" and "Annual Volume". Use the specific machine names (e.g., "Our Citizen L20 represents the best option for your 2mm bone screws") to show expertise.
 *   **When generating Content**: Use the "De-risk" angle for B2B audiences. Focus on "Precision" and "Success rates" for Surgeon/Clinical audiences.
 *   **Geography**: Clarify we are in **Brazil** but export globally.
