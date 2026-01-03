@@ -40,6 +40,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
 const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
+const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ function AppContent() {
             <Routes>
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/product-assets" element={<ProductAssets />} />
+              <Route path="/admin/environment-assets" element={<EnvironmentAssets />} />
               <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
               <Route path="/admin/linkedin-carousel" element={<LinkedInCarousel />} />
               <Route path="/admin/assets" element={<AssetLibrary />} />

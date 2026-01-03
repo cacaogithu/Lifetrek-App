@@ -9,7 +9,8 @@ import {
   CheckCircle, 
   BookOpen,
   Upload,
-  LogOut
+  LogOut,
+  Camera
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ import { toast } from "sonner";
 const adminNavItems = [
   { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { path: "/admin/product-assets", label: "Assets & Produtos", icon: Upload },
+  { path: "/admin/environment-assets", label: "Ambiente", icon: Camera },
   { path: "/admin/image-processor", label: "Galeria", icon: Images },
   { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation },
   { path: "/admin/blog", label: "Blog", icon: FileText },

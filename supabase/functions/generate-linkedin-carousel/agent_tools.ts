@@ -62,6 +62,25 @@ export const AGENT_TOOLS = {
           required: []
         }
       }
+    },
+    {
+      type: "function",
+      function: {
+        name: "deep_research",
+        description: "Perform real-time web research using Perplexity AI. Use this to find current industry trends, news, statistics, competitor analysis, and technical information. Great for adding timely, data-backed insights to content.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: { type: "string", description: "Research query (e.g., 'medical device market trends Brazil 2024', 'orthopedic implant regulations FDA')" },
+            focus: { 
+              type: "string", 
+              enum: ["industry_trends", "competitor_analysis", "market_data", "technical_info", "news", "regulatory"],
+              description: "Focus area for research to get more targeted results"
+            }
+          },
+          required: ["query"]
+        }
+      }
     }
   ],
   copywriter: [
@@ -195,6 +214,9 @@ export async function executeToolCall(
     
     case "search_assets":
       return await searchAssets(params, supabase);
+    
+    case "deep_research":
+      return await deepResearch(params);
     
     default:
       return { error: `Unknown tool: ${toolName}` };
@@ -572,32 +594,148 @@ The text MUST be part of the image (burned in), not overlaid.`;
   }
 }
 
-// Search assets
+// Search assets with fallback to processed_product_images
 async function searchAssets(
   params: { category?: string; tags?: string[] },
   supabase: any
 ): Promise<any> {
+  console.log(`🔍 [SEARCH-ASSETS] Searching for category: ${params.category}, tags: ${params.tags?.join(", ") || "none"}`);
+  
+  // First, try content_assets table
   let query = supabase
     .from("content_assets")
     .select("id, filename, file_path, category, tags")
     .limit(10);
 
   if (params.category) {
-    query = query.eq("category", params.category);
+    query = query.ilike("category", `%${params.category}%`);
   }
 
-  const { data, error } = await query;
+  const { data: contentAssets, error: contentError } = await query;
 
-  if (error) return { error: error.message };
+  if (contentError) {
+    console.error(`❌ [SEARCH-ASSETS] content_assets error: ${contentError.message}`);
+  }
 
-  let assets = data || [];
+  let assets = contentAssets || [];
   
   // Filter by tags if provided
   if (params.tags && params.tags.length > 0) {
     assets = assets.filter((a: any) => 
-      a.tags?.some((t: string) => params.tags!.includes(t))
+      a.tags?.some((t: string) => params.tags!.some(tag => t.toLowerCase().includes(tag.toLowerCase())))
     );
   }
 
+  // If no content_assets found, fallback to processed_product_images
+  if (assets.length === 0) {
+    console.log(`🔄 [SEARCH-ASSETS] No content_assets found, falling back to processed_product_images`);
+    
+    let productQuery = supabase
+      .from("processed_product_images")
+      .select("id, name, enhanced_url, category, description")
+      .eq("is_visible", true)
+      .limit(10);
+    
+    if (params.category) {
+      productQuery = productQuery.ilike("category", `%${params.category}%`);
+    }
+    
+    const { data: products, error: productError } = await productQuery;
+    
+    if (productError) {
+      console.error(`❌ [SEARCH-ASSETS] processed_product_images error: ${productError.message}`);
+      return { assets: [], error: productError.message };
+    }
+    
+    // Map products to asset format
+    assets = (products || []).map((p: any) => ({
+      id: p.id,
+      filename: p.name,
+      file_path: p.enhanced_url,
+      category: p.category,
+      tags: [p.category, "produto", "processado"],
+      source: "processed_product_images"
+    }));
+    
+    console.log(`✅ [SEARCH-ASSETS] Found ${assets.length} products as fallback`);
+  } else {
+    console.log(`✅ [SEARCH-ASSETS] Found ${assets.length} content_assets`);
+  }
+
   return { assets };
+}
+
+// Deep research using Perplexity API
+async function deepResearch(
+  params: { query: string; focus?: string }
+): Promise<any> {
+  const perplexityApiKey = Deno.env.get("PERPLEXITY_API_KEY");
+  
+  if (!perplexityApiKey) {
+    console.error("❌ [DEEP-RESEARCH] PERPLEXITY_API_KEY not configured");
+    return { error: "Perplexity API key not configured", content: null };
+  }
+  
+  console.log(`🔬 [DEEP-RESEARCH] Query: "${params.query}", Focus: ${params.focus || "general"}`);
+  const startTime = Date.now();
+  
+  const focusPrompts: Record<string, string> = {
+    industry_trends: "Focus on current industry trends, market movements, and emerging technologies.",
+    competitor_analysis: "Focus on competitor landscape, market positioning, and competitive advantages.",
+    market_data: "Focus on market size, growth rates, statistics, and quantitative data.",
+    technical_info: "Focus on technical specifications, engineering details, and manufacturing processes.",
+    news: "Focus on recent news, announcements, and developments from the past month.",
+    regulatory: "Focus on regulatory requirements, FDA/ANVISA updates, compliance standards, and certification processes.",
+  };
+  
+  const systemPrompt = `You are a research assistant for Lifetrek Medical, a precision medical device manufacturer in Brazil.
+${focusPrompts[params.focus || ""] || "Provide comprehensive, factual information."}
+
+Context: The company specializes in Swiss-quality CNC machining of orthopedic, dental, and spinal implants.
+Target audience: Medical device OEMs, quality managers, and procurement professionals.
+
+Return concise, actionable insights with specific data points when available.
+Language: Portuguese (Brazil) preferred, English acceptable for technical terms.
+Format: Use bullet points for clarity.`;
+
+  try {
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${perplexityApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "sonar",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: params.query }
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`❌ [DEEP-RESEARCH] API error ${response.status}: ${errorText.substring(0, 200)}`);
+      return { error: `Perplexity API error: ${response.status}`, content: null };
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+    const citations = data.citations || [];
+    
+    const duration = Date.now() - startTime;
+    console.log(`✅ [DEEP-RESEARCH] Completed in ${duration}ms, ${citations.length} citations`);
+
+    return {
+      content,
+      citations,
+      query: params.query,
+      focus: params.focus,
+      duration_ms: duration
+    };
+  } catch (error: any) {
+    console.error(`❌ [DEEP-RESEARCH] Exception: ${error.message}`);
+    return { error: error.message, content: null };
+  }
 }
