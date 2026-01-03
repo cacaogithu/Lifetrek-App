@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SUPABASE_URL = os.getenv('VITE_SUPABASE_URL')
-# Fallback to Publishable/Anon key because Service Role key in .env appears to be for local dev
-SUPABASE_KEY = os.getenv('VITE_SUPABASE_PUBLISHABLE_KEY') or os.getenv('VITE_SUPABASE_ANON_KEY')
+# Service Role key is required for bypassing RLS to save data
+SUPABASE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     print("❌ Missing Supabase credentials in .env")
@@ -39,7 +39,7 @@ def generate_carousel(topic):
             return None
         
         data = response.json()
-        print(f"DEBUG: Full Response keys: {list(data.keys())}")
+        print(f"DEBUG: FULL_JSON_DUMP: {json.dumps(data)}")
         
         # Check if data IS the carousel (direct object)
         if 'topic' in data and 'slides' in data:
