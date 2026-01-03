@@ -18,50 +18,89 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
 
+    console.log("========================================");
+    console.log("[AdminLogin] 🚀 Iniciando tentativa de login");
+    console.log("[AdminLogin] 📧 Email:", email);
+    console.log("[AdminLogin] 🔑 Senha fornecida:", password ? `${password.length} caracteres` : "VAZIA");
+    console.log("========================================");
+
     try {
-      console.log("[AdminLogin] Attempting login for:", email);
+      console.log("[AdminLogin] ⏳ Chamando supabase.auth.signInWithPassword...");
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      console.log("[AdminLogin] 📦 Resposta recebida:");
+      console.log("[AdminLogin] - data:", data ? JSON.stringify(data, null, 2) : "null");
+      console.log("[AdminLogin] - error:", error ? JSON.stringify(error, null, 2) : "null");
+
       if (error) {
-        console.error("[AdminLogin] Auth error:", error.message, error.status);
+        console.error("========================================");
+        console.error("[AdminLogin] ❌ ERRO DE AUTENTICAÇÃO");
+        console.error("[AdminLogin] - Mensagem:", error.message);
+        console.error("[AdminLogin] - Status:", error.status);
+        console.error("[AdminLogin] - Nome:", error.name);
+        console.error("[AdminLogin] - Código:", (error as any).code);
+        console.error("========================================");
         
         if (error.message.includes("Invalid login credentials")) {
+          console.error("[AdminLogin] 🔒 Diagnóstico: SENHA INCORRETA ou EMAIL NÃO EXISTE");
           toast.error("Email ou senha incorretos. Verifique suas credenciais.");
           return;
         }
         if (error.message.includes("Email not confirmed")) {
+          console.error("[AdminLogin] 📨 Diagnóstico: EMAIL NÃO CONFIRMADO");
           toast.error("Email não confirmado. Verifique sua caixa de entrada.");
+          return;
+        }
+        if (error.message.includes("too many requests")) {
+          console.error("[AdminLogin] ⚠️ Diagnóstico: RATE LIMIT - muitas tentativas");
+          toast.error("Muitas tentativas. Aguarde alguns minutos.");
           return;
         }
         throw error;
       }
       
-      console.log("[AdminLogin] Auth successful, checking admin status...");
+      console.log("[AdminLogin] ✅ Autenticação bem-sucedida!");
+      console.log("[AdminLogin] 👤 User ID:", data.user?.id);
+      console.log("[AdminLogin] 📧 User Email:", data.user?.email);
+      console.log("[AdminLogin] 🎫 Session:", data.session ? "PRESENTE" : "AUSENTE");
 
       if (data.user) {
-        // Check if user is admin
-        const { data: adminData } = await supabase
+        console.log("[AdminLogin] ⏳ Verificando se usuário é admin...");
+        
+        const { data: adminData, error: adminError } = await supabase
           .from("admin_users")
           .select("*")
           .eq("user_id", data.user.id)
           .single();
 
+        console.log("[AdminLogin] 🔍 Resultado da verificação admin:");
+        console.log("[AdminLogin] - adminData:", adminData ? JSON.stringify(adminData) : "null");
+        console.log("[AdminLogin] - adminError:", adminError ? JSON.stringify(adminError) : "null");
+
         if (!adminData) {
+          console.error("[AdminLogin] 🚫 ACESSO NEGADO - Usuário não é admin");
           await supabase.auth.signOut();
-          toast.error("Access denied. Not an admin user.");
+          toast.error("Acesso negado. Usuário não é administrador.");
           return;
         }
 
-        toast.success("Login successful!");
+        console.log("[AdminLogin] 🎉 Login completo! Redirecionando para /admin...");
+        toast.success("Login realizado com sucesso!");
         navigate("/admin");
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to login");
+      console.error("========================================");
+      console.error("[AdminLogin] 💥 ERRO NÃO TRATADO");
+      console.error("[AdminLogin] - Mensagem:", error.message);
+      console.error("[AdminLogin] - Stack:", error.stack);
+      console.error("========================================");
+      toast.error(error.message || "Falha no login");
     } finally {
+      console.log("[AdminLogin] 🏁 Processo de login finalizado");
       setLoading(false);
     }
   };
