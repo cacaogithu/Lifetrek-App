@@ -13,6 +13,7 @@ import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { AIChatbot } from "./components/AIChatbot";
 import { LoadingSpinner } from "./components/LoadingSpinner";
+import { AdminSupportButton } from "./components/admin/AdminSupportButton";
 
 // Lazy load route components for better code splitting
 const Home = lazy(() => import("./pages/Home"));
@@ -90,6 +91,7 @@ const App = () => (
               <MobileNav />
               <ScrollToTop />
               {/* <AIChatbot /> - Temporarily hidden, keeping code for later use */}
+              <AdminSupportButton />
             </div>
           </BrowserRouter>
         </LanguageProvider>
