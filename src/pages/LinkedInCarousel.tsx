@@ -77,6 +77,7 @@ export default function LinkedInCarousel() {
   const [proofPoints, setProofPoints] = useState("");
   const [ctaAction, setCtaAction] = useState("");
   const [format, setFormat] = useState<"carousel" | "single-image">("carousel");
+  const [postType, setPostType] = useState<"value" | "commercial">("value");
 
   // Workflow State
   const [currentStep, setCurrentStep] = useState<"content" | "design">("content");
@@ -415,6 +416,7 @@ export default function LinkedInCarousel() {
           proofPoints,
           ctaAction,
           format,
+          postType,
           numberOfCarousels,
           stream: true,
         }),
@@ -888,6 +890,44 @@ export default function LinkedInCarousel() {
                             <SelectItem value="single-image">Post Único</SelectItem>
                           </SelectContent>
                         </Select>
+                      </div>
+                    </div>
+
+                    {/* Post Type Selection */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div
+                        onClick={() => setPostType("value")}
+                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
+                          postType === "value" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className={`w-3 h-3 rounded-full ${postType === "value" ? "bg-primary" : "bg-muted"}`} />
+                          <span className="font-semibold text-sm">Post de Valor</span>
+                          <Badge variant="secondary" className="text-[10px]">80%</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Educacional, insight, behind-the-scenes. CTA leve (PDF, checklist, DM).
+                        </p>
+                      </div>
+                      <div
+                        onClick={() => setPostType("commercial")}
+                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
+                          postType === "commercial" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className={`w-3 h-3 rounded-full ${postType === "commercial" ? "bg-primary" : "bg-muted"}`} />
+                          <span className="font-semibold text-sm">Post Comercial</span>
+                          <Badge variant="outline" className="text-[10px]">20%</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Ofertas diretas, capacidade, pilotos. CTA mais forte.
+                        </p>
                       </div>
                     </div>
                     

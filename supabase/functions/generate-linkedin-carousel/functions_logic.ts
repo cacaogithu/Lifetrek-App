@@ -128,6 +128,26 @@ export const LINKEDIN_BEST_PRACTICES = `
 5.  Hashtags
 `;
 
+export const BRAND_ASSOCIATIONS = `
+# Brand Associations (Reinforce in EVERY carousel)
+
+1. **"Local Swiss-level"** → Produção no Brasil com padrão tecnológico global
+   - Mention: Citizen M32, Tornos GT26, ZEISS Contura
+   - Proof: "Mesma precisão de fábricas suíças, a 1 voo de distância"
+
+2. **"Regulatory-safe"** → ISO 13485, ANVISA, documentação para auditorias
+   - Mention: Cleanroom ISO 7, rastreabilidade lote-a-lote
+   - Proof: "30+ anos sem recall, 100% Quality Board"
+
+3. **"Cash-friendly supply chain"** → Menos estoque, menos lead time
+   - Mention: 30 dias vs 90 dias de importação
+   - Proof: "Reduza 20-30% do capital parado em estoque"
+
+4. **"Engineering partner"** → Co-engineering, DFM, suporte técnico
+   - Mention: Prototipagem rápida, análise de manufaturabilidade
+   - Proof: "Do desenho ao lote piloto em semanas, não meses"
+`;
+
 export function constructUserPrompt(
     topic: string,
     targetAudience: string,
@@ -136,21 +156,52 @@ export function constructUserPrompt(
     proofPoints: string,
     ctaAction: string,
     isBatch: boolean,
-    numberOfCarousels: number
+    numberOfCarousels: number,
+    postType: "value" | "commercial" = "value",
+    productImagesContext: string = ""
 ): string {
-    let userPrompt = `Topic: ${topic}
+    let userPrompt = `=== BRIEFING ===
+Topic: ${topic}
 Target Audience: ${targetAudience}
 Pain Point: ${painPoint}
-${desiredOutcome ? `Outcome: ${desiredOutcome}` : ""}
-${proofPoints ? `Proof: ${proofPoints}` : ""}
-${ctaAction ? `CTA: ${ctaAction}` : ""}
+${desiredOutcome ? `Desired Outcome: ${desiredOutcome}` : ""}
+${proofPoints ? `Proof Points: ${proofPoints}` : ""}
+${ctaAction ? `CTA Action: ${ctaAction}` : ""}
+
+=== POST TYPE: ${postType.toUpperCase()} ===
+${postType === "value" 
+  ? `FOCUS: Educational/insight post (80% of content mix)
+- Teach something valuable the reader can use immediately
+- Position Lifetrek as a thought leader, not a vendor
+- CTA: Low-friction (PDF, checklist, comment "GUIA", DM for more)
+- Tone: Engineer-to-engineer, consultative, educational
+- Goal: Build trust and brand association, not immediate sales`
+  : `FOCUS: Commercial/offer post (20% of content mix)
+- Highlight specific capability, capacity, or pilot program
+- CTA: Stronger but still professional (schedule call, request quote, pilot project)
+- Tone: Confident, direct, still technical
+- Goal: Generate qualified leads and conversations`}
+
+=== AVAILABLE PRODUCT IMAGES ===
+${productImagesContext || "No product images available. Generate all visuals."}
+
+=== BRAND ASSOCIATIONS (Reinforce at least ONE) ===
+- "Local Swiss-level" → Produção BR com padrão tecnológico global (Citizen M32, ZEISS)
+- "Regulatory-safe" → ISO 13485, ANVISA, documentação para auditorias
+- "Cash-friendly supply chain" → Menos estoque, menos lead time (30d vs 90d)
+- "Engineering partner" → Co-engineering, DFM, suporte técnico próximo
 `;
 
     if (isBatch) {
-        userPrompt += `\nGenerate ${numberOfCarousels} distinct carousels for a content calendar. Each should have a different angle.`;
+        userPrompt += `\n=== BATCH MODE ===
+Generate ${numberOfCarousels} DISTINCT carousels for a content calendar.
+Each should have a DIFFERENT angle/approach on the topic.
+Vary the hook types (Label, Question, Conditional, etc).`;
     } else {
-        userPrompt += `\nGenerate a single high-impact carousel following the best practices structure.`;
+        userPrompt += `\n=== SINGLE CAROUSEL MODE ===
+Generate ONE high-impact carousel following the HOOK → VALUE → CTA structure.`;
     }
+
     return userPrompt;
 }
 
@@ -158,17 +209,34 @@ const slideSchema = {
     type: "object",
     properties: {
         type: { type: "string", enum: ["hook", "content", "cta"] },
-        headline: { type: "string" },
-        body: { type: "string" },
-        backgroundType: { type: "string", enum: ["asset", "generate"] },
-        assetId: { type: "string" },
+        headline: { type: "string", description: "Bold headline, under 10 words" },
+        body: { type: "string", description: "Supporting text, under 25 words" },
+        backgroundType: { type: "string", enum: ["asset", "generate", "product_image"] },
+        assetId: { type: "string", description: "Asset ID if using existing asset" },
+        productImageId: { type: "string", description: "Product image ID if using product photo" },
         imageGenerationPrompt: { type: "string" },
-        // DESIGNER AGENT FIELDS
-        visual_concept: { type: "string", description: "Designer's visual concept." },
-        brand_notes: { type: "string", description: "Design notes." },
-        textPlacement: { type: "string", enum: ["clean", "burned_in"], description: "Strategist decision: 'clean' (no text in image, just background) or 'burned_in' (render headline TEXT inside the image)." }
+        // STRATEGIST → COPYWRITER & DESIGNER NOTES
+        copywriter_notes: { 
+            type: "string", 
+            description: "Instructions for copywriter: tone adjustments, word choices, emphasis" 
+        },
+        designer_notes: { 
+            type: "string", 
+            description: "Instructions for designer: visual direction, mood, composition, colors" 
+        },
+        brand_association: { 
+            type: "string", 
+            enum: ["local_swiss_level", "regulatory_safe", "cash_friendly", "engineering_partner"],
+            description: "Which brand association this slide reinforces"
+        },
+        image_style: { 
+            type: "string", 
+            enum: ["client_perspective", "technical_proof", "abstract_premium", "product_showcase"],
+            description: "Visual style direction for image generation"
+        },
+        textPlacement: { type: "string", enum: ["burned_in"], description: "Always burned_in for Nano Banana" }
     },
-    required: ["type", "headline", "body", "backgroundType", "textPlacement"]
+    required: ["type", "headline", "body", "backgroundType", "copywriter_notes", "designer_notes"]
 };
 
 export function getTools(isBatch: boolean): any[] {
@@ -177,7 +245,7 @@ export function getTools(isBatch: boolean): any[] {
             type: "function",
             function: {
                 name: isBatch ? "create_batch_carousels" : "create_carousel",
-                description: isBatch ? "Create multiple carousels" : "Create a single carousel",
+                description: isBatch ? "Create multiple carousels with full strategist notes" : "Create a single carousel with full strategist notes",
                 parameters: {
                     type: "object",
                     properties: isBatch ? {
@@ -188,69 +256,102 @@ export function getTools(isBatch: boolean): any[] {
                                 properties: {
                                     topic: { type: "string" },
                                     targetAudience: { type: "string" },
+                                    strategic_angle: { type: "string", description: "The unique angle/approach for this carousel" },
+                                    brand_associations_used: { 
+                                        type: "array", 
+                                        items: { type: "string" },
+                                        description: "Which brand associations are reinforced in this carousel"
+                                    },
                                     slides: { type: "array", items: slideSchema },
-                                    caption: { type: "string" }
+                                    caption: { type: "string" },
+                                    caption_hashtags: { type: "array", items: { type: "string" } }
                                 },
-                                required: ["topic", "targetAudience", "slides", "caption"]
+                                required: ["topic", "targetAudience", "strategic_angle", "slides", "caption"]
                             }
                         }
                     } : {
                         topic: { type: "string" },
                         targetAudience: { type: "string" },
+                        strategic_angle: { type: "string", description: "The unique angle/approach for this carousel" },
+                        brand_associations_used: { 
+                            type: "array", 
+                            items: { type: "string" },
+                            description: "Which brand associations are reinforced in this carousel"
+                        },
                         slides: { type: "array", items: slideSchema },
-                        caption: { type: "string" }
+                        caption: { type: "string" },
+                        caption_hashtags: { type: "array", items: { type: "string" } }
                     },
-                    required: isBatch ? ["carousels"] : ["topic", "targetAudience", "slides", "caption"]
+                    required: isBatch ? ["carousels"] : ["topic", "targetAudience", "strategic_angle", "slides", "caption"]
                 }
             }
         }
     ];
 }
 
-export function constructSystemPrompt(assetsContext: string): string {
-    return `You are the Lead LinkedIn Copywriter AND Visual Designer for Lifetrek Medical.
-    
-=== YOUR JOB ===
-Turn strategy briefs into killer LinkedIn posts/carousels.
+export function constructSystemPrompt(assetsContext: string, postType: "value" | "commercial" = "value"): string {
+    return `You are the Lead LinkedIn Content Strategist for Lifetrek Medical.
+Your job is to create content that builds brand associations while delivering genuine value.
 
-=== KNOWLEDGE BASE (COMPANY) ===
+=== YOUR MISSION (Alex Hormozi Framework) ===
+Design LinkedIn content that:
+1. Builds STRONG brand associations (see below)
+2. Delivers REAL, standalone value in every post
+3. Generates pipeline via LOW-FRICTION CTAs embedded naturally
+
+=== MANDATORY STRUCTURE: HOOK → VALUE → LIGHT CTA ===
+Every carousel MUST follow this:
+- **HOOK (Slide 1)**: Callout + implied payoff. Make the avatar think "That's me!"
+- **VALUE (Slides 2-5)**: Solve ONE narrow problem with SPECIFICS. Not fluff.
+- **CTA (Final Slide)**: Next step tied to MORE VALUE (PDF, checklist, DM), not a hard pitch.
+
+=== POST TYPE: ${postType.toUpperCase()} ===
+${postType === "value" 
+  ? `This is a VALUE POST (80% of content mix):
+- Focus: Educational, insight, behind-the-scenes
+- Goal: Position Lifetrek as thought leader
+- CTA: "Comente 'GUIA'", "DM para PDF", "Quer o checklist?"
+- Tone: Teacher, consultant, engineer-to-engineer
+- The reader should be able to USE this content even without Lifetrek`
+  : `This is a COMMERCIAL POST (20% of content mix):
+- Focus: Specific offer, capacity, pilot program
+- Goal: Generate qualified leads
+- CTA: "Agende uma call", "Solicite orçamento", "Projeto piloto"
+- Tone: Confident, direct, still technical
+- Still follows HOOK → VALUE → CTA, just with stronger CTA`}
+
+=== BRAND ASSOCIATIONS (Reinforce at least ONE per carousel) ===
+${BRAND_ASSOCIATIONS}
+
+=== KNOWLEDGE BASE ===
 ${COMPANY_CONTEXT}
 
-=== KNOWLEDGE BASE (VALUE PROPS) ===
 ${VALUE_PROPOSITION_FRAMEWORK}
 
-=== KNOWLEDGE BASE (HOOKS PLAYBOOK) ===
 ${KILLER_HOOKS_PLAYBOOK}
 
 === ASSET LIBRARY ===
 ${assetsContext}
 
-=== INSTRUCTIONS (STRATEGIST MODE - "The Manager") ===
-If the user provides a generic THEME (e.g. "Spinal Screws"):
-1.  **Analyze**: Check Company Context.
-2.  **Generate Angles**: Create 3 distinct angles (Myth-Busting, Deep Dive, Social Proof).
-3.  **TEXT STRATEGY**: For each slide, decide on \`textPlacement\`:
-    *   **'clean'**: Standard. Abstract background. Text is overlayed by the frontend web-app.
-    *   **'burned_in'**: "Billboard Mode". The text is PART OF THE IMAGE (e.g. a warning sign, a big bold statement). Use this for Hooks or strong statements.
+=== YOUR OUTPUT (STRATEGIST MODE) ===
+For each slide, you MUST provide:
+1. **headline**: Bold, under 10 words
+2. **body**: Supporting text, under 25 words
+3. **copywriter_notes**: Instructions for the copywriter to refine (tone, emphasis, word choice)
+4. **designer_notes**: Instructions for the designer (visual direction, mood, composition)
+5. **brand_association**: Which brand pillar this slide reinforces
+6. **image_style**: Visual direction ("client_perspective" for showing CLIENT's experience, "technical_proof" for machinery/certifications, "abstract_premium" for conceptual, "product_showcase" for products)
+7. **backgroundType**: "generate" for AI images, "asset" for existing, "product_image" for product photos
 
-=== INSTRUCTIONS (COPYWRITER MODE) ===
-1.  **TEXT RULES**:
-    *   **Slide Body**: < 15 words.
-    *   **Post Caption**: Storytelling, rich details.
-2.  **HOOKS**: Callout + Payoff.
+=== CRITICAL RULES ===
+1. HOOK must use a formula from KILLER HOOKS PLAYBOOK (Label, Question, Conditional, etc)
+2. PROOF must be SPECIFIC: machine names (Citizen M32), certifications (ISO 13485), numbers (30 dias)
+3. CTA must be LOW-FRICTION for value posts, can be stronger for commercial posts
+4. Each slide should reinforce ONE brand association
+5. Content in Brazilian Portuguese (pt-BR)
+6. Tone: Technical but accessible, confident but not salesy
 
-=== INSTRUCTIONS (DESIGNER MODE) ===
-For each slide, provide \`visual_concept\` and \`imageGenerationPrompt\`.
-**CRITICAL: Respect \`textPlacement\`!**
-- IF \`textPlacement\` == 'clean':
-    *   **Rule**: Create a clean, high-impact visual backdrop.
-    *   **Prompt**: "Abstract medical background, macro titanium, high-end professional aesthetic."
-- IF \`textPlacement\` == 'burned_in':
-    *   **Rule**: RENDER THE HEADLINE TEXT IN THE IMAGE using the font 'Inter' (Bold). Text must be strictly white on dark or black on light.
-    *   **Prompt**: "Professional medical image featuring the text '\${headline}' written on a glossy surface/sign. High contrast High-Contrast Black/White styling."
-
-=== RULES ===
-- Use 'backgroundType': 'asset' AND 'assetId' when an asset fits perfectly.
-- Use 'backgroundType': 'generate' when you need a custom visual.
+=== LINKEDIN BEST PRACTICES ===
+${LINKEDIN_BEST_PRACTICES}
 `;
 }
