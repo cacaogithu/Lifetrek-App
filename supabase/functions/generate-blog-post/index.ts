@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -99,17 +100,51 @@ serve(async (req) => {
     console.log("🎨 [Phase 3] Designer is working...");
     let imageUrl = "";
     try {
-      const designPrompt = `Create a photorealistic, professional header image for a medical manufacturing blog.
-      SUBJECT: ${strategy.visual_concept}
-      STYLE: Clean, sterile, high-tech, medical blue/white/grey palette. 
-      VIBE: Swiss precision, ISO 13485 compliance. No text overlays.`;
+      // Fetch Assets (Logo & Products)
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { data: assets } = await supabase.from("company_assets").select("url, type").eq("type", "logo").single();
+      const { data: products } = await supabase.from("products").select("name, image_url").limit(5);
+
+      const logoUrl = assets?.url;
+      const productImages = products?.map(p => ({ url: p.image_url, name: p.name })) || [];
+
+      // Construct Multimodal Prompt
+      const designSystemPrompt = `You are a world-class Industrial Designer & Photographer for Lifetrek Medical.
+      GOAL: Generate a photorealistic header image for a blog post.
       
+      INPUTS:
+      - Concept: ${strategy.visual_concept}
+      - Style: Clean, sterile, high-tech, medical blue/white/grey palette.
+      - Vibe: Swiss precision, ISO 13485 compliance.
+      ${logoUrl ? "- REFERENCE: Use the provided Logo for branding placement (subtle)." : ""}
+      ${productImages.length > 0 ? `- PRODUCTS: Incorporate elements from the provided product images to ensure technical accuracy.` : ""}
+      
+      STRICTLY FOLLOW:
+      - NO TEXT OVERLAYS.
+      - High dynamic range, soft studio lighting.
+      - Cinematic composition.`;
+
+      const userContent = [
+        { type: "text", text: designSystemPrompt }
+      ];
+
+      if (logoUrl) userContent.push({ type: "image_url", image_url: { url: logoUrl } });
+      productImages.forEach(p => {
+        userContent.push({ type: "text", text: `Product Reference: ${p.name}` });
+        userContent.push({ type: "image_url", image_url: { url: p.url } });
+      });
+
+      console.log("Creating image with references:", { logo: !!logoUrl, productCount: productImages.length });
+
       const imgResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-3-pro-image-preview", // Checking available image models
-          messages: [{ role: "user", content: designPrompt }],
+          model: "google/gemini-2.5-flash-image-preview", 
+          messages: [{ role: "user", content: userContent }],
           modalities: ["image", "text"]
         }),
       });

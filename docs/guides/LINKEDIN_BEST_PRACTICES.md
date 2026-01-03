@@ -39,6 +39,19 @@
 5. **Visual Hierarchy**: Clear headline > subhead > body
 6. **Whitespace**: Let content breathe
 
+### Visual Strategy & Text Placement
+The AI Strategist will choose between two visual modes for each slide:
+
+1.  **Clean Mode (Standard)**
+    *   **Use Case**: Educational stats, listicles, detailed body text.
+    *   **Visual**: Abstract, high-end medical backgrounds (titanium textures, macro shots).
+    *   **Text**: Overlaid by the browser/PDF renderer. Clean and legible.
+
+2.  **Burned-In Mode (Billboard)**
+    *   **Use Case**: The **HOOK** (Slide 1) or strong Punchlines.
+    *   **Visual**: The text is physically rendered *into* the 3D scene (e.g. written on a sign, etched into metal).
+    *   **Goal**: Pattern interruption. Stops the scroll because it looks "real" rather than like a template.
+
 ### Slide Structure Template
 ```
 Slide 1: HOOK
