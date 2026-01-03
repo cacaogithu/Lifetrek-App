@@ -172,7 +172,7 @@ export default function LinkedInCarousel() {
     }
   };
 
-  const saveCarousel = async (result: CarouselResult) => {
+  const saveCarousel = async (result: CarouselResult, status: 'draft' | 'approved' | 'published' | 'archived' = 'approved') => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -189,6 +189,7 @@ export default function LinkedInCarousel() {
         caption: result.caption,
         format: result.format || format,
         image_urls: result.slides.map(s => s.imageUrl || ""),
+        status,
         generation_settings: {
           model: "google/gemini-3-pro-image-preview",
           timestamp: new Date().toISOString()
@@ -219,6 +220,60 @@ export default function LinkedInCarousel() {
     } catch (error) {
       console.error("Error saving carousel:", error);
       toast.error("Failed to save carousel");
+    }
+  };
+
+  // Auto-save carousel as draft and log generation
+  const autoSaveCarousel = async (result: CarouselResult, generationTimeMs?: number) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const payload = {
+        admin_user_id: user.id,
+        topic,
+        target_audience: targetAudience,
+        pain_point: painPoint,
+        desired_outcome: desiredOutcome,
+        proof_points: proofPoints,
+        cta_action: ctaAction,
+        slides: result.slides as any,
+        caption: result.caption,
+        format: result.format || format,
+        image_urls: result.slides.map(s => s.imageUrl || ""),
+        status: 'draft',
+        generation_settings: {
+          model: "google/gemini-3-pro-image-preview",
+          timestamp: new Date().toISOString()
+        }
+      };
+
+      // Save carousel
+      const { data: savedCarousel, error } = await supabase
+        .from("linkedin_carousels")
+        .insert([payload])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Auto-save failed:", error);
+        return;
+      }
+
+      // Log generation
+      await supabase.from("linkedin_generation_logs").insert([{
+        admin_user_id: user.id,
+        carousel_id: savedCarousel.id,
+        input_params: { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format },
+        final_output: result as any,
+        generation_time_ms: generationTimeMs,
+        image_count: result.slides.filter(s => s.imageUrl).length,
+        model_used: "google/gemini-3-pro-image-preview"
+      }]);
+
+      await fetchCarouselHistory();
+    } catch (error) {
+      console.error("Auto-save error:", error);
     }
   };
 
@@ -346,13 +401,20 @@ export default function LinkedInCarousel() {
         return;
       }
 
-      setCarouselResults(data.carousels || (data.carousel ? [data.carousel] : []));
+      const generatedCarousels = data.carousels || (data.carousel ? [data.carousel] : []);
+      setCarouselResults(generatedCarousels);
       setCurrentCarouselIndex(0);
       setCurrentSlide(0);
       setCurrentStep("design");
       setViewMode("editor");
-      setCurrentCarouselId(null); 
-      toast.success(`Generated ${data.carousels?.length || 1} carousel(s)!`);
+      setCurrentCarouselId(null);
+      
+      // Auto-save all generated carousels as drafts
+      for (const carousel of generatedCarousels) {
+        await autoSaveCarousel(carousel, data.generationTimeMs);
+      }
+      
+      toast.success(`Generated ${generatedCarousels.length} carousel(s) - auto-saved as drafts!`);
     } catch (error: any) {
       console.error("Error generating carousel:", error);
       toast.error(error.message || "Failed to generate carousel");
