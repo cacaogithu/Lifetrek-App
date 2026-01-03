@@ -378,30 +378,57 @@ export default function LinkedInCarousel() {
     const zip = new JSZip();
 
     try {
-      // Use hidden container method
-      const promises = activeCarousel.slides.map(async (slide, index) => {
+      console.log("[Export] Starting image export...");
+      
+      // Process slides sequentially to avoid race conditions
+      const results: { name: string; data: string }[] = [];
+      
+      for (let index = 0; index < activeCarousel.slides.length; index++) {
         const elementId = `export-slide-${index}`;
         const node = document.getElementById(elementId);
+        
         if (!node) {
-            console.error(`Node not found: ${elementId}`);
-            return null;
+          console.error(`[Export] Node not found: ${elementId}`);
+          continue;
         }
 
-        // Wait a bit for images to load if needed, or retry
-        // toPng can be flaky if images aren't fully loaded
-        const dataUrl = await htmlToImage.toPng(node as HTMLElement, { 
-            pixelRatio: 2,
-            cacheBust: true,
-        });
-        return { name: `slide-${index + 1}.png`, data: dataUrl };
-      });
+        console.log(`[Export] Capturing slide ${index + 1}...`);
+        
+        // Wait for images to load
+        const images = node.querySelectorAll('img');
+        await Promise.all(
+          Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+              img.onload = resolve;
+              img.onerror = resolve;
+            });
+          })
+        );
 
-      const results = await Promise.all(promises);
+        // Small delay to ensure rendering is complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const dataUrl = await htmlToImage.toPng(node as HTMLElement, { 
+          pixelRatio: 2,
+          cacheBust: true,
+          backgroundColor: '#003052', // Fallback background
+        });
+        
+        console.log(`[Export] Slide ${index + 1} captured, data length: ${dataUrl.length}`);
+        results.push({ name: `slide-${index + 1}.png`, data: dataUrl });
+      }
+
+      if (results.length === 0) {
+        throw new Error("No slides were captured");
+      }
 
       results.forEach(res => {
-        if (res) {
-          const data = res.data.split(',')[1];
-          zip.file(res.name, data, { base64: true });
+        const base64Data = res.data.split(',')[1];
+        if (base64Data && base64Data.length > 100) {
+          zip.file(res.name, base64Data, { base64: true });
+        } else {
+          console.warn(`[Export] Slide ${res.name} has invalid data`);
         }
       });
 
@@ -414,11 +441,11 @@ export default function LinkedInCarousel() {
       a.download = `carousel-${activeCarousel.topic.replace(/\s+/g, '-').toLowerCase()}.zip`;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success("Downloaded all slides!");
+      toast.success(`${results.length} slides exportados com sucesso!`);
 
     } catch (error) {
-      console.error("Export error", error);
-      toast.error("Failed to export images");
+      console.error("[Export] Error:", error);
+      toast.error("Falha ao exportar imagens. Verifique o console para detalhes.");
     } finally {
       setDesignLoading(false);
     }
@@ -432,33 +459,53 @@ export default function LinkedInCarousel() {
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "px",
-      format: [1080, 1350] // Standard LinkedIn Portrait
+      format: [1080, 1080] // Square format for LinkedIn carousel
     });
 
     try {
+      console.log("[PDF Export] Starting...");
       const slides = activeCarousel.slides;
       
       for (let i = 0; i < slides.length; i++) {
         const elementId = `export-slide-${i}`;
         const node = document.getElementById(elementId);
-        if (!node) continue;
+        
+        if (!node) {
+          console.warn(`[PDF Export] Node not found: ${elementId}`);
+          continue;
+        }
 
-        // Capture slide
+        // Wait for images to load
+        const images = node.querySelectorAll('img');
+        await Promise.all(
+          Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+              img.onload = resolve;
+              img.onerror = resolve;
+            });
+          })
+        );
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        console.log(`[PDF Export] Capturing slide ${i + 1}...`);
         const dataUrl = await htmlToImage.toPng(node as HTMLElement, { 
-            pixelRatio: 2,
-            cacheBust: true,
+          pixelRatio: 2,
+          cacheBust: true,
+          backgroundColor: '#003052',
         });
 
-        if (i > 0) pdf.addPage([1080, 1350]);
-        pdf.addImage(dataUrl, "PNG", 0, 0, 1080, 1350);
+        if (i > 0) pdf.addPage([1080, 1080]);
+        pdf.addImage(dataUrl, "PNG", 0, 0, 1080, 1080);
       }
 
       pdf.save(`carousel-${activeCarousel.topic.replace(/\s+/g, '-').toLowerCase()}.pdf`);
-      toast.success("PDF Downloaded!");
+      toast.success("PDF exportado com sucesso!");
 
     } catch (error) {
-      console.error("PDF Export error", error);
-      toast.error("Failed to export PDF");
+      console.error("[PDF Export] Error:", error);
+      toast.error("Falha ao exportar PDF. Verifique o console para detalhes.");
     } finally {
       setDesignLoading(false);
     }
@@ -541,89 +588,83 @@ export default function LinkedInCarousel() {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 p-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 font-sans">
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
 
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Estúdio de Carrossel LinkedIn
-            </h1>
-            <p className="text-muted-foreground">Geração estratégica de conteúdo B2B</p>
+            <div className="flex items-center gap-3">
+              {(viewMode === "editor" || viewMode === "plan_selection") && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => {
+                    setViewMode("input");
+                    setCarouselResults([]);
+                    setPlans([]);
+                    setCurrentCarouselId(null);
+                  }}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Voltar
+                </Button>
+              )}
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                {viewMode === "editor" ? "Editor de Carrossel" : 
+                 viewMode === "plan_selection" ? "Selecionar Estratégia" : 
+                 "Estúdio de Carrossel LinkedIn"}
+              </h1>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              {viewMode === "editor" ? `Editando: ${carouselResults[currentCarouselIndex]?.topic || topic}` :
+               viewMode === "plan_selection" ? "Escolha uma das opções abaixo" :
+               "Geração estratégica de conteúdo B2B"}
+            </p>
           </div>
 
-          <Alert className="mb-6 bg-blue-50/50 border-blue-200">
-            <Info className="h-4 w-4 text-blue-600" />
-            <AlertTitle className="text-blue-800">Dica Pro</AlertTitle>
-            <AlertDescription className="text-blue-700">
-              Crie slides educativos que abordem dores específicas dos clientes. Use a aba "Gerar" para deixar a IA construir a estrutura, depois personalize os visuais.
-            </AlertDescription>
-          </Alert>
-
-          {carouselResults.length > 0 && (
-            <div className="flex gap-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                        <Layout className="h-4 w-4" />
-                        Visualizar Experiência
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-[90vh] w-auto p-0 bg-transparent border-0 shadow-none flex items-center justify-center">
-                    <div className="relative w-[50vh] h-[62.5vh] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                        <SlideCanvas 
-                            mode="preview" 
-                            slide={carouselResults[currentCarouselIndex].slides[currentSlide]} 
-                            aspectRatio="portrait"
-                            theme={currentTheme}
-                            layout={carouselResults[currentCarouselIndex].slides[currentSlide].layout}
-                            className="w-full h-full"
-                        />
-                        {/* Overlay Controls for Preview */}
-                        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/50 to-transparent flex justify-between items-center opacity-0 hover:opacity-100 transition-opacity">
-                            <Button 
-                                variant="secondary" size="icon" className="rounded-full h-8 w-8"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setCurrentSlide(Math.max(0, currentSlide - 1));
-                                }}
-                                disabled={currentSlide === 0}
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <span className="text-white text-xs font-medium drop-shadow-md">
-                                {currentSlide + 1} / {carouselResults[currentCarouselIndex].slides.length}
-                            </span>
-                             <Button 
-                                variant="secondary" size="icon" className="rounded-full h-8 w-8"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setCurrentSlide(Math.min(carouselResults[currentCarouselIndex].slides.length - 1, currentSlide + 1));
-                                }}
-                                disabled={currentSlide === carouselResults[currentCarouselIndex].slides.length - 1}
-                            >
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                </DialogContent>
-              </Dialog>
-              <Button variant="outline" onClick={() => saveCarousel(carouselResults[currentCarouselIndex])}>
+          {/* Export Actions - only show when we have results */}
+          {carouselResults.length > 0 && viewMode === "editor" && (
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => saveCarousel(carouselResults[currentCarouselIndex])}
+              >
                 <Save className="mr-2 h-4 w-4" />
-                Salvar Projeto
+                Salvar
               </Button>
-              <Button onClick={handleExportPDF} disabled={designLoading} variant="secondary">
+              <Button 
+                size="sm"
+                onClick={handleExportPDF} 
+                disabled={designLoading} 
+                variant="secondary"
+              >
                 {designLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Download className="mr-2 h-4 w-4" />}
-                Exportar PDF
+                PDF
               </Button>
-              <Button onClick={handleExportImages} disabled={designLoading}>
+              <Button 
+                size="sm"
+                onClick={handleExportImages} 
+                disabled={designLoading}
+              >
                 {designLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <ImageIcon className="mr-2 h-4 w-4" />}
-                Exportar Imagens
+                Imagens (ZIP)
               </Button>
             </div>
           )}
         </div>
+
+        {/* Pro Tip - only show on input view */}
+        {viewMode === "input" && carouselResults.length === 0 && (
+          <Alert className="bg-blue-50/50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800">
+            <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <AlertTitle className="text-blue-800 dark:text-blue-300 text-sm">Dica Pro</AlertTitle>
+            <AlertDescription className="text-blue-700 dark:text-blue-400 text-sm">
+              Crie slides educativos que abordem dores específicas. Use "Gerar Plano" para revisar opções estratégicas antes da produção final.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Workflow Tabs (Stepper) */}
         {carouselResults.length === 0 && (
@@ -637,83 +678,114 @@ export default function LinkedInCarousel() {
               <Card className="max-w-3xl mx-auto">
                 <CardHeader>
                   <CardTitle>Briefing de Conteúdo</CardTitle>
-                  <CardDescription>Defina o objetivo estratégico do seu carrossel.</CardDescription>
+                  <CardDescription>Preencha os campos abaixo para gerar seu carrossel.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
+                <CardContent className="space-y-5">
+                  {/* Essential Fields */}
+                  <div className="grid gap-4">
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <Label>Tópico</Label>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Label className="text-sm font-medium">Tópico *</Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                              <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Tente: "5 Mitos sobre Usinagem Suíça" ou "Como Reduzir Falhas em Implantes"</p>
+                              <p>Ex: "5 Mitos sobre Usinagem Suíça" ou "Como Reduzir Recalls"</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                      <Input value={topic} onChange={e => setTopic(e.target.value)} placeholder="ex: Reduzindo defeitos de fabricação" />
+                      <Input 
+                        value={topic} 
+                        onChange={e => setTopic(e.target.value)} 
+                        placeholder="Tema principal do carrossel"
+                        className="h-11"
+                      />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label>Público Alvo</Label>
+                        <Label className="text-sm font-medium mb-1.5 block">Público Alvo *</Label>
                         <Select value={targetAudience} onValueChange={setTargetAudience}>
-                          <SelectTrigger><SelectValue placeholder="Selecionar..." /></SelectTrigger>
+                          <SelectTrigger className="h-11">
+                            <SelectValue placeholder="Selecionar público..." />
+                          </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Fabricantes ortopédicos">Fabricantes ortopédicos</SelectItem>
-                            <SelectItem value="P&D de dispositivos médicos">P&D de dispositivos médicos</SelectItem>
-                            <SelectItem value="Gestores de qualidade">Gestores de qualidade</SelectItem>
+                            <SelectItem value="Fabricantes ortopédicos">Fabricantes Ortopédicos</SelectItem>
+                            <SelectItem value="P&D de dispositivos médicos">P&D de Dispositivos Médicos</SelectItem>
+                            <SelectItem value="Gestores de qualidade">Gestores de Qualidade</SelectItem>
+                            <SelectItem value="Compradores hospitalares">Compradores Hospitalares</SelectItem>
+                            <SelectItem value="Engenheiros de produção">Engenheiros de Produção</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
-                        <Label>Formato</Label>
+                        <Label className="text-sm font-medium mb-1.5 block">Formato</Label>
                         <Select value={format} onValueChange={(v: any) => setFormat(v)}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectTrigger className="h-11">
+                            <SelectValue />
+                          </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="carousel">Carrossel (PDF/Imagens)</SelectItem>
+                            <SelectItem value="carousel">Carrossel (5 slides)</SelectItem>
                             <SelectItem value="single-image">Post Único</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
-                    <div>
-                      <Label>Dor do Cliente</Label>
-                      <Textarea value={painPoint} onChange={e => setPainPoint(e.target.value)} />
-                    </div>
-                    {/* Advanced optional fields could be collapsed */}
                     
-                    <div className="space-y-2">
-                        <Label>Número de Opções (Lote)</Label>
-                        <div className="flex items-center gap-4">
-                            <Input 
-                                type="number" 
-                                min={1} 
-                                max={5} 
-                                value={numberOfCarousels} 
-                                onChange={e => setNumberOfCarousels(parseInt(e.target.value))} 
-                                className="max-w-[100px]"
-                            />
-                            <span className="text-sm text-muted-foreground">Gere múltiplas variações para escolher.</span>
-                        </div>
+                    <div>
+                      <Label className="text-sm font-medium mb-1.5 block">Dor do Cliente</Label>
+                      <Textarea 
+                        value={painPoint} 
+                        onChange={e => setPainPoint(e.target.value)} 
+                        placeholder="Qual problema do cliente você quer abordar? (opcional para Plano, obrigatório para Geração Rápida)"
+                        className="min-h-[80px] resize-none"
+                      />
                     </div>
+                  </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Button onClick={handleCreatePlan} disabled={isGenerating} variant="outline" size="lg" className="h-auto py-4 flex flex-col gap-1 items-center">
-                            {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Layout className="mb-1 h-5 w-5" />}
-                            <span className="font-semibold">Gerar Plano Estratégico</span>
-                            <span className="text-xs font-normal opacity-70">Revisar 3 opções primeiro</span>
-                        </Button>
-
-                        <Button onClick={handleGenerate} disabled={isGenerating} size="lg" className="h-auto py-4 flex flex-col gap-1 items-center bg-gradient-to-r from-primary to-blue-600 hover:to-blue-700">
-                             {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Wand2 className="mb-1 h-5 w-5" />}
-                             <span className="font-semibold">Geração Rápida</span>
-                             <span className="text-xs font-normal opacity-70">Modo Automático</span>
-                        </Button>
+                  {/* Batch Option */}
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <Label className="text-sm font-medium">Variações</Label>
+                      <p className="text-xs text-muted-foreground">Gere múltiplas opções para escolher</p>
                     </div>
+                    <Input 
+                      type="number" 
+                      min={1} 
+                      max={5} 
+                      value={numberOfCarousels} 
+                      onChange={e => setNumberOfCarousels(parseInt(e.target.value) || 1)} 
+                      className="w-16 h-9 text-center"
+                    />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-2 gap-4 pt-2">
+                    <Button 
+                      onClick={handleCreatePlan} 
+                      disabled={isGenerating || !topic || !targetAudience} 
+                      variant="outline" 
+                      size="lg" 
+                      className="h-auto py-4 flex flex-col gap-1 items-center"
+                    >
+                      {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Layout className="mb-1 h-5 w-5" />}
+                      <span className="font-semibold">Gerar Plano</span>
+                      <span className="text-xs font-normal opacity-70">Revisar 3 estratégias</span>
+                    </Button>
+
+                    <Button 
+                      onClick={handleGenerate} 
+                      disabled={isGenerating || !topic || !targetAudience || !painPoint} 
+                      size="lg" 
+                      className="h-auto py-4 flex flex-col gap-1 items-center"
+                    >
+                      {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Wand2 className="mb-1 h-5 w-5" />}
+                      <span className="font-semibold">Geração Rápida</span>
+                      <span className="text-xs font-normal opacity-70">Produção imediata</span>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -907,10 +979,27 @@ export default function LinkedInCarousel() {
                 />
               </div>
 
-              {/* Hidden Export Area */}
-              <div className="absolute top-0 left-0 overflow-hidden w-0 h-0 opacity-0 pointer-events-none">
+              {/* Hidden Export Area - positioned offscreen with real dimensions for capture */}
+              <div 
+                className="fixed pointer-events-none"
+                style={{ 
+                  left: '-9999px', 
+                  top: 0,
+                  width: '1080px',
+                  zIndex: -1,
+                }}
+                aria-hidden="true"
+              >
                 {carouselResults[currentCarouselIndex].slides.map((s, idx) => (
-                  <div id={`export-slide-${idx}`} key={idx}>
+                  <div 
+                    id={`export-slide-${idx}`} 
+                    key={idx}
+                    style={{ 
+                      width: '1080px', 
+                      height: '1080px',
+                      marginBottom: '10px',
+                    }}
+                  >
                     <SlideCanvas mode="export" slide={s} aspectRatio="square" theme={currentTheme} layout={s.layout} />
                   </div>
                 ))}
