@@ -94,7 +94,7 @@ const App = () => (
               <MobileNav />
               <ScrollToTop />
               {/* <AIChatbot /> - Temporarily hidden, keeping code for later use */}
-              <AdminSupportButton />
+              {/* <AdminSupportButton /> - Temporarily hidden */}
             </div>
           </BrowserRouter>
         </LanguageProvider>
