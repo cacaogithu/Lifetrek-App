@@ -54,11 +54,18 @@ async function handleMultiAgentGeneration(req: Request, params: any) {
     format, wantImages, numberOfCarousels, postType = "value" 
   } = params;
   
+  const requestStartTime = Date.now();
+  console.log(`\n${"=".repeat(60)}`);
+  console.log(`🚀 [REQUEST] LinkedIn Carousel Generation Started`);
+  console.log(`${"=".repeat(60)}`);
+  console.log(`📋 [REQUEST] Params:`, JSON.stringify({ topic, targetAudience, painPoint, format, wantImages, numberOfCarousels, postType }, null, 2));
+  
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
   if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error(`❌ [CONFIG] Missing env vars: LOVABLE_API_KEY=${!!LOVABLE_API_KEY}, SUPABASE_URL=${!!SUPABASE_URL}, SERVICE_ROLE=${!!SUPABASE_SERVICE_ROLE_KEY}`);
     return new Response(JSON.stringify({ error: "Missing configuration" }), { 
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } 
     });
@@ -66,9 +73,30 @@ async function handleMultiAgentGeneration(req: Request, params: any) {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+  // Extract user ID from JWT token in authorization header
+  const authHeader = req.headers.get("authorization");
+  let userId: string | null = null;
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.substring(7);
+    try {
+      const { data: { user } } = await supabase.auth.getUser(token);
+      userId = user?.id || null;
+      console.log(`🔐 [AUTH] User ID extracted: ${userId ? userId.substring(0, 8) + '...' : 'null'}`);
+    } catch (authError) {
+      console.warn(`⚠️ [AUTH] Failed to extract user from token:`, authError);
+    }
+  } else {
+    console.warn(`⚠️ [AUTH] No Bearer token in authorization header`);
+  }
+
   const stream = new ReadableStream({
     async start(controller) {
       const startTime = Date.now();
+      let strategistTime = 0;
+      let copywriterTime = 0;
+      let designerTime = 0;
+      let saveSuccess = false;
+      let imageCount = 0;
       
       try {
         // Create SSE sender for this controller
@@ -96,80 +124,119 @@ async function handleMultiAgentGeneration(req: Request, params: any) {
         };
 
         // ============= PHASE 1: STRATEGIST AGENT =============
-        console.log("🎯 [ORCHESTRATOR] Running Strategist Agent...");
+        const strategistStart = Date.now();
+        console.log(`\n🎯 [PHASE 1] STRATEGIST AGENT Started @ ${strategistStart - requestStartTime}ms`);
         const strategistResult = await runStrategistAgent(brief, agentContext);
         let carousels = strategistResult.carousels;
+        strategistTime = Date.now() - strategistStart;
+        console.log(`✅ [PHASE 1] STRATEGIST Completed in ${strategistTime}ms (${(strategistTime/1000).toFixed(1)}s)`);
+        console.log(`   └─ Generated ${carousels.length} carousel(s), RAG docs used: ${strategistResult.ragContext?.length || 0}`);
 
-        sseSend("step", { step: "strategist", status: "done", timeMs: Date.now() - startTime });
+        sseSend("step", { step: "strategist", status: "done", timeMs: strategistTime });
         sseSend("step", { step: "analyst", status: "active", message: "Copywriter refinando..." });
 
         // ============= PHASE 2: COPYWRITER AGENT =============
-        console.log("✍️ [ORCHESTRATOR] Running Copywriter Agent...");
-        const copywriterStartTime = Date.now();
+        const copywriterStart = Date.now();
+        console.log(`\n✍️ [PHASE 2] COPYWRITER AGENT Started @ ${copywriterStart - requestStartTime}ms`);
         carousels = await runCopywriterAgent(carousels, agentContext);
+        copywriterTime = Date.now() - copywriterStart;
+        console.log(`✅ [PHASE 2] COPYWRITER Completed in ${copywriterTime}ms (${(copywriterTime/1000).toFixed(1)}s)`);
 
-        sseSend("step", { step: "analyst", status: "done", timeMs: Date.now() - copywriterStartTime });
+        sseSend("step", { step: "analyst", status: "done", timeMs: copywriterTime });
 
         // ============= PHASE 3: DESIGNER AGENT =============
         if (wantImages) {
           sseSend("step", { step: "images", status: "active", message: "Designer gerando visuais..." });
           
-          console.log("🎨 [ORCHESTRATOR] Running Designer Agent...");
-          const designerStartTime = Date.now();
+          const designerStart = Date.now();
+          const totalSlides = carousels.reduce((sum: number, c: any) => sum + (c.slides?.length || 0), 0);
+          console.log(`\n🎨 [PHASE 3] DESIGNER AGENT Started @ ${designerStart - requestStartTime}ms`);
+          console.log(`   └─ Total images to generate: ${totalSlides}`);
+          
           carousels = await runDesignerAgent(carousels, agentContext);
+          designerTime = Date.now() - designerStart;
+          imageCount = carousels.reduce((sum: number, c: any) => sum + (c.slides?.filter((s: any) => s.imageUrl)?.length || 0), 0);
+          
+          const avgPerImage = totalSlides > 0 ? (designerTime / totalSlides).toFixed(0) : 0;
+          console.log(`✅ [PHASE 3] DESIGNER Completed in ${designerTime}ms (${(designerTime/1000).toFixed(1)}s)`);
+          console.log(`   └─ Images generated: ${imageCount}/${totalSlides}, avg ${avgPerImage}ms/image`);
 
-          sseSend("step", { step: "images", status: "done", timeMs: Date.now() - designerStartTime });
+          sseSend("step", { step: "images", status: "done", timeMs: designerTime });
         }
 
         // ============= SAVE TO DATABASE =============
-        console.log(`💾 [MULTI-AGENT] Saving LinkedIn carousel(s) to database...`);
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
+        const saveStart = Date.now();
+        console.log(`\n💾 [PHASE 4] DATABASE SAVE Started @ ${saveStart - requestStartTime}ms`);
 
-          // Save each carousel to linkedin_carousels table
-          for (const carousel of carousels) {
-            const { error: insertError } = await supabase
-              .from("linkedin_carousels")
-              .insert({
-                admin_user_id: user?.id || "00000000-0000-0000-0000-000000000000",
-                topic: carousel.topic || brief.topic,
-                target_audience: brief.targetAudience,
-                pain_point: brief.painPoint,
-                desired_outcome: brief.desiredOutcome,
-                proof_points: brief.proofPoints,
-                cta_action: brief.ctaAction,
-                slides: carousel.slides || [],
-                caption: carousel.caption || `${brief.topic} - ${brief.targetAudience}`,
-                image_urls: carousel.imageUrls || [],
-                format: brief.format || "carousel",
-                status: "draft",
-                generation_settings: {
-                  mode: "multi-agent",
-                  postType: brief.postType,
-                  numberOfCarousels: brief.numberOfCarousels,
-                },
-              });
+        if (!userId) {
+          console.warn(`⚠️ [DB] No authenticated user, skipping database save`);
+        } else {
+          try {
+            // Save each carousel to linkedin_carousels table
+            for (let i = 0; i < carousels.length; i++) {
+              const carousel = carousels[i];
+              const { data: insertData, error: insertError } = await supabase
+                .from("linkedin_carousels")
+                .insert({
+                  admin_user_id: userId,
+                  topic: carousel.topic || brief.topic,
+                  target_audience: brief.targetAudience,
+                  pain_point: brief.painPoint,
+                  desired_outcome: brief.desiredOutcome,
+                  proof_points: brief.proofPoints,
+                  cta_action: brief.ctaAction,
+                  slides: carousel.slides || [],
+                  caption: carousel.caption || `${brief.topic} - ${brief.targetAudience}`,
+                  image_urls: carousel.imageUrls || [],
+                  format: brief.format || "carousel",
+                  status: "draft",
+                  generation_settings: {
+                    mode: "multi-agent",
+                    postType: brief.postType,
+                    numberOfCarousels: brief.numberOfCarousels,
+                    generationTimeMs: Date.now() - requestStartTime,
+                    imageCount,
+                  },
+                })
+                .select("id")
+                .single();
 
-            if (insertError) {
-              console.error('[MULTI-AGENT] Error saving carousel:', insertError);
-            } else {
-              console.log(`✅ [MULTI-AGENT] Carousel saved as draft: "${carousel.topic || brief.topic}"`);
+              if (insertError) {
+                console.error(`❌ [DB] Error saving carousel ${i + 1}:`, JSON.stringify(insertError));
+              } else {
+                saveSuccess = true;
+                console.log(`✅ [DB] Carousel ${i + 1} saved: ${insertData?.id}`);
+              }
             }
+          } catch (dbError) {
+            console.error(`❌ [DB] Database save exception:`, dbError);
           }
-        } catch (dbError) {
-          console.error('[MULTI-AGENT] Database save failed (non-fatal):', dbError);
         }
+        const saveTime = Date.now() - saveStart;
+        console.log(`✅ [PHASE 4] DATABASE SAVE Completed in ${saveTime}ms`);
 
-        // ============= COMPLETE =============
-        const totalTime = Date.now() - startTime;
-        console.log(`✅ [ORCHESTRATOR] Multi-agent generation complete in ${totalTime}ms`);
+        // ============= PERFORMANCE SUMMARY =============
+        const totalTime = Date.now() - requestStartTime;
+        console.log(`\n${"=".repeat(60)}`);
+        console.log(`📊 [SUMMARY] Generation Complete`);
+        console.log(`${"=".repeat(60)}`);
+        console.log(`   Total Time:    ${totalTime}ms (${(totalTime/1000).toFixed(1)}s)`);
+        console.log(`   ├─ Strategist: ${strategistTime}ms (${((strategistTime/totalTime)*100).toFixed(0)}%)`);
+        console.log(`   ├─ Copywriter: ${copywriterTime}ms (${((copywriterTime/totalTime)*100).toFixed(0)}%)`);
+        console.log(`   ├─ Designer:   ${designerTime}ms (${((designerTime/totalTime)*100).toFixed(0)}%)`);
+        console.log(`   └─ DB Save:    ${saveTime}ms (${((saveTime/totalTime)*100).toFixed(0)}%)`);
+        console.log(`   Images: ${imageCount} generated`);
+        console.log(`   DB Save: ${saveSuccess ? 'OK' : 'SKIPPED/FAILED'}`);
+        console.log(`${"=".repeat(60)}\n`);
 
         const final = numberOfCarousels > 1 ? { carousels } : carousels[0];
         sseSend("complete", final);
         controller.close();
 
       } catch (error: any) {
-        console.error("Multi-agent error:", error);
+        const errorTime = Date.now() - requestStartTime;
+        console.error(`\n❌ [ERROR] Multi-agent generation failed at ${errorTime}ms:`, error);
+        console.error(`   Stack:`, error.stack);
         sendSSE(controller, "error", { error: error.message || "Generation failed" });
         controller.close();
       }

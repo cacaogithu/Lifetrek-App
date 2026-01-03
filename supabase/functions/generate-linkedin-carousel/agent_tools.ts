@@ -421,10 +421,16 @@ async function generateImage(
   lovableApiKey: string,
   supabase: any
 ): Promise<any> {
+  const imageStartTime = Date.now();
   const style = params.style || "client_perspective";
   const slideType = params.slide_type || "content";
   
+  console.log(`\n         🖼️ [IMAGE-GEN] Starting generation`);
+  console.log(`            └─ Style: ${style}, Type: ${slideType}`);
+  console.log(`            └─ Headline: "${params.headline?.substring(0, 50)}..."`);
+  
   // Fetch logo from company_assets
+  const assetFetchStart = Date.now();
   const { data: logoAsset } = await supabase
     .from("company_assets")
     .select("url")
@@ -437,8 +443,9 @@ async function generateImage(
     .select("name, enhanced_url, category")
     .eq("is_visible", true)
     .limit(2);
-
-  console.log(`🎨 [DESIGNER] Creating image with references: { logo: ${!!logoAsset?.url}, productCount: ${products?.length || 0} }`);
+  
+  const assetFetchTime = Date.now() - assetFetchStart;
+  console.log(`            └─ Assets fetched in ${assetFetchTime}ms: { logo: ${!!logoAsset?.url}, products: ${products?.length || 0} }`);
 
   const styleDirections: Record<string, string> = {
     client_perspective: "Show the CLIENT'S experience - engineers inspecting precision parts, quality managers reviewing documentation, cleanroom production",
@@ -520,6 +527,9 @@ The text MUST be part of the image (burned in), not overlaid.`;
       }
     }
 
+    const apiCallStart = Date.now();
+    console.log(`            └─ Calling AI Gateway (model: google/gemini-3-pro-image-preview)...`);
+    
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -533,15 +543,31 @@ The text MUST be part of the image (burned in), not overlaid.`;
       }),
     });
 
+    const apiCallTime = Date.now() - apiCallStart;
+    console.log(`            └─ API Response: ${response.status} in ${apiCallTime}ms`);
+
     if (!response.ok) {
-      throw new Error(`Image generation error: ${response.status}`);
+      const errorBody = await response.text();
+      console.error(`            ❌ [IMAGE-GEN] API Error ${response.status}:`);
+      console.error(`               Body: ${errorBody.substring(0, 500)}`);
+      throw new Error(`Image generation error: ${response.status} - ${errorBody.substring(0, 200)}`);
     }
 
     const data = await response.json();
     const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    const totalImageTime = Date.now() - imageStartTime;
+    if (imageUrl) {
+      console.log(`            ✅ [IMAGE-GEN] Success in ${totalImageTime}ms (API: ${apiCallTime}ms)`);
+    } else {
+      console.warn(`            ⚠️ [IMAGE-GEN] No image in response after ${totalImageTime}ms`);
+      console.warn(`               Response structure: ${JSON.stringify(Object.keys(data || {}))}`);
+    }
 
     return { image_url: imageUrl, prompt_used: fullPrompt };
   } catch (error: any) {
+    const totalImageTime = Date.now() - imageStartTime;
+    console.error(`            ❌ [IMAGE-GEN] Exception after ${totalImageTime}ms: ${error.message}`);
     return { error: error.message };
   }
 }
