@@ -10,6 +10,18 @@ import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 
+// Sanitize filenames to remove special characters that Supabase Storage rejects
+const sanitizeFilename = (name: string): string => {
+  return name
+    .toLowerCase()
+    .normalize('NFD')                    // Decompose accents
+    .replace(/[\u0300-\u036f]/g, '')     // Remove accent marks
+    .replace(/[/\\]/g, '-')              // Replace slashes with dashes
+    .replace(/[^a-z0-9\-_.]/g, '-')      // Keep only safe chars
+    .replace(/-+/g, '-')                 // Collapse multiple dashes
+    .replace(/^-|-$/g, '');              // Trim leading/trailing dashes
+};
+
 interface ProcessedImage {
   id: string;
   originalUrl: string;
@@ -70,7 +82,7 @@ export default function ProductImageProcessor() {
       const { data: { user } } = await supabase.auth.getUser();
 
       // 1. Upload original image
-      const originalPath = `originals/${Date.now()}-${originalFile.name}`;
+      const originalPath = `originals/${Date.now()}-${sanitizeFilename(originalFile.name)}`;
       const { error: uploadOriginalError } = await supabase.storage
         .from('processed-products')
         .upload(originalPath, originalFile);
@@ -79,7 +91,7 @@ export default function ProductImageProcessor() {
 
       // 2. Convert enhanced image (base64) to Blob and upload
       const enhancedBlob = await fetch(enhancedImageUrl).then(r => r.blob());
-      const enhancedPath = `enhanced/${Date.now()}-${analysis.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+      const enhancedPath = `enhanced/${Date.now()}-${sanitizeFilename(analysis.name)}.png`;
       
       const { error: uploadEnhancedError } = await supabase.storage
         .from('processed-products')
