@@ -19,12 +19,28 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
+      console.log("[AdminLogin] Attempting login for:", email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("[AdminLogin] Auth error:", error.message, error.status);
+        
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Email ou senha incorretos. Verifique suas credenciais.");
+          return;
+        }
+        if (error.message.includes("Email not confirmed")) {
+          toast.error("Email não confirmado. Verifique sua caixa de entrada.");
+          return;
+        }
+        throw error;
+      }
+      
+      console.log("[AdminLogin] Auth successful, checking admin status...");
 
       if (data.user) {
         // Check if user is admin
