@@ -15,46 +15,56 @@ Generate high-quality, on-brand LinkedIn carousel posts using AI to create engag
 - `desiredOutcome`: Desired customer outcome
 - `mode`: "plan" or "generate" (default: "generate")
 
-## Tools & Components
+## Architecture: Multi-Agent System
 
-### Supabase Edge Function
-- **Endpoint**: `generate-linkedin-carousel`
-- **Location**: `supabase/functions/generate-linkedin-carousel/`
+The system uses a **Multi-Agent Architecture** orchestrated by the Edge Function:
 
-### Frontend Component
-- **Location**: `src/pages/LinkedInCarousel.tsx`
-- **Features**: Input form, Preview, PDF Download.
+1.  **Orchestrator (Edge Function)**
+    *   **Role**: The runtime logic (`index.ts`) that manages the workflow, state, and data passing between agents.
+    *   **Responsibility**: Calls the LLMs, handles the "Plan vs Generate" routing, and manages the Critique Loop.
+2.  **Strategist (The Manager)**
+    *   **Role**: Analyzes the request and determines the "Angle" and "Text Placement".
+    *   **Logic**: Decides if the visual should be "Clean" (abstract background) or "Burned-In" (billboard style text integration).
+2.  **Copywriter (The Writer)**
+    *   **Role**: Drafts the content (Hooks, Body, CTA) following the *Killer Hooks Playbook*.
+    *   **Focus**: Ensuring specific technical details and low-friction CTAs.
+3.  **Designer (The Artist)**
+    *   **Role**: Generates the visual concepts and image prompts.
+    *   **Logic**: Executes the Strategist's "Clean" vs "Burned-In" vision using Gemini 2.0 Pro.
+4.  **Brand Analyst (The Quality Control)**
+    *   **Role**: Runs a "Critique Loop" after the initial draft is generated.
+    *   **Logic**: Reviews against the Brand Book. If the hook is weak or proof is generic, it *rewrites* the content before sending it to the user.
 
 ## Process Flow
 
 ### 1. Plan Mode (Strategy Selection)
-1. User provides a **generic theme**.
-2. AI analyzes company capabilities and generates **3 strategic angles**.
-3. User selects the preferred angle.
+1.  User provides a **generic theme**.
+2.  **Strategist Agent** generates **3 strategic angles**.
+3.  User selects the preferred angle.
 
 ### 2. Generate Mode (Content Creation)
-1. User provides a **specific brief** or uses the selected angle from Plan Mode.
-2. AI constructs prompts using brand guidelines.
-3. Calls Perplexity API to generate content.
-4. Returns JSON with carousel structure.
-5. Frontend renders preview for user to download/copy.
+1.  **Strategist**: Sets the direction (Text Placement: Clean vs Burned-In).
+2.  **Copywriter**: Generates the initial carousel draft.
+3.  **Brand Analyst**: Critiques the draft.
+    *   *Check*: Is the hook strong? Is the proof specific (e.g. "Citizen M32" vs "Machine")?
+    *   *Action*: Refines and rewrites logically.
+4.  **Designer**: Generates image prompts based on the refined text.
+5.  **Image Generation**: Paralllel processing of all slides.
+6.  **Frontend**: Renders the final result.
 
-## Brand Guidelines Integration
-
-The system automatically injects context from:
-- `docs/brand/BRAND_BOOK.md`
-- `docs/brand/COMPANY_CONTEXT.md`
-- `docs/guides/LINKEDIN_BEST_PRACTICES.md`
+### 3. Text Placement Modes
+*   **Clean Mode**: Minimalist, abstract backgrounds. Text is overlaid by the web app code. Best for detailed content slides.
+*   **Burned-In Mode**: "Billboard Style". The headline text is rendered *inside* the image pixel data by the AI. Best for high-impact Hooks.
 
 ## Troubleshooting
 
 ### API Limits
-- **Perplexity API**: Has rate limits. If it fails, wait and try again.
-- **Timeouts**: Generation can take 5-15 seconds.
+- **Perplexity/Gemini**: Has rate limits. If it fails, wait and try again.
+- **Timeouts**: Generation can take 15-30 seconds due to the critique loop.
 
 ### Content Quality
-- **Too Generic**: Try adding specific proof points or pain points in the input.
-- **Off-Brand**: Ensure brand docs are up to date.
+- **Too Generic**: The Brand Analyst usually catches this, but try adding specific machine names in input.
+- **Off-Brand**: Ensure `docs/brand/BRAND_BOOK.md` is current.
 
 ### Common Errors
 - **401 Unauthorized**: Check if you are logged in or if API keys are valid.
