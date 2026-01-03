@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SlideCanvas, SlideLayout } from "@/components/carousel/SlideCanvas";
+import { GenerationProgress, GenerationStep } from "@/components/carousel/GenerationProgress";
 import * as htmlToImage from "html-to-image";
 import JSZip from "jszip";
 import jsPDF from "jspdf";
@@ -95,6 +96,10 @@ export default function LinkedInCarousel() {
   const exportRef = useRef<HTMLDivElement>(null); // Hidden ref for high-res export
   const [availableAssets, setAvailableAssets] = useState<any[]>([]);
   const [designLoading, setDesignLoading] = useState(false);
+
+  // Generation Progress State
+  const [generationSteps, setGenerationSteps] = useState<GenerationStep[]>([]);
+  const [currentPreview, setCurrentPreview] = useState<string>("");
 
   useEffect(() => {
     checkAdminAccess();
@@ -381,9 +386,23 @@ export default function LinkedInCarousel() {
     }
 
     setIsGenerating(true);
+    setGenerationSteps([
+      { id: "strategist", label: "Strategist", status: "pending", icon: "strategist" },
+      { id: "analyst", label: "Analyst", status: "pending", icon: "analyst" },
+      { id: "images", label: "Imagens", status: "pending", icon: "images" },
+    ]);
+    setCurrentPreview("");
+
     try {
-      const { data, error } = await supabase.functions.invoke("generate-linkedin-carousel", {
-        body: {
+      // Use streaming endpoint
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-linkedin-carousel`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           topic,
           targetAudience,
           painPoint,
@@ -392,32 +411,110 @@ export default function LinkedInCarousel() {
           ctaAction,
           format,
           numberOfCarousels,
-        },
+          stream: true,
+        }),
       });
 
-      if (error) throw error;
-      if (data.error) {
-        toast.error(data.error);
-        return;
+      if (!response.ok || !response.body) {
+        throw new Error("Failed to start generation");
       }
 
-      const generatedCarousels = data.carousels || (data.carousel ? [data.carousel] : []);
-      setCarouselResults(generatedCarousels);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let finalCarousels: CarouselResult[] = [];
+      const startTime = Date.now();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let idx: number;
+        while ((idx = buffer.indexOf("\n\n")) !== -1) {
+          const chunk = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+
+          // Parse SSE event
+          const eventMatch = chunk.match(/^event: (\w+)\ndata: (.+)$/s);
+          if (!eventMatch) continue;
+
+          const [, eventType, dataStr] = eventMatch;
+          let data: any;
+          try {
+            data = JSON.parse(dataStr);
+          } catch { continue; }
+
+          switch (eventType) {
+            case "step":
+              setGenerationSteps((prev) =>
+                prev.map((s) =>
+                  s.id === data.step ? { ...s, status: data.status, content: data.message } : s
+                )
+              );
+              break;
+
+            case "preview":
+              setCurrentPreview(data.content || "");
+              break;
+
+            case "strategist_result":
+              // Show early preview
+              if (data.preview) {
+                setCurrentPreview(`Hook: ${data.preview}`);
+              }
+              break;
+
+            case "analyst_result":
+              // Could update preview
+              break;
+
+            case "image_progress":
+              setGenerationSteps((prev) =>
+                prev.map((s) =>
+                  s.id === "images"
+                    ? { ...s, content: `${data.completed}/${data.total} imagens` }
+                    : s
+                )
+              );
+              break;
+
+            case "complete":
+              finalCarousels = data.carousels || [data];
+              break;
+
+            case "error":
+              throw new Error(data.error);
+          }
+        }
+      }
+
+      const genTime = Date.now() - startTime;
+
+      if (finalCarousels.length === 0) {
+        throw new Error("No carousels generated");
+      }
+
+      setCarouselResults(finalCarousels);
       setCurrentCarouselIndex(0);
       setCurrentSlide(0);
       setCurrentStep("design");
       setViewMode("editor");
       setCurrentCarouselId(null);
-      
+      setGenerationSteps([]);
+      setCurrentPreview("");
+
       // Auto-save all generated carousels as drafts
-      for (const carousel of generatedCarousels) {
-        await autoSaveCarousel(carousel, data.generationTimeMs);
+      for (const carousel of finalCarousels) {
+        await autoSaveCarousel(carousel, genTime);
       }
-      
-      toast.success(`Generated ${generatedCarousels.length} carousel(s) - auto-saved as drafts!`);
+
+      toast.success(`Gerado ${finalCarousels.length} carousel(s) - salvos como rascunho!`);
     } catch (error: any) {
       console.error("Error generating carousel:", error);
       toast.error(error.message || "Failed to generate carousel");
+      setGenerationSteps([]);
+      setCurrentPreview("");
     } finally {
       setIsGenerating(false);
     }
@@ -854,6 +951,13 @@ export default function LinkedInCarousel() {
                       <span className="text-xs font-normal opacity-70">Produção imediata</span>
                     </Button>
                   </div>
+
+                  {/* Generation Progress */}
+                  {isGenerating && generationSteps.length > 0 && (
+                    <div className="mt-4">
+                      <GenerationProgress steps={generationSteps} currentOutput={currentPreview} />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
