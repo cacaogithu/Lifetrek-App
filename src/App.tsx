@@ -37,6 +37,7 @@ const ContentApproval = lazy(() => import("./pages/ContentApproval"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const AdminBlog = lazy(() => import("./pages/AdminBlog"));
+const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
                       <Route path="/ev" element={<SalesEngineerDashboard />} />
                       <Route path="/admin/content-approval" element={<ContentApproval />} />
                       <Route path="/admin/blog" element={<AdminBlog />} />
+                      <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
