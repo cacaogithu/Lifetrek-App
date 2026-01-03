@@ -1,15 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LinkedInPost, LinkedInPostInsert, LinkedInPostUpdate } from "@/types/linkedin";
 import { toast } from "sonner";
+import { Tables } from "@/integrations/supabase/types";
 
-// Fetch all LinkedIn posts (optionally filter by status)
+type LinkedInCarousel = Tables<"linkedin_carousels">;
+
+// Fetch all LinkedIn carousels (optionally filter by status)
 export function useLinkedInPosts(status?: string) {
   return useQuery({
-    queryKey: ["linkedin_posts", status],
+    queryKey: ["linkedin_carousels", status],
     queryFn: async () => {
       let query = supabase
-        .from("linkedin_posts")
+        .from("linkedin_carousels")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -20,201 +22,169 @@ export function useLinkedInPosts(status?: string) {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as LinkedInPost[];
+      return data as LinkedInCarousel[];
     },
   });
 }
 
-// Fetch single LinkedIn post by ID
+// Fetch single LinkedIn carousel by ID
 export function useLinkedInPost(id: string) {
   return useQuery({
-    queryKey: ["linkedin_post", id],
+    queryKey: ["linkedin_carousel", id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("linkedin_posts")
+        .from("linkedin_carousels")
         .select("*")
         .eq("id", id)
         .single();
 
       if (error) throw error;
-      return data as LinkedInPost;
+      return data as LinkedInCarousel;
     },
     enabled: !!id,
   });
 }
 
-// Create new LinkedIn post
-export function useCreateLinkedInPost() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (post: LinkedInPostInsert) => {
-      const { data, error } = await supabase
-        .from("linkedin_posts")
-        .insert(post)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as LinkedInPost;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["linkedin_posts"] });
-      toast.success("Post do LinkedIn criado com sucesso!");
-    },
-    onError: (error: any) => {
-      console.error("Error creating LinkedIn post:", error);
-      toast.error("Erro ao criar post do LinkedIn");
-    },
-  });
-}
-
-// Update LinkedIn post
+// Update LinkedIn carousel
 export function useUpdateLinkedInPost() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: LinkedInPostUpdate) => {
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<LinkedInCarousel>) => {
       const { data, error } = await supabase
-        .from("linkedin_posts")
+        .from("linkedin_carousels")
         .update(updates)
         .eq("id", id)
         .select()
         .single();
 
       if (error) throw error;
-      return data as LinkedInPost;
+      return data as LinkedInCarousel;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["linkedin_posts"] });
-      queryClient.invalidateQueries({ queryKey: ["linkedin_post", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["linkedin_carousels"] });
+      queryClient.invalidateQueries({ queryKey: ["linkedin_carousel", data.id] });
       toast.success("Post atualizado com sucesso!");
     },
     onError: (error: any) => {
-      console.error("Error updating LinkedIn post:", error);
+      console.error("Error updating LinkedIn carousel:", error);
       toast.error("Erro ao atualizar post");
     },
   });
 }
 
-// Approve LinkedIn post
+// Approve LinkedIn carousel
 export function useApproveLinkedInPost() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
-
       const { data, error } = await supabase
-        .from("linkedin_posts")
+        .from("linkedin_carousels")
         .update({
           status: "approved",
-          approved_at: new Date().toISOString(),
-          approved_by: user?.id,
         })
         .eq("id", id)
         .select()
         .single();
 
       if (error) throw error;
-      return data as LinkedInPost;
+      return data as LinkedInCarousel;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["linkedin_posts"] });
+      queryClient.invalidateQueries({ queryKey: ["linkedin_carousels"] });
       toast.success("Post aprovado com sucesso!");
     },
     onError: (error: any) => {
-      console.error("Error approving post:", error);
+      console.error("Error approving carousel:", error);
       toast.error("Erro ao aprovar post");
     },
   });
 }
 
-// Reject LinkedIn post
+// Reject LinkedIn carousel
 export function useRejectLinkedInPost() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       const { data, error } = await supabase
-        .from("linkedin_posts")
+        .from("linkedin_carousels")
         .update({
-          status: "rejected",
-          rejection_reason: reason,
+          status: "archived",
         })
         .eq("id", id)
         .select()
         .single();
 
       if (error) throw error;
-      return data as LinkedInPost;
+      return data as LinkedInCarousel;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["linkedin_posts"] });
+      queryClient.invalidateQueries({ queryKey: ["linkedin_carousels"] });
       toast.success("Post rejeitado");
     },
     onError: (error: any) => {
-      console.error("Error rejecting post:", error);
+      console.error("Error rejecting carousel:", error);
       toast.error("Erro ao rejeitar post");
     },
   });
 }
 
-// Publish LinkedIn post (after approval)
+// Publish LinkedIn carousel (after approval)
 export function usePublishLinkedInPost() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
       const { data, error } = await supabase
-        .from("linkedin_posts")
+        .from("linkedin_carousels")
         .update({
           status: "published",
-          published_at: new Date().toISOString(),
         })
         .eq("id", id)
         .select()
         .single();
 
       if (error) throw error;
-      return data as LinkedInPost;
+      return data as LinkedInCarousel;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["linkedin_posts"] });
+      queryClient.invalidateQueries({ queryKey: ["linkedin_carousels"] });
       toast.success("Post publicado no LinkedIn!");
     },
     onError: (error: any) => {
-      console.error("Error publishing post:", error);
+      console.error("Error publishing carousel:", error);
       toast.error("Erro ao publicar post");
     },
   });
 }
 
-// Delete LinkedIn post
+// Delete LinkedIn carousel
 export function useDeleteLinkedInPost() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("linkedin_posts")
+        .from("linkedin_carousels")
         .delete()
         .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["linkedin_posts"] });
+      queryClient.invalidateQueries({ queryKey: ["linkedin_carousels"] });
       toast.success("Post deletado com sucesso!");
     },
     onError: (error: any) => {
-      console.error("Error deleting post:", error);
+      console.error("Error deleting carousel:", error);
       toast.error("Erro ao deletar post");
     },
   });
 }
 
-// Get content approval items (combines blogs and LinkedIn posts)
+// Get content approval items (combines blogs and LinkedIn carousels)
 export function useContentApprovalItems() {
   return useQuery({
     queryKey: ["content_approval_items"],
@@ -228,11 +198,11 @@ export function useContentApprovalItems() {
 
       if (blogsError) throw blogsError;
 
-      // Fetch pending LinkedIn posts
-      const { data: linkedInPosts, error: linkedInError } = await supabase
-        .from("linkedin_posts")
+      // Fetch draft/pending LinkedIn carousels
+      const { data: linkedInCarousels, error: linkedInError } = await supabase
+        .from("linkedin_carousels")
         .select("*")
-        .eq("status", "pending_approval")
+        .in("status", ["draft", "pending_approval"])
         .order("created_at", { ascending: false });
 
       if (linkedInError) throw linkedInError;
@@ -249,15 +219,15 @@ export function useContentApprovalItems() {
           ai_generated: blog.ai_generated || false,
           full_data: blog,
         })),
-        ...(linkedInPosts || []).map((post: any) => ({
-          id: post.id,
+        ...(linkedInCarousels || []).map((carousel: any) => ({
+          id: carousel.id,
           type: 'linkedin' as const,
-          title: post.topic,
-          content_preview: post.carousel_data?.slides?.[0]?.headline || '',
-          status: post.status,
-          created_at: post.created_at,
-          ai_generated: post.ai_generated || false,
-          full_data: post,
+          title: carousel.topic,
+          content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
+          status: carousel.status,
+          created_at: carousel.created_at,
+          ai_generated: true,
+          full_data: carousel,
         })),
       ];
 

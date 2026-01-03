@@ -1,4 +1,4 @@
-// LinkedIn Posts Types for Content Approval System
+// LinkedIn Carousel Types - aligned with linkedin_carousels table
 
 export interface CarouselSlide {
   type: string; // 'hook', 'content', 'cta'
@@ -24,53 +24,27 @@ export interface CarouselData {
   strategy_brief?: any;
 }
 
+// This interface is kept for backward compatibility but 
+// the hook now uses Tables<"linkedin_carousels"> from Supabase types
 export interface LinkedInPost {
   id: string;
+  admin_user_id: string;
   topic: string;
-  target_audience: string | null;
+  target_audience: string;
   pain_point: string | null;
   desired_outcome: string | null;
-  proof_points: string[] | null;
+  proof_points: string | null;
   cta_action: string | null;
-  post_type: 'value' | 'commercial';
-  carousel_data: CarouselData;
-  caption: string | null;
-  created_by: string | null;
-  number_of_slides: number;
-  status: 'pending_approval' | 'approved' | 'rejected' | 'published';
-  approved_at: string | null;
-  approved_by: string | null;
-  published_at: string | null;
-  rejection_reason: string | null;
-  ai_generated: boolean;
-  generation_mode: string | null;
+  slides: CarouselSlide[];
+  caption: string;
+  format: string | null;
+  image_urls: string[];
+  generation_settings: Record<string, any> | null;
+  performance_metrics: Record<string, any> | null;
+  is_favorite: boolean | null;
+  status: string | null;
   created_at: string;
   updated_at: string;
-}
-
-export interface LinkedInPostInsert {
-  topic: string;
-  target_audience?: string;
-  pain_point?: string;
-  desired_outcome?: string;
-  proof_points?: string[];
-  cta_action?: string;
-  post_type?: 'value' | 'commercial';
-  carousel_data: CarouselData;
-  caption?: string;
-  created_by?: string;
-  number_of_slides?: number;
-  status?: 'pending_approval' | 'approved' | 'rejected' | 'published';
-  ai_generated?: boolean;
-  generation_mode?: string;
-}
-
-export interface LinkedInPostUpdate extends Partial<LinkedInPostInsert> {
-  id: string;
-  approved_at?: string;
-  approved_by?: string;
-  published_at?: string;
-  rejection_reason?: string;
 }
 
 export interface ContentApprovalItem {

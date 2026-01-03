@@ -238,18 +238,24 @@ export default function LinkedInCarousel() {
   const autoSaveCarousel = async (result: CarouselResult, generationTimeMs?: number) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.error("Auto-save: No user logged in");
+        return;
+      }
 
+      // Ensure caption has a value (required field)
+      const captionValue = result.caption || `Post sobre ${topic}`;
+      
       const payload = {
         admin_user_id: user.id,
-        topic,
-        target_audience: targetAudience,
-        pain_point: painPoint,
-        desired_outcome: desiredOutcome,
-        proof_points: proofPoints,
-        cta_action: ctaAction,
+        topic: topic || "Sem tópico",
+        target_audience: targetAudience || "Geral",
+        pain_point: painPoint || null,
+        desired_outcome: desiredOutcome || null,
+        proof_points: proofPoints || null,
+        cta_action: ctaAction || null,
         slides: result.slides as any,
-        caption: result.caption,
+        caption: captionValue,
         format: result.format || format,
         image_urls: result.slides.map(s => s.imageUrl || ""),
         status: 'draft',
@@ -259,6 +265,13 @@ export default function LinkedInCarousel() {
         }
       };
 
+      console.log("Auto-save payload:", { 
+        user_id: user.id, 
+        topic: payload.topic,
+        slides_count: payload.slides.length,
+        has_caption: !!payload.caption
+      });
+
       // Save carousel
       const { data: savedCarousel, error } = await supabase
         .from("linkedin_carousels")
@@ -267,12 +280,15 @@ export default function LinkedInCarousel() {
         .single();
 
       if (error) {
-        console.error("Auto-save failed:", error);
+        console.error("Auto-save failed:", error.message, error.details, error.hint);
+        toast.error(`Falha ao salvar: ${error.message}`);
         return;
       }
 
+      console.log("Carousel saved successfully:", savedCarousel.id);
+
       // Log generation
-      await supabase.from("linkedin_generation_logs").insert([{
+      const { error: logError } = await supabase.from("linkedin_generation_logs").insert([{
         admin_user_id: user.id,
         carousel_id: savedCarousel.id,
         input_params: { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format },
@@ -282,9 +298,14 @@ export default function LinkedInCarousel() {
         model_used: "google/gemini-3-pro-image-preview"
       }]);
 
+      if (logError) {
+        console.error("Generation log failed:", logError);
+      }
+
       await fetchCarouselHistory();
     } catch (error) {
       console.error("Auto-save error:", error);
+      toast.error("Erro ao salvar carrossel");
     }
   };
 
