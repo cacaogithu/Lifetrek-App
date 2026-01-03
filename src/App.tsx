@@ -14,6 +14,7 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import { AIChatbot } from "./components/AIChatbot";
 import { LoadingSpinner } from "./components/LoadingSpinner";
 import { AdminSupportButton } from "./components/admin/AdminSupportButton";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load route components for better code splitting
 const Home = lazy(() => import("./pages/Home"));
@@ -73,17 +74,17 @@ const App = () => (
                       <Route path="/blog/:slug" element={<BlogPost />} />
                       <Route path="/assessment" element={<Assessment />} />
                       <Route path="/calculator" element={<Calculator />} />
-                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                       <Route path="/admin/login" element={<AdminLogin />} />
                       <Route path="/product-catalog" element={<ProductCatalog />} />
-                      <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
-                      <Route path="/admin/linkedin-carousel" element={<LinkedInCarousel />} />
-                      <Route path="/admin/assets" element={<AssetLibrary />} />
+                      <Route path="/admin/image-processor" element={<ProtectedRoute><ProductImageProcessor /></ProtectedRoute>} />
+                      <Route path="/admin/linkedin-carousel" element={<ProtectedRoute><LinkedInCarousel /></ProtectedRoute>} />
+                      <Route path="/admin/assets" element={<ProtectedRoute><AssetLibrary /></ProtectedRoute>} />
                       <Route path="/pitch-deck" element={<PitchDeck />} />
                       <Route path="/ev" element={<SalesEngineerDashboard />} />
-                      <Route path="/admin/content-approval" element={<ContentApproval />} />
-                      <Route path="/admin/blog" element={<AdminBlog />} />
-                      <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
+                      <Route path="/admin/content-approval" element={<ProtectedRoute><ContentApproval /></ProtectedRoute>} />
+                      <Route path="/admin/blog" element={<ProtectedRoute><AdminBlog /></ProtectedRoute>} />
+                      <Route path="/admin/knowledge-base" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
