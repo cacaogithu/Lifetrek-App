@@ -544,6 +544,37 @@ export default function LinkedInCarousel() {
     setCarouselResults(newResults);
   };
 
+  const readBlobAsDataUrl = (blob: Blob) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("Failed to read image"));
+      reader.readAsDataURL(blob);
+    });
+
+  const resolveImageToDataUrl = async (src: string) => {
+    if (!src) return "";
+    if (src.startsWith("data:image/")) return src;
+
+    // Fetch remote URL and convert to data URL so it can be embedded in PDF
+    const resp = await fetch(src, { mode: "cors" });
+    if (!resp.ok) throw new Error(`Failed to fetch image (${resp.status})`);
+    const blob = await resp.blob();
+    return readBlobAsDataUrl(blob);
+  };
+
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // Delay revoke to avoid Safari/Chrome race conditions
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
   const handleExportImages = async () => {
     const activeCarousel = carouselResults[currentCarouselIndex];
     if (!activeCarousel) return;
@@ -552,74 +583,39 @@ export default function LinkedInCarousel() {
     const zip = new JSZip();
 
     try {
-      console.log("[Export] Starting image export...");
-      
-      // Process slides sequentially to avoid race conditions
-      const results: { name: string; data: string }[] = [];
-      
-      for (let index = 0; index < activeCarousel.slides.length; index++) {
-        const elementId = `export-slide-${index}`;
-        const node = document.getElementById(elementId);
-        
-        if (!node) {
-          console.error(`[Export] Node not found: ${elementId}`);
-          continue;
-        }
+      // Prefer direct generated images (Nano Banana) instead of rendering/capturing DOM
+      const slidesWithImages = activeCarousel.slides
+        .map((s, i) => ({ s, i }))
+        .filter(({ s }) => Boolean(s.imageUrl));
 
-        console.log(`[Export] Capturing slide ${index + 1}...`);
-        
-        // Wait for images to load
-        const images = node.querySelectorAll('img');
-        await Promise.all(
-          Array.from(images).map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-              img.onload = resolve;
-              img.onerror = resolve;
-            });
-          })
-        );
-
-        // Small delay to ensure rendering is complete
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        const dataUrl = await htmlToImage.toPng(node as HTMLElement, { 
-          pixelRatio: 2,
-          cacheBust: true,
-          backgroundColor: '#003052', // Fallback background
-        });
-        
-        console.log(`[Export] Slide ${index + 1} captured, data length: ${dataUrl.length}`);
-        results.push({ name: `slide-${index + 1}.png`, data: dataUrl });
+      if (slidesWithImages.length === 0) {
+        throw new Error("No images found on slides");
       }
 
-      if (results.length === 0) {
-        throw new Error("No slides were captured");
-      }
+      for (const { s, i } of slidesWithImages) {
+        const src = s.imageUrl as string;
 
-      results.forEach(res => {
-        const base64Data = res.data.split(',')[1];
-        if (base64Data && base64Data.length > 100) {
-          zip.file(res.name, base64Data, { base64: true });
+        if (src.startsWith("data:image/")) {
+          const base64Data = src.split(",")[1];
+          if (!base64Data) continue;
+          zip.file(`slide-${i + 1}.png`, base64Data, { base64: true });
         } else {
-          console.warn(`[Export] Slide ${res.name} has invalid data`);
+          const resp = await fetch(src, { mode: "cors" });
+          if (!resp.ok) throw new Error(`Failed to fetch slide ${i + 1} (${resp.status})`);
+          const blob = await resp.blob();
+          zip.file(`slide-${i + 1}.png`, blob);
         }
-      });
+      }
 
-      zip.file("caption.txt", activeCarousel.caption);
+      zip.file("caption.txt", activeCarousel.caption || "");
 
       const content = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(content);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `carousel-${activeCarousel.topic.replace(/\s+/g, '-').toLowerCase()}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success(`${results.length} slides exportados com sucesso!`);
-
+      const safeTopic = (activeCarousel.topic || "carousel").replace(/\s+/g, "-").toLowerCase();
+      downloadBlob(content, `carousel-${safeTopic}.zip`);
+      toast.success(`${slidesWithImages.length} slides exportados com sucesso!`);
     } catch (error) {
       console.error("[Export] Error:", error);
-      toast.error("Falha ao exportar imagens. Verifique o console para detalhes.");
+      toast.error("Falha ao exportar imagens.");
     } finally {
       setDesignLoading(false);
     }
@@ -633,53 +629,34 @@ export default function LinkedInCarousel() {
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "px",
-      format: [1080, 1080] // Square format for LinkedIn carousel
+      format: [1080, 1080],
     });
 
     try {
-      console.log("[PDF Export] Starting...");
       const slides = activeCarousel.slides;
-      
-      for (let i = 0; i < slides.length; i++) {
-        const elementId = `export-slide-${i}`;
-        const node = document.getElementById(elementId);
-        
-        if (!node) {
-          console.warn(`[PDF Export] Node not found: ${elementId}`);
-          continue;
-        }
+      const slidesWithImages = slides
+        .map((s, i) => ({ s, i }))
+        .filter(({ s }) => Boolean(s.imageUrl));
 
-        // Wait for images to load
-        const images = node.querySelectorAll('img');
-        await Promise.all(
-          Array.from(images).map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-              img.onload = resolve;
-              img.onerror = resolve;
-            });
-          })
-        );
+      if (slidesWithImages.length === 0) {
+        throw new Error("No images found on slides");
+      }
 
-        await new Promise(resolve => setTimeout(resolve, 100));
+      for (let idx = 0; idx < slidesWithImages.length; idx++) {
+        const { s } = slidesWithImages[idx];
+        const dataUrl = await resolveImageToDataUrl(s.imageUrl as string);
+        if (!dataUrl) continue;
 
-        console.log(`[PDF Export] Capturing slide ${i + 1}...`);
-        const dataUrl = await htmlToImage.toPng(node as HTMLElement, { 
-          pixelRatio: 2,
-          cacheBust: true,
-          backgroundColor: '#003052',
-        });
-
-        if (i > 0) pdf.addPage([1080, 1080]);
+        if (idx > 0) pdf.addPage([1080, 1080]);
         pdf.addImage(dataUrl, "PNG", 0, 0, 1080, 1080);
       }
 
-      pdf.save(`carousel-${activeCarousel.topic.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+      const safeTopic = (activeCarousel.topic || "carousel").replace(/\s+/g, "-").toLowerCase();
+      pdf.save(`carousel-${safeTopic}.pdf`);
       toast.success("PDF exportado com sucesso!");
-
     } catch (error) {
       console.error("[PDF Export] Error:", error);
-      toast.error("Falha ao exportar PDF. Verifique o console para detalhes.");
+      toast.error("Falha ao exportar PDF.");
     } finally {
       setDesignLoading(false);
     }
