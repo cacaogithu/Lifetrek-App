@@ -122,35 +122,38 @@ async function handleMultiAgentGeneration(req: Request, params: any) {
         }
 
         // ============= SAVE TO DATABASE =============
-        console.log(`💾 [MULTI-AGENT] Saving LinkedIn post(s) to database for approval...`);
+        console.log(`💾 [MULTI-AGENT] Saving LinkedIn carousel(s) to database...`);
         try {
           const { data: { user } } = await supabase.auth.getUser();
 
-          // Save each carousel as a separate post
+          // Save each carousel to linkedin_carousels table
           for (const carousel of carousels) {
             const { error: insertError } = await supabase
-              .from("linkedin_posts")
+              .from("linkedin_carousels")
               .insert({
+                admin_user_id: user?.id || "00000000-0000-0000-0000-000000000000",
                 topic: carousel.topic || brief.topic,
                 target_audience: brief.targetAudience,
                 pain_point: brief.painPoint,
                 desired_outcome: brief.desiredOutcome,
                 proof_points: brief.proofPoints,
                 cta_action: brief.ctaAction,
-                post_type: brief.postType,
-                carousel_data: carousel,
-                caption: carousel.caption,
-                created_by: user?.id,
-                number_of_slides: carousel.slides?.length || 0,
-                status: 'pending_approval',
-                ai_generated: true,
-                generation_mode: 'multi-agent',
+                slides: carousel.slides || [],
+                caption: carousel.caption || `${brief.topic} - ${brief.targetAudience}`,
+                image_urls: carousel.imageUrls || [],
+                format: brief.format || "carousel",
+                status: "draft",
+                generation_settings: {
+                  mode: "multi-agent",
+                  postType: brief.postType,
+                  numberOfCarousels: brief.numberOfCarousels,
+                },
               });
 
             if (insertError) {
-              console.error('[MULTI-AGENT] Error saving LinkedIn post:', insertError);
+              console.error('[MULTI-AGENT] Error saving carousel:', insertError);
             } else {
-              console.log(`✅ [MULTI-AGENT] Post saved for approval: "${carousel.topic || brief.topic}"`);
+              console.log(`✅ [MULTI-AGENT] Carousel saved as draft: "${carousel.topic || brief.topic}"`);
             }
           }
         } catch (dbError) {
