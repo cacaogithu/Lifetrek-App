@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SUPABASE_URL = os.getenv('VITE_SUPABASE_URL')
-SUPABASE_ANON_KEY = os.getenv('VITE_SUPABASE_ANON_KEY')
+SUPABASE_ANON_KEY = os.getenv('VITE_SUPABASE_ANON_KEY') or os.getenv('VITE_SUPABASE_PUBLISHABLE_KEY')
 PERPLEXITY_API_KEY = os.getenv('PERPLEXITY_API_KEY')
 
 
@@ -31,12 +31,14 @@ class BlogGenerator:
     """Generates SEO-optimized blog posts using AI and Supabase"""
     
     def __init__(self):
-        self.supabase_url = SUPABASE_URL
-        self.supabase_key = SUPABASE_ANON_KEY
-        self.perplexity_key = PERPLEXITY_API_KEY
+        # Environment variables
+        self.supabase_url = os.getenv('VITE_SUPABASE_URL')
+        # Prefer Service Role Key for backend scripts to bypass RLS
+        self.supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY') or os.getenv('VITE_SUPABASE_ANON_KEY') or os.getenv('VITE_SUPABASE_PUBLISHABLE_KEY')
+        self.perplexity_key = os.getenv('PERPLEXITY_API_KEY')
         
-        if not all([self.supabase_url, self.supabase_key]):
-            raise ValueError("Missing required environment variables: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY")
+        if not self.supabase_url or not self.supabase_key:
+            raise ValueError("Missing Supabase credentials in .env")
     
     def load_topics_from_csv(self, csv_path: str, count: int = 4) -> List[Dict]:
         """Load blog topics from CSV file"""
@@ -136,22 +138,48 @@ Forneça fontes confiáveis e informações atualizadas.'''
             print(f"  ❌ Generation failed: {str(e)}")
             raise
     
+    def slugify(self, text: str) -> str:
+        """Generate URL-friendly slug from title"""
+        import unicodedata
+        import re
+        
+        # Normalize to NFKD form and filter non-ASCII characters
+        text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
+        
+        # Convert to lowercase
+        text = text.lower()
+        
+        # Replace non-alphanumeric characters with hyphens
+        text = re.sub(r'[^a-z0-9\s-]', '', text)
+        
+        # Replace whitespace and hyphens with a single hyphen
+        text = re.sub(r'[-\s]+', '-', text).strip('-')
+        
+        return text
+
     def get_category_id(self, category_slug: str) -> Optional[str]:
         """Get category UUID from slug"""
         try:
+            # Try fetching all categories if specific one fails
             response = requests.get(
                 f'{self.supabase_url}/rest/v1/blog_categories',
                 headers={
                     'apikey': self.supabase_key,
                     'Authorization': f'Bearer {self.supabase_key}'
                 },
-                params={'slug': f'eq.{category_slug}', 'select': 'id'}
+                params={'select': 'id,slug'}
             )
             
             if response.status_code == 200:
-                data = response.json()
-                if data:
-                    return data[0]['id']
+                categories = response.json()
+                # Try exact match
+                for cat in categories:
+                    if cat['slug'] == category_slug:
+                        return cat['id']
+                # Try case-insensitive match
+                for cat in categories:
+                    if cat['slug'].lower() == category_slug.lower():
+                        return cat['id']
             
             print(f"  ⚠️  Category '{category_slug}' not found, using NULL")
             return None
@@ -167,6 +195,9 @@ Forneça fontes confiáveis e informações atualizadas.'''
         # Get category ID
         category_id = self.get_category_id(category_slug)
         
+        if 'slug' not in post_data or not post_data['slug']:
+            post_data['slug'] = self.slugify(post_data['title'])
+            
         # Prepare post data
         db_post = {
             'title': post_data['title'],
@@ -225,6 +256,13 @@ status: pending_review
 ai_generated: true
 generated_at: {datetime.now().isoformat()}
 ---
+
+<!-- 
+STRATEGY BRIEF:
+{json.dumps(post_data.get('strategy_brief', {}), indent=2, ensure_ascii=False)} 
+-->
+
+![Header Image]({post_data.get('image_url', '')} "Header Image")
 
 {post_data['content']}
 """
@@ -313,46 +351,49 @@ generated_at: {datetime.now().isoformat()}
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate SEO-optimized blog posts for Lifetrek Medical')
-    
-    # Batch mode
-    parser.add_argument('--topics', type=str, help='Path to CSV file with topics')
+    parser = argparse.ArgumentParser(description='Generate blog content for Lifetrek Medical')
+    parser.add_argument('--topics', help='Path to CSV file with topics')
     parser.add_argument('--count', type=int, default=4, help='Number of posts to generate from CSV')
-    
-    # Single post mode
-    parser.add_argument('--topic', type=str, help='Single topic to generate')
-    parser.add_argument('--keywords', type=str, help='Comma-separated keywords')
-    parser.add_argument('--category', type=str, default='educacional', 
-                       choices=['educacional', 'produto', 'mercado', 'prova-social'],
-                       help='Content category')
+    parser.add_argument('--topic', help='Single topic to generate')
+    parser.add_argument('--keywords', help='Comma-separated keywords for single topic')
+    parser.add_argument('--category', default='educacional', help='Category for single topic')
+    parser.add_argument('--news', action='store_true', help='Generate a weekly news update based on recent events')
     
     args = parser.parse_args()
     
     generator = BlogGenerator()
     
-    # Batch mode
-    if args.topics:
-        if not os.path.exists(args.topics):
-            print(f"❌ Error: CSV file not found: {args.topics}")
-            sys.exit(1)
+    if args.news:
+        generator.execute_news_generation()
         
-        topics = generator.load_topics_from_csv(args.topics, args.count)
-        results = generator.generate_batch(topics)
-        
-        # Exit code based on success rate
-        sys.exit(0 if results['failed'] == 0 else 1)
-    
-    # Single post mode
     elif args.topic:
-        if not args.keywords:
-            print("❌ Error: --keywords required when using --topic")
+        keywords = [k.strip() for k in args.keywords.split(',')] if args.keywords else []
+        generator.generate_single_post(args.topic, keywords, args.category)
+        
+    elif args.topics:
+        topics = generator.load_topics_from_csv(args.topics, args.count)
+        
+        print(f"🚀 Starting batch generation: {len(topics)} posts")
+        
+        success_count = 0
+        fail_count = 0
+        
+        for t in topics:
+            if generator.generate_single_post(t['topic'], t['keywords'], t['category']):
+                success_count += 1
+            else:
+                fail_count += 1
+        
+        print(f"\n{'='*60}")
+        print(f"📊 BATCH COMPLETE")
+        print(f"{'='*60}")
+        print(f"Total:   {len(topics)}")
+        print(f"✅ Success: {success_count}")
+        print(f"❌ Failed:  {fail_count}")
+        
+        if fail_count > 0:
             sys.exit(1)
-        
-        keywords = [k.strip() for k in args.keywords.split(',')]
-        success = generator.generate_single_post(args.topic, keywords, args.category)
-        
-        sys.exit(0 if success else 1)
-    
+            
     else:
         parser.print_help()
         sys.exit(1)
