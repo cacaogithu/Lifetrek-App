@@ -121,10 +121,46 @@ async function handleMultiAgentGeneration(req: Request, params: any) {
           sseSend("step", { step: "images", status: "done", timeMs: Date.now() - designerStartTime });
         }
 
+        // ============= SAVE TO DATABASE =============
+        console.log(`💾 [MULTI-AGENT] Saving LinkedIn post(s) to database for approval...`);
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+
+          // Save each carousel as a separate post
+          for (const carousel of carousels) {
+            const { error: insertError } = await supabase
+              .from("linkedin_posts")
+              .insert({
+                topic: carousel.topic || brief.topic,
+                target_audience: brief.targetAudience,
+                pain_point: brief.painPoint,
+                desired_outcome: brief.desiredOutcome,
+                proof_points: brief.proofPoints,
+                cta_action: brief.ctaAction,
+                post_type: brief.postType,
+                carousel_data: carousel,
+                caption: carousel.caption,
+                created_by: user?.id,
+                number_of_slides: carousel.slides?.length || 0,
+                status: 'pending_approval',
+                ai_generated: true,
+                generation_mode: 'multi-agent',
+              });
+
+            if (insertError) {
+              console.error('[MULTI-AGENT] Error saving LinkedIn post:', insertError);
+            } else {
+              console.log(`✅ [MULTI-AGENT] Post saved for approval: "${carousel.topic || brief.topic}"`);
+            }
+          }
+        } catch (dbError) {
+          console.error('[MULTI-AGENT] Database save failed (non-fatal):', dbError);
+        }
+
         // ============= COMPLETE =============
         const totalTime = Date.now() - startTime;
         console.log(`✅ [ORCHESTRATOR] Multi-agent generation complete in ${totalTime}ms`);
-        
+
         const final = numberOfCarousels > 1 ? { carousels } : carousels[0];
         sseSend("complete", final);
         controller.close();
@@ -497,6 +533,42 @@ The text MUST be part of the image (burned in).`.trim();
           });
 
           sendSSE(controller, "step", { step: "images", status: "done" });
+        }
+
+        // === SAVE TO DATABASE FOR CONTENT APPROVAL ===
+        console.log(`💾 [STREAMING] Saving LinkedIn post(s) to database for approval...`);
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+
+          // Save each carousel as a separate post
+          for (const carousel of resultCarousels) {
+            const { error: insertError } = await supabase
+              .from("linkedin_posts")
+              .insert({
+                topic: carousel.topic || topic,
+                target_audience: targetAudience,
+                pain_point: painPoint,
+                desired_outcome: desiredOutcome,
+                proof_points: proofPoints,
+                cta_action: ctaAction,
+                post_type: postType,
+                carousel_data: carousel,
+                caption: carousel.caption,
+                created_by: user?.id,
+                number_of_slides: carousel.slides?.length || 0,
+                status: 'pending_approval',
+                ai_generated: true,
+                generation_mode: 'stream',
+              });
+
+            if (insertError) {
+              console.error('[STREAMING] Error saving LinkedIn post:', insertError);
+            } else {
+              console.log(`✅ [STREAMING] Post saved for approval: "${carousel.topic || topic}"`);
+            }
+          }
+        } catch (dbError) {
+          console.error('[STREAMING] Database save failed (non-fatal):', dbError);
         }
 
         // Final result
@@ -945,8 +1017,44 @@ LIGHTING: Soft studio lighting, highlight precision equipment.`;
     const successCount = imageResults.filter(r => r.imageUrl).length;
     console.log(`🖼️ Image processing complete in ${imageTime}ms (${successCount}/${allSlideTasks.length} successful)`);
 
+    // === SAVE TO DATABASE FOR CONTENT APPROVAL ===
+    console.log(`💾 Saving LinkedIn post(s) to database for approval...`);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Save each carousel as a separate post
+      for (const carousel of resultCarousels) {
+        const { error: insertError } = await supabase
+          .from("linkedin_posts")
+          .insert({
+            topic: carousel.topic || topic,
+            target_audience: targetAudience,
+            pain_point: painPoint,
+            desired_outcome: desiredOutcome,
+            proof_points: proofPoints,
+            cta_action: ctaAction,
+            post_type: postType,
+            carousel_data: carousel,
+            caption: carousel.caption,
+            created_by: user?.id,
+            number_of_slides: carousel.slides?.length || 0,
+            status: 'pending_approval',
+            ai_generated: true,
+            generation_mode: mode,
+          });
+
+        if (insertError) {
+          console.error('Error saving LinkedIn post to database:', insertError);
+        } else {
+          console.log(`✅ LinkedIn post saved for approval: "${carousel.topic || topic}"`);
+        }
+      }
+    } catch (dbError) {
+      console.error('Database save failed (non-fatal):', dbError);
+    }
+
     // Return response
-    const finalResponse = isBatch 
+    const finalResponse = isBatch
       ? { carousels: resultCarousels }
       : resultCarousels[0];
 
