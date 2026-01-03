@@ -379,14 +379,24 @@ export async function runDesignerAgent(
   context: AgentContext
 ): Promise<any[]> {
   const { supabase, lovableApiKey, sendSSE } = context;
+  
+  const designerStartTime = Date.now();
+  const totalSlides = carousels.reduce((sum, c) => sum + (c.slides?.length || 0), 0);
+  console.log(`\n🎨 [DESIGNER] Agent Started`);
+  console.log(`   └─ Carousels: ${carousels.length}, Total slides: ${totalSlides}`);
 
   sendSSE("agent_status", { agent: "designer", status: "starting", message: "Preparando visuais..." });
 
   const results = [];
+  let completedImages = 0;
+  let failedImages = 0;
 
   for (let ci = 0; ci < carousels.length; ci++) {
     const carousel = carousels[ci];
     const slides = carousel.slides || [];
+    const carouselStart = Date.now();
+
+    console.log(`\n   📁 [DESIGNER] Carousel ${ci + 1}/${carousels.length}: "${carousel.topic?.substring(0, 40)}..." (${slides.length} slides)`);
 
     sendSSE("agent_status", { 
       agent: "designer", 
@@ -399,9 +409,14 @@ export async function runDesignerAgent(
     // Process slides in batches of 5 for concurrency
     for (let i = 0; i < slides.length; i += 5) {
       const batch = slides.slice(i, i + 5);
+      const batchStart = Date.now();
+      console.log(`      🔄 [DESIGNER] Batch ${Math.floor(i/5) + 1}: slides ${i + 1}-${Math.min(i + 5, slides.length)}`);
       
       const batchResults = await Promise.all(batch.map(async (slide: any, batchIndex: number) => {
         const slideIndex = i + batchIndex;
+        const slideStart = Date.now();
+        
+        console.log(`         🖼️ [DESIGNER] Slide ${slideIndex + 1}/${slides.length} started: [${slide.type}] "${slide.headline?.substring(0, 30)}..."`);
         
         sendSSE("image_progress", { 
           carouselIndex: ci, 
@@ -410,57 +425,86 @@ export async function runDesignerAgent(
           message: `Gerando slide ${slideIndex + 1}` 
         });
 
-        // Check if we should use a product image
-        if (slide.suggested_product_category) {
-          const products = await executeToolCall(
-            "search_products",
-            { category: slide.suggested_product_category, limit: 1 },
-            { supabase, lovableApiKey }
-          );
-
-          if (products.products?.length > 0) {
-            // Use product image - but we still need to burn text into it
-            // For now, we'll generate with product context
-            const imageResult = await executeToolCall(
-              "generate_image",
-              {
-                prompt: `${slide.designer_notes || ""} Feature the product: ${products.products[0].name}`,
-                headline: slide.headline,
-                body_text: slide.body,
-                style: slide.image_style || "product_showcase",
-              },
+        try {
+          // Check if we should use a product image
+          if (slide.suggested_product_category) {
+            const products = await executeToolCall(
+              "search_products",
+              { category: slide.suggested_product_category, limit: 1 },
               { supabase, lovableApiKey }
             );
 
-            return {
-              ...slide,
-              imageUrl: imageResult.image_url || "",
-              productUsed: products.products[0],
-            };
+            if (products.products?.length > 0) {
+              // Use product image - but we still need to burn text into it
+              const imageResult = await executeToolCall(
+                "generate_image",
+                {
+                  prompt: `${slide.designer_notes || ""} Feature the product: ${products.products[0].name}`,
+                  headline: slide.headline,
+                  body_text: slide.body,
+                  style: slide.image_style || "product_showcase",
+                },
+                { supabase, lovableApiKey }
+              );
+
+              const slideTime = Date.now() - slideStart;
+              if (imageResult.image_url) {
+                completedImages++;
+                console.log(`         ✅ [DESIGNER] Slide ${slideIndex + 1} done in ${slideTime}ms (product: ${products.products[0].name?.substring(0, 20)})`);
+              } else {
+                failedImages++;
+                console.error(`         ❌ [DESIGNER] Slide ${slideIndex + 1} FAILED in ${slideTime}ms: ${imageResult.error || 'no image returned'}`);
+              }
+
+              return {
+                ...slide,
+                imageUrl: imageResult.image_url || "",
+                productUsed: products.products[0],
+              };
+            }
           }
+
+          // Generate custom image
+          const imageResult = await executeToolCall(
+            "generate_image",
+            {
+              prompt: slide.designer_notes || `${slide.type} slide for ${carousel.topic}`,
+              headline: slide.headline,
+              body_text: slide.body,
+              style: slide.image_style || "client_perspective",
+              slide_type: slide.type,
+            },
+            { supabase, lovableApiKey }
+          );
+
+          const slideTime = Date.now() - slideStart;
+          if (imageResult.image_url) {
+            completedImages++;
+            console.log(`         ✅ [DESIGNER] Slide ${slideIndex + 1} done in ${slideTime}ms`);
+          } else {
+            failedImages++;
+            console.error(`         ❌ [DESIGNER] Slide ${slideIndex + 1} FAILED in ${slideTime}ms: ${imageResult.error || 'no image returned'}`);
+          }
+
+          return {
+            ...slide,
+            imageUrl: imageResult.image_url || "",
+          };
+        } catch (slideError: any) {
+          failedImages++;
+          const slideTime = Date.now() - slideStart;
+          console.error(`         ❌ [DESIGNER] Slide ${slideIndex + 1} EXCEPTION in ${slideTime}ms:`, slideError.message);
+          return { ...slide, imageUrl: "", error: slideError.message };
         }
-
-        // Generate custom image
-        const imageResult = await executeToolCall(
-          "generate_image",
-          {
-            prompt: slide.designer_notes || `${slide.type} slide for ${carousel.topic}`,
-            headline: slide.headline,
-            body_text: slide.body,
-            style: slide.image_style || "client_perspective",
-            slide_type: slide.type, // Pass slide type for text density control
-          },
-          { supabase, lovableApiKey }
-        );
-
-        return {
-          ...slide,
-          imageUrl: imageResult.image_url || "",
-        };
       }));
 
+      const batchTime = Date.now() - batchStart;
+      console.log(`      ✅ [DESIGNER] Batch done in ${batchTime}ms (avg ${(batchTime / batch.length).toFixed(0)}ms/slide)`);
       processedSlides.push(...batchResults);
     }
+
+    const carouselTime = Date.now() - carouselStart;
+    console.log(`   ✅ [DESIGNER] Carousel ${ci + 1} done in ${carouselTime}ms`);
 
     results.push({
       ...carousel,
@@ -468,6 +512,12 @@ export async function runDesignerAgent(
       imageUrls: processedSlides.map((s: any) => s.imageUrl || ""),
     });
   }
+
+  const totalTime = Date.now() - designerStartTime;
+  console.log(`\n🎨 [DESIGNER] Agent Complete`);
+  console.log(`   └─ Total: ${totalTime}ms (${(totalTime/1000).toFixed(1)}s)`);
+  console.log(`   └─ Images: ${completedImages} success, ${failedImages} failed`);
+  console.log(`   └─ Avg per image: ${totalSlides > 0 ? (totalTime / totalSlides).toFixed(0) : 0}ms`);
 
   sendSSE("agent_status", { agent: "designer", status: "done", message: "Visuais prontos!" });
   sendSSE("designer_result", { 
