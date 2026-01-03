@@ -13,19 +13,41 @@ export const AGENT_TOOLS = {
       type: "function",
       function: {
         name: "query_knowledge",
-        description: "Search the company knowledge base (Brand Book, Hormozi Framework) for relevant context based on a topic or question. Use this to ground your strategy in company-specific information.",
+        description: "Search the company knowledge base (Brand Book, Hormozi Framework, Market Research, Pain Points) for relevant context based on a topic or question. Use this to ground your strategy in company-specific information and market data.",
         parameters: {
           type: "object",
           properties: {
-            query: { type: "string", description: "The topic or question to search for" },
+            query: { type: "string", description: "The topic or question to search for (e.g., 'dores do OEM ortopédico', 'hooks para linkedin', 'vantagens produção local')" },
             source_type: { 
               type: "string", 
-              enum: ["brand_book", "hormozi_framework", null],
+              enum: ["brand_book", "hormozi_framework", "industry_research", "market_pain_points", "competitive_intelligence"],
               description: "Optional: filter by source type"
             },
             max_results: { type: "number", description: "Maximum results to return (default: 5)" }
           },
           required: ["query"]
+        }
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "search_industry_data",
+        description: "Search for market research, industry trends, and pain points by avatar type. Use this to add data-backed arguments to your content.",
+        parameters: {
+          type: "object",
+          properties: {
+            avatar: { 
+              type: "string", 
+              enum: ["orthopedic_oem", "dental_oem", "veterinary_oem", "surgical_instruments", "general"],
+              description: "The target avatar to get pain points for"
+            },
+            topic: { 
+              type: "string", 
+              description: "Specific topic to search (e.g., 'lead time', 'recalls', 'regulatory')"
+            }
+          },
+          required: ["avatar"]
         }
       }
     },
@@ -54,7 +76,7 @@ export const AGENT_TOOLS = {
             query: { type: "string", description: "The topic to search for" },
             source_type: { 
               type: "string", 
-              enum: ["brand_book", "hormozi_framework", null],
+              enum: ["brand_book", "hormozi_framework"],
               description: "Optional: filter by source type"
             },
             max_results: { type: "number", description: "Maximum results (default: 3)" }
@@ -154,7 +176,10 @@ export async function executeToolCall(
 
   switch (toolName) {
     case "query_knowledge":
-      return await queryKnowledge(params, supabase, lovableApiKey);
+      return await queryKnowledge(params, supabase);
+    
+    case "search_industry_data":
+      return await searchIndustryData(params, supabase);
     
     case "list_product_categories":
       return await listProductCategories(supabase);
@@ -176,54 +201,136 @@ export async function executeToolCall(
   }
 }
 
-// Query Knowledge Base using RAG
+// Query Knowledge Base using text search (no embeddings needed)
 async function queryKnowledge(
   params: { query: string; source_type?: string; max_results?: number },
-  supabase: any,
-  lovableApiKey: string
+  supabase: any
 ): Promise<any> {
   try {
-    // Generate embedding for query
-    const embeddingResponse = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovableApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-embedding-001",
-        input: params.query,
-      }),
-    });
-
-    if (!embeddingResponse.ok) {
-      throw new Error(`Embedding API error: ${embeddingResponse.status}`);
+    console.log(`🔍 Querying knowledge base: "${params.query}" (source: ${params.source_type || "all"})`);
+    
+    // Build search terms from query
+    const searchTerms = params.query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
+    
+    // Get all documents matching the source type filter
+    let query = supabase
+      .from("knowledge_embeddings")
+      .select("id, content, source_type, source_id, metadata");
+    
+    if (params.source_type) {
+      query = query.eq("source_type", params.source_type);
     }
-
-    const embeddingData = await embeddingResponse.json();
-    const queryEmbedding = embeddingData.data[0].embedding;
-
-    // Search knowledge base
-    const { data, error } = await supabase.rpc("match_knowledge", {
-      query_embedding: queryEmbedding,
-      match_threshold: 0.6,
-      match_count: params.max_results || 5,
-      filter_source_type: params.source_type || null,
-    });
-
+    
+    const { data, error } = await query;
+    
     if (error) throw error;
+    
+    if (!data || data.length === 0) {
+      console.log("⚠️ No documents in knowledge base");
+      return { results: [], query: params.query, message: "Knowledge base is empty. Please populate it first." };
+    }
+    
+    // Score documents by relevance (simple keyword matching)
+    const scoredDocs = data.map((doc: any) => {
+      const contentLower = doc.content.toLowerCase();
+      const metadataKeywords = (doc.metadata?.keywords || []).join(" ").toLowerCase();
+      
+      let score = 0;
+      for (const term of searchTerms) {
+        // Check content
+        const contentMatches = (contentLower.match(new RegExp(term, 'g')) || []).length;
+        score += contentMatches * 2;
+        
+        // Check keywords (higher weight)
+        if (metadataKeywords.includes(term)) {
+          score += 5;
+        }
+        
+        // Check source_id
+        if (doc.source_id.toLowerCase().includes(term)) {
+          score += 3;
+        }
+      }
+      
+      return { ...doc, score };
+    });
+    
+    // Sort by score and take top results
+    const topResults = scoredDocs
+      .filter((d: any) => d.score > 0)
+      .sort((a: any, b: any) => b.score - a.score)
+      .slice(0, params.max_results || 5);
+    
+    console.log(`✅ Found ${topResults.length} relevant documents`);
 
     return {
-      results: data?.map((d: any) => ({
+      results: topResults.map((d: any) => ({
         content: d.content,
         source: `${d.source_type}/${d.source_id}`,
-        similarity: d.similarity,
-      })) || [],
+        relevance_score: d.score,
+        category: d.metadata?.category,
+      })),
       query: params.query,
+      total_documents: data.length,
     };
   } catch (error: any) {
     console.error("Knowledge query error:", error);
     return { error: error.message, results: [] };
+  }
+}
+
+// Search industry data by avatar
+async function searchIndustryData(
+  params: { avatar: string; topic?: string },
+  supabase: any
+): Promise<any> {
+  try {
+    console.log(`📊 Searching industry data for avatar: ${params.avatar}, topic: ${params.topic || "general"}`);
+    
+    // Map avatar to source_id patterns
+    const avatarMappings: Record<string, string[]> = {
+      orthopedic_oem: ["orthopedic_oem_pains", "medical_device_market_brazil", "global_supply_chain_trends", "import_vs_local"],
+      dental_oem: ["dental_oem_pains", "medical_device_market_brazil", "global_supply_chain_trends", "import_vs_local"],
+      veterinary_oem: ["veterinary_oem_pains", "medical_device_market_brazil", "import_vs_local"],
+      surgical_instruments: ["surgical_instruments_pains", "medical_device_market_brazil", "import_vs_local"],
+      general: ["medical_device_market_brazil", "global_supply_chain_trends", "import_vs_local"],
+    };
+    
+    const relevantSourceIds = avatarMappings[params.avatar] || avatarMappings.general;
+    
+    // Query for relevant documents
+    const { data, error } = await supabase
+      .from("knowledge_embeddings")
+      .select("content, source_type, source_id, metadata")
+      .in("source_id", relevantSourceIds);
+    
+    if (error) throw error;
+    
+    let results = data || [];
+    
+    // If topic is provided, filter further
+    if (params.topic && results.length > 0) {
+      const topicLower = params.topic.toLowerCase();
+      results = results.filter((d: any) => 
+        d.content.toLowerCase().includes(topicLower) ||
+        (d.metadata?.keywords || []).some((k: string) => k.toLowerCase().includes(topicLower))
+      );
+    }
+    
+    console.log(`✅ Found ${results.length} industry data documents`);
+    
+    return {
+      avatar: params.avatar,
+      topic: params.topic,
+      documents: results.map((d: any) => ({
+        content: d.content,
+        source: `${d.source_type}/${d.source_id}`,
+        category: d.metadata?.category,
+      })),
+    };
+  } catch (error: any) {
+    console.error("Industry data search error:", error);
+    return { error: error.message, documents: [] };
   }
 }
 
@@ -244,34 +351,34 @@ async function listProductCategories(supabase: any): Promise<any> {
 async function getHookExamples(params: { hook_type?: string }): Promise<any> {
   const hookExamples: Record<string, string[]> = {
     label: [
-      "Orthopedic OEMs: Reduce supplier risk in 30 days",
-      "Medical Device Engineers: Stop 'babysitting' your machining vendor",
-      "Quality Managers: Documentation that sells itself to auditors",
+      "OEMs Ortopédicos: Reduza risco de recall em 30 dias",
+      "Engenheiros de Dispositivos Médicos: Pare de 'babysitar' seu fornecedor de usinagem",
+      "Gerentes de Qualidade: Documentação que se vende sozinha para auditores",
     ],
     yes_question: [
-      "Would you cut 60 days off your import lead time?",
-      "Would you launch new SKUs without hearing 'we can't make that'?",
-      "Would you reduce capital tied up in overseas inventory by 25%?",
+      "Você cortaria 60 dias do seu lead time de importação?",
+      "Você lançaria novos SKUs sem ouvir 'não conseguimos fazer isso'?",
+      "Você reduziria 25% do capital parado em estoque importado?",
     ],
     conditional: [
-      "If you're still importing precision implants, you're overpaying for risk",
-      "If your supplier can't show you their CMM reports, you have a problem",
-      "If you're coordinating 4 vendors for one product, there's a better way",
+      "Se você ainda importa implantes de precisão, está pagando caro pelo risco",
+      "Se seu fornecedor não mostra relatórios CMM, você tem um problema",
+      "Se você coordena 4 fornecedores para um produto, existe um jeito melhor",
     ],
     command: [
-      "Read this before your next supplier audit",
-      "Stop accepting 90-day lead times",
-      "Watch this if you've ever had a regulatory surprise",
+      "Leia isso antes da sua próxima auditoria de fornecedor",
+      "Pare de aceitar lead times de 90 dias",
+      "Assista isso se já teve uma surpresa regulatória",
     ],
     narrative: [
-      "We once had a client lose 6 months to a bad batch from overseas...",
-      "Last week, an OEM asked us: 'Can you really do Swiss-level in Brazil?'",
-      "A quality manager told us: 'Your reports just passed our FDA audit'",
+      "Uma vez, um cliente nosso perdeu 6 meses por um lote ruim do exterior...",
+      "Semana passada, um OEM nos perguntou: 'Vocês realmente fazem nível suíço no Brasil?'",
+      "Um gerente de qualidade nos disse: 'Seus relatórios passaram nossa auditoria FDA'",
     ],
     list: [
-      "5 ways your import supplier is costing you more than you think",
-      "3 questions to ask before your next orthopedic component RFQ",
-      "7 signs your precision machining vendor isn't actually precision",
+      "5 formas que seu fornecedor importado está custando mais do que você pensa",
+      "3 perguntas para fazer antes do seu próximo RFQ de componentes ortopédicos",
+      "7 sinais de que seu fornecedor de usinagem não é realmente de precisão",
     ],
   };
 

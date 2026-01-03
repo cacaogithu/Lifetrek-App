@@ -27,18 +27,20 @@ export const STRATEGIST_PROMPT = `You are the Lead LinkedIn Content Strategist f
 === YOUR MISSION ===
 Design LinkedIn carousel content that:
 1. Builds STRONG brand associations
-2. Delivers REAL, standalone value
+2. Delivers REAL, standalone value (backed by market data)
 3. Generates pipeline via LOW-FRICTION CTAs
 
 === YOUR TOOLS ===
 You have access to:
-- query_knowledge: Search the company knowledge base (Brand Book, Hormozi Framework) for relevant context
+- query_knowledge: Search the company knowledge base (Brand Book, Hormozi Framework, Market Research, Pain Points) for relevant context
+- search_industry_data: Get specific pain points and market data by avatar type (orthopedic_oem, dental_oem, veterinary_oem, surgical_instruments)
 - list_product_categories: See what products can be featured
 
 === MANDATORY WORKFLOW ===
-1. FIRST: Use query_knowledge to search for relevant brand messaging and hooks for this topic
-2. SECOND: Check product categories if the topic relates to specific products
-3. THEN: Design the carousel structure following HOOK → VALUE → CTA
+1. FIRST: Use search_industry_data to get pain points for the target audience
+2. SECOND: Use query_knowledge to search for relevant brand messaging and hooks for this topic
+3. THIRD: Check product categories if the topic relates to specific products
+4. THEN: Design the carousel structure following HOOK → VALUE → CTA using real data from tools
 
 === BRAND ASSOCIATIONS (Reinforce at least ONE) ===
 - "Local Swiss-level" → Produção BR com padrão tecnológico global
@@ -131,16 +133,34 @@ export async function runStrategistAgent(
 ): Promise<any> {
   const { supabase, lovableApiKey, sendSSE } = context;
   
-  sendSSE("agent_status", { agent: "strategist", status: "starting", message: "Consultando knowledge base..." });
+  sendSSE("agent_status", { agent: "strategist", status: "starting", message: "Buscando dados de mercado..." });
 
-  // First, query knowledge base for relevant context
+  // First, get industry data for the target avatar
+  const avatarMapping: Record<string, string> = {
+    "OEMs Ortopédicos": "orthopedic_oem",
+    "OEMs Dentais": "dental_oem", 
+    "OEMs Veterinários": "veterinary_oem",
+    "Fabricantes de Instrumentais": "surgical_instruments",
+  };
+  
+  const avatar = avatarMapping[brief.targetAudience] || "general";
+  
+  const industryData = await executeToolCall(
+    "search_industry_data",
+    { avatar, topic: brief.painPoint },
+    { supabase, lovableApiKey }
+  );
+
+  sendSSE("agent_status", { agent: "strategist", status: "thinking", message: `Encontrou ${industryData.documents?.length || 0} docs de mercado` });
+
+  // Then, query knowledge base for relevant context
   const knowledgeResults = await executeToolCall(
     "query_knowledge",
     { query: `${brief.topic} ${brief.painPoint} ${brief.targetAudience}`, max_results: 5 },
     { supabase, lovableApiKey }
   );
 
-  sendSSE("agent_status", { agent: "strategist", status: "thinking", message: `Encontrou ${knowledgeResults.results?.length || 0} contextos relevantes` });
+  sendSSE("agent_status", { agent: "strategist", status: "thinking", message: `Encontrou ${knowledgeResults.results?.length || 0} contextos de KB` });
 
   // Check product categories
   const productCategories = await executeToolCall(
@@ -150,12 +170,16 @@ export async function runStrategistAgent(
   );
 
   // Build context for LLM
+  const industryContext = industryData.documents?.map((d: any) => d.content).join("\n\n---\n\n") || "";
   const ragContext = knowledgeResults.results?.map((r: any) => r.content).join("\n\n---\n\n") || "";
   
   const systemPrompt = `${STRATEGIST_PROMPT}
 
-=== KNOWLEDGE BASE CONTEXT (from RAG) ===
-${ragContext}
+=== INDUSTRY DATA & PAIN POINTS (from search_industry_data) ===
+${industryContext || "No industry data available - knowledge base may be empty."}
+
+=== BRAND & FRAMEWORK CONTEXT (from query_knowledge) ===
+${ragContext || "No brand context available - knowledge base may be empty."}
 
 === AVAILABLE PRODUCT CATEGORIES ===
 ${productCategories.categories?.join(", ") || "None available"}`;
