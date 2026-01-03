@@ -144,24 +144,39 @@ async function handleStreamingGeneration(req: Request, params: any) {
           return;
         }
 
-        // Send strategist output
+        // Build a human-readable summary of the strategist's work
+        const strategistSummary = resultCarousels.map((c: any, idx: number) => {
+          const slides = c.slides || [];
+          const slidesSummary = slides.map((s: any, si: number) => 
+            `  Slide ${si + 1} (${s.type}): "${s.headline}"`
+          ).join("\n");
+          return `Carousel ${idx + 1}: "${c.topic}"\n${slidesSummary}`;
+        }).join("\n\n");
+
+        // Send strategist full output
         sendSSE(controller, "strategist_result", { 
           carousels: resultCarousels,
-          preview: resultCarousels[0]?.slides?.[0]?.headline || ""
+          preview: resultCarousels[0]?.slides?.[0]?.headline || "",
+          fullOutput: `📝 ESTRATÉGIA GERADA (${(strategistTime / 1000).toFixed(1)}s)\n\n${strategistSummary}`
         });
 
         // === ANALYST (Critique) ===
         sendSSE(controller, "step", { step: "analyst", status: "active", message: "Analyst revisando..." });
 
-        const critiqueSystemPrompt = `You are the Brand & Quality Analyst for Lifetrek Medical.
-Mission: Review drafts to ensure On-brand voice, Technical credibility, and Strategic alignment.
+        const critiqueSystemPrompt = `You are the Copywriter / Brand & Quality Analyst for Lifetrek Medical.
+Mission: Review drafts to ensure On-brand voice, Technical credibility, Strategic alignment, AND polish the copy for maximum engagement.
+=== YOUR JOB ===
+1. Refine headlines for punch and clarity
+2. Tighten body copy - remove fluff, add specifics
+3. Ensure proof points are concrete (machines, certifications, numbers)
+4. Make CTAs irresistible but low-friction
 === CHECKLIST ===
 1. **Avatar & Problem**: Is the avatar clearly identified (Callout)? Is ONE main problem addressed?
 2. **Hook**: Does slide 1 follow the "Callout + Payoff" formula?
 3. **Proof**: Are specific machines (Citizen M32) or standards (ISO 13485) used?
 4. **CTA**: Single, low-friction CTA?
 === OUTPUT ===
-Refine and return the SAME JSON structure.`;
+Refine and return the SAME JSON structure with improved copy.`;
 
         const critiqueUserPrompt = `Draft: ${JSON.stringify(resultCarousels)}\nCritique and refine using checklist.`;
 
@@ -220,7 +235,19 @@ Refine and return the SAME JSON structure.`;
 
         const analystTime = Date.now() - analystStartTime;
         sendSSE(controller, "step", { step: "analyst", status: "done", timeMs: analystTime });
-        sendSSE(controller, "analyst_result", { carousels: resultCarousels });
+
+        // Build copywriter summary showing the refinements
+        const copywriterSummary = resultCarousels.map((c: any, idx: number) => {
+          const slides = c.slides || [];
+          return slides.map((s: any, si: number) => 
+            `Slide ${si + 1} (${s.type}):\n  📌 "${s.headline}"\n  ${s.body.substring(0, 150)}${s.body.length > 150 ? '...' : ''}`
+          ).join("\n\n");
+        }).join("\n\n---\n\n");
+
+        sendSSE(controller, "analyst_result", { 
+          carousels: resultCarousels,
+          fullOutput: `✍️ COPY REFINADA (${(analystTime / 1000).toFixed(1)}s)\n\n${copywriterSummary}`
+        });
 
         // === IMAGE GENERATION ===
         if (wantImages) {

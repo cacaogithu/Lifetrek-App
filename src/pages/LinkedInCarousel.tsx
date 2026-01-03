@@ -17,6 +17,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SlideCanvas, SlideLayout } from "@/components/carousel/SlideCanvas";
 import { GenerationProgress, GenerationStep } from "@/components/carousel/GenerationProgress";
+import { SlideCopyPanel } from "@/components/carousel/SlideCopyPanel";
 import * as htmlToImage from "html-to-image";
 import JSZip from "jszip";
 import jsPDF from "jspdf";
@@ -100,6 +101,8 @@ export default function LinkedInCarousel() {
   // Generation Progress State
   const [generationSteps, setGenerationSteps] = useState<GenerationStep[]>([]);
   const [currentPreview, setCurrentPreview] = useState<string>("");
+  const [strategistOutput, setStrategistOutput] = useState<string>("");
+  const [analystOutput, setAnalystOutput] = useState<string>("");
 
   useEffect(() => {
     checkAdminAccess();
@@ -392,6 +395,8 @@ export default function LinkedInCarousel() {
       { id: "images", label: "Imagens", status: "pending", icon: "images" },
     ]);
     setCurrentPreview("");
+    setStrategistOutput("");
+    setAnalystOutput("");
 
     try {
       // Use streaming endpoint
@@ -459,14 +464,21 @@ export default function LinkedInCarousel() {
               break;
 
             case "strategist_result":
-              // Show early preview
-              if (data.preview) {
+              // Store full strategist output
+              if (data.fullOutput) {
+                setStrategistOutput(data.fullOutput);
+                setCurrentPreview("");
+              } else if (data.preview) {
                 setCurrentPreview(`Hook: ${data.preview}`);
               }
               break;
 
             case "analyst_result":
-              // Could update preview
+              // Store full analyst/copywriter output
+              if (data.fullOutput) {
+                setAnalystOutput(data.fullOutput);
+                setCurrentPreview("");
+              }
               break;
 
             case "image_progress":
@@ -501,6 +513,7 @@ export default function LinkedInCarousel() {
       setCurrentStep("design");
       setViewMode("editor");
       setCurrentCarouselId(null);
+      // Keep the outputs for history display, clear progress
       setGenerationSteps([]);
       setCurrentPreview("");
 
@@ -515,6 +528,8 @@ export default function LinkedInCarousel() {
       toast.error(error.message || "Failed to generate carousel");
       setGenerationSteps([]);
       setCurrentPreview("");
+      setStrategistOutput("");
+      setAnalystOutput("");
     } finally {
       setIsGenerating(false);
     }
@@ -955,7 +970,12 @@ export default function LinkedInCarousel() {
                   {/* Generation Progress */}
                   {isGenerating && generationSteps.length > 0 && (
                     <div className="mt-4">
-                      <GenerationProgress steps={generationSteps} currentOutput={currentPreview} />
+                      <GenerationProgress 
+                        steps={generationSteps} 
+                        currentOutput={currentPreview}
+                        strategistFullOutput={strategistOutput}
+                        analystFullOutput={analystOutput}
+                      />
                     </div>
                   )}
                 </CardContent>
@@ -1060,7 +1080,7 @@ export default function LinkedInCarousel() {
               </div>
            </div>
         ) : carouselResults.length > 0 && carouselResults[currentCarouselIndex]?.slides && (
-          <div className="grid lg:grid-cols-[300px_1fr_300px] gap-8 h-[calc(100vh-200px)]">
+          <div className="grid lg:grid-cols-[280px_1fr_320px] gap-6 h-[calc(100vh-200px)]">
 
             {/* LEFT PANEL: Slides List */}
             <Card className="h-full flex flex-col overflow-hidden">
@@ -1190,57 +1210,17 @@ export default function LinkedInCarousel() {
               </div>
             </div>
 
-            {/* RIGHT PANEL: Design Tools */}
-            <Card className="h-full flex flex-col overflow-hidden">
-              <CardHeader className="py-4">
-                <CardTitle className="text-sm">Recursos de Design</CardTitle>
-              </CardHeader>
-              <Tabs defaultValue="assets" className="flex-1 flex flex-col">
-                <TabsList className="mx-4">
-                  <TabsTrigger value="assets" className="flex-1">Biblioteca</TabsTrigger>
-                  <TabsTrigger value="generate" className="flex-1">Gerar</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="assets" className="flex-1 overflow-y-auto p-4">
-                  {Object.entries(assetsByCategory).map(([cat, assets]) => (
-                    <div key={cat} className="mb-6">
-                      <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-3">{cat}</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {assets.map(asset => (
-                          <div
-                            key={asset.id}
-                            className="aspect-square bg-muted rounded overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all relative group"
-                            onClick={() => asset.public_url && handleUpdateSlideImage(asset.public_url)}
-                          >
-                            {asset.public_url ? (
-                              <img src={asset.public_url} className="w-full h-full object-cover" loading="lazy" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                                <ImageIcon className="h-6 w-6" />
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                              <span className="text-xs text-white font-medium">Usar</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </TabsContent>
-
-                <TabsContent value="generate" className="flex-1 p-4">
-                  <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">Regenere a imagem deste slide usando IA.</p>
-                    {/* We could add prompt override here */}
-                    <Button className="w-full" variant="secondary" onClick={handleRegenerateImage} disabled={designLoading}>
-                      <RefreshCw className="mr-2 h-4 w-4" />
-                      Regenerar Imagem
-                    </Button>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </Card>
+            {/* RIGHT PANEL: Copy + Design Tools */}
+            <div className="h-full flex flex-col gap-4 overflow-hidden">
+              {/* Copy Panel */}
+              <div className="flex-1 min-h-0">
+                <SlideCopyPanel 
+                  slides={carouselResults[currentCarouselIndex]?.slides || []} 
+                  caption={carouselResults[currentCarouselIndex]?.caption || ""}
+                  currentSlide={currentSlide}
+                />
+              </div>
+            </div>
           </div>
         )}
 
