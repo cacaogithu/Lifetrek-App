@@ -267,21 +267,51 @@ Refine and return the SAME JSON structure with improved copy.`;
             const results = await Promise.allSettled(batch.map(async (task) => {
               if (task.slide.backgroundType !== "generate") return { ...task, imageUrl: "" };
 
-              const prompt = task.slide.imageGenerationPrompt || `Professional medical scene for: ${task.slide.headline}`;
+              // Build a prompt that burns text INTO the image
+              const slideType = task.slide.type === "hook" ? "HOOK" : task.slide.type === "cta" ? "CTA" : "CONTEÚDO";
+              const burnedInPrompt = `
+Create a professional LinkedIn carousel slide image with TEXT BURNED IN.
+Format: 1080x1080 square image.
+Brand: Lifetrek Medical (precision medical manufacturing).
+Colors: Deep blue background (#003052), white text, green accent (#228B22).
+
+SLIDE TYPE: ${slideType}
+HEADLINE (must appear prominently in image): "${task.slide.headline}"
+BODY TEXT (smaller, below headline): "${task.slide.body}"
+
+LAYOUT REQUIREMENTS:
+- Deep blue gradient background (#003052 to #004080)
+- Top left: Small "LM" logo in white box
+- Top right: Badge saying "${slideType}" in green
+- Center: Large, bold white headline text
+- Below headline: Green accent line/bar
+- Below line: Body text in white (smaller)
+- Bottom: "Lifetrek Medical | lifetrek-medical.com" footer
+
+TYPOGRAPHY:
+- Headline: Bold sans-serif, large (like 48-60pt equivalent)
+- Body: Regular weight, medium size (like 18-24pt equivalent)
+- All text must be CLEARLY READABLE
+
+STYLE: Clean, corporate, medical B2B aesthetic. Premium LinkedIn carousel look.
+The text MUST be part of the image, not overlaid.`.trim();
+
               const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
                 method: "POST",
                 headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
                 body: JSON.stringify({
                   model: IMAGE_MODEL,
                   messages: [
-                    { role: "system", content: "Professional medical equipment photographer." },
-                    { role: "user", content: `${prompt}\nSTYLE: Photorealistic, ISO 13485 aesthetic.` }
+                    { role: "user", content: burnedInPrompt }
                   ],
                   modalities: ["image", "text"]
                 }),
               });
 
-              if (!imgRes.ok) return { ...task, imageUrl: "" };
+              if (!imgRes.ok) {
+                console.error("Image generation failed:", imgRes.status, await imgRes.text());
+                return { ...task, imageUrl: "" };
+              }
               const data = await imgRes.json();
               return { ...task, imageUrl: data.choices?.[0]?.message?.images?.[0]?.image_url?.url || "" };
             }));
@@ -289,6 +319,7 @@ Refine and return the SAME JSON structure with improved copy.`;
             results.forEach((r) => {
               if (r.status === "fulfilled" && r.value.imageUrl) {
                 resultCarousels[r.value.carouselIndex].slides[r.value.slideIndex].imageUrl = r.value.imageUrl;
+                resultCarousels[r.value.carouselIndex].slides[r.value.slideIndex].textPlacement = "burned_in";
               }
               completed++;
             });
@@ -366,11 +397,30 @@ serve(async (req: Request) => {
          const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
          if (!LOVABLE_API_KEY) throw new Error("Missing Lovable Key");
 
-         const finalPrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
-HEADLINE: ${headline}
-CONTEXT: ${slideBody}
-VISUAL DESCRIPTION: ${imagePrompt || "Professional medical manufacturing scene"}
-STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
+         const burnedInPrompt = `
+Create a professional LinkedIn carousel slide image with TEXT BURNED IN.
+Format: 1080x1080 square image.
+Brand: Lifetrek Medical (precision medical manufacturing).
+Colors: Deep blue background (#003052), white text, green accent (#228B22).
+
+HEADLINE (must appear prominently in image): "${headline}"
+BODY TEXT (smaller, below headline): "${slideBody}"
+
+LAYOUT REQUIREMENTS:
+- Deep blue gradient background (#003052 to #004080)
+- Top left: Small "LM" logo in white box
+- Center: Large, bold white headline text
+- Below headline: Green accent line/bar
+- Below line: Body text in white (smaller)
+- Bottom: "Lifetrek Medical | lifetrek-medical.com" footer
+
+TYPOGRAPHY:
+- Headline: Bold sans-serif, large (like 48-60pt equivalent)
+- Body: Regular weight, medium size (like 18-24pt equivalent)
+- All text must be CLEARLY READABLE
+
+STYLE: Clean, corporate, medical B2B aesthetic. Premium LinkedIn carousel look.
+The text MUST be part of the image, not overlaid.`.trim();
 
         const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
             method: "POST",
@@ -378,8 +428,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
             body: JSON.stringify({
             model: IMAGE_MODEL,
             messages: [
-                { role: "system", content: "You are a professional medical designer." },
-                { role: "user", content: finalPrompt }
+                { role: "user", content: burnedInPrompt }
             ],
             modalities: ["image", "text"]
             }),
