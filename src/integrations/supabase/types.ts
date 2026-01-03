@@ -727,6 +727,7 @@ export type Database = {
           performance_metrics: Json | null
           proof_points: string | null
           slides: Json
+          status: string | null
           target_audience: string
           topic: string
           updated_at: string
@@ -746,6 +747,7 @@ export type Database = {
           performance_metrics?: Json | null
           proof_points?: string | null
           slides: Json
+          status?: string | null
           target_audience: string
           topic: string
           updated_at?: string
@@ -765,11 +767,62 @@ export type Database = {
           performance_metrics?: Json | null
           proof_points?: string | null
           slides?: Json
+          status?: string | null
           target_audience?: string
           topic?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      linkedin_generation_logs: {
+        Row: {
+          admin_user_id: string
+          analyst_output: Json | null
+          carousel_id: string | null
+          created_at: string | null
+          final_output: Json | null
+          generation_time_ms: number | null
+          id: string
+          image_count: number | null
+          input_params: Json
+          model_used: string | null
+          strategist_output: Json | null
+        }
+        Insert: {
+          admin_user_id: string
+          analyst_output?: Json | null
+          carousel_id?: string | null
+          created_at?: string | null
+          final_output?: Json | null
+          generation_time_ms?: number | null
+          id?: string
+          image_count?: number | null
+          input_params: Json
+          model_used?: string | null
+          strategist_output?: Json | null
+        }
+        Update: {
+          admin_user_id?: string
+          analyst_output?: Json | null
+          carousel_id?: string | null
+          created_at?: string | null
+          final_output?: Json | null
+          generation_time_ms?: number | null
+          id?: string
+          image_count?: number | null
+          input_params?: Json
+          model_used?: string | null
+          strategist_output?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "linkedin_generation_logs_carousel_id_fkey"
+            columns: ["carousel_id"]
+            isOneToOne: false
+            referencedRelation: "linkedin_carousels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       news_digest: {
         Row: {
