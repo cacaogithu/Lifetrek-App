@@ -91,10 +91,12 @@ export const SlideCanvas = forwardRef<HTMLDivElement, SlideCanvasProps>(
 
         const isExport = mode === "export";
         const currentTheme = THEMES[theme];
-        const isBurnedIn = slide.textPlacement === "burned_in";
+        // ALWAYS render ONLY the image when imageUrl exists (Nano Banana generates burned-in text)
+        const hasGeneratedImage = !!slide.imageUrl;
 
-        // If burned_in, render ONLY the image without any text/badges/overlays
-        if (isBurnedIn && slide.imageUrl) {
+        // If image exists, render ONLY the image without any text/badges/overlays
+        // Nano Banana generates images with text burned-in, no overlay needed
+        if (hasGeneratedImage) {
             return (
                 <div
                     ref={ref}

@@ -18,6 +18,7 @@ export interface CarouselBrief {
   ctaAction?: string;
   postType: "value" | "commercial";
   numberOfCarousels: number;
+  format: "single-image" | "carousel"; // Single image = 1 slide + strong caption
 }
 
 // ============= AGENT PROMPTS =============
@@ -61,7 +62,11 @@ After using your tools, output a carousel plan with:
   - image_style: "client_perspective" | "technical_proof" | "abstract_premium" | "product_showcase"
   - suggested_product_category: If a real product image should be used
 - caption: LinkedIn post caption
-- caption_hashtags: Relevant hashtags`;
+- caption_hashtags: Relevant hashtags
+
+=== FORMAT RULES ===
+- If format is "single-image": Create ONLY 1 slide (hook type) with a strong headline and concise body. Focus on the CAPTION being the main content vehicle.
+- If format is "carousel": Create 5 slides (1 hook, 3 content, 1 CTA) as normal.`;
 
 export const COPYWRITER_PROMPT = `You are the Copywriter & Brand Voice Guardian for Lifetrek Medical.
 
@@ -197,7 +202,12 @@ ${brief.postType === "value"
   ? "Focus: Educational/insight (80% content mix). CTA: Low-friction (PDF, checklist, DM)."
   : "Focus: Commercial offer (20% content mix). CTA: Stronger (schedule call, quote request)."}
 
-Generate ${brief.numberOfCarousels} carousel(s) with different strategic angles.`;
+=== FORMAT: ${brief.format?.toUpperCase() || "CAROUSEL"} ===
+${brief.format === "single-image" 
+  ? "SINGLE IMAGE POST: Create ONLY 1 slide (hook type). The CAPTION should be the main content - make it strong, insightful, and engaging. The image headline should be punchy and standalone."
+  : "CAROUSEL POST: Create 5 slides following HOOK → VALUE → CTA structure."}
+
+Generate ${brief.numberOfCarousels} ${brief.format === "single-image" ? "single-image post(s)" : "carousel(s)"} with different strategic angles.`;
 
   // Call LLM
   sendSSE("agent_status", { agent: "strategist", status: "generating", message: "Criando estratégia..." });
@@ -438,6 +448,7 @@ export async function runDesignerAgent(
             headline: slide.headline,
             body_text: slide.body,
             style: slide.image_style || "client_perspective",
+            slide_type: slide.type, // Pass slide type for text density control
           },
           { supabase, lovableApiKey }
         );

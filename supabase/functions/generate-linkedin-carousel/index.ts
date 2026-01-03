@@ -92,6 +92,7 @@ async function handleMultiAgentGeneration(req: Request, params: any) {
           ctaAction,
           postType,
           numberOfCarousels,
+          format: format === "single-image" ? "single-image" : "carousel",
         };
 
         // ============= PHASE 1: STRATEGIST AGENT =============
