@@ -31,7 +31,270 @@ interface Carousel {
   caption?: string; 
 }
 
-// Serve handling...
+// Helper to send SSE events
+function sendSSE(controller: ReadableStreamDefaultController, event: string, data: any) {
+  const encoder = new TextEncoder();
+  controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+}
+
+// Streaming generation handler
+async function handleStreamingGeneration(req: Request, params: any) {
+  const { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format, wantImages, numberOfCarousels, isBatch } = params;
+  
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const TEXT_MODEL = "google/gemini-2.5-flash";
+  const IMAGE_MODEL = "google/gemini-3-pro-image-preview";
+
+  if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return new Response(JSON.stringify({ error: "Missing configuration" }), { 
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        // Send initial step
+        sendSSE(controller, "step", { step: "strategist", status: "active", message: "Strategist escrevendo..." });
+
+        // Fetch assets
+        const { data: assets } = await supabase.from("content_assets").select("id, filename, category, tags").limit(50);
+        const assetsContext = assets?.map((a: any) => {
+          const category = a.category || "general";
+          const tags = Array.isArray(a.tags) ? a.tags.join(", ") : "none";
+          return `- [${category.toUpperCase()}] ID: ${a.id} (Tags: ${tags}, Filename: ${a.filename})`;
+        }).join("\n") || "No assets available.";
+
+        const SYSTEM_PROMPT = constructSystemPrompt(assetsContext);
+        const userPrompt = constructUserPrompt(topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, isBatch, numberOfCarousels);
+        const tools = getTools(isBatch);
+
+        // === STRATEGIST with streaming ===
+        const strategistStartTime = Date.now();
+        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: TEXT_MODEL,
+            messages: [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: userPrompt }],
+            tools, tool_choice: { type: "function", function: { name: isBatch ? "create_batch_carousels" : "create_carousel" } },
+            stream: true
+          }),
+        });
+
+        if (!response.ok || !response.body) {
+          sendSSE(controller, "error", { error: `API error: ${response.status}` });
+          controller.close();
+          return;
+        }
+
+        // Parse streaming response
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let toolCallArgs = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          let newlineIndex: number;
+          while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+            let line = buffer.slice(0, newlineIndex);
+            buffer = buffer.slice(newlineIndex + 1);
+            if (line.endsWith("\r")) line = line.slice(0, -1);
+            if (!line.startsWith("data: ") || line.trim() === "") continue;
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === "[DONE]") break;
+
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const delta = parsed.choices?.[0]?.delta;
+              if (delta?.tool_calls?.[0]?.function?.arguments) {
+                toolCallArgs += delta.tool_calls[0].function.arguments;
+                // Send preview of what's being written
+                if (toolCallArgs.length > 50 && toolCallArgs.length % 100 < 10) {
+                  // Extract a preview headline if possible
+                  const headlineMatch = toolCallArgs.match(/"headline"\s*:\s*"([^"]+)"/);
+                  if (headlineMatch) {
+                    sendSSE(controller, "preview", { agent: "strategist", content: headlineMatch[1] });
+                  }
+                }
+              }
+            } catch { /* continue */ }
+          }
+        }
+
+        const strategistTime = Date.now() - strategistStartTime;
+        sendSSE(controller, "step", { step: "strategist", status: "done", timeMs: strategistTime });
+
+        // Parse strategist result
+        let resultCarousels: any[];
+        try {
+          const args = JSON.parse(toolCallArgs);
+          resultCarousels = isBatch ? args.carousels : [args];
+        } catch (e) {
+          sendSSE(controller, "error", { error: "Failed to parse strategist output" });
+          controller.close();
+          return;
+        }
+
+        // Send strategist output
+        sendSSE(controller, "strategist_result", { 
+          carousels: resultCarousels,
+          preview: resultCarousels[0]?.slides?.[0]?.headline || ""
+        });
+
+        // === ANALYST (Critique) ===
+        sendSSE(controller, "step", { step: "analyst", status: "active", message: "Analyst revisando..." });
+
+        const critiqueSystemPrompt = `You are the Brand & Quality Analyst for Lifetrek Medical.
+Mission: Review drafts to ensure On-brand voice, Technical credibility, and Strategic alignment.
+=== CHECKLIST ===
+1. **Avatar & Problem**: Is the avatar clearly identified (Callout)? Is ONE main problem addressed?
+2. **Hook**: Does slide 1 follow the "Callout + Payoff" formula?
+3. **Proof**: Are specific machines (Citizen M32) or standards (ISO 13485) used?
+4. **CTA**: Single, low-friction CTA?
+=== OUTPUT ===
+Refine and return the SAME JSON structure.`;
+
+        const critiqueUserPrompt = `Draft: ${JSON.stringify(resultCarousels)}\nCritique and refine using checklist.`;
+
+        const analystStartTime = Date.now();
+        const critiqueRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: TEXT_MODEL,
+            messages: [{ role: "system", content: critiqueSystemPrompt }, { role: "user", content: critiqueUserPrompt }],
+            tools, tool_choice: { type: "function", function: { name: isBatch ? "create_batch_carousels" : "create_carousel" } },
+            stream: true
+          }),
+        });
+
+        if (critiqueRes.ok && critiqueRes.body) {
+          const cReader = critiqueRes.body.getReader();
+          let cBuffer = "";
+          let cToolArgs = "";
+
+          while (true) {
+            const { done, value } = await cReader.read();
+            if (done) break;
+            cBuffer += decoder.decode(value, { stream: true });
+
+            let idx: number;
+            while ((idx = cBuffer.indexOf("\n")) !== -1) {
+              let line = cBuffer.slice(0, idx);
+              cBuffer = cBuffer.slice(idx + 1);
+              if (line.endsWith("\r")) line = line.slice(0, -1);
+              if (!line.startsWith("data: ")) continue;
+              const jsonStr = line.slice(6).trim();
+              if (jsonStr === "[DONE]") break;
+              try {
+                const parsed = JSON.parse(jsonStr);
+                const delta = parsed.choices?.[0]?.delta;
+                if (delta?.tool_calls?.[0]?.function?.arguments) {
+                  cToolArgs += delta.tool_calls[0].function.arguments;
+                  if (cToolArgs.length > 50 && cToolArgs.length % 100 < 10) {
+                    const headlineMatch = cToolArgs.match(/"headline"\s*:\s*"([^"]+)"/);
+                    if (headlineMatch) {
+                      sendSSE(controller, "preview", { agent: "analyst", content: headlineMatch[1] });
+                    }
+                  }
+                }
+              } catch { /* continue */ }
+            }
+          }
+
+          try {
+            const refinedArgs = JSON.parse(cToolArgs);
+            const refined = isBatch ? refinedArgs.carousels : [refinedArgs];
+            if (refined?.length > 0) resultCarousels = refined;
+          } catch { /* use original */ }
+        }
+
+        const analystTime = Date.now() - analystStartTime;
+        sendSSE(controller, "step", { step: "analyst", status: "done", timeMs: analystTime });
+        sendSSE(controller, "analyst_result", { carousels: resultCarousels });
+
+        // === IMAGE GENERATION ===
+        if (wantImages) {
+          sendSSE(controller, "step", { step: "images", status: "active", message: "Gerando imagens..." });
+
+          interface SlideTask { carouselIndex: number; slideIndex: number; slide: any; }
+          const tasks: SlideTask[] = [];
+          resultCarousels.forEach((c: any, ci: number) => {
+            c?.slides?.forEach((s: any, si: number) => tasks.push({ carouselIndex: ci, slideIndex: si, slide: s }));
+          });
+
+          let completed = 0;
+          const CONCURRENCY = 5;
+
+          for (let i = 0; i < tasks.length; i += CONCURRENCY) {
+            const batch = tasks.slice(i, i + CONCURRENCY);
+            const results = await Promise.allSettled(batch.map(async (task) => {
+              if (task.slide.backgroundType !== "generate") return { ...task, imageUrl: "" };
+
+              const prompt = task.slide.imageGenerationPrompt || `Professional medical scene for: ${task.slide.headline}`;
+              const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  model: IMAGE_MODEL,
+                  messages: [
+                    { role: "system", content: "Professional medical equipment photographer." },
+                    { role: "user", content: `${prompt}\nSTYLE: Photorealistic, ISO 13485 aesthetic.` }
+                  ],
+                  modalities: ["image", "text"]
+                }),
+              });
+
+              if (!imgRes.ok) return { ...task, imageUrl: "" };
+              const data = await imgRes.json();
+              return { ...task, imageUrl: data.choices?.[0]?.message?.images?.[0]?.image_url?.url || "" };
+            }));
+
+            results.forEach((r) => {
+              if (r.status === "fulfilled" && r.value.imageUrl) {
+                resultCarousels[r.value.carouselIndex].slides[r.value.slideIndex].imageUrl = r.value.imageUrl;
+              }
+              completed++;
+            });
+
+            sendSSE(controller, "image_progress", { completed, total: tasks.length });
+          }
+
+          resultCarousels.forEach((c: any) => {
+            c.imageUrls = c.slides?.map((s: any) => s.imageUrl || "") || [];
+          });
+
+          sendSSE(controller, "step", { step: "images", status: "done" });
+        }
+
+        // Final result
+        const final = isBatch ? { carousels: resultCarousels } : resultCarousels[0];
+        sendSSE(controller, "complete", final);
+        controller.close();
+
+      } catch (error: any) {
+        console.error("Streaming error:", error);
+        sendSSE(controller, "error", { error: error.message || "Generation failed" });
+        controller.close();
+      }
+    }
+  });
+
+  return new Response(stream, {
+    headers: { ...corsHeaders, "Content-Type": "text/event-stream", "Cache-Control": "no-cache" }
+  });
+}
+
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -55,12 +318,21 @@ serve(async (req: Request) => {
       mode = "generate",
       headline,
       body: slideBody,
-      imagePrompt
+      imagePrompt,
+      stream = false
     } = await req.json();
 
     const isBatch = (numberOfCarousels > 1) || (mode === 'plan');
 
-    console.log("Generating LinkedIn content:", { topic, mode, isBatch });
+    console.log("Generating LinkedIn content:", { topic, mode, isBatch, stream });
+
+    // --- STREAMING MODE ---
+    if (stream && mode !== "image_only" && mode !== "plan") {
+      return handleStreamingGeneration(req, {
+        topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction,
+        format, wantImages, numberOfCarousels, isBatch
+      });
+    }
 
     // --- HANDLE IMAGE ONLY MODE ---
     if (mode === "image_only") {
