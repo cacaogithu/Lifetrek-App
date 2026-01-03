@@ -105,11 +105,20 @@ serve(async (req) => {
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const supabase = createClient(supabaseUrl, supabaseKey);
 
-      const { data: assets } = await supabase.from("company_assets").select("url, type").eq("type", "logo").single();
-      const { data: products } = await supabase.from("products").select("name, image_url").limit(5);
+      const { data: logoAsset } = await supabase
+        .from("company_assets")
+        .select("url")
+        .eq("type", "logo")
+        .single();
 
-      const logoUrl = assets?.url;
-      const productImages = products?.map(p => ({ url: p.image_url, name: p.name })) || [];
+      const { data: products } = await supabase
+        .from("processed_product_images")
+        .select("name, enhanced_url")
+        .eq("is_visible", true)
+        .limit(5);
+
+      const logoUrl = logoAsset?.url;
+      const productImages = products?.map(p => ({ url: p.enhanced_url, name: p.name })) || [];
 
       // Construct Multimodal Prompt
       const designSystemPrompt = `You are a world-class Industrial Designer & Photographer for Lifetrek Medical.
@@ -127,11 +136,19 @@ serve(async (req) => {
       - High dynamic range, soft studio lighting.
       - Cinematic composition.`;
 
-      const userContent = [
+      // Properly typed multimodal content
+      type ContentPart = 
+        | { type: "text"; text: string }
+        | { type: "image_url"; image_url: { url: string } };
+
+      const userContent: ContentPart[] = [
         { type: "text", text: designSystemPrompt }
       ];
 
-      if (logoUrl) userContent.push({ type: "image_url", image_url: { url: logoUrl } });
+      if (logoUrl) {
+        userContent.push({ type: "image_url", image_url: { url: logoUrl } });
+      }
+      
       productImages.forEach(p => {
         userContent.push({ type: "text", text: `Product Reference: ${p.name}` });
         userContent.push({ type: "image_url", image_url: { url: p.url } });
@@ -143,7 +160,7 @@ serve(async (req) => {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash-image-preview", 
+          model: "google/gemini-3-pro-image-preview",
           messages: [{ role: "user", content: userContent }],
           modalities: ["image", "text"]
         }),

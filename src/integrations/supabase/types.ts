@@ -372,6 +372,33 @@ export type Database = {
           },
         ]
       }
+      company_assets: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          name: string | null
+          type: string
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          name?: string | null
+          type: string
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          name?: string | null
+          type?: string
+          url?: string
+        }
+        Relationships: []
+      }
       company_research: {
         Row: {
           company_name: string | null
