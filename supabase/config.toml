@@ -35,3 +35,6 @@ verify_jwt = true
 
 [functions.sales-engineer-agent]
 verify_jwt = true
+
+[functions.migrate-assets]
+verify_jwt = true
