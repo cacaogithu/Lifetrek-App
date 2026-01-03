@@ -711,6 +711,42 @@ export type Database = {
           },
         ]
       }
+      knowledge_embeddings: {
+        Row: {
+          chunk_index: number | null
+          content: string
+          created_at: string | null
+          embedding: string | null
+          id: string
+          metadata: Json | null
+          source_id: string | null
+          source_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          chunk_index?: number | null
+          content: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          source_id?: string | null
+          source_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          chunk_index?: number | null
+          content?: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          source_id?: string | null
+          source_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       linkedin_carousels: {
         Row: {
           admin_user_id: string
@@ -1062,6 +1098,38 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      match_knowledge: {
+        Args: {
+          filter_source_type?: string
+          match_count?: number
+          match_threshold?: number
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          id: string
+          metadata: Json
+          similarity: number
+          source_id: string
+          source_type: string
+        }[]
+      }
+      search_products_for_carousel: {
+        Args: {
+          limit_count?: number
+          search_category?: string
+          search_query?: string
+        }
+        Returns: {
+          brand: string
+          category: string
+          description: string
+          enhanced_url: string
+          id: string
+          model: string
+          name: string
+        }[]
       }
     }
     Enums: {

@@ -10,6 +10,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Import multi-agent system
+import { 
+  runStrategistAgent, 
+  runCopywriterAgent, 
+  runDesignerAgent,
+  CarouselBrief,
+  AgentContext 
+} from "./agents.ts";
+
+// Legacy imports for non-agent mode
 import { constructSystemPrompt, constructUserPrompt, getTools } from "./functions_logic.ts";
 
 // Type definitions
@@ -37,7 +47,101 @@ function sendSSE(controller: ReadableStreamDefaultController, event: string, dat
   controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
 }
 
-// Streaming generation handler
+// ============= MULTI-AGENT STREAMING HANDLER =============
+async function handleMultiAgentGeneration(req: Request, params: any) {
+  const { 
+    topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, 
+    format, wantImages, numberOfCarousels, postType = "value" 
+  } = params;
+  
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+  if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return new Response(JSON.stringify({ error: "Missing configuration" }), { 
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+    });
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      const startTime = Date.now();
+      
+      try {
+        // Create SSE sender for this controller
+        const sseSend = (event: string, data: any) => sendSSE(controller, event, data);
+
+        // Send initial steps
+        sseSend("step", { step: "strategist", status: "active", message: "Strategist consultando KB..." });
+
+        const agentContext: AgentContext = {
+          supabase,
+          lovableApiKey: LOVABLE_API_KEY,
+          sendSSE: sseSend,
+        };
+
+        const brief: CarouselBrief = {
+          topic,
+          targetAudience,
+          painPoint,
+          desiredOutcome,
+          proofPoints,
+          ctaAction,
+          postType,
+          numberOfCarousels,
+        };
+
+        // ============= PHASE 1: STRATEGIST AGENT =============
+        console.log("🎯 [ORCHESTRATOR] Running Strategist Agent...");
+        const strategistResult = await runStrategistAgent(brief, agentContext);
+        let carousels = strategistResult.carousels;
+
+        sseSend("step", { step: "strategist", status: "done", timeMs: Date.now() - startTime });
+        sseSend("step", { step: "analyst", status: "active", message: "Copywriter refinando..." });
+
+        // ============= PHASE 2: COPYWRITER AGENT =============
+        console.log("✍️ [ORCHESTRATOR] Running Copywriter Agent...");
+        const copywriterStartTime = Date.now();
+        carousels = await runCopywriterAgent(carousels, agentContext);
+
+        sseSend("step", { step: "analyst", status: "done", timeMs: Date.now() - copywriterStartTime });
+
+        // ============= PHASE 3: DESIGNER AGENT =============
+        if (wantImages) {
+          sseSend("step", { step: "images", status: "active", message: "Designer gerando visuais..." });
+          
+          console.log("🎨 [ORCHESTRATOR] Running Designer Agent...");
+          const designerStartTime = Date.now();
+          carousels = await runDesignerAgent(carousels, agentContext);
+
+          sseSend("step", { step: "images", status: "done", timeMs: Date.now() - designerStartTime });
+        }
+
+        // ============= COMPLETE =============
+        const totalTime = Date.now() - startTime;
+        console.log(`✅ [ORCHESTRATOR] Multi-agent generation complete in ${totalTime}ms`);
+        
+        const final = numberOfCarousels > 1 ? { carousels } : carousels[0];
+        sseSend("complete", final);
+        controller.close();
+
+      } catch (error: any) {
+        console.error("Multi-agent error:", error);
+        sendSSE(controller, "error", { error: error.message || "Generation failed" });
+        controller.close();
+      }
+    }
+  });
+
+  return new Response(stream, {
+    headers: { ...corsHeaders, "Content-Type": "text/event-stream", "Cache-Control": "no-cache" }
+  });
+}
+
+// ============= LEGACY STREAMING HANDLER (fallback) =============
 async function handleStreamingGeneration(req: Request, params: any) {
   const { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format, wantImages, numberOfCarousels, isBatch, postType = "value" } = params;
   
@@ -445,11 +549,12 @@ serve(async (req: Request) => {
 
     console.log("Generating LinkedIn content:", { topic, mode, isBatch, stream, postType });
 
-    // --- STREAMING MODE ---
+    // --- MULTI-AGENT STREAMING MODE (default) ---
     if (stream && mode !== "image_only" && mode !== "plan") {
-      return handleStreamingGeneration(req, {
+      // Use new multi-agent system with RAG
+      return handleMultiAgentGeneration(req, {
         topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction,
-        format, wantImages, numberOfCarousels, isBatch, postType
+        format, wantImages, numberOfCarousels, postType
       });
     }
 

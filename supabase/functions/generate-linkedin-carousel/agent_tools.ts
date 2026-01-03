@@ -1,0 +1,404 @@
+// Agent Tools for LinkedIn Carousel Generation
+// These tools are available to Strategist, Copywriter, and Designer agents
+
+// @ts-ignore
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+
+declare const Deno: any;
+
+// Tool definitions for Gemini function calling
+export const AGENT_TOOLS = {
+  strategist: [
+    {
+      type: "function",
+      function: {
+        name: "query_knowledge",
+        description: "Search the company knowledge base (Brand Book, Hormozi Framework) for relevant context based on a topic or question. Use this to ground your strategy in company-specific information.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: { type: "string", description: "The topic or question to search for" },
+            source_type: { 
+              type: "string", 
+              enum: ["brand_book", "hormozi_framework", null],
+              description: "Optional: filter by source type"
+            },
+            max_results: { type: "number", description: "Maximum results to return (default: 5)" }
+          },
+          required: ["query"]
+        }
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "list_product_categories",
+        description: "Get a list of available product categories to understand what products can be featured in the carousel.",
+        parameters: {
+          type: "object",
+          properties: {},
+          required: []
+        }
+      }
+    }
+  ],
+  copywriter: [
+    {
+      type: "function",
+      function: {
+        name: "query_knowledge",
+        description: "Search the knowledge base for tone, messaging examples, and best practices.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: { type: "string", description: "The topic to search for" },
+            source_type: { 
+              type: "string", 
+              enum: ["brand_book", "hormozi_framework", null],
+              description: "Optional: filter by source type"
+            },
+            max_results: { type: "number", description: "Maximum results (default: 3)" }
+          },
+          required: ["query"]
+        }
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "get_hook_examples",
+        description: "Get examples of killer hooks from the playbook for inspiration.",
+        parameters: {
+          type: "object",
+          properties: {
+            hook_type: { 
+              type: "string", 
+              enum: ["label", "yes_question", "conditional", "command", "narrative", "list"],
+              description: "Type of hook to get examples for"
+            }
+          },
+          required: []
+        }
+      }
+    }
+  ],
+  designer: [
+    {
+      type: "function",
+      function: {
+        name: "search_products",
+        description: "Search for product images that can be used in the carousel. Returns URLs of processed product images.",
+        parameters: {
+          type: "object",
+          properties: {
+            category: { 
+              type: "string", 
+              description: "Product category to search (e.g., 'spinal', 'dental', 'surgical_instruments')"
+            },
+            query: { 
+              type: "string", 
+              description: "Search query for product name or description"
+            },
+            limit: { type: "number", description: "Maximum products to return (default: 5)" }
+          },
+          required: []
+        }
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "generate_image",
+        description: "Generate a custom image for a carousel slide using AI. Use this when no suitable product image exists.",
+        parameters: {
+          type: "object",
+          properties: {
+            prompt: { type: "string", description: "Detailed image generation prompt" },
+            headline: { type: "string", description: "Headline text to burn into the image" },
+            body_text: { type: "string", description: "Body text to burn into the image" },
+            style: { 
+              type: "string", 
+              enum: ["client_perspective", "technical_proof", "abstract_premium", "product_showcase"],
+              description: "Visual style direction"
+            }
+          },
+          required: ["prompt", "headline", "body_text"]
+        }
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "search_assets",
+        description: "Search for existing content assets (backgrounds, logos, etc.)",
+        parameters: {
+          type: "object",
+          properties: {
+            category: { type: "string", description: "Asset category" },
+            tags: { type: "array", items: { type: "string" }, description: "Tags to filter by" }
+          },
+          required: []
+        }
+      }
+    }
+  ]
+};
+
+// Tool execution functions
+export async function executeToolCall(
+  toolName: string,
+  params: any,
+  context: { supabase: any; lovableApiKey: string }
+): Promise<any> {
+  const { supabase, lovableApiKey } = context;
+
+  switch (toolName) {
+    case "query_knowledge":
+      return await queryKnowledge(params, supabase, lovableApiKey);
+    
+    case "list_product_categories":
+      return await listProductCategories(supabase);
+    
+    case "get_hook_examples":
+      return await getHookExamples(params);
+    
+    case "search_products":
+      return await searchProducts(params, supabase);
+    
+    case "generate_image":
+      return await generateImage(params, lovableApiKey);
+    
+    case "search_assets":
+      return await searchAssets(params, supabase);
+    
+    default:
+      return { error: `Unknown tool: ${toolName}` };
+  }
+}
+
+// Query Knowledge Base using RAG
+async function queryKnowledge(
+  params: { query: string; source_type?: string; max_results?: number },
+  supabase: any,
+  lovableApiKey: string
+): Promise<any> {
+  try {
+    // Generate embedding for query
+    const embeddingResponse = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${lovableApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-embedding-001",
+        input: params.query,
+      }),
+    });
+
+    if (!embeddingResponse.ok) {
+      throw new Error(`Embedding API error: ${embeddingResponse.status}`);
+    }
+
+    const embeddingData = await embeddingResponse.json();
+    const queryEmbedding = embeddingData.data[0].embedding;
+
+    // Search knowledge base
+    const { data, error } = await supabase.rpc("match_knowledge", {
+      query_embedding: queryEmbedding,
+      match_threshold: 0.6,
+      match_count: params.max_results || 5,
+      filter_source_type: params.source_type || null,
+    });
+
+    if (error) throw error;
+
+    return {
+      results: data?.map((d: any) => ({
+        content: d.content,
+        source: `${d.source_type}/${d.source_id}`,
+        similarity: d.similarity,
+      })) || [],
+      query: params.query,
+    };
+  } catch (error: any) {
+    console.error("Knowledge query error:", error);
+    return { error: error.message, results: [] };
+  }
+}
+
+// List product categories
+async function listProductCategories(supabase: any): Promise<any> {
+  const { data, error } = await supabase
+    .from("processed_product_images")
+    .select("category")
+    .eq("is_visible", true);
+
+  if (error) return { error: error.message };
+
+  const categories = [...new Set(data?.map((d: any) => d.category) || [])];
+  return { categories };
+}
+
+// Get hook examples
+async function getHookExamples(params: { hook_type?: string }): Promise<any> {
+  const hookExamples: Record<string, string[]> = {
+    label: [
+      "Orthopedic OEMs: Reduce supplier risk in 30 days",
+      "Medical Device Engineers: Stop 'babysitting' your machining vendor",
+      "Quality Managers: Documentation that sells itself to auditors",
+    ],
+    yes_question: [
+      "Would you cut 60 days off your import lead time?",
+      "Would you launch new SKUs without hearing 'we can't make that'?",
+      "Would you reduce capital tied up in overseas inventory by 25%?",
+    ],
+    conditional: [
+      "If you're still importing precision implants, you're overpaying for risk",
+      "If your supplier can't show you their CMM reports, you have a problem",
+      "If you're coordinating 4 vendors for one product, there's a better way",
+    ],
+    command: [
+      "Read this before your next supplier audit",
+      "Stop accepting 90-day lead times",
+      "Watch this if you've ever had a regulatory surprise",
+    ],
+    narrative: [
+      "We once had a client lose 6 months to a bad batch from overseas...",
+      "Last week, an OEM asked us: 'Can you really do Swiss-level in Brazil?'",
+      "A quality manager told us: 'Your reports just passed our FDA audit'",
+    ],
+    list: [
+      "5 ways your import supplier is costing you more than you think",
+      "3 questions to ask before your next orthopedic component RFQ",
+      "7 signs your precision machining vendor isn't actually precision",
+    ],
+  };
+
+  if (params.hook_type && hookExamples[params.hook_type]) {
+    return { hook_type: params.hook_type, examples: hookExamples[params.hook_type] };
+  }
+
+  return { all_types: Object.keys(hookExamples), examples: hookExamples };
+}
+
+// Search products
+async function searchProducts(
+  params: { category?: string; query?: string; limit?: number },
+  supabase: any
+): Promise<any> {
+  const { data, error } = await supabase.rpc("search_products_for_carousel", {
+    search_category: params.category || null,
+    search_query: params.query || null,
+    limit_count: params.limit || 5,
+  });
+
+  if (error) return { error: error.message };
+
+  return {
+    products: data?.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      category: p.category,
+      image_url: p.enhanced_url,
+      brand: p.brand,
+      model: p.model,
+    })) || [],
+  };
+}
+
+// Generate image with Nano Banana
+async function generateImage(
+  params: { prompt: string; headline: string; body_text: string; style?: string },
+  lovableApiKey: string
+): Promise<any> {
+  const style = params.style || "client_perspective";
+  
+  const styleDirections: Record<string, string> = {
+    client_perspective: "Show the CLIENT'S experience - engineers inspecting precision parts, quality managers reviewing documentation, cleanroom production",
+    technical_proof: "Close-up of precision machinery, ZEISS CMM measurements, ISO certifications displayed prominently",
+    abstract_premium: "Abstract medical/industrial aesthetic with premium feel, subtle gradients, professional",
+    product_showcase: "Elegant product photography of medical implants or instruments on premium surface",
+  };
+
+  const fullPrompt = `Create a premium LinkedIn carousel slide (1080x1080) for B2B medical device industry.
+
+PERSPECTIVE: ${styleDirections[style] || styleDirections.client_perspective}
+
+CONTEXT: ${params.prompt}
+
+HEADLINE (burn into image, large white text): "${params.headline}"
+BODY TEXT (burn into image, smaller white text below headline): "${params.body_text}"
+
+VISUAL STYLE:
+- Premium feel: deep blue gradient (#003052 to #004080), white text, green accent (#228B22)
+- Editorial, informative, NOT salesy
+- Lifetrek branding subtle (small "LM" logo bottom-right)
+- HIGH CONTRAST text must be CLEARLY READABLE
+
+LAYOUT:
+- Top: Small badge with slide type
+- Center: Large, bold headline (Inter Bold equivalent)
+- Below headline: Green accent line
+- Below line: Body text (Inter Regular)
+- Bottom: "Lifetrek Medical" footer
+
+The text MUST be part of the image (burned in), not overlaid.`;
+
+  try {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${lovableApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-3-pro-image-preview",
+        messages: [{ role: "user", content: fullPrompt }],
+        modalities: ["image", "text"],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Image generation error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+    return { image_url: imageUrl, prompt_used: fullPrompt };
+  } catch (error: any) {
+    return { error: error.message };
+  }
+}
+
+// Search assets
+async function searchAssets(
+  params: { category?: string; tags?: string[] },
+  supabase: any
+): Promise<any> {
+  let query = supabase
+    .from("content_assets")
+    .select("id, filename, file_path, category, tags")
+    .limit(10);
+
+  if (params.category) {
+    query = query.eq("category", params.category);
+  }
+
+  const { data, error } = await query;
+
+  if (error) return { error: error.message };
+
+  let assets = data || [];
+  
+  // Filter by tags if provided
+  if (params.tags && params.tags.length > 0) {
+    assets = assets.filter((a: any) => 
+      a.tags?.some((t: string) => params.tags!.includes(t))
+    );
+  }
+
+  return { assets };
+}
