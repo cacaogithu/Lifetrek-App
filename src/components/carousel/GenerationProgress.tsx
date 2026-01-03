@@ -1,6 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, CheckCircle2, Pencil, Eye, Image } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, CheckCircle2, Pencil, Eye, Image, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 export interface GenerationStep {
   id: string;
@@ -13,6 +15,8 @@ export interface GenerationStep {
 interface GenerationProgressProps {
   steps: GenerationStep[];
   currentOutput?: string;
+  strategistFullOutput?: string;
+  analystFullOutput?: string;
 }
 
 const iconMap = {
@@ -21,12 +25,28 @@ const iconMap = {
   images: Image,
 };
 
-export function GenerationProgress({ steps, currentOutput }: GenerationProgressProps) {
+const roleLabels = {
+  strategist: "Estrategista",
+  analyst: "Copywriter",
+};
+
+export function GenerationProgress({ 
+  steps, 
+  currentOutput,
+  strategistFullOutput,
+  analystFullOutput
+}: GenerationProgressProps) {
   return (
     <Card className="border-primary/20 bg-card/50 backdrop-blur">
-      <CardContent className="pt-6 space-y-4">
+      <CardHeader className="py-3 px-4 border-b">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+          Geração em Andamento
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-4 space-y-4">
         {/* Steps Progress */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 flex-wrap">
           {steps.map((step, index) => {
             const Icon = iconMap[step.icon];
             return (
@@ -36,7 +56,7 @@ export function GenerationProgress({ steps, currentOutput }: GenerationProgressP
                     step.status === "active"
                       ? "bg-primary text-primary-foreground"
                       : step.status === "done"
-                      ? "bg-green-500/20 text-green-400"
+                      ? "bg-green-500/20 text-green-600 dark:text-green-400"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -48,10 +68,13 @@ export function GenerationProgress({ steps, currentOutput }: GenerationProgressP
                     <Icon className="h-4 w-4" />
                   )}
                   <span className="font-medium">{step.label}</span>
+                  {step.content && (
+                    <span className="text-xs opacity-70">({step.content})</span>
+                  )}
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`w-8 h-0.5 ${
+                    className={`w-6 h-0.5 ${
                       step.status === "done" ? "bg-green-500/50" : "bg-muted"
                     }`}
                   />
@@ -62,35 +85,101 @@ export function GenerationProgress({ steps, currentOutput }: GenerationProgressP
         </div>
 
         {/* Live Output Display */}
-        <AnimatePresence mode="wait">
-          {currentOutput && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-muted/50 rounded-lg p-4 border border-border/50"
-            >
-              <div className="flex items-start gap-3">
-                <div className="bg-primary/10 p-2 rounded-lg">
-                  <Pencil className="h-4 w-4 text-primary" />
+        <ScrollArea className="max-h-[300px]">
+          <div className="space-y-3">
+            {/* Strategist Full Output */}
+            {strategistFullOutput && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-blue-500/10 rounded-lg p-4 border border-blue-500/20"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-blue-500/20 p-1.5 rounded-md">
+                    <Pencil className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <Badge variant="outline" className="text-xs text-blue-600 dark:text-blue-400 border-blue-500/30">
+                    Estrategista
+                  </Badge>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500 ml-auto" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">
-                    Escrevendo...
-                  </p>
-                  <motion.p
-                    key={currentOutput.slice(-50)}
-                    initial={{ opacity: 0.5 }}
-                    animate={{ opacity: 1 }}
-                    className="text-sm text-foreground leading-relaxed line-clamp-4"
-                  >
-                    {currentOutput}
-                  </motion.p>
+                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                  {strategistFullOutput}
+                </p>
+              </motion.div>
+            )}
+
+            {/* Analyst Full Output */}
+            {analystFullOutput && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-purple-500/10 rounded-lg p-4 border border-purple-500/20"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-purple-500/20 p-1.5 rounded-md">
+                    <Eye className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <Badge variant="outline" className="text-xs text-purple-600 dark:text-purple-400 border-purple-500/30">
+                    Copywriter
+                  </Badge>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500 ml-auto" />
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                  {analystFullOutput}
+                </p>
+              </motion.div>
+            )}
+
+            {/* Current Active Output */}
+            <AnimatePresence mode="wait">
+              {currentOutput && !strategistFullOutput && !analystFullOutput && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-muted/50 rounded-lg p-4 border border-border/50"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="bg-primary/10 p-2 rounded-lg">
+                      <Pencil className="h-4 w-4 text-primary animate-pulse" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">
+                        Escrevendo...
+                      </p>
+                      <motion.p
+                        key={currentOutput.slice(-50)}
+                        initial={{ opacity: 0.5 }}
+                        animate={{ opacity: 1 }}
+                        className="text-sm text-foreground leading-relaxed"
+                      >
+                        {currentOutput}
+                      </motion.p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Preview while typing (when we have outputs already) */}
+            {currentOutput && (strategistFullOutput || analystFullOutput) && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-muted/30 rounded-lg p-3 border border-border/30"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                  <span className="text-xs text-muted-foreground">Processando...</span>
+                </div>
+                <p className="text-sm text-foreground/70 line-clamp-2">
+                  {currentOutput}
+                </p>
+              </motion.div>
+            )}
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );
