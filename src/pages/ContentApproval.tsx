@@ -138,7 +138,11 @@ export default function ContentApproval() {
       );
     } else if (selectedItem.type === 'linkedin') {
       const post = selectedItem.full_data;
-      const slides = post.slides || [];
+      // Handle nested slides structure: post.slides can be { slides: [...], metadata: {...} } or just [...]
+      const rawSlides = post.slides;
+      const slides = Array.isArray(rawSlides) 
+        ? rawSlides 
+        : (Array.isArray(rawSlides?.slides) ? rawSlides.slides : []);
 
       return (
         <div className="space-y-4">
