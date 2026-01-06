@@ -22,6 +22,7 @@ import * as htmlToImage from "html-to-image";
 import JSZip from "jszip";
 import jsPDF from "jspdf";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LINKEDIN_CAMPAIGN } from "@/config/linkedinCampaign";
 
 interface CarouselSlide {
   headline: string;
@@ -106,6 +107,10 @@ export default function LinkedInCarousel() {
   const [analystOutput, setAnalystOutput] = useState<string>("");
   const [designerOutput, setDesignerOutput] = useState<string>("");
   const [agentStatus, setAgentStatus] = useState<{ agent: string; status: string; message: string } | undefined>();
+  
+  // Batch Campaign State
+  const [isBatchGenerating, setIsBatchGenerating] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number; currentTopic: string } | null>(null);
 
   useEffect(() => {
     checkAdminAccess();
@@ -235,7 +240,7 @@ export default function LinkedInCarousel() {
   };
 
   // Auto-save carousel as draft and log generation
-  const autoSaveCarousel = async (result: CarouselResult, generationTimeMs?: number) => {
+  const autoSaveCarousel = async (result: CarouselResult, generationTimeMs?: number, overrideStatus?: string, scheduledDate?: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -244,11 +249,11 @@ export default function LinkedInCarousel() {
       }
 
       // Ensure caption has a value (required field)
-      const captionValue = result.caption || `Post sobre ${topic}`;
+      const captionValue = result.caption || `Post sobre ${topic || result.topic}`;
       
       const payload = {
         admin_user_id: user.id,
-        topic: topic || "Sem tópico",
+        topic: result.topic || topic || "Sem tópico",
         target_audience: targetAudience || "Geral",
         pain_point: painPoint || null,
         desired_outcome: desiredOutcome || null,
@@ -258,7 +263,8 @@ export default function LinkedInCarousel() {
         caption: captionValue,
         format: result.format || format,
         image_urls: result.slides.map(s => s.imageUrl || ""),
-        status: 'draft',
+        status: overrideStatus || 'draft',
+        scheduled_date: scheduledDate || null,
         generation_settings: {
           model: "google/gemini-3-pro-image-preview",
           timestamp: new Date().toISOString()
@@ -580,6 +586,65 @@ export default function LinkedInCarousel() {
     }
   };
 
+  const handleBatchGenerateCampaign = async () => {
+    const missingTopics = LINKEDIN_CAMPAIGN.carousels.filter(ct => 
+      !carouselHistory.some(h => 
+        h.topic.toLowerCase().includes(ct.name.toLowerCase()) || 
+        ct.input.topic.toLowerCase().includes(h.topic.toLowerCase())
+      )
+    );
+
+    if (missingTopics.length === 0) {
+      toast.info("Todos os tópicos da campanha já foram gerados!");
+      return;
+    }
+
+    if (!window.confirm(`Isso irá gerar ${missingTopics.length} carrosséis automáticos. Continuar?`)) {
+      return;
+    }
+
+    setIsBatchGenerating(true);
+    setBatchProgress({ current: 0, total: missingTopics.length, currentTopic: "" });
+    let successCount = 0;
+
+    for (const [index, campaignTopic] of missingTopics.entries()) {
+      setBatchProgress({ 
+        current: index + 1, 
+        total: missingTopics.length, 
+        currentTopic: campaignTopic.name 
+      });
+
+      try {
+        const { data, error } = await supabase.functions.invoke("generate-linkedin-carousel", {
+          body: {
+            ...campaignTopic.input,
+            numberOfCarousels: 1, // Full automation: 1 high quality variation
+            mode: "generate"
+          },
+        });
+
+        if (error) throw error;
+        
+        const result = data.carousel || data.carousels?.[0];
+        if (result) {
+          // Force pending_approval status for campaign items
+          await autoSaveCarousel(result, 0, 'pending_approval', campaignTopic.scheduledDate);
+          successCount++;
+        }
+      } catch (error) {
+        console.error(`Failed to generate: ${campaignTopic.name}`, error);
+        toast.error(`Erro ao gerar: ${campaignTopic.name}`);
+      }
+
+      // Small delay between generations
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+
+    setIsBatchGenerating(false);
+    setBatchProgress(null);
+    toast.success(`Batch concluído! ${successCount}/${missingTopics.length} carrosséis enviados para aprovação.`);
+  };
+
   const handleUpdateSlideImage = (url: string) => {
     if (!carouselResults[currentCarouselIndex]) return;
     const newResults = [...carouselResults];
@@ -870,10 +935,125 @@ export default function LinkedInCarousel() {
         {/* Workflow Tabs (Stepper) */}
         {carouselResults.length === 0 && (
           <Tabs defaultValue="generate" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md mb-8">
+            <TabsList className="grid w-full grid-cols-3 max-w-lg mb-8">
               <TabsTrigger value="generate">Criar Novo</TabsTrigger>
+              <TabsTrigger value="campaign">Visão de Campanha</TabsTrigger>
               <TabsTrigger value="history">Histórico</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="campaign">
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-xl font-bold">{LINKEDIN_CAMPAIGN.metadata.campaign}</h2>
+                    <p className="text-sm text-muted-foreground">Progresso da estratégia de conteúdo</p>
+                  </div>
+                  <Button 
+                    onClick={handleBatchGenerateCampaign} 
+                    disabled={isBatchGenerating}
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    {isBatchGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
+                    Gerar Toda a Campanha
+                  </Button>
+                </div>
+
+                {isBatchGenerating && batchProgress && (
+                  <Card className="p-6 border-primary/50 bg-primary/5 shadow-lg animate-in fade-in slide-in-from-top-4">
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-end">
+                        <div className="space-y-1">
+                          <p className="text-sm font-semibold text-primary uppercase tracking-wider">Gerando Campanha Automática</p>
+                          <h3 className="text-lg font-bold">Post {batchProgress.current} de {batchProgress.total}</h3>
+                        </div>
+                        <span className="text-sm font-medium">{Math.round((batchProgress.current / batchProgress.total) * 100)}%</span>
+                      </div>
+                      <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary transition-all duration-500 ease-out"
+                          style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}
+                        />
+                      </div>
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        Gerando: <span className="font-medium text-foreground">{batchProgress.currentTopic}</span>
+                      </p>
+                    </div>
+                  </Card>
+                )}
+
+                <div className="grid gap-4">
+                  {LINKEDIN_CAMPAIGN.carousels.map((campaignTopic) => {
+                    const matchedPost = carouselHistory.find(h => 
+                      h.topic.toLowerCase().includes(campaignTopic.name.toLowerCase()) ||
+                      campaignTopic.input.topic.toLowerCase().includes(h.topic.toLowerCase())
+                    );
+
+                    const status = matchedPost?.status || "missing";
+                    const scheduledDate = new Date(campaignTopic.scheduledDate);
+
+                    return (
+                      <Card key={campaignTopic.id} className="overflow-hidden border-l-4" style={{ 
+                        borderLeftColor: status === 'published' ? '#10b981' : 
+                                       status === 'approved' ? '#3b82f6' : 
+                                       status === 'draft' ? '#f59e0b' : '#e2e8f0' 
+                      }}>
+                        <div className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-muted-foreground">
+                                {scheduledDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                              </span>
+                              <h3 className="font-semibold text-lg">{campaignTopic.name}</h3>
+                              {status === 'missing' ? (
+                                <Badge variant="outline" className="text-muted-foreground border-dashed">Não Gerado</Badge>
+                              ) : (
+                                <Badge className={
+                                  status === 'published' ? 'bg-green-100 text-green-800' :
+                                  status === 'approved' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-amber-100 text-amber-800'
+                                }>
+                                  {status === 'published' ? 'Publicado' : 
+                                   status === 'approved' ? 'Aprovado' : 'Rascunho'}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground line-clamp-1 italic">
+                              "{campaignTopic.input.topic}"
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {matchedPost ? (
+                              <Button variant="outline" size="sm" onClick={() => loadCarousel(matchedPost)}>
+                                <Layout className="w-4 h-4 mr-2" />
+                                Abrir Editor
+                              </Button>
+                            ) : (
+                              <Button 
+                                size="sm" 
+                                variant="secondary" 
+                                onClick={() => {
+                                  setTopic(campaignTopic.input.topic);
+                                  setTargetAudience(campaignTopic.input.targetAudience);
+                                  setPainPoint(campaignTopic.input.painPoint);
+                                  setCtaAction(campaignTopic.input.ctaAction || "");
+                                  setViewMode("input");
+                                  toast.info("Briefing preenchido. Clique em 'Geração Rápida' para produzir.");
+                                }}
+                              >
+                                <Wand2 className="w-4 h-4 mr-2" />
+                                Preparar Briefing
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            </TabsContent>
 
             <TabsContent value="generate">
               <Card className="max-w-3xl mx-auto">

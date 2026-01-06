@@ -272,7 +272,7 @@ const AdminBlog = () => {
             seo_description: generatedData.seo_description,
             keywords: generatedData.keywords || topic.keywords,
             tags: generatedData.tags || [],
-            status: "draft", // Batch generated posts start as drafts
+            status: "pending_review", // AI generated posts go to review
             ai_generated: true,
             news_sources: generatedData.sources || [],
           };
@@ -345,7 +345,7 @@ const AdminBlog = () => {
           seo_description: generatedData.seo_description,
           keywords: generatedData.keywords || topic.keywords,
           tags: generatedData.tags || [],
-          status: "draft", 
+          status: "pending_review", 
           ai_generated: true,
           news_sources: generatedData.sources || [],
         };
