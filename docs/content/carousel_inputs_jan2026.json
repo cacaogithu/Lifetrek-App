@@ -1,0 +1,94 @@
+{
+  "carousels": [
+    {
+      "id": "post-1-importacao",
+      "name": "O Custo Real da Importação",
+      "scheduledDate": "2026-01-06T09:00:00-03:00",
+      "input": {
+        "topic": "O Custo Real da Importação de Implantes Médicos",
+        "targetAudience": "Fabricantes de dispositivos médicos, Procurement, CFOs",
+        "painPoint": "Dependência de importação, capital parado 20-30% em estoque, lead time 90 dias vs 30 dias local, custos ocultos de alfândega",
+        "desiredOutcome": "Awareness sobre TCO total e posicionamento de fabricação local da Lifetrek como alternativa estratégica",
+        "mode": "generate"
+      },
+      "cta": "DM 'COMPARATIVO' para receber planilha de TCO",
+      "hashtags": ["#MedicalDeviceManufacturing", "#SupplyChain", "#MedTech"]
+    },
+    {
+      "id": "post-2-validacao",
+      "name": "7 Pontos de Validação",
+      "scheduledDate": "2026-01-08T09:00:00-03:00",
+      "input": {
+        "topic": "7 Pontos de Validação Que Todo Fornecedor Médico Deve Passar",
+        "targetAudience": "Quality Managers, Procurement, Regulatory Affairs",
+        "painPoint": "Dificuldade em qualificar fornecedores confiáveis, risco de não-conformidade, auditorias complexas",
+        "desiredOutcome": "Education sobre critérios técnicos e posicionamento da Lifetrek como expert (não vendedor)",
+        "mode": "generate"
+      },
+      "cta": "Salve este checklist para sua próxima auditoria",
+      "hashtags": ["#ISO13485", "#QualityControl", "#PrecisionMachining"]
+    },
+    {
+      "id": "post-3-integracao",
+      "name": "Por Que Tudo Sob Um Teto",
+      "scheduledDate": "2026-01-10T09:00:00-03:00",
+      "input": {
+        "topic": "Por Que Trouxemos Usinagem, Acabamento, Metrologia e Embalagem Para Dentro da Lifetrek",
+        "targetAudience": "OEMs, Procurement, Operations Directors",
+        "painPoint": "Coordenar múltiplos fornecedores, lack of supply chain visibility, problemas de rastreabilidade",
+        "desiredOutcome": "Demonstrar visão estratégica de integração vertical e benefício de single-source supplier",
+        "mode": "generate"
+      },
+      "cta": "Comente 'TOUR' para agendar visita técnica",
+      "hashtags": ["#MedicalManufacturing", "#VerticalIntegration", "#QualityControl"]
+    },
+    {
+      "id": "post-4-swiss-cnc",
+      "name": "Swiss Turning vs CNC",
+      "scheduledDate": "2026-01-14T09:00:00-03:00",
+      "input": {
+        "topic": "Swiss Turning vs CNC Convencional: Por Que Importa Para Implantes Médicos",
+        "targetAudience": "R&D Engineers, Manufacturing Engineers, Technical Directors",
+        "painPoint": "Falta de expertise técnico em fornecedores, tolerâncias inadequadas, acabamento superficial ruim",
+        "desiredOutcome": "Educação técnica profunda e diferenciação da Lifetrek de job shops genéricos",
+        "mode": "generate"
+      },
+      "cta": "Link na bio para especificações técnicas completas",
+      "hashtags": ["#CNCMachining", "#MedicalDevices", "#PrecisionEngineering"]
+    },
+    {
+      "id": "post-5-coengineering",
+      "name": "Fornecedor Que Não Freia P&D",
+      "scheduledDate": "2026-01-16T09:00:00-03:00",
+      "input": {
+        "topic": "O Fornecedor Que Nunca Freia Seu P&D: Co-Engineering na Prática",
+        "targetAudience": "R&D Teams, Product Development, Innovation Directors",
+        "painPoint": "Designs bloqueados por limitações de fornecedor, 'não dá para fabricar isso', ciclos de inovação lentos",
+        "desiredOutcome": "Posicionar Lifetrek como co-engineering partner que habilita inovação, não como job shop transacional",
+        "mode": "generate"
+      },
+      "cta": "Agende design review com nossos engenheiros",
+      "hashtags": ["#MedicalDevices", "#ProductDevelopment", "#Innovation"]
+    },
+    {
+      "id": "post-6-indicadores-risco",
+      "name": "Indicadores de Risco 2026",
+      "scheduledDate": "2026-01-18T10:00:00-03:00",
+      "input": {
+        "topic": "Três Indicadores Que Seu Fornecedor Atual Pode Comprometer Seus Objetivos de Qualidade em 2026",
+        "targetAudience": "Quality Managers, Procurement, Supply Chain Directors",
+        "painPoint": "Problemas de fornecedor não detectados, riscos regulatórios, custos de firefighting",
+        "desiredOutcome": "Gerar leads de empresas planejando qualification ou troca de fornecedores em Q1 2026",
+        "mode": "generate"
+      },
+      "cta": "Agende conversa técnica para avaliar fit",
+      "hashtags": ["#MedicalDeviceManufacturing", "#SupplyChainRisk", "#QualityManagement"]
+    }
+  ],
+  "metadata": {
+    "campaign": "January 2026 LinkedIn Content",
+    "generatedDate": "2026-01-03",
+    "projectUrl": "https://iijkbhiqcsvtnfernrbs.supabase.co",
+    "functionEndpoint": "/functions/v1/generate-linkedin-carousel"
+  }
+}
