@@ -112,6 +112,8 @@ export function useRejectLinkedInPost() {
         .from("linkedin_carousels")
         .update({
           status: "archived",
+          rejection_reason: reason,
+          rejected_at: new Date().toISOString(),
         })
         .eq("id", id)
         .select()

@@ -645,6 +645,9 @@ export type Database = {
           id: string
           language: string
           niche: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
           status: string
           title: string
           updated_at: string
@@ -658,6 +661,9 @@ export type Database = {
           id?: string
           language?: string
           niche?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -671,6 +677,9 @@ export type Database = {
           id?: string
           language?: string
           niche?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           status?: string
           title?: string
           updated_at?: string
@@ -789,6 +798,9 @@ export type Database = {
           pain_point: string | null
           performance_metrics: Json | null
           proof_points: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
           slides: Json
           status: string | null
           target_audience: string
@@ -809,6 +821,9 @@ export type Database = {
           pain_point?: string | null
           performance_metrics?: Json | null
           proof_points?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           slides: Json
           status?: string | null
           target_audience: string
@@ -829,6 +844,9 @@ export type Database = {
           pain_point?: string | null
           performance_metrics?: Json | null
           proof_points?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           slides?: Json
           status?: string | null
           target_audience?: string

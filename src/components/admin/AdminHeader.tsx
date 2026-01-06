@@ -10,7 +10,8 @@ import {
   BookOpen,
   Upload,
   LogOut,
-  Camera
+  Camera,
+  BarChart3
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -23,6 +24,7 @@ const adminNavItems = [
   { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation },
   { path: "/admin/blog", label: "Blog", icon: FileText },
   { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
+  { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3 },
   { path: "/admin/knowledge-base", label: "Knowledge", icon: BookOpen },
 ];
 
