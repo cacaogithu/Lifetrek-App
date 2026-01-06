@@ -62,7 +62,9 @@ import {
   Sparkles,
   ArrowLeft,
   Loader2,
+  PlayCircle,
 } from "lucide-react";
+import { BLOG_TOPICS } from "@/config/blogTopics";
 
 const AdminBlog = () => {
   const navigate = useNavigate();
@@ -71,6 +73,7 @@ const AdminBlog = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number; currentTopic: string } | null>(null);
 
   const { data: posts, isLoading: postsLoading } = useBlogPosts(false);
   const { data: categories } = useBlogCategories();
@@ -222,6 +225,75 @@ const AdminBlog = () => {
     }
   };
 
+  const handleBatchGenerate = async () => {
+    if (!window.confirm(`Isso irá gerar ${BLOG_TOPICS.length} artigos. Pode levar vários minutos. Continuar?`)) {
+      return;
+    }
+
+    setIsGenerating(true);
+    setBatchProgress({ current: 0, total: BLOG_TOPICS.length, currentTopic: "" });
+    let successCount = 0;
+
+    for (const [index, topic] of BLOG_TOPICS.entries()) {
+      setBatchProgress({ 
+        current: index + 1, 
+        total: BLOG_TOPICS.length, 
+        currentTopic: topic.topic 
+      });
+
+      try {
+        console.log(`Generating: ${topic.topic}`);
+        // 1. Generate Content
+        const { data: generatedData, error: genError } = await supabase.functions.invoke("generate-blog-post", {
+          body: { 
+            topic: topic.topic, 
+            category: topic.category,
+            // We can pass keywords if the edge function supports it, or let AI decide.
+            // keeping it simple for now based on current edge function signature.
+          },
+        });
+
+        if (genError) throw genError;
+
+        if (generatedData) {
+          // 2. Save directly to DB
+          const newPost: BlogPostInsert = {
+            title: generatedData.title,
+            slug: generateSlug(generatedData.title),
+            content: generatedData.content,
+            excerpt: generatedData.excerpt || "",
+            // Map category string to ID if possible, or leave empty/default. 
+            // The edge function returns a category string, but our DB expects a UUID usually if relational, 
+            // BUT looking at formData state 'category_id' is a string. 
+            // Ideally we'd map "educacional" -> uuid. For now, let's leave flexible or try to find a match.
+            category_id: categories?.find(c => c.name.toLowerCase() === topic.category.toLowerCase())?.id || "",
+            seo_title: generatedData.seo_title,
+            seo_description: generatedData.seo_description,
+            keywords: generatedData.keywords || topic.keywords,
+            tags: generatedData.tags || [],
+            status: "draft", // Batch generated posts start as drafts
+            ai_generated: true,
+            news_sources: generatedData.sources || [],
+          };
+
+          await createPost.mutateAsync(newPost);
+          successCount++;
+        }
+        
+      } catch (error) {
+        console.error(`Failed to generate topic: ${topic.topic}`, error);
+        toast.error(`Falha ao gerar: ${topic.topic}`);
+      }
+      
+      // Small delay to be nice to the API
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+
+    setIsGenerating(false);
+    setBatchProgress(null);
+    toast.success(`Batch concluído! ${successCount}/${BLOG_TOPICS.length} artigos gerados.`);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "published":
@@ -261,6 +333,40 @@ const AdminBlog = () => {
           </div>
 
           <div className="flex gap-2">
+            
+            {/* Batch Progress Bar Overlay/Indicator */}
+            {batchProgress && (
+              <div className="fixed bottom-4 right-4 bg-background border p-4 rounded-lg shadow-lg z-50 min-w-[300px]">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-sm">Gerando em Lote...</span>
+                  <span className="text-xs text-muted-foreground">{batchProgress.current}/{batchProgress.total}</span>
+                </div>
+                <div className="h-2 bg-secondary rounded-full overflow-hidden mb-2">
+                  <div 
+                    className="h-full bg-primary transition-all duration-500"
+                    style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}
+                  />
+                </div>
+                <p className="text-xs truncate text-muted-foreground max-w-[280px]">
+                  {batchProgress.currentTopic}
+                </p>
+              </div>
+            )}
+
+            <Button 
+              variant="outline" 
+              onClick={handleBatchGenerate}
+              disabled={isGenerating}
+              className="gap-2"
+            >
+              {isGenerating && batchProgress ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <PlayCircle className="h-4 w-4" />
+              )}
+              Batch Generator ({BLOG_TOPICS.length})
+            </Button>
+
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button onClick={resetForm}>
@@ -288,6 +394,19 @@ const AdminBlog = () => {
                         <Sparkles className="h-4 w-4 mr-2" />
                       )}
                       Gerar com IA
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleGenerateWithAI}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating && !batchProgress ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Sparkles className="h-4 w-4 mr-2" />
+                      )}
+                      Gerar com IA (Single)
                     </Button>
                   </div>
 
