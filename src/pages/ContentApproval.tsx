@@ -177,7 +177,7 @@ export default function ContentApproval() {
                       <img
                         src={slide.imageUrl}
                         alt={`Slide ${idx + 1}`}
-                        className="rounded-md w-full max-h-64 object-cover mt-2"
+                        className="rounded-md w-full mt-2"
                       />
                     )}
                   </CardContent>
@@ -190,7 +190,7 @@ export default function ContentApproval() {
             <div className="border-t pt-4">
               <h4 className="font-semibold mb-2">Caption LinkedIn</h4>
               <p className="text-sm whitespace-pre-wrap bg-muted p-3 rounded-md">
-                {post.caption}
+                {post.caption.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '')}
               </p>
             </div>
           )}
