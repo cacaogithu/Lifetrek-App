@@ -134,7 +134,7 @@ export default function ContentApproval() {
       );
     } else if (selectedItem.type === 'linkedin') {
       const post = selectedItem.full_data;
-      const carousel = post.carousel_data;
+      const slides = post.slides || [];
 
       return (
         <div className="space-y-4">
@@ -160,9 +160,9 @@ export default function ContentApproval() {
           </div>
 
           <div className="border-t pt-4">
-            <h4 className="font-semibold mb-3">Slides ({carousel?.slides?.length || 0})</h4>
+            <h4 className="font-semibold mb-3">Slides ({slides.length})</h4>
             <div className="space-y-3">
-              {carousel?.slides?.map((slide: any, idx: number) => (
+              {slides.map((slide: any, idx: number) => (
                 <Card key={idx}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
@@ -186,11 +186,11 @@ export default function ContentApproval() {
             </div>
           </div>
 
-          {carousel?.caption && (
+          {post.caption && (
             <div className="border-t pt-4">
               <h4 className="font-semibold mb-2">Caption LinkedIn</h4>
               <p className="text-sm whitespace-pre-wrap bg-muted p-3 rounded-md">
-                {carousel.caption}
+                {post.caption}
               </p>
             </div>
           )}
