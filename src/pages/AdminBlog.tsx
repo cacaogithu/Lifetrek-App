@@ -62,7 +62,10 @@ import {
   Sparkles,
   ArrowLeft,
   Loader2,
+  PlayCircle,
 } from "lucide-react";
+import { BLOG_TOPICS } from "@/config/blogTopics";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AdminBlog = () => {
   const navigate = useNavigate();
@@ -71,6 +74,7 @@ const AdminBlog = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number; currentTopic: string } | null>(null);
 
   const { data: posts, isLoading: postsLoading } = useBlogPosts(false);
   const { data: categories } = useBlogCategories();
@@ -222,6 +226,75 @@ const AdminBlog = () => {
     }
   };
 
+  const handleBatchGenerate = async () => {
+    if (!window.confirm(`Isso irá gerar ${BLOG_TOPICS.length} artigos. Pode levar vários minutos. Continuar?`)) {
+      return;
+    }
+
+    setIsGenerating(true);
+    setBatchProgress({ current: 0, total: BLOG_TOPICS.length, currentTopic: "" });
+    let successCount = 0;
+
+    for (const [index, topic] of BLOG_TOPICS.entries()) {
+      setBatchProgress({ 
+        current: index + 1, 
+        total: BLOG_TOPICS.length, 
+        currentTopic: topic.topic 
+      });
+
+      try {
+        console.log(`Generating: ${topic.topic}`);
+        // 1. Generate Content
+        const { data: generatedData, error: genError } = await supabase.functions.invoke("generate-blog-post", {
+          body: { 
+            topic: topic.topic, 
+            category: topic.category,
+            // We can pass keywords if the edge function supports it, or let AI decide.
+            // keeping it simple for now based on current edge function signature.
+          },
+        });
+
+        if (genError) throw genError;
+
+        if (generatedData) {
+          // 2. Save directly to DB
+          const newPost: BlogPostInsert = {
+            title: generatedData.title,
+            slug: generateSlug(generatedData.title),
+            content: generatedData.content,
+            excerpt: generatedData.excerpt || "",
+            // Map category string to ID if possible, or leave empty/default. 
+            // The edge function returns a category string, but our DB expects a UUID usually if relational, 
+            // BUT looking at formData state 'category_id' is a string. 
+            // Ideally we'd map "educacional" -> uuid. For now, let's leave flexible or try to find a match.
+            category_id: categories?.find(c => c.name.toLowerCase() === topic.category.toLowerCase())?.id || "",
+            seo_title: generatedData.seo_title,
+            seo_description: generatedData.seo_description,
+            keywords: generatedData.keywords || topic.keywords,
+            tags: generatedData.tags || [],
+            status: "draft", // Batch generated posts start as drafts
+            ai_generated: true,
+            news_sources: generatedData.sources || [],
+          };
+
+          await createPost.mutateAsync(newPost);
+          successCount++;
+        }
+        
+      } catch (error) {
+        console.error(`Failed to generate topic: ${topic.topic}`, error);
+        toast.error(`Falha ao gerar: ${topic.topic}`);
+      }
+      
+      // Small delay to be nice to the API
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+
+    setIsGenerating(false);
+    setBatchProgress(null);
+    toast.success(`Batch concluído! ${successCount}/${BLOG_TOPICS.length} artigos gerados.`);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "published":
@@ -234,6 +307,62 @@ const AdminBlog = () => {
         return <Badge variant="secondary">Rascunho</Badge>;
     }
   };
+
+  // Group topics by month
+  const topicsByMonth = BLOG_TOPICS.reduce((acc, topic) => {
+    if (!acc[topic.month]) {
+      acc[topic.month] = [];
+    }
+    acc[topic.month].push(topic);
+    return acc;
+  }, {} as Record<string, typeof BLOG_TOPICS>);
+
+  const generatePostForTopic = async (topic: typeof BLOG_TOPICS[0]) => {
+    setIsGenerating(true);
+    setBatchProgress({ current: 0, total: 1, currentTopic: topic.topic });
+    
+    try {
+      console.log(`Generating: ${topic.topic}`);
+      // 1. Generate Content
+      const { data: generatedData, error: genError } = await supabase.functions.invoke("generate-blog-post", {
+        body: { 
+          topic: topic.topic, 
+          category: topic.category,
+        },
+      });
+
+      if (genError) throw genError;
+
+      if (generatedData) {
+        // 2. Save directly to DB
+        const newPost: BlogPostInsert = {
+          title: generatedData.title,
+          slug: generateSlug(generatedData.title),
+          content: generatedData.content,
+          excerpt: generatedData.excerpt || "",
+          category_id: categories?.find(c => c.name.toLowerCase() === topic.category.toLowerCase())?.id || "",
+          seo_title: generatedData.seo_title,
+          seo_description: generatedData.seo_description,
+          keywords: generatedData.keywords || topic.keywords,
+          tags: generatedData.tags || [],
+          status: "draft", 
+          ai_generated: true,
+          news_sources: generatedData.sources || [],
+        };
+
+        await createPost.mutateAsync(newPost);
+        toast.success(`Artigo "${topic.topic}" gerado com sucesso!`);
+      }
+      
+    } catch (error) {
+      console.error(`Failed to generate topic: ${topic.topic}`, error);
+      toast.error(`Falha ao gerar: ${topic.topic}`);
+    } finally {
+      setIsGenerating(false);
+      setBatchProgress(null);
+    }
+  };
+
 
   if (isLoading) {
     return (
@@ -261,6 +390,26 @@ const AdminBlog = () => {
           </div>
 
           <div className="flex gap-2">
+            
+            {/* Batch Progress Bar Overlay/Indicator */}
+            {batchProgress && (
+              <div className="fixed bottom-4 right-4 bg-background border p-4 rounded-lg shadow-lg z-50 min-w-[300px]">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-sm">Gerando...</span>
+                  <span className="text-xs text-muted-foreground">{batchProgress.current}/{batchProgress.total}</span>
+                </div>
+                <div className="h-2 bg-secondary rounded-full overflow-hidden mb-2">
+                  <div 
+                    className="h-full bg-primary transition-all duration-500"
+                    style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}
+                  />
+                </div>
+                <p className="text-xs truncate text-muted-foreground max-w-[280px]">
+                  {batchProgress.currentTopic}
+                </p>
+              </div>
+            )}
+
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button onClick={resetForm}>
@@ -275,7 +424,14 @@ const AdminBlog = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="flex gap-2 mb-4">
+                  {/* ... (keep form content as is, omitted for brevity if possible, but replace needs context) ... */}
+                  {/* Actually, I need to keep the form accessible. 
+                      Since I am replacing a big chunk, I'll assume the form logic inside Dialog is fine. 
+                      I will just re-paste the triggers and the dialog content if I had to replace it.
+                      But wait, I am replacing from "if (isLoading)" onwards. 
+                      So I need to re-include everything.
+                   */}
+                   <div className="flex gap-2 mb-4">
                     <Button
                       type="button"
                       variant="outline"
@@ -496,107 +652,207 @@ const AdminBlog = () => {
           </Card>
         </div>
 
-        {/* Posts Table */}
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Título</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Criado em</TableHead>
-                  <TableHead>IA</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {postsLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                    </TableCell>
-                  </TableRow>
-                ) : posts && posts.length > 0 ? (
-                  posts.map((post) => (
-                    <TableRow key={post.id}>
-                      <TableCell className="font-medium">{post.title}</TableCell>
-                      <TableCell>{post.category?.name || "-"}</TableCell>
-                      <TableCell>{getStatusBadge(post.status)}</TableCell>
-                      <TableCell>
-                        {format(new Date(post.created_at), "dd/MM/yyyy", {
-                          locale: ptBR,
+        {/* TABS FOR VIEWS */}
+        <Tabs defaultValue="campaign" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="campaign">Visão de Campanha</TabsTrigger>
+            <TabsTrigger value="list">Lista de Artigos</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="campaign">
+            <div className="space-y-8">
+              <div className="flex justify-end p-4 bg-muted/20 rounded-lg">
+                <Button 
+                    variant="outline" 
+                    onClick={handleBatchGenerate}
+                    disabled={isGenerating}
+                    className="gap-2"
+                  >
+                    {isGenerating && batchProgress?.total && batchProgress.total > 1 ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <PlayCircle className="h-4 w-4" />
+                    )}
+                    Gerar Todos ({BLOG_TOPICS.length})
+                </Button>
+              </div>
+
+              {Object.entries(topicsByMonth).map(([month, topics]) => (
+                <Card key={month}>
+                  <CardHeader>
+                    <CardTitle className="capitalize">{month}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Tópico</TableHead>
+                          <TableHead>Categoria</TableHead>
+                          <TableHead>Keywords</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="text-right">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {topics.map((topic, idx) => {
+                          // Find matching post logic (simplistic match by title inclusion or exact match)
+                          const matchingPost = posts?.find(p => 
+                            p.title.toLowerCase().includes(topic.topic.toLowerCase()) || 
+                            topic.topic.toLowerCase().includes(p.title.toLowerCase())
+                          );
+                          const isGenerated = !!matchingPost;
+
+                          return (
+                            <TableRow key={idx}>
+                              <TableCell className="font-medium">{topic.topic}</TableCell>
+                              <TableCell>{topic.category}</TableCell>
+                              <TableCell className="text-xs text-muted-foreground">{topic.keywords?.join(", ")}</TableCell>
+                              <TableCell>
+                                {isGenerated ? (
+                                  getStatusBadge(matchingPost.status)
+                                ) : (
+                                  <Badge variant="outline" className="text-muted-foreground border-dashed">Não Gerado</Badge>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {isGenerated ? (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleEdit(matchingPost)}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    disabled={isGenerating}
+                                    onClick={() => generatePostForTopic(topic)}
+                                  >
+                                    {isGenerating && batchProgress?.currentTopic === topic.topic ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <Sparkles className="h-4 w-4 mr-2" />
+                                    )}
+                                    Gerar
+                                  </Button>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          );
                         })}
-                      </TableCell>
-                      <TableCell>
-                        {post.ai_generated && (
-                          <Sparkles className="h-4 w-4 text-purple-500" />
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          {post.status !== "published" && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => publishPost.mutate(post.id)}
-                            >
-                              <Check className="h-4 w-4" />
-                            </Button>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => window.open(`/blog/${post.slug}`, "_blank")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(post)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Excluir artigo?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Esta ação não pode ser desfeita.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => deletePost.mutate(post.id)}
-                                >
-                                  Excluir
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="list">
+            <Card>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Título</TableHead>
+                      <TableHead>Categoria</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Criado em</TableHead>
+                      <TableHead>IA</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      Nenhum artigo encontrado. Crie o primeiro!
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {postsLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8">
+                          <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                        </TableCell>
+                      </TableRow>
+                    ) : posts && posts.length > 0 ? (
+                      posts.map((post) => (
+                        <TableRow key={post.id}>
+                          <TableCell className="font-medium">{post.title}</TableCell>
+                          <TableCell>{post.category?.name || "-"}</TableCell>
+                          <TableCell>{getStatusBadge(post.status)}</TableCell>
+                          <TableCell>
+                            {format(new Date(post.created_at), "dd/MM/yyyy", {
+                              locale: ptBR,
+                            })}
+                          </TableCell>
+                          <TableCell>
+                            {post.ai_generated && (
+                              <Sparkles className="h-4 w-4 text-purple-500" />
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              {post.status !== "published" && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => publishPost.mutate(post.id)}
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(`/blog/${post.slug}`, "_blank")}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(post)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm">
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Excluir artigo?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Esta ação não pode ser desfeita.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => deletePost.mutate(post.id)}
+                                    >
+                                      Excluir
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                          <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          Nenhum artigo encontrado. Crie o primeiro!
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
