@@ -35,12 +35,7 @@ interface GenerationLog {
   id: string;
   admin_user_id: string;
   carousel_id: string | null;
-  input_params: {
-    topic?: string;
-    targetAudience?: string;
-    painPoint?: string;
-    format?: string;
-  };
+  input_params: unknown;
   strategist_output: unknown;
   analyst_output: unknown;
   final_output: unknown;
@@ -49,6 +44,15 @@ interface GenerationLog {
   model_used: string | null;
   created_at: string;
 }
+
+const getInputParam = (log: GenerationLog, key: string): string => {
+  const params = log.input_params;
+  if (params && typeof params === 'object' && !Array.isArray(params)) {
+    const value = (params as Record<string, unknown>)[key];
+    return typeof value === 'string' ? value : '-';
+  }
+  return '-';
+};
 
 interface CampaignStats {
   totalGenerations: number;
@@ -319,10 +323,10 @@ export default function CampaignManagement() {
                     <TableRow key={log.id}>
                       <TableCell>{getStatusBadge(log)}</TableCell>
                       <TableCell className="max-w-[200px] truncate font-medium">
-                        {log.input_params?.topic || "-"}
+                        {getInputParam(log, 'topic')}
                       </TableCell>
                       <TableCell className="max-w-[150px] truncate text-muted-foreground">
-                        {log.input_params?.targetAudience || "-"}
+                        {getInputParam(log, 'targetAudience')}
                       </TableCell>
                       <TableCell className="text-center">
                         <Badge variant="secondary">{log.image_count || 0}</Badge>
