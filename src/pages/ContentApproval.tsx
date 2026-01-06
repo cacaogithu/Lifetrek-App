@@ -6,12 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Check, X, Eye, FileText, Linkedin, Sparkles, Clock,
-  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive
+  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   useContentApprovalItems,
   useRejectedContentItems,
+  useApprovedContentItems,
   useApproveLinkedInPost,
   useRejectLinkedInPost,
 } from "@/hooks/useLinkedInPosts";
@@ -44,6 +45,7 @@ export default function ContentApproval() {
   const navigate = useNavigate();
   const { data: items, isLoading } = useContentApprovalItems();
   const { data: rejectedItems, isLoading: isLoadingRejected } = useRejectedContentItems();
+  const { data: approvedItems, isLoading: isLoadingApproved } = useApprovedContentItems();
   const approveLinkedIn = useApproveLinkedInPost();
   const rejectLinkedIn = useRejectLinkedInPost();
   const publishBlog = usePublishBlogPost();
@@ -201,7 +203,7 @@ export default function ContentApproval() {
     }
   };
 
-  if (isLoading || isLoadingRejected) {
+  if (isLoading || isLoadingRejected || isLoadingApproved) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -213,6 +215,7 @@ export default function ContentApproval() {
   const linkedInItems = items?.filter(i => i.type === 'linkedin') || [];
   const allPending = items || [];
   const allRejected = rejectedItems || [];
+  const allApproved = approvedItems || [];
 
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-8">
@@ -236,9 +239,9 @@ export default function ContentApproval() {
       </div>
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-8">
+        <TabsList className="grid w-full grid-cols-5 mb-8">
           <TabsTrigger value="all" className="text-base">
-            Todos ({allPending.length})
+            Pendentes ({allPending.length})
           </TabsTrigger>
           <TabsTrigger value="blogs" className="text-base">
             <FileText className="h-4 w-4 mr-2" />
@@ -247,6 +250,10 @@ export default function ContentApproval() {
           <TabsTrigger value="linkedin" className="text-base">
             <Linkedin className="h-4 w-4 mr-2" />
             LinkedIn ({linkedInItems.length})
+          </TabsTrigger>
+          <TabsTrigger value="approved" className="text-base text-green-600">
+            <CheckCircle className="h-4 w-4 mr-2" />
+            Aprovados ({allApproved.length})
           </TabsTrigger>
           <TabsTrigger value="rejected" className="text-base text-destructive">
             <Archive className="h-4 w-4 mr-2" />
@@ -457,6 +464,55 @@ export default function ContentApproval() {
                       Rejeitar
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="approved" className="space-y-4">
+          {allApproved.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center text-muted-foreground">
+                Nenhum conteúdo aprovado
+              </CardContent>
+            </Card>
+          ) : (
+            allApproved.map((item: any) => (
+              <Card key={`${item.type}-${item.id}`} className="border-green-500/30 bg-green-500/5">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        {item.type === 'blog' ? (
+                          <FileText className="h-5 w-5 text-blue-500" />
+                        ) : (
+                          <Linkedin className="h-5 w-5 text-blue-600" />
+                        )}
+                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                      </div>
+                      <CardDescription>{item.content_preview}</CardDescription>
+                      <div className="flex gap-2 items-center flex-wrap">
+                        <Badge variant="outline">
+                          {format(new Date(item.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                        </Badge>
+                        <Badge className="gap-1 bg-green-600">
+                          <Check className="h-3 w-3" />
+                          {item.status === 'published' ? 'Publicado' : 'Aprovado'}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePreview(item)}
+                    className="gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Visualizar
+                  </Button>
                 </CardContent>
               </Card>
             ))

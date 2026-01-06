@@ -303,3 +303,66 @@ export function useRejectedContentItems() {
     },
   });
 }
+
+// Get approved content items
+export function useApprovedContentItems() {
+  return useQuery({
+    queryKey: ["approved_content_items"],
+    queryFn: async () => {
+      // Fetch published blogs
+      const { data: blogs, error: blogsError } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .eq("status", "published")
+        .order("published_at", { ascending: false })
+        .limit(50);
+
+      if (blogsError) throw blogsError;
+
+      // Fetch approved LinkedIn carousels
+      const { data: linkedInCarousels, error: linkedInError } = await supabase
+        .from("linkedin_carousels")
+        .select("*")
+        .in("status", ["approved", "published"])
+        .order("updated_at", { ascending: false })
+        .limit(50);
+
+      if (linkedInError) throw linkedInError;
+
+      // Combine and format
+      const items = [
+        ...(blogs || []).map((blog: any) => ({
+          id: blog.id,
+          type: 'blog' as const,
+          title: blog.title,
+          content_preview: blog.excerpt || blog.content.substring(0, 150),
+          status: blog.status,
+          created_at: blog.created_at,
+          approved_at: blog.published_at,
+          ai_generated: blog.ai_generated || false,
+          full_data: blog,
+        })),
+        ...(linkedInCarousels || []).map((carousel: any) => ({
+          id: carousel.id,
+          type: 'linkedin' as const,
+          title: carousel.topic,
+          content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
+          status: carousel.status,
+          created_at: carousel.created_at,
+          approved_at: carousel.updated_at,
+          ai_generated: true,
+          full_data: carousel,
+        })),
+      ];
+
+      // Sort by approved_at
+      items.sort((a, b) => {
+        const dateA = a.approved_at ? new Date(a.approved_at).getTime() : new Date(a.created_at).getTime();
+        const dateB = b.approved_at ? new Date(b.approved_at).getTime() : new Date(b.created_at).getTime();
+        return dateB - dateA;
+      });
+
+      return items;
+    },
+  });
+}
