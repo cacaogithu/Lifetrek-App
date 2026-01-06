@@ -386,6 +386,48 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
       carousel.imageUrls = processedSlides.map((s: any) => s.imageUrl || "");
     }
 
+    // --- SAVE TO DATABASE ---
+    console.log("Saving generated carousels to database...");
+    
+    // Normalize to array for processing
+    const carouselsToSave = (Array.isArray(resultCarousels) ? resultCarousels : [resultCarousels]).filter(Boolean);
+
+    for (const carousel of (carouselsToSave as any[])) {
+       try {
+          // 1. Insert into linkedin_carousels
+          const { data: insertedCarousel, error: insertError } = await supabase
+            .from("linkedin_carousels")
+            .insert({
+              topic: carousel.topic,
+              content: carousel, // Store full JSON structure
+              status: 'draft',
+              scheduled_date: carousel.scheduledDate || null  // if generated
+            })
+            .select("id")
+            .single();
+
+          if (insertError) {
+            console.error("Failed to insert carousel into DB:", insertError);
+          } else {
+            console.log("✅ Saved carousel to DB:", insertedCarousel.id);
+            // Add ID to the returned object so the client knows it
+            carousel.id = insertedCarousel.id;
+             
+             // 2. Log generation event
+            await supabase.from("linkedin_generation_logs").insert({
+                admin_user_id: (await supabase.auth.getUser()).data.user?.id || '00000000-0000-0000-0000-000000000000', // Fallback if anon
+                carousel_id: insertedCarousel.id,
+                input_params: { topic, targetAudience, painPoint, desiredOutcome, mode },
+                final_output: carousel,
+                model_used: TEXT_MODEL
+            });
+          }
+
+       } catch (dbError) {
+         console.error("Database save error:", dbError);
+       }
+    }
+
     return new Response(
       JSON.stringify(isBatch ? { carousels: resultCarousels } : { carousel: resultCarousels[0] }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

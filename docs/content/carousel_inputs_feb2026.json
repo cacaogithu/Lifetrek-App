@@ -1,0 +1,55 @@
+{
+  "carousels": [
+    {
+      "id": "post-feb-01-red-tape",
+      "name": "The 'Red Tape' Reduction",
+      "scheduledDate": "2026-02-03T09:00:00-03:00",
+      "input": {
+        "topic": "The 'Red Tape' Reduction: How Local Manufacturing Simplifies Compliance",
+        "targetAudience": "Regulatory Affairs Managers, Quality Directors, Compliance Officers",
+        "painPoint": "Regulatory bottlenecks with imported goods, complexity of proving local conformity for imported lots, delayed audits",
+        "desiredOutcome": "Highlighting Lifetrek's ISO 13485 certification and local presence as a compliance accelerator",
+        "mode": "generate",
+        "ctaAction": "Download our Quality Manual"
+      },
+      "cta": "Download our Quality Manual to see our compliance specs",
+      "hashtags": ["#MedTechCompliance", "#RegulatoryAffairs", "#ISO13485"]
+    },
+    {
+      "id": "post-feb-02-material-science",
+      "name": "Material Science Mastery",
+      "scheduledDate": "2026-02-10T09:00:00-03:00",
+      "input": {
+        "topic": "Material Science Mastery: Beyond Standard Titanium Alloys",
+        "targetAudience": "Medical Device R&D Engineers, Material Scientists, Product Designers",
+        "painPoint": "Suppliers who only know standard alloys, lack of advice on material fatigue or biocompatibility nuances",
+        "desiredOutcome": "Position Lifetrek as a technical authority on materials, capable of advising on best alloys for specific implant lifecycles",
+        "mode": "generate",
+        "ctaAction": "Request a Material Sample Kit"
+      },
+      "cta": "Request a Material Sample Kit for your next prototype",
+      "hashtags": ["#MaterialScience", "#TitaniumImplants", "#MedicalEngineering"]
+    },
+    {
+      "id": "post-feb-03-prototype-scale",
+      "name": "From Prototype to Production",
+      "scheduledDate": "2026-02-17T09:00:00-03:00",
+      "input": {
+        "topic": "Scaling from 1 to 10,000 Units Without Changing Suppliers",
+        "targetAudience": "MedTech Startup Founders, CTOs, Operations Managers",
+        "painPoint": "The 'Valley of Death' between prototyping shops and mass production factories. Losing knowledge transfer when switching vendors.",
+        "desiredOutcome": "Demonstrate Lifetrek's ability to handle both rapid prototyping and full-scale production runs under one roof.",
+        "mode": "generate",
+        "ctaAction": "Book a Scalability Consultation"
+      },
+      "cta": "Book a Scalability Consultation for your Q1 roadmap",
+      "hashtags": ["#MedTechStartups", "#ScalingManufacturing", "#ProductLaunch"]
+    }
+  ],
+  "metadata": {
+    "campaign": "February 2026 Content Strategy",
+    "generatedDate": "2026-01-06",
+    "projectUrl": "https://iijkbhiqcsvtnfernrbs.supabase.co",
+    "functionEndpoint": "/functions/v1/generate-linkedin-carousel"
+  }
+}
