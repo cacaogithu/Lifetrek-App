@@ -425,11 +425,23 @@ export default function LinkedInCarousel() {
     try {
       // Use streaming endpoint
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-linkedin-carousel`;
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        toast.error("Faça login novamente para gerar conteúdo");
+        navigate("/admin/login");
+        return;
+      }
+
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           topic,
