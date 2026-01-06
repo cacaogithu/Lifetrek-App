@@ -42,6 +42,7 @@ const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
 const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
 const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
 const RejectionAnalytics = lazy(() => import("./pages/Admin/RejectionAnalytics"));
+const CampaignManagement = lazy(() => import("./pages/CampaignManagement"));
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,7 @@ function AppContent() {
               <Route path="/admin/blog" element={<AdminBlog />} />
               <Route path="/admin/rejection-analytics" element={<RejectionAnalytics />} />
               <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
+              <Route path="/admin/campaigns" element={<CampaignManagement />} />
             </Routes>
           </AdminLayout>
         </ProtectedRoute>

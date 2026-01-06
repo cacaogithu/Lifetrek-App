@@ -11,7 +11,8 @@ import {
   Upload,
   LogOut,
   Camera,
-  BarChart3
+  BarChart3,
+  Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -22,6 +23,7 @@ const adminNavItems = [
   { path: "/admin/environment-assets", label: "Ambiente", icon: Camera },
   { path: "/admin/image-processor", label: "Galeria", icon: Images },
   { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation },
+  { path: "/admin/campaigns", label: "Campanhas", icon: Target },
   { path: "/admin/blog", label: "Blog", icon: FileText },
   { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
   { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3 },
