@@ -6,11 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Check, X, Eye, FileText, Linkedin, Sparkles, Clock,
-  ThumbsUp, ThumbsDown, ArrowLeft, Loader2
+  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   useContentApprovalItems,
+  useRejectedContentItems,
   useApproveLinkedInPost,
   useRejectLinkedInPost,
 } from "@/hooks/useLinkedInPosts";
@@ -42,6 +43,7 @@ import { useNavigate } from "react-router-dom";
 export default function ContentApproval() {
   const navigate = useNavigate();
   const { data: items, isLoading } = useContentApprovalItems();
+  const { data: rejectedItems, isLoading: isLoadingRejected } = useRejectedContentItems();
   const approveLinkedIn = useApproveLinkedInPost();
   const rejectLinkedIn = useRejectLinkedInPost();
   const publishBlog = usePublishBlogPost();
@@ -199,7 +201,7 @@ export default function ContentApproval() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingRejected) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -210,6 +212,7 @@ export default function ContentApproval() {
   const blogItems = items?.filter(i => i.type === 'blog') || [];
   const linkedInItems = items?.filter(i => i.type === 'linkedin') || [];
   const allPending = items || [];
+  const allRejected = rejectedItems || [];
 
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-8">
@@ -233,7 +236,7 @@ export default function ContentApproval() {
       </div>
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsList className="grid w-full grid-cols-4 mb-8">
           <TabsTrigger value="all" className="text-base">
             Todos ({allPending.length})
           </TabsTrigger>
@@ -244,6 +247,10 @@ export default function ContentApproval() {
           <TabsTrigger value="linkedin" className="text-base">
             <Linkedin className="h-4 w-4 mr-2" />
             LinkedIn ({linkedInItems.length})
+          </TabsTrigger>
+          <TabsTrigger value="rejected" className="text-base text-destructive">
+            <Archive className="h-4 w-4 mr-2" />
+            Rejeitados ({allRejected.length})
           </TabsTrigger>
         </TabsList>
 
@@ -450,6 +457,63 @@ export default function ContentApproval() {
                       Rejeitar
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="rejected" className="space-y-4">
+          {allRejected.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center text-muted-foreground">
+                Nenhum conteúdo rejeitado
+              </CardContent>
+            </Card>
+          ) : (
+            allRejected.map((item: any) => (
+              <Card key={`${item.type}-${item.id}`} className="border-destructive/30 bg-destructive/5">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        {item.type === 'blog' ? (
+                          <FileText className="h-5 w-5 text-blue-500" />
+                        ) : (
+                          <Linkedin className="h-5 w-5 text-blue-600" />
+                        )}
+                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                      </div>
+                      <CardDescription>{item.content_preview}</CardDescription>
+                      <div className="flex gap-2 items-center flex-wrap">
+                        <Badge variant="outline">
+                          {format(new Date(item.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                        </Badge>
+                        {item.rejected_at && (
+                          <Badge variant="destructive" className="gap-1">
+                            <X className="h-3 w-3" />
+                            Rejeitado em {format(new Date(item.rejected_at), "dd/MM/yyyy", { locale: ptBR })}
+                          </Badge>
+                        )}
+                      </div>
+                      {item.rejection_reason && (
+                        <div className="bg-destructive/10 border border-destructive/20 p-3 rounded-md mt-2">
+                          <p className="text-sm font-medium text-destructive">Motivo da rejeição:</p>
+                          <p className="text-sm text-muted-foreground">{item.rejection_reason}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePreview(item)}
+                    className="gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Visualizar
+                  </Button>
                 </CardContent>
               </Card>
             ))

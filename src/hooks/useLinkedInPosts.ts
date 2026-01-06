@@ -240,3 +240,66 @@ export function useContentApprovalItems() {
     },
   });
 }
+
+// Get rejected content items
+export function useRejectedContentItems() {
+  return useQuery({
+    queryKey: ["rejected_content_items"],
+    queryFn: async () => {
+      // Fetch rejected blogs
+      const { data: blogs, error: blogsError } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .eq("status", "rejected")
+        .order("created_at", { ascending: false });
+
+      if (blogsError) throw blogsError;
+
+      // Fetch archived LinkedIn carousels with rejection reason
+      const { data: linkedInCarousels, error: linkedInError } = await supabase
+        .from("linkedin_carousels")
+        .select("*")
+        .eq("status", "archived")
+        .order("rejected_at", { ascending: false });
+
+      if (linkedInError) throw linkedInError;
+
+      // Combine and format
+      const items = [
+        ...(blogs || []).map((blog: any) => ({
+          id: blog.id,
+          type: 'blog' as const,
+          title: blog.title,
+          content_preview: blog.excerpt || blog.content.substring(0, 150),
+          status: blog.status,
+          created_at: blog.created_at,
+          rejected_at: blog.rejected_at,
+          rejection_reason: blog.rejection_reason,
+          ai_generated: blog.ai_generated || false,
+          full_data: blog,
+        })),
+        ...(linkedInCarousels || []).map((carousel: any) => ({
+          id: carousel.id,
+          type: 'linkedin' as const,
+          title: carousel.topic,
+          content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
+          status: carousel.status,
+          created_at: carousel.created_at,
+          rejected_at: carousel.rejected_at,
+          rejection_reason: carousel.rejection_reason,
+          ai_generated: true,
+          full_data: carousel,
+        })),
+      ];
+
+      // Sort by rejected_at
+      items.sort((a, b) => {
+        const dateA = a.rejected_at ? new Date(a.rejected_at).getTime() : new Date(a.created_at).getTime();
+        const dateB = b.rejected_at ? new Date(b.rejected_at).getTime() : new Date(b.created_at).getTime();
+        return dateB - dateA;
+      });
+
+      return items;
+    },
+  });
+}
