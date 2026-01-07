@@ -12,6 +12,7 @@ import {
   Upload,
   LogOut,
   Camera,
+  Database,
   BarChart3,
   Target,
   Crown,
@@ -42,7 +43,7 @@ interface NavItem {
 
 const allNavItems: NavItem[] = [
   { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/admin/leads", label: "Leads", icon: Users },
+  { path: "/admin/leads", label: "Leads", icon: Database },
   { path: "/admin/image-processor", label: "Imagens", icon: Sparkles },
   { path: "/admin/gallery", label: "Galeria", icon: Images },
   { path: "/admin/blog", label: "Blog", icon: FileText },
