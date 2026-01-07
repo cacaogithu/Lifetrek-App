@@ -227,31 +227,36 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     // --- CRITIQUE LOOP (BRAND ANALYST) ---
     // Only run if not in mock mode and not image_only
     if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
-      console.log("🧐 Analyst Agent: Reviewing content against Brand Book...");
+      console.log("🧐 Agente Analista: Revisando conteúdo contra Brand Book...");
       
-      const critiqueSystemPrompt = `You are the Brand & Quality Analyst for Lifetrek Medical.
-Mission: Review drafts to ensure On-brand voice, Technical credibility, and Strategic alignment.
+      const critiqueSystemPrompt = `Você é o Analista de Marca & Qualidade da Lifetrek Medical.
+Missão: Revisar rascunhos para garantir Voz on-brand, Credibilidade técnica e Alinhamento estratégico.
+
+=== REGRA DE IDIOMA ===
+TODO O CONTEÚDO DEVE PERMANECER EM PORTUGUÊS BRASILEIRO.
 
 === CHECKLIST ===
-1. **Avatar & Problem**: Is the avatar clearly identified (Callout)? Is ONE main problem addressed?
-2. **Value**: Is the "dream outcome" (safer launches, fewer NCs) obvious?
-3. **Hook**: Does slide 1 follow the "Callout + Payoff" formula? (e.g. "Orthopedic OEMs: ...")
-4. **Proof**: Are specific machines (Citizen M32) or standards (ISO 13485) used as proof? No generic claims.
-5. **CTA**: Is there a single, low-friction CTA?
+1. **Avatar & Problema**: O avatar está claramente identificado (Chamado)? UM problema principal é abordado?
+2. **Valor**: O "resultado dos sonhos" (lançamentos mais seguros, menos NCs) é óbvio?
+3. **Gancho**: O slide 1 segue a fórmula "Chamado + Recompensa"? (ex: "OEMs Ortopédicos: ...")
+4. **Prova**: Máquinas específicas (Citizen M32) ou padrões (ISO 13485) são usados como prova? Sem claims genéricos.
+5. **CTA**: Há um único CTA de baixa fricção?
 
 === OUTPUT ===
-Refine the content and output the SAME JSON structure. 
-- If the hook is weak, REWRITE IT.
-- If the proof is vague, ADD specific machine names.
-- If the tone is salesy, make it more ENGINEER-to-ENGINEER.
+Refine o conteúdo e produza a MESMA estrutura JSON. 
+- Se o gancho está fraco, REESCREVA-O.
+- Se a prova é vaga, ADICIONE nomes de máquinas específicas.
+- Se o tom é vendedor demais, torne mais ENGENHEIRO-para-ENGENHEIRO.
+- MANTENHA TODO TEXTO EM PORTUGUÊS.
 `;
 
-      const critiqueUserPrompt = `Here is the draft content produced by the Copywriter:
+      const critiqueUserPrompt = `Aqui está o conteúdo rascunho produzido pelo Copywriter:
 ${JSON.stringify(resultCarousels)}
 
-Critique and REFINE this draft using your checklist.
-Focus heavily on the HOOK (Slide 1) and PROOF (Technical specificities).
-Return the refined JSON object (carousels array).`;
+Critique e REFINE este rascunho usando seu checklist.
+Foque pesadamente no GANCHO (Slide 1) e PROVA (Especificidades técnicas).
+Retorne o objeto JSON refinado (array de carrosséis).
+IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
 
        try {
          const critiqueRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -401,14 +406,41 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
 
     for (const carousel of (carouselsToSave as any[])) {
        try {
-          // 1. Insert into linkedin_carousels
+          // Extract admin_user_id from auth header
+          const authHeader = req.headers.get("Authorization");
+          let adminUserId = '00000000-0000-0000-0000-000000000000';
+          
+          if (authHeader) {
+            const token = authHeader.replace("Bearer ", "");
+            const { data: { user } } = await supabase.auth.getUser(token);
+            if (user?.id) {
+              adminUserId = user.id;
+            }
+          }
+
+          // 1. Insert into linkedin_carousels with ALL required fields
           const { data: insertedCarousel, error: insertError } = await supabase
             .from("linkedin_carousels")
             .insert({
-              topic: carousel.topic,
-              content: carousel, // Store full JSON structure
+              admin_user_id: adminUserId,
+              topic: carousel.topic || topic,
+              target_audience: carousel.targetAudience || targetAudience,
+              pain_point: carousel.painPoint || painPoint || null,
+              desired_outcome: carousel.desiredOutcome || desiredOutcome || null,
+              proof_points: carousel.proofPoints || proofPoints || null,
+              cta_action: carousel.ctaAction || ctaAction || null,
+              caption: carousel.caption || '',
+              slides: carousel.slides || [],
+              image_urls: carousel.imageUrls || carousel.slides?.map((s: any) => s.imageUrl).filter(Boolean) || [],
               status: 'draft',
-              scheduled_date: carousel.scheduledDate || null  // if generated
+              format: format || 'carousel',
+              generation_settings: {
+                mode,
+                wantImages,
+                numberOfCarousels,
+                model: TEXT_MODEL,
+                imageModel: IMAGE_MODEL
+              }
             })
             .select("id")
             .single();
