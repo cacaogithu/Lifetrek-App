@@ -20,11 +20,13 @@ import {
   ArrowRight,
   RefreshCw,
   LogOut,
-  Bot
+  Bot,
+  BookOpen
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SalesAgentChat } from "@/components/SalesAgentChat";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 
 interface Lead {
   id: string;
@@ -355,22 +357,26 @@ export default function SalesEngineerDashboard() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="action" className="space-y-4">
-          <TabsList className="grid w-full max-w-2xl grid-cols-4">
+          <TabsList className="grid w-full max-w-3xl grid-cols-5">
             <TabsTrigger value="action" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              Ação Pendente ({pendingAction.length})
+              <span className="hidden sm:inline">Ação Pendente</span> ({pendingAction.length})
             </TabsTrigger>
             <TabsTrigger value="priority" className="flex items-center gap-2">
               <Star className="h-4 w-4" />
-              Alta Prioridade ({highPriorityLeads.length})
+              <span className="hidden sm:inline">Alta Prior.</span> ({highPriorityLeads.length})
             </TabsTrigger>
             <TabsTrigger value="recent" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Recentes ({recentLeads.length})
+              <span className="hidden sm:inline">Recentes</span> ({recentLeads.length})
             </TabsTrigger>
             <TabsTrigger value="assistant" className="flex items-center gap-2">
               <Bot className="h-4 w-4" />
-              Assistente IA
+              <span className="hidden sm:inline">Assistente</span>
+            </TabsTrigger>
+            <TabsTrigger value="onboarding" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Onboarding</span>
             </TabsTrigger>
           </TabsList>
 
@@ -468,6 +474,12 @@ export default function SalesEngineerDashboard() {
           <TabsContent value="assistant">
             <div className="max-w-4xl mx-auto">
               <SalesAgentChat />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="onboarding">
+            <div className="max-w-4xl mx-auto">
+              <OnboardingChecklist />
             </div>
           </TabsContent>
         </Tabs>
