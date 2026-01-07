@@ -126,20 +126,21 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     // Fetch company assets (logos, ISO badge, etc.)
     const { data: companyAssets, error: companyAssetsError } = await supabase
       .from("company_assets")
-      .select("type, url, description");
+      .select("type, url, name, metadata");
 
     if (companyAssetsError) {
       console.warn("Could not fetch company assets (non-fatal):", companyAssetsError.message);
     }
 
     const companyAssetsContext = companyAssets?.map((a: any) => 
-      `- [${a.type.toUpperCase()}] URL: ${a.url} (${a.description || 'No description'})`
+      `- [${a.type.toUpperCase()}] URL: ${a.url} (${a.name || 'No name'})`
     ).join("\n") || "No company assets available.";
 
-    // Fetch products for visual reference
+    // Fetch processed product images for visual reference
     const { data: products, error: productsError } = await supabase
-      .from("products")
-      .select("name, image_url, category")
+      .from("processed_product_images")
+      .select("name, enhanced_url, category")
+      .eq("is_visible", true)
       .limit(15);
 
     if (productsError) {
@@ -147,8 +148,14 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     }
 
     const productsContext = products?.map((p: any) =>
-      `- [${p.category || 'general'}] ${p.name}: ${p.image_url}`
+      `- [${p.category || 'general'}] ${p.name}: ${p.enhanced_url}`
     ).join("\n") || "No product images available.";
+    
+    console.log("📚 RAG Context loaded:", { 
+      contentAssets: assets?.length || 0, 
+      companyAssets: companyAssets?.length || 0,
+      products: products?.length || 0 
+    });
 
     // Combined System Prompt with EMBEDDED CONTEXT
     const SYSTEM_PROMPT = constructSystemPrompt(assetsContext, companyAssetsContext, productsContext);
