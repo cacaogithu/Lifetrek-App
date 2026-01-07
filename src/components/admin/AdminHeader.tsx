@@ -15,6 +15,8 @@ import {
   BarChart3,
   Target,
   Crown,
+  Users,
+  Sparkles,
   LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,13 +32,15 @@ interface NavItem {
 
 const allNavItems: NavItem[] = [
   { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/admin/product-assets", label: "Assets", icon: Upload, requiresSuperAdmin: true },
-  { path: "/admin/environment-assets", label: "Ambiente", icon: Camera, requiresSuperAdmin: true },
-  { path: "/admin/image-processor", label: "Galeria", icon: Images },
-  { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
-  { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
+  { path: "/admin/leads", label: "Leads", icon: Users },
+  { path: "/admin/image-processor", label: "Imagens", icon: Sparkles },
+  { path: "/admin/gallery", label: "Galeria", icon: Images },
   { path: "/admin/blog", label: "Blog", icon: FileText },
   { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
+  { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
+  { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
+  { path: "/admin/product-assets", label: "Assets", icon: Upload, requiresSuperAdmin: true },
+  { path: "/admin/environment-assets", label: "Ambiente", icon: Camera, requiresSuperAdmin: true },
   { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3, requiresSuperAdmin: true },
   { path: "/admin/knowledge-base", label: "Knowledge", icon: BookOpen, requiresSuperAdmin: true },
 ];

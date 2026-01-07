@@ -43,6 +43,8 @@ const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
 const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
 const RejectionAnalytics = lazy(() => import("./pages/Admin/RejectionAnalytics"));
 const CampaignManagement = lazy(() => import("./pages/CampaignManagement"));
+const AdminLeads = lazy(() => import("./pages/admin/Leads"));
+const AdminGallery = lazy(() => import("./pages/admin/Gallery"));
 
 const queryClient = new QueryClient();
 
@@ -63,6 +65,8 @@ function AppContent() {
           <AdminLayout>
             <Routes>
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/leads" element={<AdminLeads />} />
+              <Route path="/admin/gallery" element={<AdminGallery />} />
               <Route path="/admin/product-assets" element={<ProductAssets />} />
               <Route path="/admin/environment-assets" element={<EnvironmentAssets />} />
               <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
