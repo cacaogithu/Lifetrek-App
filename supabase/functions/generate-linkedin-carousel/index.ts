@@ -66,11 +66,31 @@ serve(async (req: Request) => {
          const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
          if (!LOVABLE_API_KEY) throw new Error("Missing Lovable Key");
 
-         const finalPrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
-HEADLINE: ${headline}
-CONTEXT: ${slideBody}
-VISUAL DESCRIPTION: ${imagePrompt || "Professional medical manufacturing scene"}
-STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
+         // Clean prompt without literal HEADLINE:/CONTEXT: prefixes
+         const finalPrompt = `Crie uma imagem profissional para carrossel do LinkedIn da Lifetrek Medical.
+
+=== ESTILO OBRIGATÓRIO ===
+- Dimensões: 1080x1350px (retrato)
+- Cores da marca: Azul Primário #004F8F (dominante em fundos), Verde #1A7A3E (apenas micro-acentos), Laranja #F07818 (apenas CTAs)
+- Fundo: Gradiente escuro de #003052 para #004F8F
+- Fonte: Inter Bold para títulos, alto contraste branco sobre escuro
+- Estética: Premium, minimalista, alta tecnologia médica
+
+=== TEXTO A RENDERIZAR NA IMAGEM ===
+Renderize o seguinte título em fonte grande, branca, bold, centralizado:
+"${headline}"
+
+${slideBody ? `Subtexto (menor, abaixo do título):
+"${slideBody}"` : ""}
+
+=== DESCRIÇÃO VISUAL ===
+${imagePrompt || "Professional medical manufacturing scene, precision CNC machining, cleanroom environment"}
+
+=== REGRAS CRÍTICAS ===
+1. NÃO escreva "HEADLINE:", "CONTEXT:", "VISUAL:" ou qualquer label na imagem
+2. Texto deve ser CLARO, LEGÍVEL, alto contraste
+3. Logo "LM" pequena no canto inferior direito
+4. Estilo editorial premium, NÃO vendedor`;
 
         const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
             method: "POST",
@@ -78,7 +98,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
             body: JSON.stringify({
             model: IMAGE_MODEL,
             messages: [
-                { role: "system", content: "You are a professional medical designer." },
+                { role: "system", content: "You are an expert professional medical device designer. You create premium, editorial-quality LinkedIn slides with burned-in text. Never include label prefixes like 'HEADLINE:' in the image." },
                 { role: "user", content: finalPrompt }
             ],
             modalities: ["image", "text"]
@@ -318,72 +338,141 @@ IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
 
         // 2. Generate if needed
         if (!imageUrl && wantImages && (slide.backgroundType === "generate" || !slide.assetId)) {
-          try {
-            let imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
-HEADLINE: ${slide.headline}
-CONTEXT: ${slide.body}
-VISUAL DESCRIPTION: ${slide.imageGenerationPrompt || "Professional medical manufacturing scene"}
-STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
+          // Helper function for retry with exponential backoff
+          async function generateImageWithRetry(prompt: string, maxRetries = 3): Promise<Response | null> {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+              try {
+                const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                  method: "POST",
+                  headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    model: IMAGE_MODEL,
+                    messages: [
+                      { role: "system", content: "Você é um designer profissional de dispositivos médicos. Crie slides de LinkedIn premium com texto integrado ('burned-in'). NUNCA inclua prefixos como 'HEADLINE:', 'CONTEXT:', 'VISUAL:' na imagem. Use fonte Inter Bold para títulos." },
+                      { role: "user", content: prompt }
+                    ],
+                    modalities: ["image", "text"]
+                  }),
+                });
+                
+                if (res.status === 429) {
+                  console.warn(`Rate limited on attempt ${attempt}, waiting ${attempt * 2}s...`);
+                  await new Promise(r => setTimeout(r, attempt * 2000));
+                  continue;
+                }
+                if (res.ok) return res;
+                
+                console.warn(`Image gen attempt ${attempt} failed with status ${res.status}`);
+              } catch (e) {
+                console.error(`Image gen attempt ${attempt} error:`, e);
+              }
+              
+              if (attempt < maxRetries) {
+                await new Promise(r => setTimeout(r, attempt * 1000));
+              }
+            }
+            return null;
+          }
 
-            // Handling Text Placement Strategy (Strategist Decision)
+          try {
+            // Clean prompt structure without literal HEADLINE:/CONTEXT: that get rendered
+            let imagePrompt = `Crie uma imagem profissional para carrossel do LinkedIn da Lifetrek Medical.
+
+=== ESTILO OBRIGATÓRIO ===
+- Dimensões: 1080x1350px (retrato)
+- Cores da marca: Azul Primário #004F8F (dominante), Verde #1A7A3E (micro-acentos), Laranja #F07818 (CTAs)
+- Fundo: Gradiente premium de #0A1628 para #004F8F
+- Fonte: Inter Bold (títulos), Inter SemiBold (corpo)
+- Alto contraste: Texto BRANCO sobre fundo ESCURO
+- Estética: Premium, editorial, alta tecnologia médica
+
+=== DESCRIÇÃO VISUAL ===
+${slide.imageGenerationPrompt || "Professional medical manufacturing, precision CNC, cleanroom"}`;
+
+            // Handling Text Placement Strategy
             if (slide.textPlacement === "burned_in") {
-                imagePrompt += `\nIMPORTANT: You MUST render the headline text ("${slide.headline}") CLEARLY and LEGIBLY inside the image. Integrated professional typography.`;
+              imagePrompt += `
+
+=== TEXTO A RENDERIZAR (BURNED-IN) ===
+Título (fonte GRANDE, BOLD, BRANCO, centralizado):
+"${slide.headline}"
+
+${slide.body ? `Subtexto (menor, abaixo do título, max 2 linhas):
+"${slide.body.split(' ').slice(0, 15).join(' ')}${slide.body.split(' ').length > 15 ? '...' : ''}"` : ""}`;
             } else {
-                imagePrompt += `\nIMPORTANT: Create a clean, abstract background optimized for professional presentation.`;
+              imagePrompt += `
+
+=== MODO CLEAN ===
+Crie um fundo visual premium SEM texto renderizado.
+Fundo abstrato profissional, texturas médicas sutis, ready for text overlay.`;
             }
 
-            // Handle Logo Integration
-            if (slide.showLogo && companyAssets) {
-              const logo = companyAssets.find((a: any) => a.type === 'lifetrek_logo');
-              if (logo) {
-                const position = slide.logoPosition || 'top-right';
-                imagePrompt += `\n\nBRANDING: Include the Lifetrek Medical logo at the ${position} corner of the image.`;
-                imagePrompt += `\nLogo should be subtle but visible, professional placement.`;
-              }
+            imagePrompt += `
+
+=== REGRAS CRÍTICAS ===
+1. NUNCA escreva "HEADLINE:", "CONTEXT:", "VISUAL:", "DESCRIPTION:" ou qualquer label/prefixo na imagem
+2. Texto deve ser CLARO, LEGÍVEL, profissional
+3. Estilo editorial premium, NÃO vendedor ou genérico
+4. Use a paleta de cores da marca consistentemente`;
+
+            // Handle Logo - will be overlaid via image editing in next step
+            const logoPosition = slide.logoPosition || 'bottom-right';
+            if (slide.showLogo) {
+              imagePrompt += `\n5. Reserve espaço para logo no canto ${logoPosition}`;
             }
 
             // Handle ISO Badge Integration
-            if (slide.showISOBadge && companyAssets) {
-              const isoBadge = companyAssets.find((a: any) => a.type === 'iso_13485_logo');
-              if (isoBadge) {
-                imagePrompt += `\n\nCERTIFICATION: Include the ISO 13485:2016 certification badge.`;
-                imagePrompt += `\nBadge should be prominently displayed to emphasize quality standards.`;
-              }
+            if (slide.showISOBadge) {
+              imagePrompt += `\n6. Inclua indicação visual de certificação ISO 13485:2016`;
             }
 
-            // Handle Product Reference Images
-            if (slide.productReferenceUrls && slide.productReferenceUrls.length > 0) {
-              imagePrompt += `\n\nPRODUCT REFERENCES: Use the following product images as visual reference for technical accuracy:`;
-              slide.productReferenceUrls.forEach((url: string, idx: number) => {
-                imagePrompt += `\n${idx + 1}. ${url}`;
-              });
-              imagePrompt += `\nIncorporate visual elements from these products to ensure authenticity and technical precision.`;
-            }
-
-            const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: IMAGE_MODEL, // Nano Banana Pro 3.0
-                messages: [
-                  { role: "system", content: "You are an expert design agent using Gemini 3 Pro (Nano Banana). You excel at high-fidelity text rendering." },
-                  { role: "user", content: imagePrompt }
-                ],
-                modalities: ["image", "text"]
-              }),
-            });
+            // Generate base image with retry logic
+            const imgRes = await generateImageWithRetry(imagePrompt);
             
-            if (!imgRes.ok) {
-              if (imgRes.status === 429) {
-                console.warn("Image generation rate limited, skipping this slide");
-              } else if (imgRes.status === 402) {
-                console.warn("Image generation payment required, skipping this slide");
-              } else {
-                console.warn(`Image generation error: ${imgRes.status}`);
-              }
-            } else {
+            if (imgRes) {
               const imgData = await imgRes.json();
-              imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+              let baseImageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+              
+              // Overlay real logo via image editing if showLogo is true and we have the asset
+              if (baseImageUrl && slide.showLogo && companyAssets) {
+                const logoAsset = companyAssets.find((a: any) => a.type === 'logo' || a.type === 'lifetrek_logo');
+                if (logoAsset?.url) {
+                  try {
+                    console.log(`Overlaying real logo at ${logoPosition}...`);
+                    const overlayRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                      method: "POST",
+                      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        model: IMAGE_MODEL,
+                        messages: [{
+                          role: "user",
+                          content: [
+                            { type: "text", text: `Add this company logo to the ${logoPosition} corner of the slide image. Keep the logo clear, professional, and properly sized (not too large). Maintain the original image quality and composition.` },
+                            { type: "image_url", image_url: { url: baseImageUrl } },
+                            { type: "image_url", image_url: { url: logoAsset.url } }
+                          ]
+                        }],
+                        modalities: ["image", "text"]
+                      }),
+                    });
+                    
+                    if (overlayRes.ok) {
+                      const overlayData = await overlayRes.json();
+                      const overlayedUrl = overlayData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+                      if (overlayedUrl) {
+                        baseImageUrl = overlayedUrl;
+                        console.log("Logo overlay successful");
+                      }
+                    }
+                  } catch (logoErr) {
+                    console.warn("Logo overlay failed, using base image:", logoErr);
+                  }
+                }
+              }
+              
+              imageUrl = baseImageUrl;
+            } else {
+              console.warn("All image generation attempts failed for this slide");
             }
           } catch (e) {
             console.error("Image gen error", e);
