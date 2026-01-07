@@ -414,8 +414,8 @@ export default function LinkedInCarousel() {
   };
 
   const handleGenerate = async () => {
-    if (!topic || !targetAudience || !painPoint) {
-      toast.error("Please fill in at least Topic, Target Audience, and Pain Point");
+    if (!topic) {
+      toast.error("Por favor, descreva sobre o que é o post");
       return;
     }
 
@@ -1135,151 +1135,213 @@ export default function LinkedInCarousel() {
               <Card className="max-w-3xl mx-auto">
                 <CardHeader>
                   <CardTitle>Briefing de Conteúdo</CardTitle>
-                  <CardDescription>Preencha os campos abaixo para gerar seu carrossel.</CardDescription>
+                  <CardDescription>Descreva o que você quer criar. Campos opcionais ajudam a direcionar melhor o conteúdo.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-5">
-                  {/* Essential Fields */}
-                  <div className="grid gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <Label className="text-sm font-medium">Tópico *</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Ex: "5 Mitos sobre Usinagem Suíça" ou "Como Reduzir Recalls"</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                      <Input 
-                        value={topic} 
-                        onChange={e => setTopic(e.target.value)} 
-                        placeholder="Tema principal do carrossel"
-                        className="h-11"
-                      />
+                  {/* Main Content Field */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Label className="text-sm font-medium">Sobre o que é o post? *</Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p>Descreva livremente: pode ser sobre a Lifetrek, um problema do mercado, uma tecnologia, um case, etc.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium mb-1.5 block">Público Alvo *</Label>
-                        <Select value={targetAudience} onValueChange={setTargetAudience}>
-                          <SelectTrigger className="h-11">
-                            <SelectValue placeholder="Selecionar público..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Fabricantes ortopédicos">Fabricantes Ortopédicos</SelectItem>
-                            <SelectItem value="P&D de dispositivos médicos">P&D de Dispositivos Médicos</SelectItem>
-                            <SelectItem value="Gestores de qualidade">Gestores de Qualidade</SelectItem>
-                            <SelectItem value="Compradores hospitalares">Compradores Hospitalares</SelectItem>
-                            <SelectItem value="Engenheiros de produção">Engenheiros de Produção</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium mb-1.5 block">Formato</Label>
-                        <Select value={format} onValueChange={(v: any) => setFormat(v)}>
-                          <SelectTrigger className="h-11">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="carousel">Carrossel (5 slides)</SelectItem>
-                            <SelectItem value="single-image">Post Único</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    {/* Post Type Selection */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div
-                        onClick={() => setPostType("value")}
-                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
-                          postType === "value" 
-                            ? "border-primary bg-primary/5" 
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className={`w-3 h-3 rounded-full ${postType === "value" ? "bg-primary" : "bg-muted"}`} />
-                          <span className="font-semibold text-sm">Post de Valor</span>
-                          <Badge variant="secondary" className="text-[10px]">80%</Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          Educacional, insight, behind-the-scenes. CTA leve (PDF, checklist, DM).
-                        </p>
-                      </div>
-                      <div
-                        onClick={() => setPostType("commercial")}
-                        className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
-                          postType === "commercial" 
-                            ? "border-primary bg-primary/5" 
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className={`w-3 h-3 rounded-full ${postType === "commercial" ? "bg-primary" : "bg-muted"}`} />
-                          <span className="font-semibold text-sm">Post Comercial</span>
-                          <Badge variant="outline" className="text-[10px]">20%</Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          Ofertas diretas, capacidade, pilotos. CTA mais forte.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label className="text-sm font-medium mb-1.5 block">Dor do Cliente</Label>
-                      <Textarea 
-                        value={painPoint} 
-                        onChange={e => setPainPoint(e.target.value)} 
-                        placeholder="Qual problema do cliente você quer abordar? (opcional para Plano, obrigatório para Geração Rápida)"
-                        className="min-h-[80px] resize-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Batch Option */}
-                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <Label className="text-sm font-medium">Variações</Label>
-                      <p className="text-xs text-muted-foreground">Gere múltiplas opções para escolher</p>
-                    </div>
-                    <Input 
-                      type="number" 
-                      min={1} 
-                      max={5} 
-                      value={numberOfCarousels} 
-                      onChange={e => setNumberOfCarousels(parseInt(e.target.value) || 1)} 
-                      className="w-16 h-9 text-center"
+                    <Textarea 
+                      value={topic} 
+                      onChange={e => setTopic(e.target.value)} 
+                      placeholder="Ex: Nossas salas limpas ISO 7, como reduzir custos em implantes, 5 mitos sobre usinagem suíça..."
+                      className="min-h-[100px] resize-none"
                     />
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <Button 
-                      onClick={handleCreatePlan} 
-                      disabled={isGenerating || !topic || !targetAudience} 
-                      variant="outline" 
-                      size="lg" 
-                      className="h-auto py-4 flex flex-col gap-1 items-center"
-                    >
-                      {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Layout className="mb-1 h-5 w-5" />}
-                      <span className="font-semibold">Gerar Plano</span>
-                      <span className="text-xs font-normal opacity-70">Revisar 3 estratégias</span>
-                    </Button>
+                  {/* Reference Image Upload */}
+                  <div>
+                    <Label className="text-sm font-medium mb-1.5 block">Imagem de Referência (opcional)</Label>
+                    <div className="flex items-center gap-3">
+                      <label className="flex-1">
+                        <div className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 transition-colors">
+                          <ImageIcon className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Arraste ou clique para adicionar uma imagem que a IA deve usar como referência</span>
+                        </div>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              setProofPoints(ev.target?.result as string || "");
+                              toast.success("Imagem de referência adicionada");
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }} />
+                      </label>
+                      {proofPoints && proofPoints.startsWith("data:image") && (
+                        <div className="relative w-20 h-20">
+                          <img src={proofPoints} alt="Referência" className="w-full h-full object-cover rounded-lg" />
+                          <Button 
+                            variant="destructive" 
+                            size="icon" 
+                            className="absolute -top-2 -right-2 h-6 w-6"
+                            onClick={() => setProofPoints("")}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Target Audience - Optional Multi-select */}
+                    <div>
+                      <Label className="text-sm font-medium mb-1.5 block">Público Alvo (opcional)</Label>
+                      <Select value={targetAudience} onValueChange={setTargetAudience}>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Geral (todos)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Geral">Geral (todos)</SelectItem>
+                          <SelectItem value="Fabricantes ortopédicos">Fabricantes Ortopédicos</SelectItem>
+                          <SelectItem value="Fabricantes odontológicos">Fabricantes Odontológicos</SelectItem>
+                          <SelectItem value="P&D de dispositivos médicos">P&D de Dispositivos Médicos</SelectItem>
+                          <SelectItem value="Gestores de qualidade">Gestores de Qualidade</SelectItem>
+                          <SelectItem value="Compradores hospitalares">Compradores Hospitalares</SelectItem>
+                          <SelectItem value="Engenheiros de produção">Engenheiros de Produção</SelectItem>
+                          <SelectItem value="Startups de medtech">Startups de MedTech</SelectItem>
+                          <SelectItem value="Sobre a Lifetrek">Sobre a Lifetrek (institucional)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium mb-1.5 block">Formato</Label>
+                      <Select value={format} onValueChange={(v: any) => setFormat(v)}>
+                        <SelectTrigger className="h-11">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="carousel">Carrossel (5 slides)</SelectItem>
+                          <SelectItem value="single-image">Post Único</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Pain Points - Optional Multi-select */}
+                  <div>
+                    <Label className="text-sm font-medium mb-1.5 block">Dores do Mercado (opcional)</Label>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {[
+                        "Recalls e problemas de qualidade",
+                        "Custos altos de produção",
+                        "Lead times longos",
+                        "Dificuldade em escalar",
+                        "Compliance regulatório",
+                        "Falta de fornecedores qualificados",
+                        "Tolerâncias apertadas",
+                        "Acabamento superficial crítico"
+                      ].map((pain) => (
+                        <Badge 
+                          key={pain}
+                          variant={painPoint.includes(pain) ? "default" : "outline"}
+                          className="cursor-pointer hover:bg-primary/20 transition-colors"
+                          onClick={() => {
+                            if (painPoint.includes(pain)) {
+                              setPainPoint(painPoint.replace(pain, "").replace(/,\s*,/g, ",").replace(/^,\s*|,\s*$/g, "").trim());
+                            } else {
+                              setPainPoint(painPoint ? `${painPoint}, ${pain}` : pain);
+                            }
+                          }}
+                        >
+                          {pain}
+                        </Badge>
+                      ))}
+                    </div>
+                    <Input 
+                      value={painPoint.split(",").filter(p => ![
+                        "Recalls e problemas de qualidade",
+                        "Custos altos de produção",
+                        "Lead times longos",
+                        "Dificuldade em escalar",
+                        "Compliance regulatório",
+                        "Falta de fornecedores qualificados",
+                        "Tolerâncias apertadas",
+                        "Acabamento superficial crítico"
+                      ].includes(p.trim())).join(", ").trim()}
+                      onChange={e => {
+                        const selectedPains = painPoint.split(",").filter(p => [
+                          "Recalls e problemas de qualidade",
+                          "Custos altos de produção",
+                          "Lead times longos",
+                          "Dificuldade em escalar",
+                          "Compliance regulatório",
+                          "Falta de fornecedores qualificados",
+                          "Tolerâncias apertadas",
+                          "Acabamento superficial crítico"
+                        ].includes(p.trim())).join(", ");
+                        const customPain = e.target.value;
+                        setPainPoint(selectedPains && customPain ? `${selectedPains}, ${customPain}` : selectedPains || customPain);
+                      }}
+                      placeholder="Ou digite outra dor específica..."
+                      className="h-9 text-sm"
+                    />
+                  </div>
+
+                  {/* Post Type Selection */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div
+                      onClick={() => setPostType("value")}
+                      className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
+                        postType === "value" 
+                          ? "border-primary bg-primary/5" 
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-3 h-3 rounded-full ${postType === "value" ? "bg-primary" : "bg-muted"}`} />
+                        <span className="font-semibold text-sm">Post de Valor</span>
+                        <Badge variant="secondary" className="text-[10px]">80%</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Educacional, insight, behind-the-scenes. CTA leve.
+                      </p>
+                    </div>
+                    <div
+                      onClick={() => setPostType("commercial")}
+                      className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
+                        postType === "commercial" 
+                          ? "border-primary bg-primary/5" 
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-3 h-3 rounded-full ${postType === "commercial" ? "bg-primary" : "bg-muted"}`} />
+                        <span className="font-semibold text-sm">Post Comercial</span>
+                        <Badge variant="outline" className="text-[10px]">20%</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Ofertas diretas, capacidade, pilotos.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-2">
                     <Button 
                       onClick={handleGenerate} 
-                      disabled={isGenerating || !topic || !targetAudience || !painPoint} 
+                      disabled={isGenerating || !topic} 
                       size="lg" 
-                      className="h-auto py-4 flex flex-col gap-1 items-center"
+                      className="w-full h-auto py-4 flex flex-col gap-1 items-center"
                     >
                       {isGenerating ? <Loader2 className="animate-spin mb-1" /> : <Wand2 className="mb-1 h-5 w-5" />}
-                      <span className="font-semibold">Geração Rápida</span>
-                      <span className="text-xs font-normal opacity-70">Produção imediata</span>
+                      <span className="font-semibold">Gerar Carrossel</span>
+                      <span className="text-xs font-normal opacity-70">A IA vai criar o conteúdo completo</span>
                     </Button>
                   </div>
 
