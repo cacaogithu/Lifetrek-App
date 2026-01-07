@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, CheckCircle2, Pencil, Eye, Image, Sparkles } from "lucide-react";
+import { Loader2, CheckCircle2, Pencil, Eye, Image, Sparkles, Clock, Database, Lightbulb, Target, Search, Palette } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { useEffect, useState } from "react";
 
 export interface GenerationStep {
   id: string;
@@ -10,6 +12,21 @@ export interface GenerationStep {
   status: "pending" | "active" | "done";
   content?: string;
   icon: "strategist" | "analyst" | "images";
+  durationMs?: number;
+}
+
+export interface RAGContext {
+  documentCount: number;
+  assetsCount: number;
+  productsCount: number;
+  sources?: string[];
+}
+
+export interface AgentOutput {
+  agent: string;
+  type: "rag_loaded" | "industry_data" | "angle_selected" | "hook_refined" | "proof_added" | "image_progress" | "critique";
+  message: string;
+  details?: Record<string, any>;
 }
 
 interface GenerationProgressProps {
@@ -19,6 +36,10 @@ interface GenerationProgressProps {
   analystFullOutput?: string;
   designerFullOutput?: string;
   agentStatus?: { agent: string; status: string; message: string };
+  ragContext?: RAGContext;
+  agentOutputs?: AgentOutput[];
+  startTime?: number;
+  imageProgress?: { current: number; total: number };
 }
 
 const iconMap = {
@@ -27,9 +48,24 @@ const iconMap = {
   images: Image,
 };
 
-const roleLabels = {
-  strategist: "Estrategista",
-  analyst: "Copywriter",
+const agentOutputIcons: Record<string, any> = {
+  rag_loaded: Database,
+  industry_data: Search,
+  angle_selected: Target,
+  hook_refined: Lightbulb,
+  proof_added: CheckCircle2,
+  image_progress: Palette,
+  critique: Eye,
+};
+
+const agentOutputColors: Record<string, string> = {
+  rag_loaded: "text-cyan-500",
+  industry_data: "text-amber-500",
+  angle_selected: "text-blue-500",
+  hook_refined: "text-purple-500",
+  proof_added: "text-green-500",
+  image_progress: "text-pink-500",
+  critique: "text-orange-500",
 };
 
 export function GenerationProgress({ 
@@ -38,18 +74,52 @@ export function GenerationProgress({
   strategistFullOutput,
   analystFullOutput,
   designerFullOutput,
-  agentStatus
+  agentStatus,
+  ragContext,
+  agentOutputs = [],
+  startTime,
+  imageProgress
 }: GenerationProgressProps) {
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  // Live timer
+  useEffect(() => {
+    if (!startTime) return;
+    
+    const interval = setInterval(() => {
+      setElapsedTime(Date.now() - startTime);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [startTime]);
+
+  const formatTime = (ms: number) => {
+    const seconds = Math.floor(ms / 1000);
+    const tenths = Math.floor((ms % 1000) / 100);
+    return `${seconds}.${tenths}s`;
+  };
+
+  // Calculate total duration from completed steps
+  const totalDuration = steps.reduce((acc, s) => acc + (s.durationMs || 0), 0);
+
   return (
     <Card className="border-primary/20 bg-card/50 backdrop-blur">
       <CardHeader className="py-3 px-4 border-b">
-        <CardTitle className="text-sm flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-          Geração em Andamento
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+            Geração em Andamento
+          </CardTitle>
+          {startTime && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="h-4 w-4" />
+              <span className="font-mono">{formatTime(elapsedTime)}</span>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="pt-4 space-y-4">
-        {/* Steps Progress */}
+        {/* Steps Progress with Duration */}
         <div className="flex items-center gap-2 flex-wrap">
           {steps.map((step, index) => {
             const Icon = iconMap[step.icon];
@@ -72,8 +142,8 @@ export function GenerationProgress({
                     <Icon className="h-4 w-4" />
                   )}
                   <span className="font-medium">{step.label}</span>
-                  {step.content && (
-                    <span className="text-xs opacity-70">({step.content})</span>
+                  {step.durationMs && step.status === "done" && (
+                    <span className="text-xs opacity-70">({formatTime(step.durationMs)})</span>
                   )}
                 </div>
                 {index < steps.length - 1 && (
@@ -88,9 +158,93 @@ export function GenerationProgress({
           })}
         </div>
 
-        {/* Live Output Display */}
+        {/* RAG Context Info */}
+        {ragContext && (ragContext.documentCount > 0 || ragContext.assetsCount > 0) && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-cyan-500/10 rounded-lg p-3 border border-cyan-500/20"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Database className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+              <span className="text-sm font-medium text-cyan-700 dark:text-cyan-300">
+                Contexto RAG Carregado
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {ragContext.documentCount > 0 && (
+                <Badge variant="outline" className="text-xs border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
+                  📚 {ragContext.documentCount} docs Knowledge Base
+                </Badge>
+              )}
+              {ragContext.assetsCount > 0 && (
+                <Badge variant="outline" className="text-xs border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
+                  🖼️ {ragContext.assetsCount} assets disponíveis
+                </Badge>
+              )}
+              {ragContext.productsCount > 0 && (
+                <Badge variant="outline" className="text-xs border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
+                  📦 {ragContext.productsCount} produtos referenciados
+                </Badge>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Image Generation Progress */}
+        {imageProgress && imageProgress.total > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-pink-500/10 rounded-lg p-3 border border-pink-500/20"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Palette className="h-4 w-4 text-pink-600 dark:text-pink-400 animate-pulse" />
+                <span className="text-sm font-medium text-pink-700 dark:text-pink-300">
+                  Designer Gerando Imagens
+                </span>
+              </div>
+              <span className="text-xs text-pink-600 dark:text-pink-400">
+                Slide {imageProgress.current}/{imageProgress.total}
+              </span>
+            </div>
+            <Progress 
+              value={(imageProgress.current / imageProgress.total) * 100} 
+              className="h-2 bg-pink-200 dark:bg-pink-900"
+            />
+          </motion.div>
+        )}
+
+        {/* Live Agent Outputs Stream */}
         <ScrollArea className="max-h-[300px]">
           <div className="space-y-3">
+            {/* Agent Outputs Timeline */}
+            {agentOutputs.length > 0 && (
+              <div className="space-y-2">
+                {agentOutputs.map((output, idx) => {
+                  const Icon = agentOutputIcons[output.type] || Sparkles;
+                  const colorClass = agentOutputColors[output.type] || "text-primary";
+                  
+                  return (
+                    <motion.div
+                      key={`${output.type}-${idx}`}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="flex items-start gap-2 text-sm"
+                    >
+                      <Icon className={`h-4 w-4 mt-0.5 ${colorClass}`} />
+                      <div className="flex-1">
+                        <span className="font-medium capitalize">{output.agent}:</span>{" "}
+                        <span className="text-muted-foreground">{output.message}</span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+
             {/* Strategist Full Output */}
             {strategistFullOutput && (
               <motion.div
@@ -223,6 +377,31 @@ export function GenerationProgress({
             )}
           </div>
         </ScrollArea>
+
+        {/* Duration Breakdown (when complete) */}
+        {totalDuration > 0 && steps.every(s => s.status === "done") && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-green-500/10 rounded-lg p-3 border border-green-500/20"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                ✅ Geração Completa
+              </span>
+              <span className="text-sm font-mono text-green-600 dark:text-green-400">
+                Total: {formatTime(totalDuration)}
+              </span>
+            </div>
+            <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+              {steps.map(s => s.durationMs && (
+                <span key={s.id}>
+                  {s.label}: {formatTime(s.durationMs)}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </CardContent>
     </Card>
   );
