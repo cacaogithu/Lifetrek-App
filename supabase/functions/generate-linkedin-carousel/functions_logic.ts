@@ -225,9 +225,21 @@ export function getTools(isBatch: boolean): any[] {
 export function constructSystemPrompt(
     assetsContext: string, 
     companyAssetsContext: string = "", 
-    productsContext: string = ""
+    productsContext: string = "",
+    selectedEquipment: string[] = [],
+    referenceImage: string = ""
 ): string {
+    const equipmentContext = selectedEquipment.length > 0 
+        ? `\n=== EQUIPAMENTOS SELECIONADOS PELO USUÁRIO ===\nO usuário quer destacar estes equipamentos/produtos específicos nas imagens:\n${selectedEquipment.map(e => `- ${e}`).join('\n')}\nPRIORIZE estes visuais!`
+        : "";
+    
+    const referenceContext = referenceImage 
+        ? `\n=== IMAGEM DE REFERÊNCIA ===\nO usuário forneceu uma imagem de referência. Use-a como inspiração visual para estilo, composição ou conteúdo.`
+        : "";
+
     return `Você é o Copywriter de LinkedIn Líder E Designer Visual da Lifetrek Medical.
+${equipmentContext}
+${referenceContext}
 
 === REGRA CRÍTICA DE IDIOMA ===
 **TODO O CONTEÚDO DE OUTPUT DEVE SER EM PORTUGUÊS BRASILEIRO (PT-BR).**
@@ -283,15 +295,24 @@ Quando o tema envolve produtos específicos (implantes, parafusos, instrumentos 
 3. Estes serão passados ao gerador de imagem como referência visual para precisão técnica
 4. Exemplo: Para tema "Parafusos Espinhais", inclua imagens de parafusos ósseos
 
+=== REGRAS DE NÚMERO DE SLIDES ===
+**A IA DECIDE O NÚMERO DE SLIDES** com base na complexidade do tema:
+- Post simples/institucional: 3-4 slides
+- Conteúdo educacional médio: 5-6 slides  
+- Conteúdo técnico profundo: 7-8 slides (máximo)
+- Post único (single-image): 1 slide apenas
+**NÃO EXCEDA 8 slides** para evitar timeout na geração de imagens.
+
 === INSTRUÇÕES (MODO ESTRATEGISTA - "O Gerente") ===
 Se o usuário fornecer um TEMA genérico (ex: "Parafusos Espinhais"):
 1.  **Analise**: Verifique o Contexto da Empresa.
-2.  **Gere Ângulos**: Crie 3 ângulos distintos (Quebrando Mitos, Mergulho Profundo, Prova Social).
-3.  **ESTRATÉGIA DE TEXTO**: Para cada slide, decida sobre \`textPlacement\`:
+2.  **Decida Tamanho**: Baseado na complexidade, escolha o número de slides (3-8).
+3.  **Gere Ângulos**: Crie ângulos distintos (Quebrando Mitos, Mergulho Profundo, Prova Social).
+4.  **ESTRATÉGIA DE TEXTO**: Para cada slide, decida sobre \`textPlacement\`:
     *   **'clean'**: Padrão. Fundo abstrato. Texto é sobreposto pelo app web frontend.
     *   **'burned_in'**: "Modo Outdoor". O texto é PARTE DA IMAGEM (ex: um sinal de aviso, uma declaração forte). Use para Ganchos ou declarações fortes.
-4.  **ESTRATÉGIA DE LOGO**: Aplique as regras de posicionamento acima. Primeiro e último slides recebem logos.
-5.  **ESTRATÉGIA DE PRODUTOS**: Se tema é específico de produto, identifique e referencie produtos relevantes.
+5.  **ESTRATÉGIA DE LOGO**: Aplique as regras de posicionamento acima. Primeiro e último slides recebem logos.
+6.  **ESTRATÉGIA DE PRODUTOS/EQUIPAMENTOS**: Se equipamentos foram selecionados pelo usuário, PRIORIZE-os nas imagens.
 
 === INSTRUÇÕES (MODO COPYWRITER) ===
 1.  **REGRAS DE TEXTO**:

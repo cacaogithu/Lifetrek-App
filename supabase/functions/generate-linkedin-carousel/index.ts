@@ -42,24 +42,30 @@ serve(async (req: Request) => {
   try {
     const {
       topic,
-      targetAudience,
-      painPoint,
-      desiredOutcome,
-      proofPoints,
-      ctaAction,
+      targetAudience = "Geral",
+      painPoint = "",
+      desiredOutcome = "",
+      proofPoints = "",
+      ctaAction = "",
       format = "carousel",
       wantImages = true,
       numberOfCarousels = 1,
       mode = "generate", // 'generate', 'image_only', 'plan'
+      postType = "value",
+      // New optional fields
+      selectedEquipment = [], // Array of equipment/product names
+      referenceImage = "", // Base64 or URL of reference image
+      batchMode = false, // For terminal batch generation
+      scheduledDate = null, // For scheduling
       // For image_only mode
       headline,
       body: slideBody,
       imagePrompt
     } = await req.json();
 
-    const isBatch = (numberOfCarousels > 1) || (mode === 'plan'); // Plan mode always implies batch of options
+    const isBatch = (numberOfCarousels > 1) || (mode === 'plan') || batchMode;
 
-    console.log("Generating LinkedIn content:", { topic, mode, isBatch });
+    console.log("Generating LinkedIn content:", { topic, mode, isBatch, postType, equipmentCount: selectedEquipment?.length || 0 });
 
     // --- HANDLE IMAGE ONLY MODE ---
     if (mode === "image_only") {
@@ -176,7 +182,7 @@ ${imagePrompt || "Professional medical manufacturing scene, precision CNC machin
     });
 
     // Combined System Prompt with EMBEDDED CONTEXT
-    const SYSTEM_PROMPT = constructSystemPrompt(assetsContext, companyAssetsContext, productsContext);
+    const SYSTEM_PROMPT = constructSystemPrompt(assetsContext, companyAssetsContext, productsContext, selectedEquipment, referenceImage);
 
     // Construct User Prompt
     let userPrompt = constructUserPrompt(topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, isBatch, numberOfCarousels);
