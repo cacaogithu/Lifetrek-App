@@ -473,11 +473,16 @@ export type Database = {
           admin_notes: string | null
           annual_volume: string | null
           assigned_to: string | null
+          city: string | null
+          cnpj: string | null
           company: string | null
           created_at: string
           email: string
+          employees: string | null
           id: string
+          industry: string | null
           lead_score: number | null
+          linkedin_url: string | null
           message: string | null
           name: string
           phone: string
@@ -486,20 +491,29 @@ export type Database = {
           project_types:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          revenue_range: string | null
           score_breakdown: Json | null
+          source: string | null
+          state: string | null
           status: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at: string
+          website: string | null
         }
         Insert: {
           admin_notes?: string | null
           annual_volume?: string | null
           assigned_to?: string | null
+          city?: string | null
+          cnpj?: string | null
           company?: string | null
           created_at?: string
           email: string
+          employees?: string | null
           id?: string
+          industry?: string | null
           lead_score?: number | null
+          linkedin_url?: string | null
           message?: string | null
           name: string
           phone: string
@@ -508,20 +522,29 @@ export type Database = {
           project_types?:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          revenue_range?: string | null
           score_breakdown?: Json | null
+          source?: string | null
+          state?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at?: string
+          website?: string | null
         }
         Update: {
           admin_notes?: string | null
           annual_volume?: string | null
           assigned_to?: string | null
+          city?: string | null
+          cnpj?: string | null
           company?: string | null
           created_at?: string
           email?: string
+          employees?: string | null
           id?: string
+          industry?: string | null
           lead_score?: number | null
+          linkedin_url?: string | null
           message?: string | null
           name?: string
           phone?: string
@@ -530,10 +553,14 @@ export type Database = {
           project_types?:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          revenue_range?: string | null
           score_breakdown?: Json | null
+          source?: string | null
+          state?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements?: string
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {
