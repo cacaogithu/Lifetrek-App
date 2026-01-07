@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          permission_level: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id?: string
+          permission_level?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          permission_level?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
@@ -446,11 +473,16 @@ export type Database = {
           admin_notes: string | null
           annual_volume: string | null
           assigned_to: string | null
+          city: string | null
+          cnpj: string | null
           company: string | null
           created_at: string
           email: string
+          employees: string | null
           id: string
+          industry: string | null
           lead_score: number | null
+          linkedin_url: string | null
           message: string | null
           name: string
           phone: string
@@ -459,20 +491,29 @@ export type Database = {
           project_types:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          revenue_range: string | null
           score_breakdown: Json | null
+          source: string | null
+          state: string | null
           status: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at: string
+          website: string | null
         }
         Insert: {
           admin_notes?: string | null
           annual_volume?: string | null
           assigned_to?: string | null
+          city?: string | null
+          cnpj?: string | null
           company?: string | null
           created_at?: string
           email: string
+          employees?: string | null
           id?: string
+          industry?: string | null
           lead_score?: number | null
+          linkedin_url?: string | null
           message?: string | null
           name: string
           phone: string
@@ -481,20 +522,29 @@ export type Database = {
           project_types?:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          revenue_range?: string | null
           score_breakdown?: Json | null
+          source?: string | null
+          state?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at?: string
+          website?: string | null
         }
         Update: {
           admin_notes?: string | null
           annual_volume?: string | null
           assigned_to?: string | null
+          city?: string | null
+          cnpj?: string | null
           company?: string | null
           created_at?: string
           email?: string
+          employees?: string | null
           id?: string
+          industry?: string | null
           lead_score?: number | null
+          linkedin_url?: string | null
           message?: string | null
           name?: string
           phone?: string
@@ -503,10 +553,14 @@ export type Database = {
           project_types?:
             | Database["public"]["Enums"]["project_type_option"][]
             | null
+          revenue_range?: string | null
           score_breakdown?: Json | null
+          source?: string | null
+          state?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements?: string
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {
@@ -645,6 +699,9 @@ export type Database = {
           id: string
           language: string
           niche: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
           status: string
           title: string
           updated_at: string
@@ -658,6 +715,9 @@ export type Database = {
           id?: string
           language?: string
           niche?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -671,6 +731,9 @@ export type Database = {
           id?: string
           language?: string
           niche?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           status?: string
           title?: string
           updated_at?: string
@@ -789,6 +852,9 @@ export type Database = {
           pain_point: string | null
           performance_metrics: Json | null
           proof_points: string | null
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
           slides: Json
           status: string | null
           target_audience: string
@@ -809,6 +875,9 @@ export type Database = {
           pain_point?: string | null
           performance_metrics?: Json | null
           proof_points?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           slides: Json
           status?: string | null
           target_audience: string
@@ -829,6 +898,9 @@ export type Database = {
           pain_point?: string | null
           performance_metrics?: Json | null
           proof_points?: string | null
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
           slides?: Json
           status?: string | null
           target_audience?: string
@@ -917,6 +989,36 @@ export type Database = {
           id?: string
           search_query?: string | null
           sources?: string[] | null
+        }
+        Relationships: []
+      }
+      onboarding_progress: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          item_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          item_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          item_key?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1110,6 +1212,7 @@ export type Database = {
     }
     Functions: {
       extract_domain_from_email: { Args: { email: string }; Returns: string }
+      get_admin_permission_level: { Args: never; Returns: string }
       get_top_customer_interests: {
         Args: { limit_count?: number }
         Returns: {
@@ -1126,6 +1229,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_super_admin: { Args: never; Returns: boolean }
       match_knowledge: {
         Args: {
           filter_source_type?: string
@@ -1160,7 +1264,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "super_admin"
       lead_priority: "low" | "medium" | "high"
       lead_status:
         | "new"
@@ -1307,7 +1411,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "super_admin"],
       lead_priority: ["low", "medium", "high"],
       lead_status: [
         "new",

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { ImpersonationProvider } from "./contexts/ImpersonationContext";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { MobileNav } from "./components/MobileNav";
@@ -41,7 +42,11 @@ const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
 const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
 const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
+const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
+const RejectionAnalytics = lazy(() => import("./pages/Admin/RejectionAnalytics"));
+const CampaignManagement = lazy(() => import("./pages/CampaignManagement"));
 const AdminLeads = lazy(() => import("./pages/AdminLeads"));
+const AdminGallery = lazy(() => import("./pages/admin/Gallery"));
 
 const queryClient = new QueryClient();
 
@@ -62,6 +67,8 @@ function AppContent() {
           <AdminLayout>
             <Routes>
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/leads" element={<AdminLeads />} />
+              <Route path="/admin/gallery" element={<AdminGallery />} />
               <Route path="/admin/product-assets" element={<ProductAssets />} />
               <Route path="/admin/environment-assets" element={<EnvironmentAssets />} />
               <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
@@ -69,8 +76,9 @@ function AppContent() {
               <Route path="/admin/assets" element={<AssetLibrary />} />
               <Route path="/admin/content-approval" element={<ContentApproval />} />
               <Route path="/admin/blog" element={<AdminBlog />} />
+              <Route path="/admin/rejection-analytics" element={<RejectionAnalytics />} />
               <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
-              <Route path="/admin/leads" element={<AdminLeads />} />
+              <Route path="/admin/campaigns" element={<CampaignManagement />} />
             </Routes>
           </AdminLayout>
         </ProtectedRoute>
@@ -113,11 +121,13 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LanguageProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <AppContent />
-          </BrowserRouter>
+          <ImpersonationProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <AppContent />
+            </BrowserRouter>
+          </ImpersonationProvider>
         </LanguageProvider>
       </TooltipProvider>
     </QueryClientProvider>

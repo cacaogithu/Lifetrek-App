@@ -6,11 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Check, X, Eye, FileText, Linkedin, Sparkles, Clock,
-  ThumbsUp, ThumbsDown, ArrowLeft, Loader2
+  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   useContentApprovalItems,
+  useRejectedContentItems,
+  useApprovedContentItems,
   useApproveLinkedInPost,
   useRejectLinkedInPost,
 } from "@/hooks/useLinkedInPosts";
@@ -42,6 +44,8 @@ import { useNavigate } from "react-router-dom";
 export default function ContentApproval() {
   const navigate = useNavigate();
   const { data: items, isLoading } = useContentApprovalItems();
+  const { data: rejectedItems, isLoading: isLoadingRejected } = useRejectedContentItems();
+  const { data: approvedItems, isLoading: isLoadingApproved } = useApprovedContentItems();
   const approveLinkedIn = useApproveLinkedInPost();
   const rejectLinkedIn = useRejectLinkedInPost();
   const publishBlog = usePublishBlogPost();
@@ -134,7 +138,11 @@ export default function ContentApproval() {
       );
     } else if (selectedItem.type === 'linkedin') {
       const post = selectedItem.full_data;
-      const carousel = post.carousel_data;
+      // Handle nested slides structure: post.slides can be { slides: [...], metadata: {...} } or just [...]
+      const rawSlides = post.slides;
+      const slides = Array.isArray(rawSlides) 
+        ? rawSlides 
+        : (Array.isArray(rawSlides?.slides) ? rawSlides.slides : []);
 
       return (
         <div className="space-y-4">
@@ -160,9 +168,9 @@ export default function ContentApproval() {
           </div>
 
           <div className="border-t pt-4">
-            <h4 className="font-semibold mb-3">Slides ({carousel?.slides?.length || 0})</h4>
+            <h4 className="font-semibold mb-3">Slides ({slides.length})</h4>
             <div className="space-y-3">
-              {carousel?.slides?.map((slide: any, idx: number) => (
+              {slides.map((slide: any, idx: number) => (
                 <Card key={idx}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
@@ -177,7 +185,7 @@ export default function ContentApproval() {
                       <img
                         src={slide.imageUrl}
                         alt={`Slide ${idx + 1}`}
-                        className="rounded-md w-full max-h-64 object-cover mt-2"
+                        className="rounded-md w-full mt-2"
                       />
                     )}
                   </CardContent>
@@ -186,11 +194,11 @@ export default function ContentApproval() {
             </div>
           </div>
 
-          {carousel?.caption && (
+          {post.caption && (
             <div className="border-t pt-4">
               <h4 className="font-semibold mb-2">Caption LinkedIn</h4>
               <p className="text-sm whitespace-pre-wrap bg-muted p-3 rounded-md">
-                {carousel.caption}
+                {post.caption.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '').replace(/_/g, '')}
               </p>
             </div>
           )}
@@ -199,7 +207,7 @@ export default function ContentApproval() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingRejected || isLoadingApproved) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -210,6 +218,8 @@ export default function ContentApproval() {
   const blogItems = items?.filter(i => i.type === 'blog') || [];
   const linkedInItems = items?.filter(i => i.type === 'linkedin') || [];
   const allPending = items || [];
+  const allRejected = rejectedItems || [];
+  const allApproved = approvedItems || [];
 
   return (
     <div className="container mx-auto max-w-7xl py-8 space-y-8">
@@ -233,9 +243,9 @@ export default function ContentApproval() {
       </div>
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsList className="grid w-full grid-cols-5 mb-8">
           <TabsTrigger value="all" className="text-base">
-            Todos ({allPending.length})
+            Pendentes ({allPending.length})
           </TabsTrigger>
           <TabsTrigger value="blogs" className="text-base">
             <FileText className="h-4 w-4 mr-2" />
@@ -244,6 +254,14 @@ export default function ContentApproval() {
           <TabsTrigger value="linkedin" className="text-base">
             <Linkedin className="h-4 w-4 mr-2" />
             LinkedIn ({linkedInItems.length})
+          </TabsTrigger>
+          <TabsTrigger value="approved" className="text-base text-green-600">
+            <CheckCircle className="h-4 w-4 mr-2" />
+            Aprovados ({allApproved.length})
+          </TabsTrigger>
+          <TabsTrigger value="rejected" className="text-base text-destructive">
+            <Archive className="h-4 w-4 mr-2" />
+            Rejeitados ({allRejected.length})
           </TabsTrigger>
         </TabsList>
 
@@ -450,6 +468,112 @@ export default function ContentApproval() {
                       Rejeitar
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="approved" className="space-y-4">
+          {allApproved.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center text-muted-foreground">
+                Nenhum conteúdo aprovado
+              </CardContent>
+            </Card>
+          ) : (
+            allApproved.map((item: any) => (
+              <Card key={`${item.type}-${item.id}`} className="border-green-500/30 bg-green-500/5">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        {item.type === 'blog' ? (
+                          <FileText className="h-5 w-5 text-blue-500" />
+                        ) : (
+                          <Linkedin className="h-5 w-5 text-blue-600" />
+                        )}
+                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                      </div>
+                      <CardDescription>{item.content_preview}</CardDescription>
+                      <div className="flex gap-2 items-center flex-wrap">
+                        <Badge variant="outline">
+                          {format(new Date(item.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                        </Badge>
+                        <Badge className="gap-1 bg-green-600">
+                          <Check className="h-3 w-3" />
+                          {item.status === 'published' ? 'Publicado' : 'Aprovado'}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePreview(item)}
+                    className="gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Visualizar
+                  </Button>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="rejected" className="space-y-4">
+          {allRejected.length === 0 ? (
+            <Card>
+              <CardContent className="py-16 text-center text-muted-foreground">
+                Nenhum conteúdo rejeitado
+              </CardContent>
+            </Card>
+          ) : (
+            allRejected.map((item: any) => (
+              <Card key={`${item.type}-${item.id}`} className="border-destructive/30 bg-destructive/5">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        {item.type === 'blog' ? (
+                          <FileText className="h-5 w-5 text-blue-500" />
+                        ) : (
+                          <Linkedin className="h-5 w-5 text-blue-600" />
+                        )}
+                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                      </div>
+                      <CardDescription>{item.content_preview}</CardDescription>
+                      <div className="flex gap-2 items-center flex-wrap">
+                        <Badge variant="outline">
+                          {format(new Date(item.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                        </Badge>
+                        {item.rejected_at && (
+                          <Badge variant="destructive" className="gap-1">
+                            <X className="h-3 w-3" />
+                            Rejeitado em {format(new Date(item.rejected_at), "dd/MM/yyyy", { locale: ptBR })}
+                          </Badge>
+                        )}
+                      </div>
+                      {item.rejection_reason && (
+                        <div className="bg-destructive/10 border border-destructive/20 p-3 rounded-md mt-2">
+                          <p className="text-sm font-medium text-destructive">Motivo da rejeição:</p>
+                          <p className="text-sm text-muted-foreground">{item.rejection_reason}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePreview(item)}
+                    className="gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    Visualizar
+                  </Button>
                 </CardContent>
               </Card>
             ))

@@ -112,6 +112,8 @@ export function useRejectLinkedInPost() {
         .from("linkedin_carousels")
         .update({
           status: "archived",
+          rejection_reason: reason,
+          rejected_at: new Date().toISOString(),
         })
         .eq("id", id)
         .select()
@@ -189,21 +191,94 @@ export function useContentApprovalItems() {
   return useQuery({
     queryKey: ["content_approval_items"],
     queryFn: async () => {
-      // Fetch pending blogs
+      console.log("[ContentApproval] Starting fetch...");
+      
+      try {
+        // Fetch pending blogs
+        const { data: blogs, error: blogsError } = await supabase
+          .from("blog_posts")
+          .select("*")
+          .eq("status", "pending_review")
+          .order("created_at", { ascending: false });
+
+        if (blogsError) {
+          console.error("[ContentApproval] Error fetching blogs:", blogsError);
+          throw blogsError;
+        }
+        console.log("[ContentApproval] Blogs fetched:", blogs?.length || 0);
+
+        // Fetch draft/pending LinkedIn carousels
+        const { data: linkedInCarousels, error: linkedInError } = await supabase
+          .from("linkedin_carousels")
+          .select("*")
+          .in("status", ["draft", "pending_approval"])
+          .order("created_at", { ascending: false });
+
+        if (linkedInError) {
+          console.error("[ContentApproval] Error fetching LinkedIn carousels:", linkedInError);
+          throw linkedInError;
+        }
+        console.log("[ContentApproval] LinkedIn carousels fetched:", linkedInCarousels?.length || 0);
+
+        // Combine and format
+        const items = [
+          ...(blogs || []).map((blog: any) => ({
+            id: blog.id,
+            type: 'blog' as const,
+            title: blog.title,
+            content_preview: blog.excerpt || blog.content?.substring(0, 150) || '',
+            status: blog.status,
+            created_at: blog.created_at,
+            ai_generated: blog.ai_generated || false,
+            full_data: blog,
+          })),
+          ...(linkedInCarousels || []).map((carousel: any) => ({
+            id: carousel.id,
+            type: 'linkedin' as const,
+            title: carousel.topic,
+            content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
+            status: carousel.status,
+            created_at: carousel.created_at,
+            ai_generated: true,
+            full_data: carousel,
+          })),
+        ];
+
+        // Sort by created_at
+        items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+        console.log("[ContentApproval] Total items returned:", items.length);
+        return items;
+      } catch (error) {
+        console.error("[ContentApproval] Query failed:", error);
+        throw error;
+      }
+    },
+    retry: 2,
+    staleTime: 30000,
+  });
+}
+
+// Get rejected content items
+export function useRejectedContentItems() {
+  return useQuery({
+    queryKey: ["rejected_content_items"],
+    queryFn: async () => {
+      // Fetch rejected blogs
       const { data: blogs, error: blogsError } = await supabase
         .from("blog_posts")
         .select("*")
-        .eq("status", "pending_review")
+        .eq("status", "rejected")
         .order("created_at", { ascending: false });
 
       if (blogsError) throw blogsError;
 
-      // Fetch draft/pending LinkedIn carousels
+      // Fetch archived LinkedIn carousels with rejection reason
       const { data: linkedInCarousels, error: linkedInError } = await supabase
         .from("linkedin_carousels")
         .select("*")
-        .in("status", ["draft", "pending_approval"])
-        .order("created_at", { ascending: false });
+        .eq("status", "archived")
+        .order("rejected_at", { ascending: false });
 
       if (linkedInError) throw linkedInError;
 
@@ -216,6 +291,8 @@ export function useContentApprovalItems() {
           content_preview: blog.excerpt || blog.content.substring(0, 150),
           status: blog.status,
           created_at: blog.created_at,
+          rejected_at: blog.rejected_at,
+          rejection_reason: blog.rejection_reason,
           ai_generated: blog.ai_generated || false,
           full_data: blog,
         })),
@@ -226,13 +303,82 @@ export function useContentApprovalItems() {
           content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
           status: carousel.status,
           created_at: carousel.created_at,
+          rejected_at: carousel.rejected_at,
+          rejection_reason: carousel.rejection_reason,
           ai_generated: true,
           full_data: carousel,
         })),
       ];
 
-      // Sort by created_at
-      items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      // Sort by rejected_at
+      items.sort((a, b) => {
+        const dateA = a.rejected_at ? new Date(a.rejected_at).getTime() : new Date(a.created_at).getTime();
+        const dateB = b.rejected_at ? new Date(b.rejected_at).getTime() : new Date(b.created_at).getTime();
+        return dateB - dateA;
+      });
+
+      return items;
+    },
+  });
+}
+
+// Get approved content items
+export function useApprovedContentItems() {
+  return useQuery({
+    queryKey: ["approved_content_items"],
+    queryFn: async () => {
+      // Fetch published blogs
+      const { data: blogs, error: blogsError } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .eq("status", "published")
+        .order("published_at", { ascending: false })
+        .limit(50);
+
+      if (blogsError) throw blogsError;
+
+      // Fetch approved LinkedIn carousels
+      const { data: linkedInCarousels, error: linkedInError } = await supabase
+        .from("linkedin_carousels")
+        .select("*")
+        .in("status", ["approved", "published"])
+        .order("updated_at", { ascending: false })
+        .limit(50);
+
+      if (linkedInError) throw linkedInError;
+
+      // Combine and format
+      const items = [
+        ...(blogs || []).map((blog: any) => ({
+          id: blog.id,
+          type: 'blog' as const,
+          title: blog.title,
+          content_preview: blog.excerpt || blog.content.substring(0, 150),
+          status: blog.status,
+          created_at: blog.created_at,
+          approved_at: blog.published_at,
+          ai_generated: blog.ai_generated || false,
+          full_data: blog,
+        })),
+        ...(linkedInCarousels || []).map((carousel: any) => ({
+          id: carousel.id,
+          type: 'linkedin' as const,
+          title: carousel.topic,
+          content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
+          status: carousel.status,
+          created_at: carousel.created_at,
+          approved_at: carousel.updated_at,
+          ai_generated: true,
+          full_data: carousel,
+        })),
+      ];
+
+      // Sort by approved_at
+      items.sort((a, b) => {
+        const dateA = a.approved_at ? new Date(a.approved_at).getTime() : new Date(a.created_at).getTime();
+        const dateB = b.approved_at ? new Date(b.approved_at).getTime() : new Date(b.created_at).getTime();
+        return dateB - dateA;
+      });
 
       return items;
     },
