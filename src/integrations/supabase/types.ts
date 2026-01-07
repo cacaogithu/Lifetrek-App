@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          permission_level: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id?: string
+          permission_level?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          permission_level?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
@@ -1128,6 +1155,7 @@ export type Database = {
     }
     Functions: {
       extract_domain_from_email: { Args: { email: string }; Returns: string }
+      get_admin_permission_level: { Args: never; Returns: string }
       get_top_customer_interests: {
         Args: { limit_count?: number }
         Returns: {
@@ -1144,6 +1172,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_super_admin: { Args: never; Returns: boolean }
       match_knowledge: {
         Args: {
           filter_source_type?: string
@@ -1178,7 +1207,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "super_admin"
       lead_priority: "low" | "medium" | "high"
       lead_status:
         | "new"
@@ -1325,7 +1354,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "super_admin"],
       lead_priority: ["low", "medium", "high"],
       lead_status: [
         "new",
