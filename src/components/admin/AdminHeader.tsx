@@ -10,7 +10,8 @@ import {
   BookOpen,
   Upload,
   LogOut,
-  Camera
+  Camera,
+  Database
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ const adminNavItems = [
   { path: "/admin/blog", label: "Blog", icon: FileText },
   { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
   { path: "/admin/knowledge-base", label: "Knowledge", icon: BookOpen },
+  { path: "/admin/leads", label: "Leads", icon: Database },
 ];
 
 export function AdminHeader() {

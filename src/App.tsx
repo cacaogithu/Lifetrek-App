@@ -41,6 +41,7 @@ const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
 const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
 const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
+const AdminLeads = lazy(() => import("./pages/AdminLeads"));
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ function AppContent() {
               <Route path="/admin/content-approval" element={<ContentApproval />} />
               <Route path="/admin/blog" element={<AdminBlog />} />
               <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
+              <Route path="/admin/leads" element={<AdminLeads />} />
             </Routes>
           </AdminLayout>
         </ProtectedRoute>
