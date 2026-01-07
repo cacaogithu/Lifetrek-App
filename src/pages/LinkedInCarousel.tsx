@@ -73,13 +73,16 @@ export default function LinkedInCarousel() {
 
   // Generation State
   const [topic, setTopic] = useState("");
-  const [targetAudience, setTargetAudience] = useState("");
+  const [targetAudiences, setTargetAudiences] = useState<string[]>([]);
   const [painPoint, setPainPoint] = useState("");
   const [desiredOutcome, setDesiredOutcome] = useState("");
   const [proofPoints, setProofPoints] = useState("");
+  const [referenceImage, setReferenceImage] = useState("");
+  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [ctaAction, setCtaAction] = useState("");
   const [format, setFormat] = useState<"carousel" | "single-image">("carousel");
   const [postType, setPostType] = useState<"value" | "commercial">("value");
+  const [products, setProducts] = useState<{category: string; name: string; enhanced_url: string}[]>([]);
 
   // Workflow State
   const [currentStep, setCurrentStep] = useState<"content" | "design">("content");
@@ -113,6 +116,9 @@ export default function LinkedInCarousel() {
   const [isBatchGenerating, setIsBatchGenerating] = useState(false);
   const [batchProgress, setBatchProgress] = useState<{ current: number; total: number; currentTopic: string } | null>(null);
 
+  // Helper to get audience string from array
+  const targetAudience = targetAudiences.length > 0 ? targetAudiences.join(", ") : "Geral";
+
   useEffect(() => {
     checkAdminAccess();
   }, []);
@@ -121,8 +127,22 @@ export default function LinkedInCarousel() {
     if (isAdmin) {
       fetchCarouselHistory();
       fetchAssets();
+      fetchProducts();
     }
   }, [isAdmin]);
+
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("processed_product_images")
+        .select("category, name, enhanced_url")
+        .eq("is_visible", true)
+        .order("category");
+      if (!error && data) setProducts(data);
+    } catch (e) {
+      console.error("Error fetching products:", e);
+    }
+  };
 
   const checkAdminAccess = async () => {
     try {
@@ -323,7 +343,7 @@ export default function LinkedInCarousel() {
     }
 
     setTopic(carousel.topic);
-    setTargetAudience(carousel.target_audience);
+    setTargetAudiences(carousel.target_audience ? carousel.target_audience.split(", ").filter(Boolean) : []);
     setPainPoint(carousel.pain_point || "");
     setDesiredOutcome(carousel.desired_outcome || "");
     setProofPoints(carousel.proof_points || "");
@@ -455,7 +475,8 @@ export default function LinkedInCarousel() {
           targetAudience,
           painPoint,
           desiredOutcome,
-          proofPoints,
+          referenceImage: referenceImage || undefined,
+          selectedEquipment: selectedEquipment.length > 0 ? selectedEquipment : undefined,
           ctaAction,
           format,
           postType,
@@ -1055,7 +1076,7 @@ export default function LinkedInCarousel() {
                                   const ctaValue = campaignTopic.input.ctaAction || "";
                                   
                                   setTopic(topicValue);
-                                  setTargetAudience(audienceValue);
+                                  setTargetAudiences(audienceValue ? [audienceValue] : []);
                                   setPainPoint(painValue);
                                   setCtaAction(ctaValue);
                                   setIsGenerating(true);
@@ -1198,27 +1219,40 @@ export default function LinkedInCarousel() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Target Audience - Optional Multi-select */}
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Target Audience - Multi-select */}
                     <div>
-                      <Label className="text-sm font-medium mb-1.5 block">Público Alvo (opcional)</Label>
-                      <Select value={targetAudience} onValueChange={setTargetAudience}>
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Geral (todos)" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Geral">Geral (todos)</SelectItem>
-                          <SelectItem value="Fabricantes ortopédicos">Fabricantes Ortopédicos</SelectItem>
-                          <SelectItem value="Fabricantes odontológicos">Fabricantes Odontológicos</SelectItem>
-                          <SelectItem value="P&D de dispositivos médicos">P&D de Dispositivos Médicos</SelectItem>
-                          <SelectItem value="Gestores de qualidade">Gestores de Qualidade</SelectItem>
-                          <SelectItem value="Compradores hospitalares">Compradores Hospitalares</SelectItem>
-                          <SelectItem value="Engenheiros de produção">Engenheiros de Produção</SelectItem>
-                          <SelectItem value="Startups de medtech">Startups de MedTech</SelectItem>
-                          <SelectItem value="Sobre a Lifetrek">Sobre a Lifetrek (institucional)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label className="text-sm font-medium mb-1.5 block">Público Alvo (opcional, multi-select)</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          "Fabricantes ortopédicos",
+                          "Fabricantes odontológicos",
+                          "P&D de dispositivos médicos",
+                          "Gestores de qualidade",
+                          "Compradores hospitalares",
+                          "Engenheiros de produção",
+                          "Startups de medtech",
+                          "Institucional Lifetrek"
+                        ].map((audience) => (
+                          <Badge 
+                            key={audience}
+                            variant={targetAudiences.includes(audience) ? "default" : "outline"}
+                            className="cursor-pointer hover:bg-primary/20 transition-colors"
+                            onClick={() => {
+                              if (targetAudiences.includes(audience)) {
+                                setTargetAudiences(targetAudiences.filter(a => a !== audience));
+                              } else {
+                                setTargetAudiences([...targetAudiences, audience]);
+                              }
+                            }}
+                          >
+                            {audience}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
+                    
+                    {/* Format */}
                     <div>
                       <Label className="text-sm font-medium mb-1.5 block">Formato</Label>
                       <Select value={format} onValueChange={(v: any) => setFormat(v)}>
@@ -1226,10 +1260,38 @@ export default function LinkedInCarousel() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="carousel">Carrossel (5 slides)</SelectItem>
-                          <SelectItem value="single-image">Post Único</SelectItem>
+                          <SelectItem value="carousel">Carrossel (IA decide nº de slides)</SelectItem>
+                          <SelectItem value="single-image">Post Único (1 imagem)</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                  </div>
+
+                  {/* Equipment Selection */}
+                  <div>
+                    <Label className="text-sm font-medium mb-1.5 block">Equipamentos/Produtos (opcional)</Label>
+                    <p className="text-xs text-muted-foreground mb-2">Selecione equipamentos ou produtos para a IA incluir nas imagens</p>
+                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 border rounded-lg">
+                      {products.length === 0 ? (
+                        <span className="text-sm text-muted-foreground">Carregando...</span>
+                      ) : (
+                        products.map((p) => (
+                          <Badge 
+                            key={p.name}
+                            variant={selectedEquipment.includes(p.name) ? "default" : "outline"}
+                            className="cursor-pointer hover:bg-primary/20 transition-colors text-xs"
+                            onClick={() => {
+                              if (selectedEquipment.includes(p.name)) {
+                                setSelectedEquipment(selectedEquipment.filter(e => e !== p.name));
+                              } else {
+                                setSelectedEquipment([...selectedEquipment, p.name]);
+                              }
+                            }}
+                          >
+                            {p.name}
+                          </Badge>
+                        ))
+                      )}
                     </div>
                   </div>
 
