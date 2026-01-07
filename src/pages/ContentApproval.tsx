@@ -15,6 +15,7 @@ import {
   useApprovedContentItems,
   useApproveLinkedInPost,
   useRejectLinkedInPost,
+  useLinkedInCarouselFull,
 } from "@/hooks/useLinkedInPosts";
 import {
   usePublishBlogPost,
@@ -55,6 +56,10 @@ export default function ContentApproval() {
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
+
+  // Lazy load full carousel data when previewing LinkedIn posts
+  const selectedLinkedInId = selectedItem?.type === 'linkedin' ? selectedItem.id : null;
+  const { data: fullCarouselData, isLoading: isLoadingCarousel } = useLinkedInCarouselFull(selectedLinkedInId);
 
   const handlePreview = (item: any) => {
     setSelectedItem(item);
@@ -137,9 +142,21 @@ export default function ContentApproval() {
         </div>
       );
     } else if (selectedItem.type === 'linkedin') {
-      const post = selectedItem.full_data;
+      // Use lazy-loaded full data for LinkedIn carousels
+      if (isLoadingCarousel) {
+        return (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <span className="ml-3 text-muted-foreground">Carregando slides...</span>
+          </div>
+        );
+      }
+
+      // Use full carousel data if available, otherwise fall back to basic data
+      const post = fullCarouselData || selectedItem.full_data || selectedItem;
+      
       // Handle nested slides structure: post.slides can be { slides: [...], metadata: {...} } or just [...]
-      const rawSlides = post.slides;
+      const rawSlides = post?.slides;
       const slides = Array.isArray(rawSlides) 
         ? rawSlides 
         : (Array.isArray(rawSlides?.slides) ? rawSlides.slides : []);
@@ -147,54 +164,56 @@ export default function ContentApproval() {
       return (
         <div className="space-y-4">
           <div>
-            <h3 className="text-2xl font-bold mb-2">{post.topic}</h3>
+            <h3 className="text-2xl font-bold mb-2">{post?.topic || selectedItem.title}</h3>
             <div className="flex gap-2 items-center">
-              <Badge variant={post.post_type === 'value' ? 'secondary' : 'default'}>
-                {post.post_type === 'value' ? 'Educacional' : 'Comercial'}
+              <Badge variant="secondary">
+                LinkedIn Carousel
               </Badge>
-              {post.ai_generated && (
-                <Badge variant="outline" className="gap-1">
-                  <Sparkles className="h-3 w-3" />
-                  IA
-                </Badge>
-              )}
+              <Badge variant="outline" className="gap-1">
+                <Sparkles className="h-3 w-3" />
+                IA
+              </Badge>
             </div>
           </div>
 
           <div className="space-y-2">
-            <p className="text-sm"><strong>Público-alvo:</strong> {post.target_audience || 'N/A'}</p>
-            <p className="text-sm"><strong>Pain Point:</strong> {post.pain_point || 'N/A'}</p>
-            <p className="text-sm"><strong>Outcome Desejado:</strong> {post.desired_outcome || 'N/A'}</p>
+            <p className="text-sm"><strong>Público-alvo:</strong> {post?.target_audience || selectedItem.full_data?.target_audience || 'N/A'}</p>
+            <p className="text-sm"><strong>Pain Point:</strong> {post?.pain_point || selectedItem.full_data?.pain_point || 'N/A'}</p>
+            <p className="text-sm"><strong>Outcome Desejado:</strong> {post?.desired_outcome || 'N/A'}</p>
           </div>
 
           <div className="border-t pt-4">
             <h4 className="font-semibold mb-3">Slides ({slides.length})</h4>
-            <div className="space-y-3">
-              {slides.map((slide: any, idx: number) => (
-                <Card key={idx}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline">{slide.type}</Badge>
-                      {slide.imageUrl && <Eye className="h-4 w-4 text-muted-foreground" />}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p className="font-semibold">{slide.headline}</p>
-                    <p className="text-sm text-muted-foreground">{slide.body}</p>
-                    {slide.imageUrl && (
-                      <img
-                        src={slide.imageUrl}
-                        alt={`Slide ${idx + 1}`}
-                        className="rounded-md w-full mt-2"
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {slides.length === 0 ? (
+              <p className="text-muted-foreground text-sm">Nenhum slide disponível</p>
+            ) : (
+              <div className="space-y-3">
+                {slides.map((slide: any, idx: number) => (
+                  <Card key={idx}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="outline">{slide.type || `Slide ${idx + 1}`}</Badge>
+                        {slide.imageUrl && <Eye className="h-4 w-4 text-muted-foreground" />}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p className="font-semibold">{slide.headline}</p>
+                      <p className="text-sm text-muted-foreground">{slide.body}</p>
+                      {slide.imageUrl && (
+                        <img
+                          src={slide.imageUrl}
+                          alt={`Slide ${idx + 1}`}
+                          className="rounded-md w-full mt-2"
+                        />
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
 
-          {post.caption && (
+          {post?.caption && (
             <div className="border-t pt-4">
               <h4 className="font-semibold mb-2">Caption LinkedIn</h4>
               <p className="text-sm whitespace-pre-wrap bg-muted p-3 rounded-md">

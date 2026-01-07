@@ -148,9 +148,9 @@ export const LeadsSpreadsheet = () => {
     try {
       // Increase limit to fetch all leads (default is usually 1000)
       const { data, error } = await supabase
-        .from("leads")
+        .from("contact_leads")
         .select("*")
-        .order("v2_score", { ascending: false })
+        .order("lead_score", { ascending: false })
         .limit(5000);
 
       if (error) throw error;
@@ -164,7 +164,7 @@ export const LeadsSpreadsheet = () => {
           description: "Showing sample leads (database empty)",
         });
       } else {
-        setLeads(data);
+        setLeads(data as any);
       }
     } catch (error: any) {
       console.log("⚠️ Database error, using mock data:", error.message);
@@ -189,7 +189,7 @@ export const LeadsSpreadsheet = () => {
         {
           event: "*",
           schema: "public",
-          table: "leads",
+          table: "contact_leads",
         },
         (payload) => {
           console.log("Lead change detected:", payload);
@@ -210,8 +210,8 @@ export const LeadsSpreadsheet = () => {
     value: any
   ) => {
     try {
-      const { error } = await supabase
-        .from("leads")
+      const { error } = await (supabase
+        .from("contact_leads") as any)
         .update({ [field]: value })
         .eq("id", leadId);
 
