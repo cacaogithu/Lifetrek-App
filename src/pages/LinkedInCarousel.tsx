@@ -59,6 +59,7 @@ interface CarouselHistoryItem {
   format: string | null;
   image_urls: unknown;
   is_favorite: boolean | null;
+  status: string | null;
   created_at: string;
   updated_at: string;
   generation_settings: unknown;
