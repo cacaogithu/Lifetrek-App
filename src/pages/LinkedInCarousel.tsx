@@ -1045,18 +1045,81 @@ export default function LinkedInCarousel() {
                             ) : (
                               <Button 
                                 size="sm" 
-                                variant="secondary" 
-                                onClick={() => {
-                                  setTopic(campaignTopic.input.topic);
-                                  setTargetAudience(campaignTopic.input.targetAudience);
-                                  setPainPoint(campaignTopic.input.painPoint);
-                                  setCtaAction(campaignTopic.input.ctaAction || "");
-                                  setViewMode("input");
-                                  toast.info("Briefing preenchido. Clique em 'Geração Rápida' para produzir.");
+                                variant="secondary"
+                                disabled={isGenerating}
+                                onClick={async () => {
+                                  // Set form fields from campaign topic
+                                  const topicValue = campaignTopic.input.topic;
+                                  const audienceValue = campaignTopic.input.targetAudience;
+                                  const painValue = campaignTopic.input.painPoint;
+                                  const ctaValue = campaignTopic.input.ctaAction || "";
+                                  
+                                  setTopic(topicValue);
+                                  setTargetAudience(audienceValue);
+                                  setPainPoint(painValue);
+                                  setCtaAction(ctaValue);
+                                  setIsGenerating(true);
+                                  
+                                  toast.info(`Gerando carrossel: ${campaignTopic.name}...`);
+                                  
+                                  try {
+                                    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-linkedin-carousel`;
+                                    const { data: { session } } = await supabase.auth.getSession();
+                                    
+                                    if (!session?.access_token) {
+                                      toast.error("Faça login novamente");
+                                      navigate("/admin/login");
+                                      return;
+                                    }
+                                    
+                                    const response = await fetch(url, {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                                        Authorization: `Bearer ${session.access_token}`,
+                                      },
+                                      body: JSON.stringify({
+                                        topic: topicValue,
+                                        targetAudience: audienceValue,
+                                        painPoint: painValue,
+                                        ctaAction: ctaValue,
+                                        format: "carousel",
+                                        postType: "value",
+                                        numberOfCarousels: 1,
+                                        stream: false,
+                                      }),
+                                    });
+                                    
+                                    if (!response.ok) {
+                                      throw new Error("Falha na geração");
+                                    }
+                                    
+                                    const data = await response.json();
+                                    const result = data.carousels?.[0] || data.carousel;
+                                    
+                                    if (result) {
+                                      // Auto-save as draft with scheduled date
+                                      await autoSaveCarousel(result, undefined, 'draft', campaignTopic.scheduledDate);
+                                      
+                                      // Load into editor
+                                      setCarouselResults([result]);
+                                      setCurrentCarouselIndex(0);
+                                      setCurrentSlide(0);
+                                      setViewMode("editor");
+                                      setCurrentStep("design");
+                                      toast.success(`Carrossel "${campaignTopic.name}" gerado com sucesso!`);
+                                    }
+                                  } catch (error: any) {
+                                    console.error("Generation error:", error);
+                                    toast.error("Erro ao gerar carrossel");
+                                  } finally {
+                                    setIsGenerating(false);
+                                  }
                                 }}
                               >
-                                <Wand2 className="w-4 h-4 mr-2" />
-                                Preparar Briefing
+                                {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
+                                Gerar Carrossel
                               </Button>
                             )}
                           </div>
