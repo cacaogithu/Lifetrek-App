@@ -7,6 +7,7 @@ import { LeadsTable } from "@/components/admin/LeadsTable";
 import { LeadDetailsModal } from "@/components/admin/LeadDetailsModal";
 import { LeadFilters } from "@/components/admin/LeadFilters";
 import { LeadsStats } from "@/components/admin/LeadsStats";
+import { LeadsImporter } from "@/components/admin/LeadsImporter";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export default function Leads() {
@@ -125,61 +126,63 @@ export default function Leads() {
         <p className="text-muted-foreground">Gerencie todos os leads recebidos</p>
       </div>
 
-        <LeadsStats {...calculateLeadStats()} />
+      <LeadsStats {...calculateLeadStats()} />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Filtros</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LeadFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              statusFilter={statusFilter}
-              onStatusChange={setStatusFilter}
-              priorityFilter={priorityFilter}
-              onPriorityChange={setPriorityFilter}
-            />
-          </CardContent>
-        </Card>
+      <LeadsImporter onImportComplete={fetchLeads} />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Todos os Leads ({filteredLeads.length})</CardTitle>
-            <CardDescription>
-              Gerencie e acompanhe todos os leads recebidos pelo formulário de contato
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LeadsTable
-              leads={filteredLeads}
-              onViewDetails={handleViewDetails}
-              onDelete={(id) => setLeadToDelete(id)}
-            />
-          </CardContent>
-        </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Filtros</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LeadFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            statusFilter={statusFilter}
+            onStatusChange={setStatusFilter}
+            priorityFilter={priorityFilter}
+            onPriorityChange={setPriorityFilter}
+          />
+        </CardContent>
+      </Card>
 
-        <LeadDetailsModal
-          lead={selectedLead}
-          open={isDetailsModalOpen}
-          onOpenChange={setIsDetailsModalOpen}
-          onUpdate={fetchLeads}
-        />
+      <Card>
+        <CardHeader>
+          <CardTitle>Todos os Leads ({filteredLeads.length})</CardTitle>
+          <CardDescription>
+            Gerencie e acompanhe todos os leads recebidos pelo formulário de contato
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <LeadsTable
+            leads={filteredLeads}
+            onViewDetails={handleViewDetails}
+            onDelete={(id) => setLeadToDelete(id)}
+          />
+        </CardContent>
+      </Card>
 
-        <AlertDialog open={!!leadToDelete} onOpenChange={() => setLeadToDelete(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-              <AlertDialogDescription>
-                Tem certeza que deseja excluir este lead? Esta ação não pode ser desfeita.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteLead}>Excluir</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+      <LeadDetailsModal
+        lead={selectedLead}
+        open={isDetailsModalOpen}
+        onOpenChange={setIsDetailsModalOpen}
+        onUpdate={fetchLeads}
+      />
+
+      <AlertDialog open={!!leadToDelete} onOpenChange={() => setLeadToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este lead? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteLead}>Excluir</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }

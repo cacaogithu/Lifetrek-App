@@ -191,53 +191,71 @@ export function useContentApprovalItems() {
   return useQuery({
     queryKey: ["content_approval_items"],
     queryFn: async () => {
-      // Fetch pending blogs
-      const { data: blogs, error: blogsError } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("status", "pending_review")
-        .order("created_at", { ascending: false });
+      console.log("[ContentApproval] Starting fetch...");
+      
+      try {
+        // Fetch pending blogs
+        const { data: blogs, error: blogsError } = await supabase
+          .from("blog_posts")
+          .select("*")
+          .eq("status", "pending_review")
+          .order("created_at", { ascending: false });
 
-      if (blogsError) throw blogsError;
+        if (blogsError) {
+          console.error("[ContentApproval] Error fetching blogs:", blogsError);
+          throw blogsError;
+        }
+        console.log("[ContentApproval] Blogs fetched:", blogs?.length || 0);
 
-      // Fetch draft/pending LinkedIn carousels
-      const { data: linkedInCarousels, error: linkedInError } = await supabase
-        .from("linkedin_carousels")
-        .select("*")
-        .in("status", ["draft", "pending_approval"])
-        .order("created_at", { ascending: false });
+        // Fetch draft/pending LinkedIn carousels
+        const { data: linkedInCarousels, error: linkedInError } = await supabase
+          .from("linkedin_carousels")
+          .select("*")
+          .in("status", ["draft", "pending_approval"])
+          .order("created_at", { ascending: false });
 
-      if (linkedInError) throw linkedInError;
+        if (linkedInError) {
+          console.error("[ContentApproval] Error fetching LinkedIn carousels:", linkedInError);
+          throw linkedInError;
+        }
+        console.log("[ContentApproval] LinkedIn carousels fetched:", linkedInCarousels?.length || 0);
 
-      // Combine and format
-      const items = [
-        ...(blogs || []).map((blog: any) => ({
-          id: blog.id,
-          type: 'blog' as const,
-          title: blog.title,
-          content_preview: blog.excerpt || blog.content.substring(0, 150),
-          status: blog.status,
-          created_at: blog.created_at,
-          ai_generated: blog.ai_generated || false,
-          full_data: blog,
-        })),
-        ...(linkedInCarousels || []).map((carousel: any) => ({
-          id: carousel.id,
-          type: 'linkedin' as const,
-          title: carousel.topic,
-          content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
-          status: carousel.status,
-          created_at: carousel.created_at,
-          ai_generated: true,
-          full_data: carousel,
-        })),
-      ];
+        // Combine and format
+        const items = [
+          ...(blogs || []).map((blog: any) => ({
+            id: blog.id,
+            type: 'blog' as const,
+            title: blog.title,
+            content_preview: blog.excerpt || blog.content?.substring(0, 150) || '',
+            status: blog.status,
+            created_at: blog.created_at,
+            ai_generated: blog.ai_generated || false,
+            full_data: blog,
+          })),
+          ...(linkedInCarousels || []).map((carousel: any) => ({
+            id: carousel.id,
+            type: 'linkedin' as const,
+            title: carousel.topic,
+            content_preview: carousel.slides?.[0]?.headline || carousel.caption?.substring(0, 100) || '',
+            status: carousel.status,
+            created_at: carousel.created_at,
+            ai_generated: true,
+            full_data: carousel,
+          })),
+        ];
 
-      // Sort by created_at
-      items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        // Sort by created_at
+        items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      return items;
+        console.log("[ContentApproval] Total items returned:", items.length);
+        return items;
+      } catch (error) {
+        console.error("[ContentApproval] Query failed:", error);
+        throw error;
+      }
     },
+    retry: 2,
+    staleTime: 30000,
   });
 }
 
