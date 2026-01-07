@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { ImpersonationProvider } from "./contexts/ImpersonationContext";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { MobileNav } from "./components/MobileNav";
@@ -62,23 +63,25 @@ function AppContent() {
     >
       {isAdminRoute ? (
         <ProtectedRoute>
-          <AdminLayout>
-            <Routes>
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/leads" element={<AdminLeads />} />
-              <Route path="/admin/gallery" element={<AdminGallery />} />
-              <Route path="/admin/product-assets" element={<ProductAssets />} />
-              <Route path="/admin/environment-assets" element={<EnvironmentAssets />} />
-              <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
-              <Route path="/admin/linkedin-carousel" element={<LinkedInCarousel />} />
-              <Route path="/admin/assets" element={<AssetLibrary />} />
-              <Route path="/admin/content-approval" element={<ContentApproval />} />
-              <Route path="/admin/blog" element={<AdminBlog />} />
-              <Route path="/admin/rejection-analytics" element={<RejectionAnalytics />} />
-              <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
-              <Route path="/admin/campaigns" element={<CampaignManagement />} />
-            </Routes>
-          </AdminLayout>
+          <ImpersonationProvider>
+            <AdminLayout>
+              <Routes>
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/leads" element={<AdminLeads />} />
+                <Route path="/admin/gallery" element={<AdminGallery />} />
+                <Route path="/admin/product-assets" element={<ProductAssets />} />
+                <Route path="/admin/environment-assets" element={<EnvironmentAssets />} />
+                <Route path="/admin/image-processor" element={<ProductImageProcessor />} />
+                <Route path="/admin/linkedin-carousel" element={<LinkedInCarousel />} />
+                <Route path="/admin/assets" element={<AssetLibrary />} />
+                <Route path="/admin/content-approval" element={<ContentApproval />} />
+                <Route path="/admin/blog" element={<AdminBlog />} />
+                <Route path="/admin/rejection-analytics" element={<RejectionAnalytics />} />
+                <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
+                <Route path="/admin/campaigns" element={<CampaignManagement />} />
+              </Routes>
+            </AdminLayout>
+          </ImpersonationProvider>
         </ProtectedRoute>
       ) : (
         <div className="flex flex-col min-h-screen overflow-x-hidden">
