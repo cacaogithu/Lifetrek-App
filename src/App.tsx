@@ -46,6 +46,7 @@ const RejectionAnalytics = lazy(() => import("./pages/Admin/RejectionAnalytics")
 const CampaignManagement = lazy(() => import("./pages/CampaignManagement"));
 const AdminLeads = lazy(() => import("./pages/AdminLeads"));
 const AdminGallery = lazy(() => import("./pages/admin/Gallery"));
+const ContentCalendar = lazy(() => import("./pages/ContentCalendar"));
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ function AppContent() {
               <Route path="/admin/rejection-analytics" element={<RejectionAnalytics />} />
               <Route path="/admin/knowledge-base" element={<KnowledgeBase />} />
               <Route path="/admin/campaigns" element={<CampaignManagement />} />
+              <Route path="/admin/content-calendar" element={<ContentCalendar />} />
             </Routes>
           </AdminLayout>
         </ProtectedRoute>
