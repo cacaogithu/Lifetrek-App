@@ -447,19 +447,41 @@ async function searchProducts(
   };
 }
 
+// Sanitize prompts: remove font names, sizes, and English text that might get rendered
+function sanitizeImagePrompt(text: string): string {
+  if (!text) return text;
+  return text
+    // Remove font names that get rendered in images
+    .replace(/inter\s*(bold|semibold|regular|medium|light)?/gi, "")
+    .replace(/fonte\s*[a-z]+\s*(bold|semibold)?/gi, "")
+    // Remove pixel sizes
+    .replace(/\d+\s*px/gi, "")
+    .replace(/\d+\s*pt/gi, "")
+    // Remove technical labels that get rendered
+    .replace(/headline:/gi, "")
+    .replace(/body\s*text:/gi, "")
+    .replace(/visual:/gi, "")
+    .replace(/context:/gi, "")
+    .trim();
+}
+
 // Generate image with Nano Banana + Multimodal RAG (logo + products)
 async function generateImage(
-  params: { prompt: string; headline: string; body_text: string; style?: string; slide_type?: string },
+  params: { prompt: string; headline: string; body_text: string; style?: string; slide_type?: string; base_image_url?: string },
   lovableApiKey: string,
   supabase: any
 ): Promise<any> {
   const imageStartTime = Date.now();
   const style = params.style || "client_perspective";
   const slideType = params.slide_type || "content";
+  const hasBaseImage = !!params.base_image_url;
   
-  console.log(`\n         🖼️ [IMAGE-GEN] Starting generation`);
+  console.log(`\n         🖼️ [IMAGE-GEN] Starting ${hasBaseImage ? "image editing" : "generation"}`);
   console.log(`            └─ Style: ${style}, Type: ${slideType}`);
   console.log(`            └─ Headline: "${params.headline?.substring(0, 50)}..."`);
+  if (hasBaseImage) {
+    console.log(`            └─ Base image: ${params.base_image_url?.substring(0, 60)}...`);
+  }
   
   // Fetch logo from company_assets
   const assetFetchStart = Date.now();
@@ -469,25 +491,30 @@ async function generateImage(
     .eq("type", "logo")
     .single();
 
-  // Fetch visible product images for visual reference
-  const { data: products } = await supabase
-    .from("processed_product_images")
-    .select("name, enhanced_url, category")
-    .eq("is_visible", true)
-    .limit(2);
+  // Fetch visible product images for visual reference (only if no base image)
+  let products: any[] = [];
+  if (!hasBaseImage) {
+    const { data } = await supabase
+      .from("processed_product_images")
+      .select("name, enhanced_url, category")
+      .eq("is_visible", true)
+      .limit(2);
+    products = data || [];
+  }
   
   const assetFetchTime = Date.now() - assetFetchStart;
-  console.log(`            └─ Assets fetched in ${assetFetchTime}ms: { logo: ${!!logoAsset?.url}, products: ${products?.length || 0} }`);
+  console.log(`            └─ Assets fetched in ${assetFetchTime}ms: { logo: ${!!logoAsset?.url}, products: ${products.length} }`);
 
   const styleDirections: Record<string, string> = {
-    client_perspective: "Show the CLIENT'S experience - engineers inspecting precision parts, quality managers reviewing documentation, cleanroom production",
-    technical_proof: "Close-up of precision machinery, ZEISS CMM measurements, ISO certifications displayed prominently",
-    abstract_premium: "Abstract medical/industrial aesthetic with premium feel, subtle gradients, professional",
-    product_showcase: "Elegant product photography of medical implants or instruments on premium surface",
+    client_perspective: "Perspectiva do CLIENTE - engenheiros inspecionando peças de precisão, gerentes de qualidade revisando documentação, produção em sala limpa",
+    technical_proof: "Close-up de maquinário de precisão, medições CMM ZEISS, certificações ISO em destaque",
+    abstract_premium: "Estética médica/industrial abstrata com sensação premium, gradientes sutis, profissional",
+    product_showcase: "Fotografia elegante de implantes médicos ou instrumentos em superfície premium",
   };
 
   // Truncate body text to max 15 words to avoid cluttered images
   const truncateToWords = (text: string, maxWords: number): string => {
+    if (!text) return "";
     const words = text.split(/\s+/);
     if (words.length <= maxWords) return text;
     return words.slice(0, maxWords).join(" ") + "...";
@@ -497,48 +524,69 @@ async function generateImage(
   const maxBodyWords = slideType === "hook" ? 8 : slideType === "cta" ? 10 : 15;
   const truncatedBody = truncateToWords(params.body_text, maxBodyWords);
 
-  // Clean prompt without literal HEADLINE:/CONTEXT: labels that get rendered in images
-  let fullPrompt = `Crie um slide premium para carrossel do LinkedIn (1080x1350px) para indústria B2B de dispositivos médicos.
+  // Sanitize headline and body to avoid technical text in images
+  const cleanHeadline = sanitizeImagePrompt(params.headline);
+  const cleanBody = sanitizeImagePrompt(truncatedBody);
+  const cleanPrompt = sanitizeImagePrompt(params.prompt);
 
-=== ESTILO VISUAL OBRIGATÓRIO ===
-- Paleta: Azul Primário #004F8F (dominante), Verde #1A7A3E (micro-acentos), Laranja #F07818 (CTAs)
-- Fundo: Gradiente premium de #0A1628 para #004F8F
-- Texto: BRANCO, fonte Inter Bold (títulos), Inter SemiBold (corpo)
-- Alto contraste: Texto deve ser CLARAMENTE LEGÍVEL
-- Estética: Premium, editorial, tecnologia médica de ponta
+  // Build prompt - different for base image editing vs generation
+  let fullPrompt: string;
+  
+  if (hasBaseImage) {
+    // IMAGE EDITING MODE: Apply branding and text overlay to real photo
+    fullPrompt = `Edite esta foto real da empresa para criar um slide de LinkedIn premium.
+
+=== AÇÃO PRINCIPAL ===
+1. Aplique um overlay de gradiente escuro (#0A1628 → transparente) nas bordas para destacar o texto
+2. Renderize o texto abaixo CENTRALIZADO na imagem, em fonte sans-serif BOLD BRANCA
+
+=== TEXTO OBRIGATÓRIO (PT-BR) ===
+TÍTULO: "${cleanHeadline}"
+${cleanBody ? `SUBTEXTO: "${cleanBody}"` : ""}
+
+=== REGRAS ABSOLUTAS ===
+- TODO texto DEVE estar em PORTUGUÊS BRASILEIRO
+- NUNCA escreva nomes de fontes (Inter, Arial, etc.) na imagem
+- NUNCA escreva tamanhos (px, pt) na imagem
+- NUNCA escreva labels como "HEADLINE:", "BODY:"
+- Mantenha a foto original reconhecível
+- Texto BRANCO com sombra sutil para legibilidade
+- Espaço no canto inferior direito para logo`;
+  } else {
+    // GENERATION MODE: Create new image from scratch
+    fullPrompt = `Crie um slide premium para carrossel LinkedIn (1080x1350px) - indústria médica B2B.
+
+=== ESTILO VISUAL ===
+- Paleta: Azul #004F8F (dominante), gradiente escuro #0A1628 → #003052
+- Acentos: Verde #1A7A3E (micro), Laranja #F07818 (apenas CTAs)
+- Estética: Premium editorial, tecnologia médica de ponta, profissional
 
 === PERSPECTIVA ===
 ${styleDirections[style] || styleDirections.client_perspective}
 
-=== CONTEXTO ===
-${params.prompt}
+=== CONTEXTO VISUAL ===
+${cleanPrompt}
 
-=== TEXTO A RENDERIZAR NA IMAGEM ===
-Título (fonte GRANDE, BOLD, BRANCO, centralizado):
-"${params.headline}"
-${truncatedBody ? `
-Subtexto (menor, abaixo do título, máximo 2 linhas):
-"${truncatedBody}"` : ""}
+=== TEXTO OBRIGATÓRIO (PT-BR) ===
+TÍTULO (grande, bold, branco, centralizado): "${cleanHeadline}"
+${cleanBody ? `SUBTEXTO (menor, abaixo): "${cleanBody}"` : ""}
 
-=== LAYOUT ===
-- Título: Centralizado, fonte grande Inter Bold
-- Abaixo do título: Linha de acento verde sutil
-- Corpo (se houver): Texto menor abaixo da linha
-- Canto inferior direito: Espaço reservado para logo
-
-=== REGRAS CRÍTICAS ===
-1. NUNCA escreva "HEADLINE:", "CONTEXT:", "BODY TEXT:", "VISUAL:" ou qualquer prefixo/label na imagem
-2. Texto deve ser PARTE da imagem (burned-in), não sobreposto
-3. Mantenha texto MÍNIMO - o headline é a estrela
-4. Use apenas as cores da marca (#004F8F, #1A7A3E, #F07818)
-5. Estilo editorial premium, NUNCA vendedor ou genérico`;
+=== REGRAS ABSOLUTAS ===
+- TODO texto DEVE estar em PORTUGUÊS BRASILEIRO
+- NUNCA escreva nomes de fontes (Inter, Arial, etc.) na imagem
+- NUNCA escreva tamanhos (px, pt) na imagem  
+- NUNCA escreva labels como "HEADLINE:", "BODY:", "VISUAL:"
+- Texto BRANCO com alto contraste
+- Layout limpo - o headline é a estrela
+- Espaço no canto inferior direito para logo`;
+  }
 
   // Add visual references notes
   if (logoAsset?.url) {
-    fullPrompt += "\n\nANEXO: Logo da empresa - use esta logo EXATA no canto inferior direito.";
+    fullPrompt += "\n\n[ANEXO: Logo da empresa - usar EXATA no canto inferior direito]";
   }
-  if (products?.length) {
-    fullPrompt += `\n\nANEXO: ${products.length} imagens de referência de produtos. Use o estilo/estética como inspiração.`;
+  if (products.length > 0) {
+    fullPrompt += `\n\n[ANEXO: ${products.length} imagens de produtos como referência de estilo]`;
   }
 
   // Retry helper function

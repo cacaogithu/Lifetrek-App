@@ -64,9 +64,34 @@ serve(async (req: Request) => {
     
     console.log(`[REGEN] Assets: Logo=${!!logoAsset?.url}, ISO=${!!isoAsset?.url}`);
 
-    const slides = carousel.slides || [];
+    let slides = carousel.slides || [];
+    const totalSlides = slides.length;
+
+    // Limit to 5 slides max
+    if (slides.length > 5) {
+      console.log(`[REGEN] ⚠️ Truncating ${slides.length} slides to 5`);
+      const hook = slides.find((s: any) => s.type === 'hook') || slides[0];
+      const cta = slides.find((s: any) => s.type === 'cta') || slides[slides.length - 1];
+      const content = slides.filter((s: any) => s.type === 'content').slice(0, 3);
+      slides = [hook, ...content, cta].filter(Boolean).slice(0, 5);
+    }
 
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    // Sanitize prompts to prevent font names, sizes, and labels from being rendered
+    function sanitizePrompt(text: string): string {
+      if (!text) return text;
+      return text
+        .replace(/inter\s*(bold|semibold|regular|medium|light)?/gi, "")
+        .replace(/fonte\s*[a-z]+\s*(bold|semibold)?/gi, "")
+        .replace(/\d+\s*px/gi, "")
+        .replace(/\d+\s*pt/gi, "")
+        .replace(/headline:/gi, "")
+        .replace(/body\s*text:/gi, "")
+        .replace(/visual:/gi, "")
+        .replace(/context:/gi, "")
+        .trim();
+    }
 
     async function fetchAiWithRetry(payload: any, label: string, maxAttempts = 3) {
       let lastStatus: number | null = null;
@@ -112,34 +137,52 @@ serve(async (req: Request) => {
     async function processSlide(slide: any, index: number): Promise<any> {
       const slideStart = Date.now();
       const slideNum = index + 1;
-      console.log(`[REGEN] [Slide ${slideNum}/${slides.length}] Starting: ${slide.type}`);
+      const isFirstSlide = index === 0;
+      const isLastSlide = index === slides.length - 1;
+      
+      // Auto-set overlay flags
+      slide.showLogo = isFirstSlide || isLastSlide || slide.showLogo === true;
+      slide.showISOBadge = isLastSlide || slide.type === 'cta' || slide.showISOBadge === true;
+      
+      console.log(`[REGEN] [Slide ${slideNum}/${slides.length}] Starting: ${slide.type} (logo: ${slide.showLogo}, ISO: ${slide.showISOBadge})`);
 
       const logoPosition = slide.logoPosition || 'top-right';
       
-      // Premium prompt with Brand Book
-      let imagePrompt = `=== LIFETREK MEDICAL - PREMIUM IMAGE ===
-DIMENSIONS: 1080x1350px (portrait)
-COLORS: Primary Blue #004F8F, Dark gradient #0A1628 to #003052, Green #1A7A3E (accents only), Orange #F07818 (CTA only)
-TYPOGRAPHY: Inter Bold headlines (48-60px), Inter SemiBold body (28-36px), WHITE text
-AESTHETIC: Premium glass morphism, editorial magazine style, medical precision, high-tech
+      // Sanitize text content
+      const cleanHeadline = sanitizePrompt(slide.headline);
+      const cleanBody = sanitizePrompt(slide.body);
+      const cleanVisual = sanitizePrompt(slide.imageGenerationPrompt || "");
+      
+      // Premium prompt - ALL IN PORTUGUESE, NO FONT NAMES
+      let imagePrompt = `=== LIFETREK MEDICAL - SLIDE PREMIUM ===
+DIMENSÕES: 1080x1350px (retrato)
+CORES: Azul #004F8F (primário), gradiente #0A1628 → #003052, Verde #1A7A3E (acentos), Laranja #F07818 (CTA)
+ESTÉTICA: Glassmorphism premium, estilo editorial revista, precisão médica, high-tech
 
-VISUAL: ${slide.imageGenerationPrompt || "Professional medical manufacturing, precision CNC machining, cleanroom environment"}`;
+VISUAL: ${cleanVisual || "Manufatura médica profissional, usinagem CNC de precisão, ambiente de sala limpa"}`;
 
-      if (slide.textPlacement === "burned_in") {
+      if (slide.textPlacement === "burned_in" || cleanHeadline) {
         imagePrompt += `
 
-RENDER TEXT (BURNED-IN):
-Headline: "${slide.headline}"
-${slide.body ? `Subtext: "${slide.body.split(' ').slice(0, 12).join(' ')}"` : ""}`;
+TEXTO A RENDERIZAR (PT-BR):
+Título: "${cleanHeadline}"
+${cleanBody ? `Subtexto: "${cleanBody.split(' ').slice(0, 12).join(' ')}"` : ""}`;
       } else {
         imagePrompt += `
 
-CLEAN MODE: Premium background only, no text. Abstract medical textures.`;
+MODO LIMPO: Apenas fundo premium, sem texto. Texturas médicas abstratas.`;
       }
 
       imagePrompt += `
 
-RULES: No labels like "HEADLINE:", leave space at ${logoPosition} for logo overlay, no ISO badges (overlaid later), crystal clear text, premium editorial style.`;
+REGRAS ABSOLUTAS:
+- TODO texto em PORTUGUÊS BRASILEIRO
+- NUNCA escrever nomes de fontes (Inter, Arial, etc.)
+- NUNCA escrever tamanhos (px, pt)
+- NUNCA escrever labels como "HEADLINE:", "BODY:"
+- Texto BRANCO com alto contraste
+- Espaço no ${logoPosition} para logo
+- Estilo editorial premium`;
 
       let imageUrl = "";
 
