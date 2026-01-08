@@ -8,7 +8,41 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Capture logs so the UI can show them after a regeneration run
+const __regenLogs: string[] = [];
+const stringify = (v: unknown) => {
+  if (typeof v === "string") return v;
+  try {
+    return JSON.stringify(v);
+  } catch {
+    return String(v);
+  }
+};
+const record = (level: "info" | "warn" | "error", args: unknown[]) => {
+  const msg = args.map(stringify).join(" ");
+  __regenLogs.push(`[${level}] ${msg}`);
+};
+
+const _log = console.log.bind(console);
+const _warn = console.warn.bind(console);
+const _error = console.error.bind(console);
+console.log = (...args: unknown[]) => {
+  record("info", args);
+  _log(...args);
+};
+console.warn = (...args: unknown[]) => {
+  record("warn", args);
+  _warn(...args);
+};
+console.error = (...args: unknown[]) => {
+  record("error", args);
+  _error(...args);
+};
+
 serve(async (req: Request) => {
+  // reset per request
+  __regenLogs.length = 0;
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -383,12 +417,13 @@ REGRAS ABSOLUTAS:
     console.log(`[REGEN] ✅✅ COMPLETE: ${processedSlides.length} slides, ${imageUrls.length} images, ${totalTime}ms total`);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         carousel_id,
         slides_regenerated: processedSlides.length,
         images_generated: imageUrls.length,
-        duration_ms: totalTime
+        duration_ms: totalTime,
+        logs: __regenLogs,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
