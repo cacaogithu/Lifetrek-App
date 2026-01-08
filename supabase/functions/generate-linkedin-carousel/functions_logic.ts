@@ -261,6 +261,11 @@ ${VALUE_PROPOSITION_FRAMEWORK}
 ${KILLER_HOOKS_PLAYBOOK}
 
 === BIBLIOTECA DE ASSETS ===
+**PRIORIZE ASSETS REAIS DA EMPRESA** sempre que o tema combinar:
+- Posts sobre "sala limpa" / "cleanroom" → Use asset "Sala Limpa ISO 7 - Hero" (facilities)
+- Posts sobre "equipamentos" / "CNC" → Use assets de equipment (Citizen L20, M32)
+- Posts sobre "recepção" / "instalações" → Use asset de facilities
+- Posts sobre "fábrica" / "empresa" → Use asset do exterior da fábrica
 ${assetsContext}
 
 === ASSETS DA EMPRESA (Logos, Certificações) ===
@@ -338,9 +343,17 @@ Para cada slide, forneça \`visual_concept\` e \`imageGenerationPrompt\`.
 **REFERÊNCIA DE PRODUTOS**:
 - Quando \`productReferenceUrls\` está populado, mencione: "Use provided product images as visual reference for technical accuracy"
 
-=== REGRAS ===
+=== REGRAS DE SELEÇÃO DE ASSETS ===
+**PRIORIDADE #1: ASSETS REAIS DA EMPRESA**
+- ANTES de usar 'backgroundType': 'generate', verifique se existe um asset real que combina com o tema
+- Posts sobre sala limpa, cleanroom, qualidade → Use assets de "facilities" com tags "cleanroom"
+- Posts sobre equipamentos, CNC, máquinas → Use assets de "equipment"
+- Posts sobre empresa, instalações, infraestrutura → Use assets de "facilities"
+- **APENAS GERE COM IA** quando não houver asset real adequado
+
+=== REGRAS GERAIS ===
 - Use 'backgroundType': 'asset' E 'assetId' quando um asset se encaixa perfeitamente.
-- Use 'backgroundType': 'generate' quando você precisa de um visual customizado.
+- Use 'backgroundType': 'generate' APENAS quando você precisa de um visual que NÃO existe na biblioteca.
 - SEMPRE defina \`showLogo\` apropriadamente (true para slide 1 e último slide, false para outros).
 - Defina \`showISOBadge: true\` quando mencionando ISO/certificação/padrões de qualidade.
 - Popule \`productReferenceUrls\` quando o tema se relaciona a produtos específicos.

@@ -170,12 +170,23 @@ export const AGENT_TOOLS = {
       type: "function",
       function: {
         name: "search_assets",
-        description: "Search for existing content assets (backgrounds, logos, etc.)",
+        description: "Search for REAL company assets (cleanroom photos, equipment images, facility photos). USE THIS FIRST before generating AI images. Available categories: 'facilities' (cleanroom, reception, factory), 'equipment' (CNC machines, electropolishing), 'industrial' (general factory shots).",
         parameters: {
           type: "object",
           properties: {
-            category: { type: "string", description: "Asset category" },
-            tags: { type: "array", items: { type: "string" }, description: "Tags to filter by" }
+            category: { 
+              type: "string", 
+              description: "Asset category: 'facilities' (cleanroom, reception, factory), 'equipment' (CNC, machinery), 'industrial' (general)"
+            },
+            tags: { 
+              type: "array", 
+              items: { type: "string" }, 
+              description: "Tags to filter: cleanroom, iso7, cnc, citizen, reception, factory, machinery, etc." 
+            },
+            semantic_search: {
+              type: "string",
+              description: "Natural language description of what you need (e.g., 'foto da sala limpa', 'máquina CNC')"
+            }
           },
           required: []
         }
@@ -671,21 +682,84 @@ Subtexto (menor, abaixo do título, máximo 2 linhas):
   }
 }
 
-// Search assets with fallback to processed_product_images
+// Search assets with semantic category mapping and fallback to processed_product_images
 async function searchAssets(
-  params: { category?: string; tags?: string[] },
+  params: { category?: string; tags?: string[]; semantic_search?: string },
   supabase: any
 ): Promise<any> {
-  console.log(`🔍 [SEARCH-ASSETS] Searching for category: ${params.category}, tags: ${params.tags?.join(", ") || "none"}`);
+  console.log(`🔍 [SEARCH-ASSETS] Searching for category: ${params.category}, tags: ${params.tags?.join(", ") || "none"}, semantic: ${params.semantic_search || "none"}`);
   
-  // First, try content_assets table
+  // Semantic category mapping - maps natural language to database categories and tags
+  const semanticMapping: Record<string, { categories: string[]; tags: string[] }> = {
+    // Portuguese terms
+    "sala limpa": { categories: ["facilities"], tags: ["cleanroom", "iso7", "sala_limpa"] },
+    "cleanroom": { categories: ["facilities"], tags: ["cleanroom", "iso7", "sala_limpa"] },
+    "sala_limpa": { categories: ["facilities"], tags: ["cleanroom", "iso7"] },
+    "recepção": { categories: ["facilities"], tags: ["reception", "office", "lobby"] },
+    "reception": { categories: ["facilities"], tags: ["reception", "office", "lobby"] },
+    "fábrica": { categories: ["facilities"], tags: ["factory", "exterior", "building"] },
+    "factory": { categories: ["facilities"], tags: ["factory", "exterior", "building"] },
+    "instalações": { categories: ["facilities"], tags: ["factory", "reception", "hero"] },
+    "facilities": { categories: ["facilities"], tags: ["hero", "factory", "cleanroom"] },
+    // Equipment terms
+    "cnc": { categories: ["equipment"], tags: ["cnc", "citizen", "machinery"] },
+    "máquina": { categories: ["equipment"], tags: ["cnc", "machinery", "citizen"] },
+    "torno": { categories: ["equipment"], tags: ["cnc", "swiss_turn", "citizen"] },
+    "equipment": { categories: ["equipment"], tags: ["cnc", "machinery", "citizen"] },
+    "equipamento": { categories: ["equipment"], tags: ["cnc", "machinery", "finishing"] },
+    "citizen": { categories: ["equipment"], tags: ["citizen", "cnc", "l20", "m32"] },
+    "eletropolimento": { categories: ["equipment"], tags: ["electropolishing", "finishing", "surface_treatment"] },
+    // Product terms
+    "implante": { categories: ["products", "medical_spinal"], tags: ["implant", "spinal", "medical"] },
+    "produto": { categories: ["products"], tags: ["produto", "processado"] },
+    "products": { categories: ["products", "dental", "veterinary"], tags: ["implant", "medical"] },
+    // General
+    "hero": { categories: ["facilities"], tags: ["hero"] },
+    "qualidade": { categories: ["facilities", "equipment"], tags: ["cleanroom", "iso7", "cnc"] },
+    "infraestrutura": { categories: ["facilities"], tags: ["factory", "cleanroom", "reception"] },
+  };
+
+  // Determine categories and tags from semantic search or explicit params
+  let searchCategories: string[] = [];
+  let searchTags: string[] = params.tags || [];
+  
+  // Process semantic search term
+  if (params.semantic_search) {
+    const semanticLower = params.semantic_search.toLowerCase();
+    for (const [keyword, mapping] of Object.entries(semanticMapping)) {
+      if (semanticLower.includes(keyword)) {
+        searchCategories.push(...mapping.categories);
+        searchTags.push(...mapping.tags);
+      }
+    }
+  }
+  
+  // Process explicit category with mapping
+  if (params.category) {
+    const categoryLower = params.category.toLowerCase();
+    if (semanticMapping[categoryLower]) {
+      searchCategories.push(...semanticMapping[categoryLower].categories);
+      searchTags.push(...semanticMapping[categoryLower].tags);
+    } else {
+      searchCategories.push(params.category);
+    }
+  }
+  
+  // Remove duplicates
+  searchCategories = [...new Set(searchCategories)];
+  searchTags = [...new Set(searchTags)];
+  
+  console.log(`   └─ Expanded search: categories=[${searchCategories.join(", ")}], tags=[${searchTags.join(", ")}]`);
+  
+  // Build query for content_assets
   let query = supabase
     .from("content_assets")
     .select("id, filename, file_path, category, tags")
-    .limit(10);
+    .limit(15);
 
-  if (params.category) {
-    query = query.ilike("category", `%${params.category}%`);
+  // Filter by categories (OR logic)
+  if (searchCategories.length > 0) {
+    query = query.in("category", searchCategories);
   }
 
   const { data: contentAssets, error: contentError } = await query;
@@ -696,11 +770,19 @@ async function searchAssets(
 
   let assets = contentAssets || [];
   
-  // Filter by tags if provided
-  if (params.tags && params.tags.length > 0) {
-    assets = assets.filter((a: any) => 
-      a.tags?.some((t: string) => params.tags!.some(tag => t.toLowerCase().includes(tag.toLowerCase())))
-    );
+  // Score and sort by tag match relevance
+  if (searchTags.length > 0) {
+    assets = assets.map((a: any) => {
+      const assetTags = a.tags || [];
+      const matchScore = searchTags.filter(tag => 
+        assetTags.some((at: string) => at.toLowerCase().includes(tag.toLowerCase()))
+      ).length;
+      return { ...a, matchScore };
+    });
+    
+    // Sort by match score and filter to only those with matches
+    assets = assets.filter((a: any) => a.matchScore > 0);
+    assets.sort((a: any, b: any) => b.matchScore - a.matchScore);
   }
 
   // If no content_assets found, fallback to processed_product_images
@@ -736,10 +818,15 @@ async function searchAssets(
     
     console.log(`✅ [SEARCH-ASSETS] Found ${assets.length} products as fallback`);
   } else {
-    console.log(`✅ [SEARCH-ASSETS] Found ${assets.length} content_assets`);
+    console.log(`✅ [SEARCH-ASSETS] Found ${assets.length} content_assets (best match: ${assets[0]?.filename})`);
   }
 
-  return { assets };
+  return { 
+    assets,
+    searchedCategories: searchCategories,
+    searchedTags: searchTags,
+    totalFound: assets.length
+  };
 }
 
 // Deep research using Perplexity API
