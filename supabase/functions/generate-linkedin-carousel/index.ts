@@ -130,10 +130,10 @@ ${imagePrompt || "Professional medical manufacturing scene, precision CNC machin
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Fetch available assets
+    // Fetch available assets - include file_path for proper URL resolution
     const { data: assets, error: assetsError } = await supabase
       .from("content_assets")
-      .select("id, filename, category, tags")
+      .select("id, filename, file_path, category, tags")
       .limit(50);
 
     // Log and handle assets error gracefully
@@ -333,12 +333,17 @@ IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
       for (const slide of slidesToProcess) {
         let imageUrl = "";
 
-        // 1. Try Asset
+        // 1. Try Asset - use file_path directly (already contains full URL)
         if (slide.backgroundType === "asset" && slide.assetId) {
-          const { data: assetData } = await supabase.from("content_assets").select("filename").eq("id", slide.assetId).single();
+          const { data: assetData } = await supabase.from("content_assets").select("file_path, filename").eq("id", slide.assetId).single();
           if (assetData) {
-            const { data: publicUrlData } = supabase.storage.from("content-assets").getPublicUrl(assetData.filename);
-            imageUrl = publicUrlData.publicUrl;
+            // Use file_path if available (full URL), otherwise fallback to constructing URL
+            if (assetData.file_path) {
+              imageUrl = assetData.file_path;
+            } else {
+              const { data: publicUrlData } = supabase.storage.from("content-assets").getPublicUrl(assetData.filename);
+              imageUrl = publicUrlData.publicUrl;
+            }
           }
         }
 
@@ -476,7 +481,37 @@ Fundo abstrato profissional, texturas médicas sutis, ready for text overlay.`;
                 }
               }
               
-              imageUrl = baseImageUrl;
+              // Upload base64 image to Storage to avoid storing in DB
+              if (baseImageUrl && baseImageUrl.startsWith('data:image')) {
+                try {
+                  const base64Data = baseImageUrl.split(',')[1];
+                  const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+                  const fileName = `carousel-${Date.now()}-slide-${processedSlides.length + 1}.png`;
+                  
+                  const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('carousel-images')
+                    .upload(fileName, imageBytes, {
+                      contentType: 'image/png',
+                      upsert: false
+                    });
+                  
+                  if (!uploadError && uploadData) {
+                    const { data: publicUrlData } = supabase.storage
+                      .from('carousel-images')
+                      .getPublicUrl(fileName);
+                    imageUrl = publicUrlData.publicUrl;
+                    console.log(`✅ Uploaded image to Storage: ${fileName}`);
+                  } else {
+                    console.warn("Failed to upload to Storage, keeping base64:", uploadError?.message);
+                    imageUrl = baseImageUrl;
+                  }
+                } catch (uploadErr) {
+                  console.warn("Storage upload error, keeping base64:", uploadErr);
+                  imageUrl = baseImageUrl;
+                }
+              } else {
+                imageUrl = baseImageUrl;
+              }
             } else {
               console.warn("All image generation attempts failed for this slide");
             }

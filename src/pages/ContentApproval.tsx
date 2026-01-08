@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Check, X, Eye, FileText, Linkedin, Sparkles, Clock,
-  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive, CheckCircle
+  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive, CheckCircle, Download
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -41,6 +41,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
+import JSZip from 'jszip';
 
 export default function ContentApproval() {
   const navigate = useNavigate();
@@ -56,10 +57,82 @@ export default function ContentApproval() {
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Lazy load full carousel data when previewing LinkedIn posts
   const selectedLinkedInId = selectedItem?.type === 'linkedin' ? selectedItem.id : null;
   const { data: fullCarouselData, isLoading: isLoadingCarousel } = useLinkedInCarouselFull(selectedLinkedInId);
+
+  // Download carousel as ZIP
+  const downloadCarouselAsZip = async (carousel: any) => {
+    setIsDownloading(true);
+    try {
+      const zip = new JSZip();
+      const rawSlides = carousel?.slides;
+      const slides = Array.isArray(rawSlides) 
+        ? rawSlides 
+        : (Array.isArray(rawSlides?.slides) ? rawSlides.slides : []);
+      
+      let downloadedCount = 0;
+      for (let i = 0; i < slides.length; i++) {
+        const slide = slides[i];
+        if (slide.imageUrl) {
+          try {
+            if (slide.imageUrl.startsWith('data:image')) {
+              // Base64 - extract and add
+              const base64Data = slide.imageUrl.split(',')[1];
+              zip.file(`slide-${i + 1}.png`, base64Data, { base64: true });
+              downloadedCount++;
+            } else {
+              // URL - fetch and add
+              const response = await fetch(slide.imageUrl);
+              if (response.ok) {
+                const blob = await response.blob();
+                const ext = blob.type.split('/')[1] || 'png';
+                zip.file(`slide-${i + 1}.${ext}`, blob);
+                downloadedCount++;
+              }
+            }
+          } catch (imgErr) {
+            console.warn(`Failed to download slide ${i + 1}:`, imgErr);
+          }
+        }
+      }
+      
+      // Add caption as text file
+      if (carousel.caption) {
+        const cleanCaption = carousel.caption
+          .replace(/\*\*/g, '')
+          .replace(/\*/g, '')
+          .replace(/__/g, '')
+          .replace(/_/g, '');
+        zip.file('caption.txt', cleanCaption);
+      }
+      
+      if (downloadedCount === 0) {
+        toast.error("Nenhuma imagem disponível para download");
+        return;
+      }
+      
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      const safeTopic = (carousel.topic || 'carousel').slice(0, 30).replace(/[^a-zA-Z0-9]/g, '-');
+      a.download = `carousel-${safeTopic}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success(`Download concluído: ${downloadedCount} imagens`);
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error("Erro ao gerar download");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const handlePreview = (item: any) => {
     setSelectedItem(item);
@@ -609,10 +682,25 @@ export default function ContentApproval() {
             </DialogTitle>
           </DialogHeader>
           {renderPreview()}
-          <DialogFooter>
+          <DialogFooter className="flex-wrap gap-2">
             <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
               Fechar
             </Button>
+            {selectedItem?.type === 'linkedin' && (
+              <Button
+                variant="secondary"
+                onClick={() => downloadCarouselAsZip(fullCarouselData || selectedItem.full_data)}
+                disabled={isDownloading || isLoadingCarousel}
+                className="gap-2"
+              >
+                {isDownloading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                Baixar ZIP
+              </Button>
+            )}
             <Button
               variant="default"
               onClick={() => {
