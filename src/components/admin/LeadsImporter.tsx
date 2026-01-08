@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, FileText, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Upload, FileText, CheckCircle, XCircle, Loader2, AlertTriangle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import Papa from "papaparse";
 
 interface ImportResult {
   success: boolean;
@@ -101,39 +101,28 @@ const COLUMN_MAP: Record<string, string> = {
   "revenue": "revenue_range",
 };
 
-function parseCSV(text: string): Record<string, string>[] {
-  const lines = text.split(/\r?\n/).filter(line => line.trim());
-  if (lines.length < 2) return [];
+function parseCSV(text: string): { rows: Record<string, string>[]; rawLineCount: number } {
+  // Use PapaParse for robust CSV parsing (handles quotes, commas in fields, etc.)
+  const result = Papa.parse<Record<string, string>>(text, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: (header: string) => {
+      // Normalize header: lowercase, trim, remove quotes, replace spaces/dashes with underscore
+      const normalized = header.trim().toLowerCase().replace(/["']/g, "").replace(/[\s-]+/g, "_");
+      return COLUMN_MAP[normalized] || normalized;
+    },
+  });
 
-  // Detect delimiter (comma, semicolon, or tab)
-  const firstLine = lines[0];
-  let delimiter = ",";
-  if (firstLine.includes(";") && !firstLine.includes(",")) {
-    delimiter = ";";
-  } else if (firstLine.includes("\t") && !firstLine.includes(",")) {
-    delimiter = "\t";
-  }
+  const rawLineCount = result.data.length;
+  
+  // Filter rows that have email OR company
+  const rows = result.data.filter(row => {
+    const email = row.email?.trim();
+    const company = row.company?.trim();
+    return email || company;
+  });
 
-  const headers = lines[0].split(delimiter).map(h => h.trim().toLowerCase().replace(/["']/g, ""));
-  
-  const rows: Record<string, string>[] = [];
-  
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ""));
-    const row: Record<string, string> = {};
-    
-    headers.forEach((header, index) => {
-      const mappedKey = COLUMN_MAP[header] || header;
-      row[mappedKey] = values[index] || "";
-    });
-    
-    // Include row if it has email OR company (allows company-only leads)
-    if (row.email || row.company) {
-      rows.push(row);
-    }
-  }
-  
-  return rows;
+  return { rows, rawLineCount };
 }
 
 interface LeadsImporterProps {
@@ -147,16 +136,25 @@ export function LeadsImporter({ onImportComplete }: LeadsImporterProps) {
   const [preview, setPreview] = useState<{ total: number; sample: Record<string, string>[] } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [parseWarning, setParseWarning] = useState<string | null>(null);
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const text = await file.text();
-    const rows = parseCSV(text);
+    const { rows, rawLineCount } = parseCSV(text);
     
     if (rows.length === 0) {
       toast.error("Arquivo vazio ou formato inválido");
       return;
+    }
+
+    // Warn if parsed rows are significantly less than raw lines (possible parsing issue)
+    if (rawLineCount > 100 && rows.length < rawLineCount * 0.5) {
+      setParseWarning(`Atenção: ${rawLineCount} linhas no arquivo, mas apenas ${rows.length} leads válidos. Verifique o formato do CSV.`);
+    } else {
+      setParseWarning(null);
     }
 
     setPreview({
@@ -178,14 +176,14 @@ export function LeadsImporter({ onImportComplete }: LeadsImporterProps) {
 
     try {
       const text = await file.text();
-      const leads = parseCSV(text);
+      const { rows: leads } = parseCSV(text);
 
       if (leads.length === 0) {
         throw new Error("Nenhum lead válido encontrado no arquivo");
       }
 
-      // Process in batches of 100
-      const batchSize = 100;
+      // Process in batches of 200 for better performance
+      const batchSize = 200;
       let totalInserted = 0;
       let totalSkipped = 0;
       let allErrors: string[] = [];
@@ -282,6 +280,13 @@ export function LeadsImporter({ onImportComplete }: LeadsImporterProps) {
           </div>
         </div>
 
+        {parseWarning && (
+          <div className="flex items-center gap-2 p-3 border border-yellow-500/50 bg-yellow-500/10 rounded-lg text-sm text-yellow-700">
+            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+            <span>{parseWarning}</span>
+          </div>
+        )}
+
         {preview && (
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
@@ -295,7 +300,11 @@ export function LeadsImporter({ onImportComplete }: LeadsImporterProps) {
               <p className="font-medium mb-1">Amostra (primeiros 3):</p>
               {preview.sample.map((row, i) => (
                 <p key={i} className="truncate">
-                  {row.email} - {row.name || row.company || "N/A"}
+                  <span className="text-foreground">{row.company || "—"}</span>
+                  {" | "}
+                  <span>{row.email || "sem email"}</span>
+                  {" | "}
+                  <span>{row.name || "—"}</span>
                 </p>
               ))}
             </div>
