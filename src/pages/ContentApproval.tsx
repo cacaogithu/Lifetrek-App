@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Check, X, Eye, FileText, Linkedin, Sparkles, Clock,
-  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive, CheckCircle, Download
+  ThumbsUp, ThumbsDown, ArrowLeft, Loader2, Archive, CheckCircle, Download, RefreshCw
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -58,6 +58,7 @@ export default function ContentApproval() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   // Lazy load full carousel data when previewing LinkedIn posts
   const selectedLinkedInId = selectedItem?.type === 'linkedin' ? selectedItem.id : null;
@@ -180,6 +181,42 @@ export default function ContentApproval() {
   const openRejectDialog = (item: any) => {
     setSelectedItem(item);
     setRejectDialogOpen(true);
+  };
+
+  // Regenerate carousel images using premium prompts
+  const handleRegenerateImages = async (carouselId: string) => {
+    setIsRegenerating(true);
+    try {
+      toast.info("Regenerando imagens com prompt premium...", { duration: 10000 });
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/regenerate-carousel-images`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ carousel_id: carouselId })
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Falha ao regenerar imagens');
+      }
+
+      const result = await response.json();
+      toast.success(`✅ ${result.slides_regenerated} slides regenerados com sucesso!`);
+      
+      // Close dialog and refetch
+      setPreviewDialogOpen(false);
+      setSelectedItem(null);
+      // Trigger refetch by invalidating the query (handled by react-query)
+      window.location.reload(); // Simple approach - refetch all data
+    } catch (error) {
+      console.error('Regenerate error:', error);
+      toast.error(error instanceof Error ? error.message : 'Erro ao regenerar imagens');
+    } finally {
+      setIsRegenerating(false);
+    }
   };
 
   const renderPreview = () => {
@@ -687,19 +724,34 @@ export default function ContentApproval() {
               Fechar
             </Button>
             {selectedItem?.type === 'linkedin' && (
-              <Button
-                variant="secondary"
-                onClick={() => downloadCarouselAsZip(fullCarouselData || selectedItem.full_data)}
-                disabled={isDownloading || isLoadingCarousel}
-                className="gap-2"
-              >
-                {isDownloading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                Baixar ZIP
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => handleRegenerateImages(selectedItem.id)}
+                  disabled={isRegenerating || isLoadingCarousel}
+                  className="gap-2"
+                >
+                  {isRegenerating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4" />
+                  )}
+                  Regenerar Imagens
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => downloadCarouselAsZip(fullCarouselData || selectedItem.full_data)}
+                  disabled={isDownloading || isLoadingCarousel}
+                  className="gap-2"
+                >
+                  {isDownloading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  Baixar ZIP
+                </Button>
+              </>
             )}
             <Button
               variant="default"

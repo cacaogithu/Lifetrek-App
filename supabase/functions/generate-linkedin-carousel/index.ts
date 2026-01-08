@@ -386,56 +386,76 @@ IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
           }
 
           try {
-            // Clean prompt structure without literal HEADLINE:/CONTEXT: that get rendered
-            let imagePrompt = `Crie uma imagem profissional para carrossel do LinkedIn da Lifetrek Medical.
+            // Premium prompt structure with full Brand Book compliance
+            const logoPosition = slide.logoPosition || 'top-right';
+            
+            let imagePrompt = `=== LIFETREK MEDICAL - PREMIUM IMAGE GENERATION ===
 
-=== ESTILO OBRIGATÓRIO ===
-- Dimensões: 1080x1350px (retrato)
-- Cores da marca: Azul Primário #004F8F (dominante), Verde #1A7A3E (micro-acentos), Laranja #F07818 (CTAs)
-- Fundo: Gradiente premium de #0A1628 para #004F8F
-- Fonte: Inter Bold (títulos), Inter SemiBold (corpo)
-- Alto contraste: Texto BRANCO sobre fundo ESCURO
-- Estética: Premium, editorial, alta tecnologia médica
+**MANDATORY DIMENSIONS**: 1080x1350px (portrait, LinkedIn carousel)
 
-=== DESCRIÇÃO VISUAL ===
-${slide.imageGenerationPrompt || "Professional medical manufacturing, precision CNC, cleanroom"}`;
+**BRAND BOOK COLOR PALETTE**:
+- Primary Blue #004F8F: Dominant in backgrounds, gradients, main elements
+- Dark Background: Gradient from #0A1628 (top) to #003052 (base)  
+- Innovation Green #1A7A3E: ONLY micro-accents (thin lines, subtle borders)
+- Energy Orange #F07818: ONLY CTA details (never in backgrounds)
+
+**TYPOGRAPHY**:
+- Font: Inter Bold for headlines, Inter SemiBold for body
+- Headline size: 48-60px
+- Body size: 28-36px
+- TEXT COLOR: PURE WHITE (#FFFFFF) with subtle shadow for contrast
+
+**PREMIUM AESTHETIC**:
+- Subtle glass morphism gradients
+- Premium shadows (not flat design)
+- High-tech medical precision feel
+- Magazine editorial style, NOT salesy
+- Clean composition with generous negative space
+- Sophisticated depth with layered transparencies
+
+**VISUAL ELEMENTS TO USE**:
+- Medical precision imagery (CNCs, implants, cleanrooms)
+- Subtle metallic titanium textures when appropriate
+- NEVER use generic human faces or obvious stock photos
+- Focus on machinery, products, precision, technology
+
+=== VISUAL DESCRIPTION FOR THIS SLIDE ===
+${slide.imageGenerationPrompt || "Professional medical manufacturing scene featuring precision CNC machining, cleanroom environment, high-tech medical devices. Magazine editorial aesthetic, sophisticated lighting."}`;
 
             // Handling Text Placement Strategy
             if (slide.textPlacement === "burned_in") {
               imagePrompt += `
 
-=== TEXTO A RENDERIZAR (BURNED-IN) ===
-Título (fonte GRANDE, BOLD, BRANCO, centralizado):
+=== TEXT TO RENDER (BURNED-IN MODE) ===
+Render this headline in LARGE, BOLD, WHITE, centered Inter font:
 "${slide.headline}"
 
-${slide.body ? `Subtexto (menor, abaixo do título, max 2 linhas):
-"${slide.body.split(' ').slice(0, 15).join(' ')}${slide.body.split(' ').length > 15 ? '...' : ''}"` : ""}`;
+${slide.body ? `Smaller subtext below headline (max 2 lines, Inter SemiBold):
+"${slide.body.split(' ').slice(0, 15).join(' ')}${slide.body.split(' ').length > 15 ? '...' : ''}"` : ""}
+
+Text must be CRYSTAL CLEAR with high contrast against dark background.`;
             } else {
               imagePrompt += `
 
-=== MODO CLEAN ===
-Crie um fundo visual premium SEM texto renderizado.
-Fundo abstrato profissional, texturas médicas sutis, ready for text overlay.`;
+=== CLEAN MODE (NO TEXT) ===
+Create a premium visual background WITHOUT any rendered text.
+Abstract professional background, subtle medical textures, ready for text overlay.
+Focus on atmosphere, lighting, and brand color palette.`;
             }
 
             imagePrompt += `
 
-=== REGRAS CRÍTICAS ===
-1. NUNCA escreva "HEADLINE:", "CONTEXT:", "VISUAL:", "DESCRIPTION:" ou qualquer label/prefixo na imagem
-2. Texto deve ser CLARO, LEGÍVEL, profissional
-3. Estilo editorial premium, NÃO vendedor ou genérico
-4. Use a paleta de cores da marca consistentemente`;
+=== CRITICAL RULES - MUST FOLLOW ===
+1. NEVER write "HEADLINE:", "CONTEXT:", "VISUAL:", "DESCRIPTION:" or ANY label/prefix in the image
+2. NEVER draw or create logos - leave EMPTY SPACE at ${logoPosition} corner for logo overlay
+3. NEVER draw or create ISO badges - will be overlaid separately
+4. Text must be CRYSTAL CLEAR, LEGIBLE, professional Inter font
+5. Premium editorial style, NOT generic or salesy
+6. Use brand color palette CONSISTENTLY throughout
+7. High contrast between text and background always`;
 
-            // Handle Logo - will be overlaid via image editing in next step
-            const logoPosition = slide.logoPosition || 'bottom-right';
-            if (slide.showLogo) {
-              imagePrompt += `\n5. Reserve espaço para logo no canto ${logoPosition}`;
-            }
-
-            // Handle ISO Badge Integration
-            if (slide.showISOBadge) {
-              imagePrompt += `\n6. Inclua indicação visual de certificação ISO 13485:2016`;
-            }
+            // Note: Logo and ISO badge will be overlaid via image editing in next step
+            // Do NOT ask AI to draw them - we use real assets
 
             // Generate base image with retry logic
             const imgRes = await generateImageWithRetry(imagePrompt);
@@ -449,7 +469,8 @@ Fundo abstrato profissional, texturas médicas sutis, ready for text overlay.`;
                 const logoAsset = companyAssets.find((a: any) => a.type === 'logo' || a.type === 'lifetrek_logo');
                 if (logoAsset?.url) {
                   try {
-                    console.log(`Overlaying real logo at ${logoPosition}...`);
+                    const logoPos = slide.logoPosition || 'top-right';
+                    console.log(`Overlaying real logo at ${logoPos}...`);
                     const overlayRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
                       method: "POST",
                       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
@@ -458,7 +479,16 @@ Fundo abstrato profissional, texturas médicas sutis, ready for text overlay.`;
                         messages: [{
                           role: "user",
                           content: [
-                            { type: "text", text: `Add this company logo to the ${logoPosition} corner of the slide image. Keep the logo clear, professional, and properly sized (not too large). Maintain the original image quality and composition.` },
+                            { type: "text", text: `You are a professional graphic designer. Overlay this company logo onto the slide image.
+
+CRITICAL RULES:
+- Place logo in the ${logoPos} corner of the image
+- Size: approximately 8-10% of image width
+- Keep the logo EXACTLY as provided (colors, proportions, quality)
+- DO NOT distort, redraw, or modify the logo in any way
+- DO NOT alter the rest of the slide image
+- Maintain professional, clean appearance
+- Ensure logo has good visibility against the background` },
                             { type: "image_url", image_url: { url: baseImageUrl } },
                             { type: "image_url", image_url: { url: logoAsset.url } }
                           ]
@@ -472,11 +502,57 @@ Fundo abstrato profissional, texturas médicas sutis, ready for text overlay.`;
                       const overlayedUrl = overlayData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
                       if (overlayedUrl) {
                         baseImageUrl = overlayedUrl;
-                        console.log("Logo overlay successful");
+                        console.log("✅ Logo overlay successful");
                       }
                     }
                   } catch (logoErr) {
                     console.warn("Logo overlay failed, using base image:", logoErr);
+                  }
+                }
+              }
+
+              // Overlay ISO Badge if requested
+              if (baseImageUrl && slide.showISOBadge && companyAssets) {
+                const isoAsset = companyAssets.find((a: any) => a.type === 'iso_badge');
+                if (isoAsset?.url) {
+                  try {
+                    console.log(`Overlaying ISO 13485 badge...`);
+                    const isoOverlayRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                      method: "POST",
+                      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        model: IMAGE_MODEL,
+                        messages: [{
+                          role: "user",
+                          content: [
+                            { type: "text", text: `You are a professional graphic designer. Overlay this ISO certification badge onto the slide image.
+
+CRITICAL RULES:
+- Place badge in the bottom-left corner of the image (opposite to logo)
+- Size: approximately 6-8% of image width (smaller than logo)
+- Keep the badge EXACTLY as provided (colors, text, proportions)
+- DO NOT distort, redraw, or modify the badge in any way
+- DO NOT alter the rest of the slide image
+- Ensure badge has good visibility but is not distracting
+- Professional, subtle integration` },
+                            { type: "image_url", image_url: { url: baseImageUrl } },
+                            { type: "image_url", image_url: { url: isoAsset.url } }
+                          ]
+                        }],
+                        modalities: ["image", "text"]
+                      }),
+                    });
+                    
+                    if (isoOverlayRes.ok) {
+                      const isoData = await isoOverlayRes.json();
+                      const isoOverlayedUrl = isoData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+                      if (isoOverlayedUrl) {
+                        baseImageUrl = isoOverlayedUrl;
+                        console.log("✅ ISO badge overlay successful");
+                      }
+                    }
+                  } catch (isoErr) {
+                    console.warn("ISO badge overlay failed, continuing:", isoErr);
                   }
                 }
               }
