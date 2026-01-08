@@ -1,0 +1,57 @@
+[
+  {
+    "topic": "Machining Titanium for Spinal Implants",
+    "targetAudience": "OEMs Ortopédicos",
+    "painPoint": "Difficulty machining Grade 5 Titanium without burrs or deformation",
+    "desiredOutcome": "Perfect surface finish and geometric tolerance",
+    "proofPoints": "Citizen M32 Swiss-type lathe, high-pressure coolant",
+    "ctaAction": "Request a titanium machining capability study",
+    "postType": "value",
+    "format": "carousel",
+    "numberOfCarousels": 1
+  },
+  {
+    "topic": "ISO 13485 Compliance in Instrument Manufacturing",
+    "targetAudience": "Fabricantes de Instrumentais",
+    "painPoint": "Fear of regulatory audit failures due to documentation gaps",
+    "desiredOutcome": "Audit-ready DHRs and full traceability",
+    "proofPoints": "ISO 13485:2016 certified quality management system",
+    "ctaAction": "Download our Quality Manual summary",
+    "postType": "value",
+    "format": "carousel",
+    "numberOfCarousels": 1
+  },
+  {
+    "topic": "Reducing Lead Times for Dental Implant Screws",
+    "targetAudience": "OEMs Dentais",
+    "painPoint": "Supy chain delays causing stockouts of critical components",
+    "desiredOutcome": "Reliable JIT delivery of turned parts",
+    "proofPoints": "Local Brazilian manufacturing, 24/7 production capacity",
+    "ctaAction": "Get a quote for monthly supply",
+    "postType": "commercial",
+    "format": "carousel",
+    "numberOfCarousels": 1
+  },
+  {
+    "topic": "Peek vs. Titanium: Machining Challenges",
+    "targetAudience": "OEMs Ortopédicos",
+    "painPoint": "maintaining tight tolerances on plastic components",
+    "desiredOutcome": "Burr-free PEEK cages with complex geometries",
+    "proofPoints": "Specialized tooling for polymers, controlled temperature room",
+    "ctaAction": "See our PEEK machining gallery",
+    "postType": "value",
+    "format": "carousel",
+    "numberOfCarousels": 1
+  },
+  {
+    "topic": "Veterinary Orthopedics: Human-Grade Quality",
+    "targetAudience": "OEMs Veterinários",
+    "painPoint": "Inconsistent quality from lower-tier suppliers",
+    "desiredOutcome": "Human-standard precision for vet implants",
+    "proofPoints": "Same machines (Citizen L20), same QA team as human breakdown",
+    "ctaAction": "Upgrade your veterinary line quality",
+    "postType": "commercial",
+    "format": "carousel",
+    "numberOfCarousels": 1
+  }
+]
