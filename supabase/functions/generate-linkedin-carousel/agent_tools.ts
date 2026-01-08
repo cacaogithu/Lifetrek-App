@@ -738,33 +738,42 @@ async function searchAssets(
   console.log(`🔍 [SEARCH-ASSETS] Searching for category: ${params.category}, tags: ${params.tags?.join(", ") || "none"}, semantic: ${params.semantic_search || "none"}`);
   
   // Semantic category mapping - maps natural language to database categories and tags
+  // Updated to include office and new categories from website-assets
   const semanticMapping: Record<string, { categories: string[]; tags: string[] }> = {
-    // Portuguese terms
-    "sala limpa": { categories: ["facilities"], tags: ["cleanroom", "iso7", "sala_limpa"] },
-    "cleanroom": { categories: ["facilities"], tags: ["cleanroom", "iso7", "sala_limpa"] },
-    "sala_limpa": { categories: ["facilities"], tags: ["cleanroom", "iso7"] },
-    "recepção": { categories: ["facilities"], tags: ["reception", "office", "lobby"] },
-    "reception": { categories: ["facilities"], tags: ["reception", "office", "lobby"] },
-    "fábrica": { categories: ["facilities"], tags: ["factory", "exterior", "building"] },
-    "factory": { categories: ["facilities"], tags: ["factory", "exterior", "building"] },
-    "instalações": { categories: ["facilities"], tags: ["factory", "reception", "hero"] },
-    "facilities": { categories: ["facilities"], tags: ["hero", "factory", "cleanroom"] },
+    // Portuguese terms - Facilities
+    "sala limpa": { categories: ["cleanroom", "facilities"], tags: ["cleanroom", "iso7", "sala_limpa", "qualidade"] },
+    "cleanroom": { categories: ["cleanroom", "facilities"], tags: ["cleanroom", "iso7", "sala_limpa", "qualidade"] },
+    "sala_limpa": { categories: ["cleanroom", "facilities"], tags: ["cleanroom", "iso7", "qualidade"] },
+    "recepção": { categories: ["facilities", "office"], tags: ["reception", "recepção", "office", "lobby", "escritorio"] },
+    "reception": { categories: ["facilities", "office"], tags: ["reception", "recepção", "office", "lobby"] },
+    "escritorio": { categories: ["office", "facilities"], tags: ["office", "escritorio", "reception", "facilities"] },
+    "escritório": { categories: ["office", "facilities"], tags: ["office", "escritorio", "reception", "facilities"] },
+    "office": { categories: ["office", "facilities"], tags: ["office", "escritorio", "reception", "facilities"] },
+    "fábrica": { categories: ["facilities"], tags: ["factory", "fabrica", "exterior", "building"] },
+    "fabrica": { categories: ["facilities"], tags: ["factory", "fabrica", "exterior", "building"] },
+    "factory": { categories: ["facilities"], tags: ["factory", "fabrica", "exterior", "building"] },
+    "instalações": { categories: ["facilities", "office", "cleanroom"], tags: ["factory", "reception", "hero", "office", "cleanroom"] },
+    "facilities": { categories: ["facilities", "office", "cleanroom"], tags: ["hero", "factory", "cleanroom", "office"] },
     // Equipment terms
-    "cnc": { categories: ["equipment"], tags: ["cnc", "citizen", "machinery"] },
-    "máquina": { categories: ["equipment"], tags: ["cnc", "machinery", "citizen"] },
-    "torno": { categories: ["equipment"], tags: ["cnc", "swiss_turn", "citizen"] },
-    "equipment": { categories: ["equipment"], tags: ["cnc", "machinery", "citizen"] },
-    "equipamento": { categories: ["equipment"], tags: ["cnc", "machinery", "finishing"] },
-    "citizen": { categories: ["equipment"], tags: ["citizen", "cnc", "l20", "m32"] },
-    "eletropolimento": { categories: ["equipment"], tags: ["electropolishing", "finishing", "surface_treatment"] },
+    "cnc": { categories: ["equipment"], tags: ["cnc", "citizen", "machinery", "equipment"] },
+    "máquina": { categories: ["equipment"], tags: ["cnc", "machinery", "citizen", "equipment"] },
+    "maquina": { categories: ["equipment"], tags: ["cnc", "machinery", "citizen", "equipment"] },
+    "torno": { categories: ["equipment"], tags: ["cnc", "swiss_turn", "citizen", "equipment"] },
+    "equipment": { categories: ["equipment"], tags: ["cnc", "machinery", "citizen", "equipment"] },
+    "equipamento": { categories: ["equipment"], tags: ["cnc", "machinery", "finishing", "equipment"] },
+    "citizen": { categories: ["equipment"], tags: ["citizen", "cnc", "l20", "m32", "equipment"] },
+    "eletropolimento": { categories: ["equipment"], tags: ["electropolishing", "finishing", "surface_treatment", "equipment"] },
     // Product terms
-    "implante": { categories: ["products", "medical_spinal"], tags: ["implant", "spinal", "medical"] },
-    "produto": { categories: ["products"], tags: ["produto", "processado"] },
-    "products": { categories: ["products", "dental", "veterinary"], tags: ["implant", "medical"] },
+    "implante": { categories: ["product", "products", "medical_spinal"], tags: ["implant", "spinal", "medical", "produto"] },
+    "produto": { categories: ["product", "products"], tags: ["produto", "processado", "product"] },
+    "products": { categories: ["product", "products", "dental", "veterinary"], tags: ["implant", "medical", "produto"] },
     // General
-    "hero": { categories: ["facilities"], tags: ["hero"] },
-    "qualidade": { categories: ["facilities", "equipment"], tags: ["cleanroom", "iso7", "cnc"] },
-    "infraestrutura": { categories: ["facilities"], tags: ["factory", "cleanroom", "reception"] },
+    "hero": { categories: ["facilities", "cleanroom"], tags: ["hero", "principal"] },
+    "qualidade": { categories: ["cleanroom", "facilities", "equipment"], tags: ["cleanroom", "iso7", "cnc", "qualidade"] },
+    "infraestrutura": { categories: ["facilities", "office", "cleanroom"], tags: ["factory", "cleanroom", "reception", "office"] },
+    // Team
+    "equipe": { categories: ["team"], tags: ["team", "equipe", "people"] },
+    "team": { categories: ["team"], tags: ["team", "equipe", "people"] },
   };
 
   // Determine categories and tags from semantic search or explicit params

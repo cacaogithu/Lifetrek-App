@@ -128,18 +128,35 @@ export default function EnvironmentAssets() {
     },
   });
 
+  const [migrationResults, setMigrationResults] = useState<{
+    website_assets?: { migrated: number; skipped: number };
+    processed_products?: { migrated: number; skipped: number };
+    company_assets?: { migrated: number; skipped: number };
+    content_assets_bucket?: { migrated: number; skipped: number };
+    total: number;
+    details?: string[];
+  } | null>(null);
+
   // Run migration
   const runMigration = async () => {
     setMigrating(true);
+    setMigrationResults(null);
     try {
       const { data, error } = await supabase.functions.invoke("migrate-assets");
       
       if (error) throw error;
       
-      toast.success(`Migração concluída: ${data.results?.total || 0} assets migrados`);
+      const results = data.results;
+      setMigrationResults(results);
+      
+      if (results.total > 0) {
+        toast.success(`Sincronização concluída: ${results.total} assets importados`);
+      } else {
+        toast.info("Todos os assets já estavam sincronizados");
+      }
       queryClient.invalidateQueries({ queryKey: ["content-assets"] });
     } catch (error: any) {
-      toast.error(`Erro na migração: ${error.message}`);
+      toast.error(`Erro na sincronização: ${error.message}`);
     } finally {
       setMigrating(false);
     }
@@ -188,11 +205,66 @@ export default function EnvironmentAssets() {
             Upload de fotos de instalações, equipamentos e equipe para uso pelo Designer Agent
           </p>
         </div>
-        <Button onClick={runMigration} disabled={migrating} variant="outline">
+        <Button onClick={runMigration} disabled={migrating} variant="outline" size="lg">
           <Database className="h-4 w-4 mr-2" />
-          {migrating ? "Migrando..." : "Migrar Assets Existentes"}
+          {migrating ? "Sincronizando..." : "Sincronizar Todos os Buckets"}
         </Button>
       </div>
+
+      {/* Migration Results */}
+      {migrationResults && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Database className="h-5 w-5 text-primary" />
+              Resultado da Sincronização
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              {migrationResults.website_assets && (
+                <div className="bg-background rounded-lg p-3">
+                  <p className="font-medium">website-assets</p>
+                  <p className="text-green-600">+{migrationResults.website_assets.migrated} novos</p>
+                  <p className="text-muted-foreground">{migrationResults.website_assets.skipped} existentes</p>
+                </div>
+              )}
+              {migrationResults.content_assets_bucket && (
+                <div className="bg-background rounded-lg p-3">
+                  <p className="font-medium">content-assets</p>
+                  <p className="text-green-600">+{migrationResults.content_assets_bucket.migrated} novos</p>
+                  <p className="text-muted-foreground">{migrationResults.content_assets_bucket.skipped} existentes</p>
+                </div>
+              )}
+              {migrationResults.processed_products && (
+                <div className="bg-background rounded-lg p-3">
+                  <p className="font-medium">Produtos</p>
+                  <p className="text-green-600">+{migrationResults.processed_products.migrated} novos</p>
+                  <p className="text-muted-foreground">{migrationResults.processed_products.skipped} existentes</p>
+                </div>
+              )}
+              {migrationResults.company_assets && (
+                <div className="bg-background rounded-lg p-3">
+                  <p className="font-medium">Branding</p>
+                  <p className="text-green-600">+{migrationResults.company_assets.migrated} novos</p>
+                  <p className="text-muted-foreground">{migrationResults.company_assets.skipped} existentes</p>
+                </div>
+              )}
+            </div>
+            {migrationResults.details && migrationResults.details.length > 0 && (
+              <div className="mt-4 p-3 bg-background rounded-lg max-h-40 overflow-y-auto">
+                <p className="font-medium text-sm mb-2">Detalhes:</p>
+                {migrationResults.details.slice(0, 10).map((detail, i) => (
+                  <p key={i} className="text-xs text-muted-foreground">{detail}</p>
+                ))}
+                {migrationResults.details.length > 10 && (
+                  <p className="text-xs text-muted-foreground mt-1">...e mais {migrationResults.details.length - 10} arquivos</p>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Upload Section */}
       <Card>
