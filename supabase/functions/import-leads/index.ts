@@ -79,9 +79,9 @@ serve(async (req) => {
 
     console.log(`[ImportLeads] Processing ${leads.length} leads...`);
 
-    let inserted = 0;
+    // Prepare all leads for bulk upsert
+    const preparedLeads = [];
     let skipped = 0;
-    let errors: string[] = [];
 
     for (const lead of leads as LeadRow[]) {
       // Skip if no email AND no company
@@ -92,20 +92,6 @@ serve(async (req) => {
 
       const emailNormalized = lead.email ? lead.email.toLowerCase().trim() : null;
       const companyNormalized = lead.company ? lead.company.trim() : null;
-
-      // Check for duplicate by email (only if email exists)
-      if (skipDuplicates && emailNormalized) {
-        const { data: existing } = await supabase
-          .from("contact_leads")
-          .select("id")
-          .eq("email", emailNormalized)
-          .single();
-
-        if (existing) {
-          skipped++;
-          continue;
-        }
-      }
 
       // Parse lead_score - handle string or number
       let leadScore = 50;
@@ -118,10 +104,13 @@ serve(async (req) => {
         }
       }
 
-      // Prepare lead data
-      const leadData = {
+      // Generate email placeholder for company-only leads
+      const finalEmail = emailNormalized || 
+        `${companyNormalized?.toLowerCase().replace(/[^a-z0-9]/g, '_')}@placeholder.lead`;
+
+      preparedLeads.push({
         name: lead.name || companyNormalized || "Desconhecido",
-        email: emailNormalized || `${companyNormalized?.toLowerCase().replace(/\s+/g, '_')}@placeholder.lead`,
+        email: finalEmail,
         company: companyNormalized,
         phone: lead.phone || "N/A",
         website: lead.website || null,
@@ -139,21 +128,29 @@ serve(async (req) => {
         message: lead.message || null,
         status: "new" as const,
         priority: leadScore >= 70 ? "high" as const : leadScore >= 40 ? "medium" as const : "low" as const,
-      };
+      });
+    }
 
-      // Use upsert to handle duplicates gracefully
-      const { error: upsertError } = await supabase
+    console.log(`[ImportLeads] Prepared ${preparedLeads.length} leads for upsert, skipped ${skipped} invalid`);
+
+    // Bulk upsert all leads at once
+    let inserted = 0;
+    let errors: string[] = [];
+
+    if (preparedLeads.length > 0) {
+      const { data, error: upsertError } = await supabase
         .from("contact_leads")
-        .upsert(leadData, { 
+        .upsert(preparedLeads, { 
           onConflict: "email",
           ignoreDuplicates: skipDuplicates 
-        });
+        })
+        .select("id");
 
       if (upsertError) {
-        console.error(`[ImportLeads] Error upserting ${leadData.email}:`, upsertError);
-        errors.push(`${leadData.email}: ${upsertError.message}`);
+        console.error(`[ImportLeads] Bulk upsert error:`, upsertError);
+        errors.push(upsertError.message);
       } else {
-        inserted++;
+        inserted = data?.length || preparedLeads.length;
       }
     }
 
