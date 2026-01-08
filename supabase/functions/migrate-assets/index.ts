@@ -6,6 +6,72 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Intelligent category and tag inference based on folder/file names
+function inferCategoryAndTags(folder: string, filename: string): { category: string; tags: string[] } {
+  const lowerFolder = folder.toLowerCase();
+  const lowerFilename = filename.toLowerCase();
+  const combined = `${lowerFolder} ${lowerFilename}`;
+  
+  // Category mapping
+  let category = "other";
+  const tags: string[] = [];
+  
+  // Facilities: office, reception, cleanroom, factory
+  if (combined.includes("office") || combined.includes("escritorio") || combined.includes("escritório")) {
+    category = "office";
+    tags.push("office", "escritorio", "facilities");
+  } else if (combined.includes("reception") || combined.includes("recepção") || combined.includes("recepcao") || combined.includes("lobby")) {
+    category = "facilities";
+    tags.push("reception", "recepção", "lobby", "office");
+  } else if (combined.includes("cleanroom") || combined.includes("sala_limpa") || combined.includes("salalimpa") || combined.includes("sala limpa") || combined.includes("iso7") || combined.includes("iso 7")) {
+    category = "cleanroom";
+    tags.push("cleanroom", "sala_limpa", "iso7", "qualidade");
+  } else if (combined.includes("factory") || combined.includes("fabrica") || combined.includes("fábrica") || combined.includes("exterior") || combined.includes("building")) {
+    category = "facilities";
+    tags.push("factory", "fabrica", "exterior", "building");
+  }
+  
+  // Equipment: CNC, machinery
+  else if (combined.includes("cnc") || combined.includes("citizen") || combined.includes("torno") || combined.includes("machine") || combined.includes("maquina") || combined.includes("máquina")) {
+    category = "equipment";
+    tags.push("equipment", "cnc", "machinery");
+    if (combined.includes("citizen")) tags.push("citizen");
+    if (combined.includes("m32")) tags.push("m32", "citizen");
+    if (combined.includes("l20")) tags.push("l20", "citizen");
+  } else if (combined.includes("electropol") || combined.includes("finishing") || combined.includes("acabamento")) {
+    category = "equipment";
+    tags.push("equipment", "finishing", "electropolishing");
+  }
+  
+  // Products
+  else if (combined.includes("product") || combined.includes("produto") || combined.includes("implant") || combined.includes("parafuso") || combined.includes("screw")) {
+    category = "product";
+    tags.push("produto", "product");
+    if (combined.includes("dental")) tags.push("dental");
+    if (combined.includes("spinal")) tags.push("spinal");
+    if (combined.includes("ortho")) tags.push("orthopedic");
+  }
+  
+  // Hero images
+  else if (combined.includes("hero")) {
+    category = "facilities";
+    tags.push("hero", "principal");
+  }
+  
+  // Team photos
+  else if (combined.includes("team") || combined.includes("equipe") || combined.includes("staff")) {
+    category = "team";
+    tags.push("team", "equipe", "people");
+  }
+  
+  // Add folder as tag
+  if (folder && folder !== "" && !tags.includes(folder.toLowerCase())) {
+    tags.push(folder.toLowerCase());
+  }
+  
+  return { category, tags };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -16,16 +82,221 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log("🚀 [MIGRATE-ASSETS] Starting asset migration...");
+    console.log("🚀 [MIGRATE-ASSETS] Starting comprehensive asset migration...");
     
     const results = {
       processed_products: { migrated: 0, skipped: 0, errors: 0 },
       company_assets: { migrated: 0, skipped: 0, errors: 0 },
-      total: 0
+      website_assets: { migrated: 0, skipped: 0, errors: 0 },
+      content_assets_bucket: { migrated: 0, skipped: 0, errors: 0 },
+      total: 0,
+      details: [] as string[]
     };
 
-    // 1. Migrate processed_product_images to content_assets
-    console.log("📦 [MIGRATE-ASSETS] Fetching processed_product_images...");
+    // === 1. SCAN website-assets BUCKET (NEW - Priority for LinkedIn) ===
+    console.log("🌐 [MIGRATE-ASSETS] Scanning website-assets bucket...");
+    const websiteBucket = "website-assets";
+    
+    // First, list root level
+    const { data: rootFiles, error: rootError } = await supabase.storage
+      .from(websiteBucket)
+      .list("", { limit: 200 });
+    
+    if (rootError) {
+      console.log(`⚠️ website-assets bucket error: ${rootError.message}`);
+    } else if (rootFiles) {
+      // Process files and folders
+      for (const item of rootFiles) {
+        if (item.id === null) {
+          // It's a folder - scan its contents
+          const { data: subFiles, error: subError } = await supabase.storage
+            .from(websiteBucket)
+            .list(item.name, { limit: 200 });
+          
+          if (!subError && subFiles) {
+            for (const file of subFiles) {
+              if (file.id !== null) {
+                // It's a file - process it
+                const filePath = `${supabaseUrl}/storage/v1/object/public/${websiteBucket}/${item.name}/${file.name}`;
+                
+                // Check if already exists
+                const { data: existing } = await supabase
+                  .from("content_assets")
+                  .select("id")
+                  .eq("file_path", filePath)
+                  .maybeSingle();
+                
+                if (existing) {
+                  results.website_assets.skipped++;
+                  continue;
+                }
+                
+                const { category, tags } = inferCategoryAndTags(item.name, file.name);
+                
+                const { error: insertError } = await supabase
+                  .from("content_assets")
+                  .insert({
+                    filename: file.name,
+                    file_path: filePath,
+                    content_type: file.metadata?.mimetype || "image/webp",
+                    category: category,
+                    tags: tags,
+                    size: file.metadata?.size || null,
+                  });
+                
+                if (insertError) {
+                  console.error(`❌ Error inserting ${file.name}:`, insertError.message);
+                  results.website_assets.errors++;
+                } else {
+                  results.website_assets.migrated++;
+                  results.details.push(`✅ website-assets/${item.name}/${file.name} → ${category}`);
+                }
+              }
+            }
+          }
+        } else {
+          // It's a file at root level
+          const filePath = `${supabaseUrl}/storage/v1/object/public/${websiteBucket}/${item.name}`;
+          
+          const { data: existing } = await supabase
+            .from("content_assets")
+            .select("id")
+            .eq("file_path", filePath)
+            .maybeSingle();
+          
+          if (existing) {
+            results.website_assets.skipped++;
+            continue;
+          }
+          
+          const { category, tags } = inferCategoryAndTags("", item.name);
+          
+          const { error: insertError } = await supabase
+            .from("content_assets")
+            .insert({
+              filename: item.name,
+              file_path: filePath,
+              content_type: item.metadata?.mimetype || "image/webp",
+              category: category,
+              tags: tags,
+              size: item.metadata?.size || null,
+            });
+          
+          if (insertError) {
+            results.website_assets.errors++;
+          } else {
+            results.website_assets.migrated++;
+            results.details.push(`✅ website-assets/${item.name} → ${category}`);
+          }
+        }
+      }
+    }
+    console.log(`📊 website-assets: ${results.website_assets.migrated} migrated, ${results.website_assets.skipped} skipped`);
+
+    // === 2. SCAN content-assets BUCKET ===
+    console.log("📁 [MIGRATE-ASSETS] Scanning content-assets bucket...");
+    const contentBucket = "content-assets";
+    
+    const { data: contentRootFiles } = await supabase.storage
+      .from(contentBucket)
+      .list("", { limit: 200 });
+    
+    if (contentRootFiles) {
+      for (const item of contentRootFiles) {
+        if (item.id === null) {
+          // It's a folder - scan its contents
+          const { data: subFiles } = await supabase.storage
+            .from(contentBucket)
+            .list(item.name, { limit: 200 });
+          
+          if (subFiles) {
+            for (const subItem of subFiles) {
+              if (subItem.id === null) {
+                // Nested folder
+                const { data: nestedFiles } = await supabase.storage
+                  .from(contentBucket)
+                  .list(`${item.name}/${subItem.name}`, { limit: 200 });
+                
+                if (nestedFiles) {
+                  for (const file of nestedFiles) {
+                    if (file.id !== null) {
+                      const filePath = `${supabaseUrl}/storage/v1/object/public/${contentBucket}/${item.name}/${subItem.name}/${file.name}`;
+                      
+                      const { data: existing } = await supabase
+                        .from("content_assets")
+                        .select("id")
+                        .eq("file_path", filePath)
+                        .maybeSingle();
+                      
+                      if (existing) {
+                        results.content_assets_bucket.skipped++;
+                        continue;
+                      }
+                      
+                      const { category, tags } = inferCategoryAndTags(`${item.name}/${subItem.name}`, file.name);
+                      
+                      const { error: insertError } = await supabase
+                        .from("content_assets")
+                        .insert({
+                          filename: file.name,
+                          file_path: filePath,
+                          content_type: file.metadata?.mimetype || "image/webp",
+                          category: category,
+                          tags: tags,
+                        });
+                      
+                      if (insertError) {
+                        results.content_assets_bucket.errors++;
+                      } else {
+                        results.content_assets_bucket.migrated++;
+                        results.details.push(`✅ content-assets/${item.name}/${subItem.name}/${file.name} → ${category}`);
+                      }
+                    }
+                  }
+                }
+              } else {
+                // Direct file
+                const filePath = `${supabaseUrl}/storage/v1/object/public/${contentBucket}/${item.name}/${subItem.name}`;
+                
+                const { data: existing } = await supabase
+                  .from("content_assets")
+                  .select("id")
+                  .eq("file_path", filePath)
+                  .maybeSingle();
+                
+                if (existing) {
+                  results.content_assets_bucket.skipped++;
+                  continue;
+                }
+                
+                const { category, tags } = inferCategoryAndTags(item.name, subItem.name);
+                
+                const { error: insertError } = await supabase
+                  .from("content_assets")
+                  .insert({
+                    filename: subItem.name,
+                    file_path: filePath,
+                    content_type: subItem.metadata?.mimetype || "image/webp",
+                    category: category,
+                    tags: tags,
+                  });
+                
+                if (insertError) {
+                  results.content_assets_bucket.errors++;
+                } else {
+                  results.content_assets_bucket.migrated++;
+                  results.details.push(`✅ content-assets/${item.name}/${subItem.name} → ${category}`);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    console.log(`📊 content-assets bucket: ${results.content_assets_bucket.migrated} migrated, ${results.content_assets_bucket.skipped} skipped`);
+
+    // === 3. MIGRATE processed_product_images TABLE ===
+    console.log("📦 [MIGRATE-ASSETS] Migrating processed_product_images table...");
     const { data: products, error: productError } = await supabase
       .from("processed_product_images")
       .select("id, name, enhanced_url, category, description, brand, model")
@@ -34,22 +305,20 @@ serve(async (req) => {
     if (productError) {
       console.error("❌ Error fetching products:", productError.message);
     } else if (products && products.length > 0) {
-      console.log(`📦 [MIGRATE-ASSETS] Found ${products.length} products to migrate`);
+      console.log(`📦 Found ${products.length} products to check`);
       
       for (const product of products) {
-        // Check if already exists in content_assets
         const { data: existing } = await supabase
           .from("content_assets")
           .select("id")
           .eq("file_path", product.enhanced_url)
-          .single();
+          .maybeSingle();
 
         if (existing) {
           results.processed_products.skipped++;
           continue;
         }
 
-        // Infer category tags
         const categoryTags = [product.category, "produto", "processado"];
         if (product.brand) categoryTags.push(product.brand.toLowerCase());
         if (product.model) categoryTags.push(product.model.toLowerCase());
@@ -60,21 +329,21 @@ serve(async (req) => {
             filename: product.name,
             file_path: product.enhanced_url,
             content_type: "image/png",
-            category: product.category,
+            category: product.category || "product",
             tags: categoryTags,
           });
 
         if (insertError) {
-          console.error(`❌ Error inserting product ${product.name}:`, insertError.message);
           results.processed_products.errors++;
         } else {
           results.processed_products.migrated++;
         }
       }
     }
+    console.log(`📊 processed_product_images: ${results.processed_products.migrated} migrated, ${results.processed_products.skipped} skipped`);
 
-    // 2. Migrate company_assets (logos, etc.)
-    console.log("🏢 [MIGRATE-ASSETS] Fetching company_assets...");
+    // === 4. MIGRATE company_assets TABLE (logos, etc.) ===
+    console.log("🏢 [MIGRATE-ASSETS] Migrating company_assets table...");
     const { data: companyAssets, error: companyError } = await supabase
       .from("company_assets")
       .select("id, name, url, type, metadata");
@@ -82,15 +351,14 @@ serve(async (req) => {
     if (companyError) {
       console.error("❌ Error fetching company_assets:", companyError.message);
     } else if (companyAssets && companyAssets.length > 0) {
-      console.log(`🏢 [MIGRATE-ASSETS] Found ${companyAssets.length} company assets to migrate`);
+      console.log(`🏢 Found ${companyAssets.length} company assets to check`);
       
       for (const asset of companyAssets) {
-        // Check if already exists in content_assets
         const { data: existing } = await supabase
           .from("content_assets")
           .select("id")
           .eq("file_path", asset.url)
-          .single();
+          .maybeSingle();
 
         if (existing) {
           results.company_assets.skipped++;
@@ -106,58 +374,29 @@ serve(async (req) => {
             filename: asset.name || `${asset.type}_asset`,
             file_path: asset.url,
             content_type: "image/png",
-            category: asset.type,
+            category: asset.type === "logo" ? "branding" : asset.type,
             tags: tags,
           });
 
         if (insertError) {
-          console.error(`❌ Error inserting company asset ${asset.name}:`, insertError.message);
           results.company_assets.errors++;
         } else {
           results.company_assets.migrated++;
         }
       }
     }
+    console.log(`📊 company_assets: ${results.company_assets.migrated} migrated, ${results.company_assets.skipped} skipped`);
 
-    // 3. List storage buckets to check for additional assets
-    console.log("📂 [MIGRATE-ASSETS] Checking storage buckets...");
-    
-    const bucketsToCheck = ["processed-products", "content-assets", "website-assets"];
-    
-    for (const bucketName of bucketsToCheck) {
-      const { data: files, error: listError } = await supabase.storage
-        .from(bucketName)
-        .list("", { limit: 100 });
-
-      if (listError) {
-        console.log(`⚠️ Bucket ${bucketName}: ${listError.message}`);
-        continue;
-      }
-
-      if (files && files.length > 0) {
-        console.log(`📂 Bucket ${bucketName}: ${files.length} files found`);
-        
-        // Check for subdirectories
-        for (const file of files) {
-          if (file.id === null) {
-            // It's a folder, list its contents
-            const { data: subFiles } = await supabase.storage
-              .from(bucketName)
-              .list(file.name, { limit: 100 });
-            
-            if (subFiles && subFiles.length > 0) {
-              console.log(`  └─ ${file.name}/: ${subFiles.length} files`);
-            }
-          }
-        }
-      }
-    }
-
+    // Calculate totals
     results.total = 
       results.processed_products.migrated + 
-      results.company_assets.migrated;
+      results.company_assets.migrated +
+      results.website_assets.migrated +
+      results.content_assets_bucket.migrated;
 
-    console.log("✅ [MIGRATE-ASSETS] Migration complete:", JSON.stringify(results, null, 2));
+    console.log("✅ [MIGRATE-ASSETS] Migration complete!");
+    console.log(`   └─ Total migrated: ${results.total}`);
+    console.log(`   └─ Total skipped: ${results.processed_products.skipped + results.company_assets.skipped + results.website_assets.skipped + results.content_assets_bucket.skipped}`);
 
     return new Response(JSON.stringify({
       success: true,
