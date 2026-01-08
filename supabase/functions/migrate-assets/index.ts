@@ -97,27 +97,38 @@ serve(async (req) => {
     console.log("🌐 [MIGRATE-ASSETS] Scanning website-assets bucket...");
     const websiteBucket = "website-assets";
     
+    // Helper: Check if item is a folder (no metadata.size means folder)
+    const isFolder = (item: any) => !item.metadata || item.metadata.size === undefined;
+    
     // First, list root level
     const { data: rootFiles, error: rootError } = await supabase.storage
       .from(websiteBucket)
-      .list("", { limit: 200 });
+      .list("", { limit: 500 });
     
     if (rootError) {
       console.log(`⚠️ website-assets bucket error: ${rootError.message}`);
     } else if (rootFiles) {
+      console.log(`📂 Found ${rootFiles.length} items at root of website-assets`);
+      
       // Process files and folders
       for (const item of rootFiles) {
-        if (item.id === null) {
+        console.log(`  → Checking: ${item.name} (isFolder: ${isFolder(item)}, id: ${item.id})`);
+        
+        if (isFolder(item)) {
           // It's a folder - scan its contents
           const { data: subFiles, error: subError } = await supabase.storage
             .from(websiteBucket)
-            .list(item.name, { limit: 200 });
+            .list(item.name, { limit: 500 });
           
-          if (!subError && subFiles) {
+          if (subError) {
+            console.log(`    ⚠️ Error listing folder ${item.name}: ${subError.message}`);
+          } else if (subFiles) {
+            console.log(`    📁 Folder ${item.name} has ${subFiles.length} files`);
             for (const file of subFiles) {
-              if (file.id !== null) {
-                // It's a file - process it
-                const filePath = `${supabaseUrl}/storage/v1/object/public/${websiteBucket}/${item.name}/${file.name}`;
+              if (!isFolder(file)) {
+                // It's a file - process it with encoded path
+                const encodedPath = `${item.name}/${encodeURIComponent(file.name)}`;
+                const filePath = `${supabaseUrl}/storage/v1/object/public/${websiteBucket}/${encodedPath}`;
                 
                 // Check if already exists
                 const { data: existing } = await supabase
@@ -155,8 +166,9 @@ serve(async (req) => {
             }
           }
         } else {
-          // It's a file at root level
-          const filePath = `${supabaseUrl}/storage/v1/object/public/${websiteBucket}/${item.name}`;
+          // It's a file at root level - encode filename
+          const encodedFilename = encodeURIComponent(item.name);
+          const filePath = `${supabaseUrl}/storage/v1/object/public/${websiteBucket}/${encodedFilename}`;
           
           const { data: existing } = await supabase
             .from("content_assets")
@@ -183,6 +195,7 @@ serve(async (req) => {
             });
           
           if (insertError) {
+            console.error(`❌ Error inserting root file ${item.name}:`, insertError.message);
             results.website_assets.errors++;
           } else {
             results.website_assets.migrated++;
