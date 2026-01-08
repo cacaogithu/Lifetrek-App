@@ -16,59 +16,86 @@ interface ImportResult {
   errors: string[];
 }
 
-// CSV column mapping
+// CSV column mapping - MASTER_ENRICHED_LEADS.csv compatible
 const COLUMN_MAP: Record<string, string> = {
-  // Common column variations
+  // Company - from MASTER CSV "Company" column
   "company": "company",
   "empresa": "company",
   "nome empresa": "company",
   "company name": "company",
+  "nome_empresa": "company",
   
+  // Email - from MASTER CSV "Email" column
   "email": "email",
   "e-mail": "email",
   
+  // Name/Contact - from MASTER CSV "Decision_Maker" column
   "name": "name",
   "nome": "name",
   "decision_maker": "name",
   "decision maker": "name",
   "contato": "name",
+  "decisor": "name",
   
+  // Phone
   "phone": "phone",
   "telefone": "phone",
   "tel": "phone",
   
+  // Website
   "website": "website",
   "site": "website",
   "url": "website",
   
+  // City - from MASTER CSV "Perplexity_City" column
   "city": "city",
   "cidade": "city",
+  "perplexity_city": "city",
   
+  // State - from MASTER CSV "Perplexity_State" column  
   "state": "state",
   "estado": "state",
   "uf": "state",
+  "perplexity_state": "state",
   
+  // Source
   "source": "source",
   "fonte": "source",
   "origem": "source",
   
+  // Industry - from MASTER CSV "Perplexity_Segment" column
   "industry": "industry",
   "industria": "industry",
   "setor": "industry",
+  "perplexity_segment": "industry",
+  "segment": "industry",
   
+  // Employees
   "employees": "employees",
   "funcionarios": "employees",
   "empregados": "employees",
   
+  // Lead Score - from MASTER CSV "Lead_Score", "V2_Score", "Confidence_Score"
   "lead_score": "lead_score",
   "score": "lead_score",
   "pontuacao": "lead_score",
+  "v2_score": "lead_score",
+  "confidence_score": "lead_score",
   
+  // LinkedIn - from MASTER CSV "LinkedIn_Company" column
   "linkedin_url": "linkedin_url",
   "linkedin": "linkedin_url",
+  "linkedin_company": "linkedin_url",
   
+  // Products/Technical - from MASTER CSV "Products" column
+  "products": "technical_requirements",
+  "produtos": "technical_requirements",
+  "technical_requirements": "technical_requirements",
+  
+  // CNPJ
   "cnpj": "cnpj",
   
+  // Revenue
   "revenue_range": "revenue_range",
   "faturamento": "revenue_range",
   "revenue": "revenue_range",
@@ -100,7 +127,8 @@ function parseCSV(text: string): Record<string, string>[] {
       row[mappedKey] = values[index] || "";
     });
     
-    if (row.email) {
+    // Include row if it has email OR company (allows company-only leads)
+    if (row.email || row.company) {
       rows.push(row);
     }
   }
