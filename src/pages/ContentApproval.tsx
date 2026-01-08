@@ -28,6 +28,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
@@ -63,6 +64,7 @@ export default function ContentApproval() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [regenerationLogs, setRegenerationLogs] = useState<string[]>([]);
 
   // Lazy load full carousel data when previewing LinkedIn posts
   const selectedLinkedInId = selectedItem?.type === 'linkedin' ? selectedItem.id : null;
@@ -190,6 +192,7 @@ export default function ContentApproval() {
   // Regenerate carousel images using premium prompts
   const handleRegenerateImages = async (carouselId: string) => {
     setIsRegenerating(true);
+    setRegenerationLogs([]);
     try {
       toast.info("Regenerando imagens com prompt premium...", { duration: 10000 });
 
@@ -202,9 +205,12 @@ export default function ContentApproval() {
         throw error;
       }
 
-      toast.success(`✅ ${data?.slides_regenerated ?? 0} slides regenerados com sucesso!`);
+      const logs = Array.isArray((data as any)?.logs) ? ((data as any).logs as string[]) : [];
+      setRegenerationLogs(logs);
 
-      // Refresh cached data instead of reloading the whole page
+      toast.success(`✅ ${data?.slides_regenerated ?? 0} slides regenerados (${data?.images_generated ?? 0} imagens).`);
+
+      // Refresh cached data without leaving the page
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["content_approval_items"] }),
         queryClient.invalidateQueries({ queryKey: ["linkedin_carousels"] }),
@@ -212,11 +218,13 @@ export default function ContentApproval() {
         queryClient.invalidateQueries({ queryKey: ["linkedin_carousel_full", carouselId] }),
       ]);
 
-      // Keep the user on the same page (no redirect)
-      setPreviewDialogOpen(false);
-      setSelectedItem(null);
+      // Keep the preview open and keep the user on the same page
     } catch (error) {
       console.error("Regenerate error:", error);
+      setRegenerationLogs([
+        "[UI] Erro ao regenerar imagens.",
+        error instanceof Error ? error.message : String(error),
+      ]);
       toast.error(error instanceof Error ? error.message : "Erro ao regenerar imagens");
     } finally {
       setIsRegenerating(false);
@@ -715,19 +723,56 @@ export default function ContentApproval() {
       </Tabs>
 
       {/* Preview Dialog */}
-      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
+      <Dialog
+        open={previewDialogOpen}
+        onOpenChange={(open) => {
+          setPreviewDialogOpen(open);
+          if (!open) setRegenerationLogs([]);
+        }}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedItem?.type === 'blog' ? 'Pré-visualização do Blog' : 'Pré-visualização do Post LinkedIn'}
+              {selectedItem?.type === "blog" ? "Pré-visualização do Blog" : "Pré-visualização do Post LinkedIn"}
             </DialogTitle>
+            <DialogDescription>
+              Revise o conteúdo e, se necessário, regenere as imagens. Os logs da regeneração aparecem abaixo.
+            </DialogDescription>
           </DialogHeader>
+
           {renderPreview()}
+
+          {selectedItem?.type === "linkedin" && regenerationLogs.length > 0 && (
+            <section className="space-y-2 border rounded-md p-3 bg-muted">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-sm font-semibold">Logs da regeneração</h3>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(regenerationLogs.join("\n"));
+                      toast.success("Logs copiados");
+                    } catch {
+                      toast.error("Não foi possível copiar os logs");
+                    }
+                  }}
+                >
+                  Copiar
+                </Button>
+              </div>
+              <pre className="text-xs whitespace-pre-wrap break-words max-h-56 overflow-y-auto">
+                {regenerationLogs.join("\n")}
+              </pre>
+            </section>
+          )}
+
           <DialogFooter className="flex-wrap gap-2">
             <Button variant="outline" onClick={() => setPreviewDialogOpen(false)}>
               Fechar
             </Button>
-            {selectedItem?.type === 'linkedin' && (
+            {selectedItem?.type === "linkedin" && (
               <>
                 <Button
                   variant="outline"
