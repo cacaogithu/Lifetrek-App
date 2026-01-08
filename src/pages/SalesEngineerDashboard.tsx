@@ -21,12 +21,16 @@ import {
   RefreshCw,
   LogOut,
   Bot,
-  BookOpen
+  BookOpen,
+  Flame,
+  LayoutGrid
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SalesAgentChat } from "@/components/SalesAgentChat";
 import { OnboardingChecklist } from "@/components/OnboardingChecklist";
+import { ContentCalendarPreview } from "@/components/ev/ContentCalendarPreview";
+import { QuickAccessGrid } from "@/components/ev/QuickAccessGrid";
 
 interface Lead {
   id: string;
@@ -46,6 +50,7 @@ interface Lead {
   admin_notes: string | null;
   created_at: string;
   updated_at: string;
+  source: string | null;
 }
 
 const projectTypeLabels: Record<string, string> = {
@@ -152,7 +157,7 @@ export default function SalesEngineerDashboard() {
       setRefreshing(true);
       const { data, error } = await supabase
         .from("contact_leads")
-        .select("*")
+        .select("*, source")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -174,6 +179,14 @@ export default function SalesEngineerDashboard() {
   const newLeads = leads.filter(l => l.status === "new");
   const pendingAction = leads.filter(l => ["new", "contacted"].includes(l.status));
   const highPriorityLeads = leads.filter(l => l.priority === "high" && l.status !== "closed" && l.status !== "rejected");
+  
+  // Hot leads = leads from website (not imported cold leads)
+  const hotLeadsToday = leads.filter(l => {
+    const isFromWebsite = !l.source || l.source === "website" || l.source === "contact_form";
+    const isToday = new Date(l.created_at).toDateString() === new Date().toDateString();
+    return isFromWebsite && isToday;
+  });
+  
   const recentLeads = leads.filter(l => {
     const hoursSince = (Date.now() - new Date(l.created_at).getTime()) / (1000 * 60 * 60);
     return hoursSince < 24;
@@ -184,6 +197,7 @@ export default function SalesEngineerDashboard() {
     total: leads.length,
     new: newLeads.length,
     highPriority: highPriorityLeads.length,
+    hotToday: hotLeadsToday.length,
     last24h: recentLeads.length,
     avgScore: leads.length > 0
       ? (leads.reduce((sum, l) => sum + (l.lead_score || 0), 0) / leads.length).toFixed(1)
@@ -312,13 +326,24 @@ export default function SalesEngineerDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-6 space-y-6">
+        {/* Quick Access Grid */}
+        <QuickAccessGrid />
+
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <Card className="bg-gradient-to-br from-orange-50 to-orange-100/50 border-orange-200">
+            <CardContent className="p-4 text-center">
+              <Flame className="h-6 w-6 mx-auto mb-2 text-orange-600" />
+              <p className="text-3xl font-bold text-orange-700">{stats.hotToday}</p>
+              <p className="text-xs text-orange-600">Quentes Hoje</p>
+            </CardContent>
+          </Card>
+
           <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200">
             <CardContent className="p-4 text-center">
               <Users className="h-6 w-6 mx-auto mb-2 text-blue-600" />
               <p className="text-3xl font-bold text-blue-700">{stats.total}</p>
-              <p className="text-xs text-blue-600">Total de Leads</p>
+              <p className="text-xs text-blue-600">Total</p>
             </CardContent>
           </Card>
 
@@ -334,7 +359,7 @@ export default function SalesEngineerDashboard() {
             <CardContent className="p-4 text-center">
               <AlertCircle className="h-6 w-6 mx-auto mb-2 text-red-600" />
               <p className="text-3xl font-bold text-red-700">{stats.highPriority}</p>
-              <p className="text-xs text-red-600">Alta Prioridade</p>
+              <p className="text-xs text-red-600">Alta Prior.</p>
             </CardContent>
           </Card>
 
@@ -342,7 +367,7 @@ export default function SalesEngineerDashboard() {
             <CardContent className="p-4 text-center">
               <CheckCircle2 className="h-6 w-6 mx-auto mb-2 text-green-600" />
               <p className="text-3xl font-bold text-green-700">{stats.last24h}</p>
-              <p className="text-xs text-green-600">Últimas 24h</p>
+              <p className="text-xs text-green-600">24h</p>
             </CardContent>
           </Card>
 
@@ -350,35 +375,70 @@ export default function SalesEngineerDashboard() {
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-6 w-6 mx-auto mb-2 text-purple-600" />
               <p className="text-3xl font-bold text-purple-700">{stats.avgScore}</p>
-              <p className="text-xs text-purple-600">Score Médio</p>
+              <p className="text-xs text-purple-600">Score</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="action" className="space-y-4">
-          <TabsList className="grid w-full max-w-3xl grid-cols-5">
+        <Tabs defaultValue="hot" className="space-y-4">
+          <TabsList className="grid w-full max-w-4xl grid-cols-6">
+            <TabsTrigger value="hot" className="flex items-center gap-2">
+              <Flame className="h-4 w-4" />
+              <span className="hidden sm:inline">Quentes</span> ({hotLeadsToday.length})
+            </TabsTrigger>
             <TabsTrigger value="action" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">Ação Pendente</span> ({pendingAction.length})
+              <span className="hidden sm:inline">Pendente</span> ({pendingAction.length})
             </TabsTrigger>
-            <TabsTrigger value="priority" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              <span className="hidden sm:inline">Alta Prior.</span> ({highPriorityLeads.length})
-            </TabsTrigger>
-            <TabsTrigger value="recent" className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span className="hidden sm:inline">Recentes</span> ({recentLeads.length})
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Calendário</span>
             </TabsTrigger>
             <TabsTrigger value="assistant" className="flex items-center gap-2">
               <Bot className="h-4 w-4" />
               <span className="hidden sm:inline">Assistente</span>
+            </TabsTrigger>
+            <TabsTrigger value="tools" className="flex items-center gap-2">
+              <LayoutGrid className="h-4 w-4" />
+              <span className="hidden sm:inline">Ferramentas</span>
             </TabsTrigger>
             <TabsTrigger value="onboarding" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Onboarding</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="hot">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Flame className="h-5 w-5 text-orange-500" />
+                  Leads Quentes de Hoje
+                </CardTitle>
+                <CardDescription>
+                  Leads que chegaram pelo website hoje (não importados)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-[500px] pr-4">
+                  <div className="space-y-4">
+                    {hotLeadsToday.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <Flame className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>Nenhum lead quente hoje ainda</p>
+                        <p className="text-sm mt-2">Leads do website aparecerão aqui</p>
+                      </div>
+                    ) : (
+                      hotLeadsToday.map(lead => (
+                        <LeadCard key={lead.id} lead={lead} />
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="action">
             <Card>
@@ -410,70 +470,89 @@ export default function SalesEngineerDashboard() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="priority">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-red-500" />
-                  Leads de Alta Prioridade
-                </CardTitle>
-                <CardDescription>
-                  Leads marcados como alta prioridade que ainda não foram fechados
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px] pr-4">
-                  <div className="space-y-4">
-                    {highPriorityLeads.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <Star className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>Nenhum lead de alta prioridade ativo</p>
-                      </div>
-                    ) : (
-                      highPriorityLeads.map(lead => (
-                        <LeadCard key={lead.id} lead={lead} />
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-
-          <TabsContent value="recent">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-blue-500" />
-                  Leads das Últimas 24 Horas
-                </CardTitle>
-                <CardDescription>
-                  Leads recebidos nas últimas 24 horas
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px] pr-4">
-                  <div className="space-y-4">
-                    {recentLeads.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>Nenhum lead nas últimas 24 horas</p>
-                      </div>
-                    ) : (
-                      recentLeads.map(lead => (
-                        <LeadCard key={lead.id} lead={lead} />
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
+          <TabsContent value="calendar">
+            <ContentCalendarPreview />
           </TabsContent>
 
           <TabsContent value="assistant">
             <div className="max-w-4xl mx-auto">
               <SalesAgentChat />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="tools">
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="cursor-pointer hover:shadow-lg transition-all" onClick={() => navigate("/admin/linkedin-carousel")}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="h-5 w-5 text-blue-500" />
+                    LinkedIn Carousel Generator
+                  </CardTitle>
+                  <CardDescription>
+                    Crie carrosséis profissionais com IA para LinkedIn
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full">
+                    Abrir LCG
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-lg transition-all" onClick={() => navigate("/admin/campaigns")}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-purple-500" />
+                    Campanhas
+                  </CardTitle>
+                  <CardDescription>
+                    Monitore e gerencie suas campanhas de marketing
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline" className="w-full">
+                    Ver Campanhas
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-lg transition-all" onClick={() => navigate("/admin/knowledge-base")}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-green-500" />
+                    Knowledge Base
+                  </CardTitle>
+                  <CardDescription>
+                    Acesse a base de conhecimento da empresa
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline" className="w-full">
+                    Explorar Knowledge
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-lg transition-all" onClick={() => navigate("/admin/content-approval")}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-orange-500" />
+                    Aprovação de Conteúdo
+                  </CardTitle>
+                  <CardDescription>
+                    Revise e aprove templates de conteúdo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline" className="w-full">
+                    Ver Pendentes
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 

@@ -42,7 +42,6 @@ const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
 const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
 const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
-const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
 const RejectionAnalytics = lazy(() => import("./pages/Admin/RejectionAnalytics"));
 const CampaignManagement = lazy(() => import("./pages/CampaignManagement"));
 const AdminLeads = lazy(() => import("./pages/AdminLeads"));

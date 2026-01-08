@@ -1,57 +1,54 @@
 [
   {
-    "topic": "Machining Titanium for Spinal Implants",
-    "targetAudience": "OEMs Ortopédicos",
-    "painPoint": "Difficulty machining Grade 5 Titanium without burrs or deformation",
-    "desiredOutcome": "Perfect surface finish and geometric tolerance",
-    "proofPoints": "Citizen M32 Swiss-type lathe, high-pressure coolant",
-    "ctaAction": "Request a titanium machining capability study",
+    "topic": "Por dentro das nossas salas limpas ISO 7: onde a precisão médica acontece",
+    "targetAudience": "Institucional Lifetrek",
     "postType": "value",
-    "format": "carousel",
-    "numberOfCarousels": 1
+    "selectedEquipment": ["Sala Limpa", "Sala Limpa (Layout Geral)", "Unidade de Tratamento de Ar (UTA)"]
   },
   {
-    "topic": "ISO 13485 Compliance in Instrument Manufacturing",
-    "targetAudience": "Fabricantes de Instrumentais",
-    "painPoint": "Fear of regulatory audit failures due to documentation gaps",
-    "desiredOutcome": "Audit-ready DHRs and full traceability",
-    "proofPoints": "ISO 13485:2016 certified quality management system",
-    "ctaAction": "Download our Quality Manual summary",
-    "postType": "value",
-    "format": "carousel",
-    "numberOfCarousels": 1
+    "topic": "Como escolher o fornecedor certo de implantes ortopédicos: 5 critérios que você precisa validar",
+    "targetAudience": "Fabricantes ortopédicos, Gestores de qualidade",
+    "painPoint": "Falta de fornecedores qualificados",
+    "postType": "value"
   },
   {
-    "topic": "Reducing Lead Times for Dental Implant Screws",
-    "targetAudience": "OEMs Dentais",
-    "painPoint": "Supy chain delays causing stockouts of critical components",
-    "desiredOutcome": "Reliable JIT delivery of turned parts",
-    "proofPoints": "Local Brazilian manufacturing, 24/7 production capacity",
-    "ctaAction": "Get a quote for monthly supply",
+    "topic": "Tolerâncias de ±5 microns: como alcançamos essa precisão em implantes espinhais",
+    "targetAudience": "Engenheiros de produção, P&D de dispositivos médicos",
+    "painPoint": "Tolerâncias apertadas",
+    "postType": "value",
+    "selectedEquipment": ["Componentes de Implante Espinhal", "Torno CNC Citizen M32"]
+  },
+  {
+    "topic": "Do protótipo à produção em série: escalamos sua ideia de 10 para 10.000 peças",
+    "targetAudience": "Startups de medtech",
+    "painPoint": "Dificuldade em escalar",
     "postType": "commercial",
-    "format": "carousel",
-    "numberOfCarousels": 1
+    "ctaAction": "Agende uma visita técnica"
   },
   {
-    "topic": "Peek vs. Titanium: Machining Challenges",
-    "targetAudience": "OEMs Ortopédicos",
-    "painPoint": "maintaining tight tolerances on plastic components",
-    "desiredOutcome": "Burr-free PEEK cages with complex geometries",
-    "proofPoints": "Specialized tooling for polymers, controlled temperature room",
-    "ctaAction": "See our PEEK machining gallery",
+    "topic": "Usinagem Suíça vs CNC Convencional: quando usar cada uma em dispositivos médicos",
+    "targetAudience": "Engenheiros de produção",
     "postType": "value",
-    "format": "carousel",
-    "numberOfCarousels": 1
+    "selectedEquipment": ["Torno CNC Citizen L20", "Torno CNC Citizen L20X", "Torno CNC Doosan LYNX 2100W"]
   },
   {
-    "topic": "Veterinary Orthopedics: Human-Grade Quality",
-    "targetAudience": "OEMs Veterinários",
-    "painPoint": "Inconsistent quality from lower-tier suppliers",
-    "desiredOutcome": "Human-standard precision for vet implants",
-    "proofPoints": "Same machines (Citizen L20), same QA team as human breakdown",
-    "ctaAction": "Upgrade your veterinary line quality",
+    "topic": "Eletropolimento: o segredo para acabamento superficial em implantes que reduz rejeição",
+    "targetAudience": "P&D de dispositivos médicos, Fabricantes ortopédicos",
+    "painPoint": "Acabamento superficial crítico",
+    "postType": "value",
+    "selectedEquipment": ["Linha de Eletropolimento"]
+  },
+  {
+    "topic": "Capacidade produtiva: 50.000 peças/mês com rastreabilidade total",
+    "targetAudience": "Compradores hospitalares, Fabricantes ortopédicos",
     "postType": "commercial",
-    "format": "carousel",
-    "numberOfCarousels": 1
+    "ctaAction": "Solicite uma cotação"
+  },
+  {
+    "topic": "Como validamos nossos instrumentos cirúrgicos: do design à esterilização",
+    "targetAudience": "Gestores de qualidade",
+    "painPoint": "Compliance regulatório",
+    "postType": "value",
+    "selectedEquipment": ["Instrumentos guias para cirurgia", "Ferramenta Sextavada Hex 1,2"]
   }
 ]

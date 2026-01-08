@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.75.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -81,12 +81,41 @@ serve(async (req) => {
 
     let contextToUse = research_context || "";
 
-    // 1. RESEARCH PHASE (Optional - with timeout)
-    if (generateNews && PERPLEXITY_API_KEY && !contextToUse) {
-      console.log("🔍 [Phase 1] Researching with Perplexity...");
+    // 1. DEEP RESEARCH PHASE (Perplexity sonar-pro for comprehensive research)
+    if (PERPLEXITY_API_KEY && !contextToUse) {
+      console.log("🔍 [Phase 1] Deep Research with Perplexity sonar-pro...");
       const researchStart = Date.now();
       
       try {
+        const deepResearchPrompt = `Você é um pesquisador especialista em dispositivos médicos e manufatura de precisão no Brasil.
+
+TÓPICO: ${topic || "Fabricação de Dispositivos Médicos no Brasil"}
+CATEGORIA: ${category || "Geral"}
+
+Realize uma pesquisa aprofundada incluindo:
+
+1. **Contexto Regulatório**: 
+   - Últimas atualizações da ANVISA (RDCs, INs, consultas públicas)
+   - Mudanças em certificações ISO 13485, ISO 14971
+   - Requisitos para registro de dispositivos médicos classe II/III/IV
+
+2. **Tendências de Mercado**:
+   - Movimentos de mercado em implantes ortopédicos/dentários no Brasil
+   - Investimentos em manufatura nacional vs importação
+   - Dados de mercado recentes (valor, crescimento, players)
+
+3. **Inovações Técnicas**:
+   - Avanços em usinagem CNC para implantes
+   - Novas tecnologias de acabamento superficial
+   - Tendências em materiais (titânio, PEEK, ligas de cobalto-cromo)
+
+4. **Casos Relevantes**:
+   - Notícias recentes do setor no Brasil
+   - Lançamentos de produtos ou certificações
+   - Desafios e oportunidades identificados
+
+Forneça informações factuais com fontes quando possível. Resposta em Português do Brasil, máximo 1000 palavras.`;
+
         const researchPromise = fetch("https://api.perplexity.ai/chat/completions", {
           method: "POST",
           headers: {
@@ -94,19 +123,27 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "sonar",
+            model: "sonar-pro", // Using sonar-pro for deeper research
             messages: [
-              { role: "system", content: "You are a medical industry researcher. Be concise." },
-              { role: "user", content: `Find 2-3 recent news/trends (last 30 days) about: ${topic || "Medical Device Manufacturing in Brazil"}. Focus on ANVISA, supply chain, or technology. Keep response under 500 words.` }
+              { role: "system", content: "Você é um pesquisador sênior especializado em dispositivos médicos, regulamentação ANVISA e manufatura de precisão. Forneça informações atualizadas, precisas e com fontes." },
+              { role: "user", content: deepResearchPrompt }
             ],
+            search_recency_filter: "month", // Focus on recent content
           }),
         }).then(r => r.json());
         
-        const pData = await withTimeout(researchPromise, 10000, { choices: [] });
+        const pData = await withTimeout(researchPromise, 20000, { choices: [], citations: [] });
         contextToUse = pData.choices?.[0]?.message?.content || "";
-        console.log(`✅ [Phase 1] Research complete in ${Date.now() - researchStart}ms`);
+        
+        // Store citations for reference (not shown to users)
+        const citations = pData.citations || [];
+        if (citations.length > 0) {
+          console.log(`📚 Research sources: ${citations.slice(0, 5).join(", ")}`);
+        }
+        
+        console.log(`✅ [Phase 1] Deep Research complete in ${Date.now() - researchStart}ms (${contextToUse.length} chars)`);
       } catch (e) {
-        console.error("⚠️ Perplexity failed, continuing without research", e);
+        console.error("⚠️ Perplexity deep research failed, continuing without research", e);
       }
     }
 
@@ -229,11 +266,33 @@ serve(async (req) => {
         const logoUrl = logoResult.data?.url;
         const productImages = productsResult.data?.map(p => ({ url: p.enhanced_url, name: p.name })) || [];
 
-        // Simplified image prompt
-        const designPrompt = `Generate a professional header image for a medical manufacturing blog.
-        Concept: ${strategy.visual_concept}
-        Style: Clean, sterile, high-tech, medical blue/white/grey.
-        NO TEXT OVERLAYS. Photorealistic, soft studio lighting.`;
+        // Professional banner image prompt for SEO and social sharing
+        const designPrompt = `Create a professional wide banner image (16:9 aspect ratio) for a medical manufacturing blog article.
+
+TITLE: "${finalPost.title}"
+VISUAL CONCEPT: ${strategy.visual_concept}
+
+STYLE REQUIREMENTS:
+- Ultra-professional, clean, premium medical aesthetic
+- Color palette: Deep medical blue (#1a365d), clean white, surgical steel grey, subtle teal accents
+- Composition: Modern, asymmetric layout with strong visual hierarchy
+- Lighting: Soft, diffused studio lighting with subtle highlights
+- Atmosphere: Sterile, precise, high-tech yet approachable
+
+ELEMENTS TO INCLUDE:
+- Abstract representation of precision manufacturing or medical technology
+- Subtle geometric patterns suggesting precision and quality
+- Clean negative space for visual breathing room
+- Professional gradient overlays
+
+CRITICAL:
+- NO TEXT, NO WORDS, NO LETTERS on the image
+- NO logos or watermarks
+- NO human faces
+- Photorealistic quality, 4K detail
+- Perfect for LinkedIn/Facebook Open Graph sharing
+
+The image should convey: Trust, Precision, Innovation, Medical Excellence.`;
 
         type ContentPart = 
           | { type: "text"; text: string }
@@ -241,19 +300,20 @@ serve(async (req) => {
 
         const userContent: ContentPart[] = [{ type: "text", text: designPrompt }];
         
-        if (logoUrl) {
-          userContent.push({ type: "image_url", image_url: { url: logoUrl } });
-        }
+        // Add product reference for visual consistency
         if (productImages.length > 0) {
-          userContent.push({ type: "image_url", image_url: { url: productImages[0].url } });
+          userContent.push({ 
+            type: "image_url", 
+            image_url: { url: productImages[0].url } 
+          });
         }
 
-        // Image generation with strict timeout
+        // Image generation with improved model
         const imgPromise = callAI(LOVABLE_API_KEY, {
-          model: "google/gemini-2.5-flash-image", // Faster image model
+          model: "google/gemini-3-pro-image-preview", // Better quality for banners
           messages: [{ role: "user", content: userContent }],
           modalities: ["image", "text"]
-        }, 20000);
+        }, 25000);
         
         const imgData = await withTimeout(imgPromise, 20000, null);
         if (imgData) {

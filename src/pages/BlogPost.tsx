@@ -5,7 +5,7 @@ import { useBlogAnalytics } from "@/hooks/useBlogAnalytics";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, Clock, ArrowLeft, Share2, Tag } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
@@ -161,46 +161,37 @@ const BlogPost = () => {
           </div>
         </header>
 
-        {/* Featured Image */}
+        {/* Featured Image / Banner */}
         {post.featured_image && (
-          <div className="container mx-auto px-4 max-w-4xl py-8">
-            <img
-              src={post.featured_image}
-              alt={post.title}
-              className="w-full rounded-lg shadow-lg"
-            />
+          <div className="w-full">
+            <div className="relative aspect-[21/9] max-h-[400px] overflow-hidden">
+              <img
+                src={post.featured_image}
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+            </div>
           </div>
         )}
 
         {/* Content */}
-        <div className="container mx-auto px-4 max-w-4xl py-8">
+        <div className="container mx-auto px-4 max-w-3xl py-12">
           <div
-            className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground"
+            className="prose prose-lg max-w-none dark:prose-invert 
+              prose-headings:text-foreground prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-6
+              prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-3
+              prose-h3:text-xl prose-h3:mt-8
+              prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6
+              prose-li:text-muted-foreground prose-li:leading-relaxed prose-li:my-2
+              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+              prose-strong:text-foreground prose-strong:font-semibold
+              prose-blockquote:border-l-primary prose-blockquote:bg-muted/30 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r
+              prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+              prose-ul:my-6 prose-ol:my-6
+              [&>p:first-of-type]:text-lg [&>p:first-of-type]:font-medium [&>p:first-of-type]:text-foreground"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
-
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-border">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                {post.tags.map((tag) => (
-                  <Badge key={tag} variant="outline">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* AI Generated Notice */}
-          {post.ai_generated && (
-            <div className="mt-8 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground">
-              <p>
-                Este artigo foi gerado com auxílio de inteligência artificial e revisado pela equipe Lifetrek Medical.
-              </p>
-            </div>
-          )}
         </div>
 
         {/* CTA Section */}

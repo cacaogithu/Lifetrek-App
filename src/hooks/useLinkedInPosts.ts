@@ -162,6 +162,24 @@ export function usePublishLinkedInPost() {
   });
 }
 
+// Fetch full LinkedIn carousel data (for preview - lazy load)
+export function useLinkedInCarouselFull(id: string | null) {
+  return useQuery({
+    queryKey: ["linkedin_carousel_full", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("linkedin_carousels")
+        .select("*")
+        .eq("id", id!)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as LinkedInCarousel | null;
+    },
+    enabled: !!id,
+  });
+}
+
 // Delete LinkedIn carousel
 export function useDeleteLinkedInPost() {
   const queryClient = useQueryClient();
@@ -207,10 +225,10 @@ export function useContentApprovalItems() {
         }
         console.log("[ContentApproval] Blogs fetched:", blogs?.length || 0);
 
-        // Fetch draft/pending LinkedIn carousels
+        // Fetch draft/pending LinkedIn carousels - ONLY metadata, no slides (too large)
         const { data: linkedInCarousels, error: linkedInError } = await supabase
           .from("linkedin_carousels")
-          .select("*")
+          .select("id, topic, status, created_at, target_audience, pain_point, caption, desired_outcome")
           .in("status", ["draft", "pending_approval"])
           .order("created_at", { ascending: false });
 
@@ -273,10 +291,10 @@ export function useRejectedContentItems() {
 
       if (blogsError) throw blogsError;
 
-      // Fetch archived LinkedIn carousels with rejection reason
+      // Fetch archived LinkedIn carousels - ONLY metadata, no slides
       const { data: linkedInCarousels, error: linkedInError } = await supabase
         .from("linkedin_carousels")
-        .select("*")
+        .select("id, topic, status, created_at, rejected_at, rejection_reason, target_audience, caption")
         .eq("status", "archived")
         .order("rejected_at", { ascending: false });
 
@@ -337,10 +355,10 @@ export function useApprovedContentItems() {
 
       if (blogsError) throw blogsError;
 
-      // Fetch approved LinkedIn carousels
+      // Fetch approved LinkedIn carousels - ONLY metadata, no slides
       const { data: linkedInCarousels, error: linkedInError } = await supabase
         .from("linkedin_carousels")
-        .select("*")
+        .select("id, topic, status, created_at, updated_at, target_audience, caption")
         .in("status", ["approved", "published"])
         .order("updated_at", { ascending: false })
         .limit(50);

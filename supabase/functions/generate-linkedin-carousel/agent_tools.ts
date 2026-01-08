@@ -1,8 +1,7 @@
 // Agent Tools for LinkedIn Carousel Generation
 // These tools are available to Strategist, Copywriter, and Designer agents
 
-// @ts-ignore
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+import { createClient } from "npm:@supabase/supabase-js@2.75.0";
 
 declare const Deno: any;
 
@@ -487,36 +486,84 @@ async function generateImage(
   const maxBodyWords = slideType === "hook" ? 8 : slideType === "cta" ? 10 : 15;
   const truncatedBody = truncateToWords(params.body_text, maxBodyWords);
 
-  let fullPrompt = `Create a premium LinkedIn carousel slide (1080x1080) for B2B medical device industry.
+  // Clean prompt without literal HEADLINE:/CONTEXT: labels that get rendered in images
+  let fullPrompt = `Crie um slide premium para carrossel do LinkedIn (1080x1350px) para indústria B2B de dispositivos médicos.
 
-PERSPECTIVE: ${styleDirections[style] || styleDirections.client_perspective}
+=== ESTILO VISUAL OBRIGATÓRIO ===
+- Paleta: Azul Primário #004F8F (dominante), Verde #1A7A3E (micro-acentos), Laranja #F07818 (CTAs)
+- Fundo: Gradiente premium de #0A1628 para #004F8F
+- Texto: BRANCO, fonte Inter Bold (títulos), Inter SemiBold (corpo)
+- Alto contraste: Texto deve ser CLARAMENTE LEGÍVEL
+- Estética: Premium, editorial, tecnologia médica de ponta
 
-CONTEXT: ${params.prompt}
+=== PERSPECTIVA ===
+${styleDirections[style] || styleDirections.client_perspective}
 
-HEADLINE (burn into image, LARGE white bold text, centered): "${params.headline}"
-${truncatedBody ? `BODY TEXT (burn into image, SMALLER white text below headline, max 2 lines): "${truncatedBody}"` : ""}
+=== CONTEXTO ===
+${params.prompt}
 
-VISUAL STYLE:
-- Premium feel: deep blue gradient (#003052 to #004080), white text, green accent (#228B22)
-- Editorial, informative, NOT salesy
-- HIGH CONTRAST text must be CLEARLY READABLE
-- MINIMAL text - let the visual speak
+=== TEXTO A RENDERIZAR NA IMAGEM ===
+Título (fonte GRANDE, BOLD, BRANCO, centralizado):
+"${params.headline}"
+${truncatedBody ? `
+Subtexto (menor, abaixo do título, máximo 2 linhas):
+"${truncatedBody}"` : ""}
 
-LAYOUT:
-- Center-focused: Large, bold headline (Inter Bold equivalent)
-- Below headline: Green accent line
-- Below line: Short body text if needed (Inter Regular)
-- Bottom-right: Company logo (use the EXACT attached logo image)
+=== LAYOUT ===
+- Título: Centralizado, fonte grande Inter Bold
+- Abaixo do título: Linha de acento verde sutil
+- Corpo (se houver): Texto menor abaixo da linha
+- Canto inferior direito: Espaço reservado para logo
 
-CRITICAL: Keep text MINIMAL. The headline is the star. Body text should be very short or omitted if headline is strong enough.
-The text MUST be part of the image (burned in), not overlaid.`;
+=== REGRAS CRÍTICAS ===
+1. NUNCA escreva "HEADLINE:", "CONTEXT:", "BODY TEXT:", "VISUAL:" ou qualquer prefixo/label na imagem
+2. Texto deve ser PARTE da imagem (burned-in), não sobreposto
+3. Mantenha texto MÍNIMO - o headline é a estrela
+4. Use apenas as cores da marca (#004F8F, #1A7A3E, #F07818)
+5. Estilo editorial premium, NUNCA vendedor ou genérico`;
 
   // Add visual references notes
   if (logoAsset?.url) {
-    fullPrompt += "\n\nATTACHED: Company logo - use this EXACT logo in bottom-right corner of the image.";
+    fullPrompt += "\n\nANEXO: Logo da empresa - use esta logo EXATA no canto inferior direito.";
   }
   if (products?.length) {
-    fullPrompt += `\n\nATTACHED: ${products.length} product reference images. These are real medical device products - use their style/aesthetic as inspiration.`;
+    fullPrompt += `\n\nANEXO: ${products.length} imagens de referência de produtos. Use o estilo/estética como inspiração.`;
+  }
+
+  // Retry helper function
+  async function callWithRetry(content: any, maxRetries = 3): Promise<Response | null> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${lovableApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-pro-image-preview",
+            messages: [{ role: "user", content }],
+            modalities: ["image", "text"],
+          }),
+        });
+        
+        if (res.status === 429) {
+          console.warn(`         ⏳ Rate limited on attempt ${attempt}, waiting ${attempt * 2}s...`);
+          await new Promise(r => setTimeout(r, attempt * 2000));
+          continue;
+        }
+        if (res.ok) return res;
+        
+        console.warn(`         ⚠️ Attempt ${attempt} failed: ${res.status}`);
+      } catch (e: any) {
+        console.error(`         ❌ Attempt ${attempt} error: ${e.message}`);
+      }
+      
+      if (attempt < maxRetries) {
+        await new Promise(r => setTimeout(r, attempt * 1000));
+      }
+    }
+    return null;
   }
 
   try {
@@ -529,7 +576,7 @@ The text MUST be part of the image (burned in), not overlaid.`;
       { type: "text", text: fullPrompt }
     ];
 
-    // Add logo as visual reference
+    // Add logo as visual reference for replication
     if (logoAsset?.url) {
       userContent.push({
         type: "image_url",
@@ -550,33 +597,63 @@ The text MUST be part of the image (burned in), not overlaid.`;
     }
 
     const apiCallStart = Date.now();
-    console.log(`            └─ Calling AI Gateway (model: google/gemini-3-pro-image-preview)...`);
+    console.log(`            └─ Calling AI Gateway with retry (model: google/gemini-3-pro-image-preview)...`);
     
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovableApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-pro-image-preview",
-        messages: [{ role: "user", content: userContent }],
-        modalities: ["image", "text"],
-      }),
-    });
+    // Use retry logic
+    const response = await callWithRetry(userContent);
 
     const apiCallTime = Date.now() - apiCallStart;
-    console.log(`            └─ API Response: ${response.status} in ${apiCallTime}ms`);
+    console.log(`            └─ API Response: ${response?.status || 'failed'} in ${apiCallTime}ms`);
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(`            ❌ [IMAGE-GEN] API Error ${response.status}:`);
-      console.error(`               Body: ${errorBody.substring(0, 500)}`);
-      throw new Error(`Image generation error: ${response.status} - ${errorBody.substring(0, 200)}`);
+    if (!response || !response.ok) {
+      if (response) {
+        const errorBody = await response.text();
+        console.error(`            ❌ [IMAGE-GEN] API Error ${response.status}:`);
+        console.error(`               Body: ${errorBody.substring(0, 500)}`);
+        throw new Error(`Image generation error: ${response.status} - ${errorBody.substring(0, 200)}`);
+      }
+      throw new Error("All retry attempts failed");
     }
 
     const data = await response.json();
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    let imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    // If we have a base image and logo, overlay the real logo via image editing
+    if (imageUrl && logoAsset?.url) {
+      try {
+        console.log(`            └─ Overlaying real logo via image editing...`);
+        const overlayRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${lovableApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-pro-image-preview",
+            messages: [{
+              role: "user",
+              content: [
+                { type: "text", text: "Add this company logo to the bottom-right corner of the slide image. Keep the logo clear, professional, and properly sized (not too large, about 80-100px). Maintain the original image quality." },
+                { type: "image_url", image_url: { url: imageUrl } },
+                { type: "image_url", image_url: { url: logoAsset.url } }
+              ]
+            }],
+            modalities: ["image", "text"],
+          }),
+        });
+        
+        if (overlayRes.ok) {
+          const overlayData = await overlayRes.json();
+          const overlayedUrl = overlayData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+          if (overlayedUrl) {
+            imageUrl = overlayedUrl;
+            console.log(`            ✅ Logo overlay successful`);
+          }
+        }
+      } catch (logoErr: any) {
+        console.warn(`            ⚠️ Logo overlay failed, using base image: ${logoErr.message}`);
+      }
+    }
     
     const totalImageTime = Date.now() - imageStartTime;
     if (imageUrl) {

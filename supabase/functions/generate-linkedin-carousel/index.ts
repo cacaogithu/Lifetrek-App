@@ -1,7 +1,5 @@
-// @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-// @ts-ignore
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+import { createClient } from "npm:@supabase/supabase-js@2.75.0";
 
 declare const Deno: any;
 
@@ -44,35 +42,61 @@ serve(async (req: Request) => {
   try {
     const {
       topic,
-      targetAudience,
-      painPoint,
-      desiredOutcome,
-      proofPoints,
-      ctaAction,
+      targetAudience = "Geral",
+      painPoint = "",
+      desiredOutcome = "",
+      proofPoints = "",
+      ctaAction = "",
       format = "carousel",
       wantImages = true,
       numberOfCarousels = 1,
       mode = "generate", // 'generate', 'image_only', 'plan'
+      postType = "value",
+      // New optional fields
+      selectedEquipment = [], // Array of equipment/product names
+      referenceImage = "", // Base64 or URL of reference image
+      batchMode = false, // For terminal batch generation
+      scheduledDate = null, // For scheduling
       // For image_only mode
       headline,
       body: slideBody,
       imagePrompt
     } = await req.json();
 
-    const isBatch = (numberOfCarousels > 1) || (mode === 'plan'); // Plan mode always implies batch of options
+    const isBatch = (numberOfCarousels > 1) || (mode === 'plan') || batchMode;
 
-    console.log("Generating LinkedIn content:", { topic, mode, isBatch });
+    console.log("Generating LinkedIn content:", { topic, mode, isBatch, postType, equipmentCount: selectedEquipment?.length || 0 });
 
     // --- HANDLE IMAGE ONLY MODE ---
     if (mode === "image_only") {
          const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
          if (!LOVABLE_API_KEY) throw new Error("Missing Lovable Key");
 
-         const finalPrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
-HEADLINE: ${headline}
-CONTEXT: ${slideBody}
-VISUAL DESCRIPTION: ${imagePrompt || "Professional medical manufacturing scene"}
-STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
+         // Clean prompt without literal HEADLINE:/CONTEXT: prefixes
+         const finalPrompt = `Crie uma imagem profissional para carrossel do LinkedIn da Lifetrek Medical.
+
+=== ESTILO OBRIGATÓRIO ===
+- Dimensões: 1080x1350px (retrato)
+- Cores da marca: Azul Primário #004F8F (dominante em fundos), Verde #1A7A3E (apenas micro-acentos), Laranja #F07818 (apenas CTAs)
+- Fundo: Gradiente escuro de #003052 para #004F8F
+- Fonte: Inter Bold para títulos, alto contraste branco sobre escuro
+- Estética: Premium, minimalista, alta tecnologia médica
+
+=== TEXTO A RENDERIZAR NA IMAGEM ===
+Renderize o seguinte título em fonte grande, branca, bold, centralizado:
+"${headline}"
+
+${slideBody ? `Subtexto (menor, abaixo do título):
+"${slideBody}"` : ""}
+
+=== DESCRIÇÃO VISUAL ===
+${imagePrompt || "Professional medical manufacturing scene, precision CNC machining, cleanroom environment"}
+
+=== REGRAS CRÍTICAS ===
+1. NÃO escreva "HEADLINE:", "CONTEXT:", "VISUAL:" ou qualquer label na imagem
+2. Texto deve ser CLARO, LEGÍVEL, alto contraste
+3. Logo "LM" pequena no canto inferior direito
+4. Estilo editorial premium, NÃO vendedor`;
 
         const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
             method: "POST",
@@ -80,7 +104,7 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
             body: JSON.stringify({
             model: IMAGE_MODEL,
             messages: [
-                { role: "system", content: "You are a professional medical designer." },
+                { role: "system", content: "You are an expert professional medical device designer. You create premium, editorial-quality LinkedIn slides with burned-in text. Never include label prefixes like 'HEADLINE:' in the image." },
                 { role: "user", content: finalPrompt }
             ],
             modalities: ["image", "text"]
@@ -126,20 +150,21 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     // Fetch company assets (logos, ISO badge, etc.)
     const { data: companyAssets, error: companyAssetsError } = await supabase
       .from("company_assets")
-      .select("type, url, description");
+      .select("type, url, name, metadata");
 
     if (companyAssetsError) {
       console.warn("Could not fetch company assets (non-fatal):", companyAssetsError.message);
     }
 
     const companyAssetsContext = companyAssets?.map((a: any) => 
-      `- [${a.type.toUpperCase()}] URL: ${a.url} (${a.description || 'No description'})`
+      `- [${a.type.toUpperCase()}] URL: ${a.url} (${a.name || 'No name'})`
     ).join("\n") || "No company assets available.";
 
-    // Fetch products for visual reference
+    // Fetch processed product images for visual reference
     const { data: products, error: productsError } = await supabase
-      .from("products")
-      .select("name, image_url, category")
+      .from("processed_product_images")
+      .select("name, enhanced_url, category")
+      .eq("is_visible", true)
       .limit(15);
 
     if (productsError) {
@@ -147,11 +172,17 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     }
 
     const productsContext = products?.map((p: any) =>
-      `- [${p.category || 'general'}] ${p.name}: ${p.image_url}`
+      `- [${p.category || 'general'}] ${p.name}: ${p.enhanced_url}`
     ).join("\n") || "No product images available.";
+    
+    console.log("📚 RAG Context loaded:", { 
+      contentAssets: assets?.length || 0, 
+      companyAssets: companyAssets?.length || 0,
+      products: products?.length || 0 
+    });
 
     // Combined System Prompt with EMBEDDED CONTEXT
-    const SYSTEM_PROMPT = constructSystemPrompt(assetsContext, companyAssetsContext, productsContext);
+    const SYSTEM_PROMPT = constructSystemPrompt(assetsContext, companyAssetsContext, productsContext, selectedEquipment, referenceImage);
 
     // Construct User Prompt
     let userPrompt = constructUserPrompt(topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, isBatch, numberOfCarousels);
@@ -220,31 +251,36 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
     // --- CRITIQUE LOOP (BRAND ANALYST) ---
     // Only run if not in mock mode and not image_only
     if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
-      console.log("🧐 Analyst Agent: Reviewing content against Brand Book...");
+      console.log("🧐 Agente Analista: Revisando conteúdo contra Brand Book...");
       
-      const critiqueSystemPrompt = `You are the Brand & Quality Analyst for Lifetrek Medical.
-Mission: Review drafts to ensure On-brand voice, Technical credibility, and Strategic alignment.
+      const critiqueSystemPrompt = `Você é o Analista de Marca & Qualidade da Lifetrek Medical.
+Missão: Revisar rascunhos para garantir Voz on-brand, Credibilidade técnica e Alinhamento estratégico.
+
+=== REGRA DE IDIOMA ===
+TODO O CONTEÚDO DEVE PERMANECER EM PORTUGUÊS BRASILEIRO.
 
 === CHECKLIST ===
-1. **Avatar & Problem**: Is the avatar clearly identified (Callout)? Is ONE main problem addressed?
-2. **Value**: Is the "dream outcome" (safer launches, fewer NCs) obvious?
-3. **Hook**: Does slide 1 follow the "Callout + Payoff" formula? (e.g. "Orthopedic OEMs: ...")
-4. **Proof**: Are specific machines (Citizen M32) or standards (ISO 13485) used as proof? No generic claims.
-5. **CTA**: Is there a single, low-friction CTA?
+1. **Avatar & Problema**: O avatar está claramente identificado (Chamado)? UM problema principal é abordado?
+2. **Valor**: O "resultado dos sonhos" (lançamentos mais seguros, menos NCs) é óbvio?
+3. **Gancho**: O slide 1 segue a fórmula "Chamado + Recompensa"? (ex: "OEMs Ortopédicos: ...")
+4. **Prova**: Máquinas específicas (Citizen M32) ou padrões (ISO 13485) são usados como prova? Sem claims genéricos.
+5. **CTA**: Há um único CTA de baixa fricção?
 
 === OUTPUT ===
-Refine the content and output the SAME JSON structure. 
-- If the hook is weak, REWRITE IT.
-- If the proof is vague, ADD specific machine names.
-- If the tone is salesy, make it more ENGINEER-to-ENGINEER.
+Refine o conteúdo e produza a MESMA estrutura JSON. 
+- Se o gancho está fraco, REESCREVA-O.
+- Se a prova é vaga, ADICIONE nomes de máquinas específicas.
+- Se o tom é vendedor demais, torne mais ENGENHEIRO-para-ENGENHEIRO.
+- MANTENHA TODO TEXTO EM PORTUGUÊS.
 `;
 
-      const critiqueUserPrompt = `Here is the draft content produced by the Copywriter:
+      const critiqueUserPrompt = `Aqui está o conteúdo rascunho produzido pelo Copywriter:
 ${JSON.stringify(resultCarousels)}
 
-Critique and REFINE this draft using your checklist.
-Focus heavily on the HOOK (Slide 1) and PROOF (Technical specificities).
-Return the refined JSON object (carousels array).`;
+Critique e REFINE este rascunho usando seu checklist.
+Foque pesadamente no GANCHO (Slide 1) e PROVA (Especificidades técnicas).
+Retorne o objeto JSON refinado (array de carrosséis).
+IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
 
        try {
          const critiqueRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -308,72 +344,141 @@ Return the refined JSON object (carousels array).`;
 
         // 2. Generate if needed
         if (!imageUrl && wantImages && (slide.backgroundType === "generate" || !slide.assetId)) {
-          try {
-            let imagePrompt = `Create a professional LinkedIn background image for Lifetrek Medical.
-HEADLINE: ${slide.headline}
-CONTEXT: ${slide.body}
-VISUAL DESCRIPTION: ${slide.imageGenerationPrompt || "Professional medical manufacturing scene"}
-STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
+          // Helper function for retry with exponential backoff
+          async function generateImageWithRetry(prompt: string, maxRetries = 3): Promise<Response | null> {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+              try {
+                const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                  method: "POST",
+                  headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    model: IMAGE_MODEL,
+                    messages: [
+                      { role: "system", content: "Você é um designer profissional de dispositivos médicos. Crie slides de LinkedIn premium com texto integrado ('burned-in'). NUNCA inclua prefixos como 'HEADLINE:', 'CONTEXT:', 'VISUAL:' na imagem. Use fonte Inter Bold para títulos." },
+                      { role: "user", content: prompt }
+                    ],
+                    modalities: ["image", "text"]
+                  }),
+                });
+                
+                if (res.status === 429) {
+                  console.warn(`Rate limited on attempt ${attempt}, waiting ${attempt * 2}s...`);
+                  await new Promise(r => setTimeout(r, attempt * 2000));
+                  continue;
+                }
+                if (res.ok) return res;
+                
+                console.warn(`Image gen attempt ${attempt} failed with status ${res.status}`);
+              } catch (e) {
+                console.error(`Image gen attempt ${attempt} error:`, e);
+              }
+              
+              if (attempt < maxRetries) {
+                await new Promise(r => setTimeout(r, attempt * 1000));
+              }
+            }
+            return null;
+          }
 
-            // Handling Text Placement Strategy (Strategist Decision)
+          try {
+            // Clean prompt structure without literal HEADLINE:/CONTEXT: that get rendered
+            let imagePrompt = `Crie uma imagem profissional para carrossel do LinkedIn da Lifetrek Medical.
+
+=== ESTILO OBRIGATÓRIO ===
+- Dimensões: 1080x1350px (retrato)
+- Cores da marca: Azul Primário #004F8F (dominante), Verde #1A7A3E (micro-acentos), Laranja #F07818 (CTAs)
+- Fundo: Gradiente premium de #0A1628 para #004F8F
+- Fonte: Inter Bold (títulos), Inter SemiBold (corpo)
+- Alto contraste: Texto BRANCO sobre fundo ESCURO
+- Estética: Premium, editorial, alta tecnologia médica
+
+=== DESCRIÇÃO VISUAL ===
+${slide.imageGenerationPrompt || "Professional medical manufacturing, precision CNC, cleanroom"}`;
+
+            // Handling Text Placement Strategy
             if (slide.textPlacement === "burned_in") {
-                imagePrompt += `\nIMPORTANT: You MUST render the headline text ("${slide.headline}") CLEARLY and LEGIBLY inside the image. Integrated professional typography.`;
+              imagePrompt += `
+
+=== TEXTO A RENDERIZAR (BURNED-IN) ===
+Título (fonte GRANDE, BOLD, BRANCO, centralizado):
+"${slide.headline}"
+
+${slide.body ? `Subtexto (menor, abaixo do título, max 2 linhas):
+"${slide.body.split(' ').slice(0, 15).join(' ')}${slide.body.split(' ').length > 15 ? '...' : ''}"` : ""}`;
             } else {
-                imagePrompt += `\nIMPORTANT: Create a clean, abstract background optimized for professional presentation.`;
+              imagePrompt += `
+
+=== MODO CLEAN ===
+Crie um fundo visual premium SEM texto renderizado.
+Fundo abstrato profissional, texturas médicas sutis, ready for text overlay.`;
             }
 
-            // Handle Logo Integration
-            if (slide.showLogo && companyAssets) {
-              const logo = companyAssets.find((a: any) => a.type === 'lifetrek_logo');
-              if (logo) {
-                const position = slide.logoPosition || 'top-right';
-                imagePrompt += `\n\nBRANDING: Include the Lifetrek Medical logo at the ${position} corner of the image.`;
-                imagePrompt += `\nLogo should be subtle but visible, professional placement.`;
-              }
+            imagePrompt += `
+
+=== REGRAS CRÍTICAS ===
+1. NUNCA escreva "HEADLINE:", "CONTEXT:", "VISUAL:", "DESCRIPTION:" ou qualquer label/prefixo na imagem
+2. Texto deve ser CLARO, LEGÍVEL, profissional
+3. Estilo editorial premium, NÃO vendedor ou genérico
+4. Use a paleta de cores da marca consistentemente`;
+
+            // Handle Logo - will be overlaid via image editing in next step
+            const logoPosition = slide.logoPosition || 'bottom-right';
+            if (slide.showLogo) {
+              imagePrompt += `\n5. Reserve espaço para logo no canto ${logoPosition}`;
             }
 
             // Handle ISO Badge Integration
-            if (slide.showISOBadge && companyAssets) {
-              const isoBadge = companyAssets.find((a: any) => a.type === 'iso_13485_logo');
-              if (isoBadge) {
-                imagePrompt += `\n\nCERTIFICATION: Include the ISO 13485:2016 certification badge.`;
-                imagePrompt += `\nBadge should be prominently displayed to emphasize quality standards.`;
-              }
+            if (slide.showISOBadge) {
+              imagePrompt += `\n6. Inclua indicação visual de certificação ISO 13485:2016`;
             }
 
-            // Handle Product Reference Images
-            if (slide.productReferenceUrls && slide.productReferenceUrls.length > 0) {
-              imagePrompt += `\n\nPRODUCT REFERENCES: Use the following product images as visual reference for technical accuracy:`;
-              slide.productReferenceUrls.forEach((url: string, idx: number) => {
-                imagePrompt += `\n${idx + 1}. ${url}`;
-              });
-              imagePrompt += `\nIncorporate visual elements from these products to ensure authenticity and technical precision.`;
-            }
-
-            const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: IMAGE_MODEL, // Nano Banana Pro 3.0
-                messages: [
-                  { role: "system", content: "You are an expert design agent using Gemini 3 Pro (Nano Banana). You excel at high-fidelity text rendering." },
-                  { role: "user", content: imagePrompt }
-                ],
-                modalities: ["image", "text"]
-              }),
-            });
+            // Generate base image with retry logic
+            const imgRes = await generateImageWithRetry(imagePrompt);
             
-            if (!imgRes.ok) {
-              if (imgRes.status === 429) {
-                console.warn("Image generation rate limited, skipping this slide");
-              } else if (imgRes.status === 402) {
-                console.warn("Image generation payment required, skipping this slide");
-              } else {
-                console.warn(`Image generation error: ${imgRes.status}`);
-              }
-            } else {
+            if (imgRes) {
               const imgData = await imgRes.json();
-              imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+              let baseImageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+              
+              // Overlay real logo via image editing if showLogo is true and we have the asset
+              if (baseImageUrl && slide.showLogo && companyAssets) {
+                const logoAsset = companyAssets.find((a: any) => a.type === 'logo' || a.type === 'lifetrek_logo');
+                if (logoAsset?.url) {
+                  try {
+                    console.log(`Overlaying real logo at ${logoPosition}...`);
+                    const overlayRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                      method: "POST",
+                      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        model: IMAGE_MODEL,
+                        messages: [{
+                          role: "user",
+                          content: [
+                            { type: "text", text: `Add this company logo to the ${logoPosition} corner of the slide image. Keep the logo clear, professional, and properly sized (not too large). Maintain the original image quality and composition.` },
+                            { type: "image_url", image_url: { url: baseImageUrl } },
+                            { type: "image_url", image_url: { url: logoAsset.url } }
+                          ]
+                        }],
+                        modalities: ["image", "text"]
+                      }),
+                    });
+                    
+                    if (overlayRes.ok) {
+                      const overlayData = await overlayRes.json();
+                      const overlayedUrl = overlayData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+                      if (overlayedUrl) {
+                        baseImageUrl = overlayedUrl;
+                        console.log("Logo overlay successful");
+                      }
+                    }
+                  } catch (logoErr) {
+                    console.warn("Logo overlay failed, using base image:", logoErr);
+                  }
+                }
+              }
+              
+              imageUrl = baseImageUrl;
+            } else {
+              console.warn("All image generation attempts failed for this slide");
             }
           } catch (e) {
             console.error("Image gen error", e);
@@ -394,14 +499,41 @@ STYLE: Photorealistic, clean, ISO 13485 medical aesthetic.`;
 
     for (const carousel of (carouselsToSave as any[])) {
        try {
-          // 1. Insert into linkedin_carousels
+          // Extract admin_user_id from auth header
+          const authHeader = req.headers.get("Authorization");
+          let adminUserId = '00000000-0000-0000-0000-000000000000';
+          
+          if (authHeader) {
+            const token = authHeader.replace("Bearer ", "");
+            const { data: { user } } = await supabase.auth.getUser(token);
+            if (user?.id) {
+              adminUserId = user.id;
+            }
+          }
+
+          // 1. Insert into linkedin_carousels with ALL required fields
           const { data: insertedCarousel, error: insertError } = await supabase
             .from("linkedin_carousels")
             .insert({
-              topic: carousel.topic,
-              content: carousel, // Store full JSON structure
+              admin_user_id: adminUserId,
+              topic: carousel.topic || topic,
+              target_audience: carousel.targetAudience || targetAudience,
+              pain_point: carousel.painPoint || painPoint || null,
+              desired_outcome: carousel.desiredOutcome || desiredOutcome || null,
+              proof_points: carousel.proofPoints || proofPoints || null,
+              cta_action: carousel.ctaAction || ctaAction || null,
+              caption: carousel.caption || '',
+              slides: carousel.slides || [],
+              image_urls: carousel.imageUrls || carousel.slides?.map((s: any) => s.imageUrl).filter(Boolean) || [],
               status: 'draft',
-              scheduled_date: carousel.scheduledDate || null  // if generated
+              format: format || 'carousel',
+              generation_settings: {
+                mode,
+                wantImages,
+                numberOfCarousels,
+                model: TEXT_MODEL,
+                imageModel: IMAGE_MODEL
+              }
             })
             .select("id")
             .single();
