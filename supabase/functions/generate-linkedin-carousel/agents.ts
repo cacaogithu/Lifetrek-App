@@ -400,36 +400,78 @@ export async function runDesignerAgent(
   console.log(`\n🎨 [DESIGNER] Agent Started`);
   console.log(`   └─ Carousels: ${carousels.length}, Total slides: ${totalSlides}`);
 
-  sendSSE("agent_status", { agent: "designer", status: "starting", message: "Preparando visuais..." });
+  sendSSE("agent_status", { agent: "designer", status: "starting", message: "Buscando assets reais..." });
 
   const results = [];
   let completedImages = 0;
   let failedImages = 0;
+  let realAssetsUsed = 0;
 
   for (let ci = 0; ci < carousels.length; ci++) {
     const carousel = carousels[ci];
-    const slides = carousel.slides || [];
+    let slides = carousel.slides || [];
     const carouselStart = Date.now();
 
+    // === STEP 0: LIMIT SLIDES TO 5 (hook + 3 content + cta) ===
+    if (slides.length > 5) {
+      console.log(`   ⚠️ [DESIGNER] Truncating ${slides.length} slides to 5 (max)`);
+      // Keep first (hook), last (cta), and 3 middle slides
+      const hook = slides.find((s: any) => s.type === 'hook') || slides[0];
+      const cta = slides.find((s: any) => s.type === 'cta') || slides[slides.length - 1];
+      const content = slides.filter((s: any) => s.type === 'content').slice(0, 3);
+      slides = [hook, ...content, cta].filter(Boolean).slice(0, 5);
+    }
+
     console.log(`\n   📁 [DESIGNER] Carousel ${ci + 1}/${carousels.length}: "${carousel.topic?.substring(0, 40)}..." (${slides.length} slides)`);
+
+    // === STEP 1: SEARCH FOR REAL ASSETS BASED ON TOPIC ===
+    sendSSE("agent_status", { 
+      agent: "designer", 
+      status: "searching", 
+      message: `Buscando fotos reais para "${carousel.topic?.substring(0, 30)}..."` 
+    });
+
+    const assetSearchTerms = [carousel.topic, carousel.strategic_angle, slides[0]?.designer_notes]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    
+    let availableAssets: any[] = [];
+    try {
+      const assetResult = await executeToolCall(
+        "search_assets",
+        { semantic_search: assetSearchTerms },
+        { supabase, lovableApiKey }
+      );
+      availableAssets = assetResult.assets || [];
+      console.log(`   📷 [DESIGNER] Found ${availableAssets.length} real assets for topic`);
+    } catch (e) {
+      console.warn(`   ⚠️ [DESIGNER] Asset search failed, will use AI generation`);
+    }
 
     sendSSE("agent_status", { 
       agent: "designer", 
       status: "working", 
-      message: `Processando carousel ${ci + 1}/${carousels.length}` 
+      message: `Processando carousel ${ci + 1}/${carousels.length} (${availableAssets.length} assets disponíveis)` 
     });
 
-    const processedSlides = [];
+    const processedSlides: any[] = [];
 
-    // Process slides in batches of 5 for concurrency
-    for (let i = 0; i < slides.length; i += 5) {
-      const batch = slides.slice(i, i + 5);
+    // Process slides in batches of 3 for concurrency
+    for (let i = 0; i < slides.length; i += 3) {
+      const batch = slides.slice(i, i + 3);
       const batchStart = Date.now();
-      console.log(`      🔄 [DESIGNER] Batch ${Math.floor(i/5) + 1}: slides ${i + 1}-${Math.min(i + 5, slides.length)}`);
+      console.log(`      🔄 [DESIGNER] Batch ${Math.floor(i/3) + 1}: slides ${i + 1}-${Math.min(i + 3, slides.length)}`);
       
       const batchResults = await Promise.all(batch.map(async (slide: any, batchIndex: number) => {
         const slideIndex = i + batchIndex;
         const slideStart = Date.now();
+        const isFirstSlide = slideIndex === 0;
+        const isLastSlide = slideIndex === slides.length - 1;
+        
+        // Force showLogo on first and last slides
+        slide.showLogo = isFirstSlide || isLastSlide;
+        slide.showISOBadge = isLastSlide || slide.type === 'cta';
         
         console.log(`         🖼️ [DESIGNER] Slide ${slideIndex + 1}/${slides.length} started: [${slide.type}] "${slide.headline?.substring(0, 30)}..."`);
         
@@ -441,8 +483,40 @@ export async function runDesignerAgent(
         });
 
         try {
-          // Check if we should use a product image
-          if (slide.suggested_product_category) {
+          // === PRIORITY 1: Use real asset if available and relevant ===
+          const slideNotes = (slide.designer_notes || slide.image_style || "").toLowerCase();
+          let matchingAsset: { id: string; file_path: string; filename: string; source?: string } | null = null;
+          
+          // Try to find a matching asset for this slide
+          if (availableAssets.length > 0) {
+            matchingAsset = availableAssets.find((a: any) => {
+              const assetName = (a.filename || "").toLowerCase();
+              const assetTags = (a.tags || []).join(" ").toLowerCase();
+              const assetCategory = (a.category || "").toLowerCase();
+              
+              // Match by slide notes
+              if (slideNotes.includes("sala limpa") || slideNotes.includes("cleanroom")) {
+                return assetCategory.includes("facilities") && (assetTags.includes("cleanroom") || assetName.includes("sala_limpa"));
+              }
+              if (slideNotes.includes("cnc") || slideNotes.includes("máquina") || slideNotes.includes("equipment")) {
+                return assetCategory.includes("equipment") || assetTags.includes("cnc");
+              }
+              if (slideNotes.includes("recepção") || slideNotes.includes("instalação") || slideNotes.includes("hero")) {
+                return assetCategory.includes("facilities");
+              }
+              // Generic fallback - use any available asset
+              return true;
+            }) || null;
+            
+            // Remove used asset to avoid repetition
+            if (matchingAsset) {
+              const usedId = matchingAsset.id;
+              availableAssets = availableAssets.filter((a: any) => a.id !== usedId);
+            }
+          }
+
+          // === PRIORITY 2: Check if we should use a product image ===
+          if (!matchingAsset && slide.suggested_product_category) {
             const products = await executeToolCall(
               "search_products",
               { category: slide.suggested_product_category, limit: 1 },
@@ -450,36 +524,52 @@ export async function runDesignerAgent(
             );
 
             if (products.products?.length > 0) {
-              // Use product image - but we still need to burn text into it
-              const imageResult = await executeToolCall(
-                "generate_image",
-                {
-                  prompt: `${slide.designer_notes || ""} Feature the product: ${products.products[0].name}`,
-                  headline: slide.headline,
-                  body_text: slide.body,
-                  style: slide.image_style || "product_showcase",
-                },
-                { supabase, lovableApiKey }
-              );
-
-              const slideTime = Date.now() - slideStart;
-              if (imageResult.image_url) {
-                completedImages++;
-                console.log(`         ✅ [DESIGNER] Slide ${slideIndex + 1} done in ${slideTime}ms (product: ${products.products[0].name?.substring(0, 20)})`);
-              } else {
-                failedImages++;
-                console.error(`         ❌ [DESIGNER] Slide ${slideIndex + 1} FAILED in ${slideTime}ms: ${imageResult.error || 'no image returned'}`);
-              }
-
-              return {
-                ...slide,
-                imageUrl: imageResult.image_url || "",
-                productUsed: products.products[0],
+              matchingAsset = {
+                id: products.products[0].id,
+                file_path: products.products[0].image_url,
+                filename: products.products[0].name,
+                source: "product"
               };
             }
           }
 
-          // Generate custom image
+          // === If we have a real asset, use image editing to add text/branding ===
+          if (matchingAsset?.file_path) {
+            realAssetsUsed++;
+            console.log(`         📷 [DESIGNER] Using real asset: "${matchingAsset.filename}"`);
+            
+            const imageResult = await executeToolCall(
+              "generate_image",
+              {
+                prompt: `Usando foto real da empresa como base. ${slide.designer_notes || ""}`,
+                headline: slide.headline,
+                body_text: slide.body,
+                style: slide.image_style || "client_perspective",
+                slide_type: slide.type,
+                base_image_url: matchingAsset.file_path, // New: pass real asset as base
+              },
+              { supabase, lovableApiKey }
+            );
+
+            const slideTime = Date.now() - slideStart;
+            if (imageResult.image_url) {
+              completedImages++;
+              console.log(`         ✅ [DESIGNER] Slide ${slideIndex + 1} done in ${slideTime}ms (real asset)`);
+            } else {
+              failedImages++;
+              console.error(`         ❌ [DESIGNER] Slide ${slideIndex + 1} FAILED in ${slideTime}ms`);
+            }
+
+            return {
+              ...slide,
+              imageUrl: imageResult.image_url || "",
+              usedRealAsset: true,
+              assetId: matchingAsset.id,
+            };
+          }
+
+          // === PRIORITY 3: Generate custom AI image ===
+          console.log(`         🤖 [DESIGNER] No asset found, generating AI image`);
           const imageResult = await executeToolCall(
             "generate_image",
             {
@@ -495,7 +585,7 @@ export async function runDesignerAgent(
           const slideTime = Date.now() - slideStart;
           if (imageResult.image_url) {
             completedImages++;
-            console.log(`         ✅ [DESIGNER] Slide ${slideIndex + 1} done in ${slideTime}ms`);
+            console.log(`         ✅ [DESIGNER] Slide ${slideIndex + 1} done in ${slideTime}ms (AI generated)`);
           } else {
             failedImages++;
             console.error(`         ❌ [DESIGNER] Slide ${slideIndex + 1} FAILED in ${slideTime}ms: ${imageResult.error || 'no image returned'}`);
@@ -504,12 +594,13 @@ export async function runDesignerAgent(
           return {
             ...slide,
             imageUrl: imageResult.image_url || "",
+            usedRealAsset: false,
           };
         } catch (slideError: any) {
           failedImages++;
           const slideTime = Date.now() - slideStart;
           console.error(`         ❌ [DESIGNER] Slide ${slideIndex + 1} EXCEPTION in ${slideTime}ms:`, slideError.message);
-          return { ...slide, imageUrl: "", error: slideError.message };
+          return { ...slide, imageUrl: "", error: slideError.message, usedRealAsset: false };
         }
       }));
 
