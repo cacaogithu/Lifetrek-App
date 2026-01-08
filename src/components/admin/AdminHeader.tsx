@@ -20,7 +20,8 @@ import {
   Sparkles,
   LucideIcon,
   Eye,
-  X
+  X,
+  CalendarDays
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -48,6 +49,7 @@ const allNavItems: NavItem[] = [
   { path: "/admin/gallery", label: "Galeria", icon: Images },
   { path: "/admin/blog", label: "Blog", icon: FileText },
   { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
+  { path: "/admin/content-calendar", label: "Calendário", icon: CalendarDays },
   { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
   { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
   { path: "/admin/product-assets", label: "Assets", icon: Upload, requiresSuperAdmin: true },

@@ -341,6 +341,7 @@ export type Database = {
           keywords: string[] | null
           news_sources: string[] | null
           published_at: string | null
+          scheduled_for: string | null
           seo_description: string | null
           seo_title: string | null
           slug: string
@@ -361,6 +362,7 @@ export type Database = {
           keywords?: string[] | null
           news_sources?: string[] | null
           published_at?: string | null
+          scheduled_for?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug: string
@@ -381,6 +383,7 @@ export type Database = {
           keywords?: string[] | null
           news_sources?: string[] | null
           published_at?: string | null
+          scheduled_for?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string
@@ -855,6 +858,7 @@ export type Database = {
           rejected_at: string | null
           rejected_by: string | null
           rejection_reason: string | null
+          scheduled_for: string | null
           slides: Json
           status: string | null
           target_audience: string
@@ -878,6 +882,7 @@ export type Database = {
           rejected_at?: string | null
           rejected_by?: string | null
           rejection_reason?: string | null
+          scheduled_for?: string | null
           slides: Json
           status?: string | null
           target_audience: string
@@ -901,6 +906,7 @@ export type Database = {
           rejected_at?: string | null
           rejected_by?: string | null
           rejection_reason?: string | null
+          scheduled_for?: string | null
           slides?: Json
           status?: string | null
           target_audience?: string
