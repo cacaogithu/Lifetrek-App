@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,8 @@ import JSZip from 'jszip';
 
 export default function ContentApproval() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const { data: items, isLoading } = useContentApprovalItems();
   const { data: rejectedItems, isLoading: isLoadingRejected } = useRejectedContentItems();
   const { data: approvedItems, isLoading: isLoadingApproved } = useApprovedContentItems();
@@ -195,17 +198,26 @@ export default function ContentApproval() {
       });
 
       if (error) {
+        console.error("[RegenerateImages] Function error:", error);
         throw error;
       }
 
       toast.success(`✅ ${data?.slides_regenerated ?? 0} slides regenerados com sucesso!`);
 
+      // Refresh cached data instead of reloading the whole page
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["content_approval_items"] }),
+        queryClient.invalidateQueries({ queryKey: ["linkedin_carousels"] }),
+        queryClient.invalidateQueries({ queryKey: ["linkedin_carousel", carouselId] }),
+        queryClient.invalidateQueries({ queryKey: ["linkedin_carousel_full", carouselId] }),
+      ]);
+
+      // Keep the user on the same page (no redirect)
       setPreviewDialogOpen(false);
       setSelectedItem(null);
-      window.location.reload();
     } catch (error) {
-      console.error('Regenerate error:', error);
-      toast.error(error instanceof Error ? error.message : 'Erro ao regenerar imagens');
+      console.error("Regenerate error:", error);
+      toast.error(error instanceof Error ? error.message : "Erro ao regenerar imagens");
     } finally {
       setIsRegenerating(false);
     }
