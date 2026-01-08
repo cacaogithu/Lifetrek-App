@@ -21,6 +21,7 @@ import {
   usePublishBlogPost,
   useUpdateBlogPost
 } from "@/hooks/useBlogPosts";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -188,29 +189,20 @@ export default function ContentApproval() {
     setIsRegenerating(true);
     try {
       toast.info("Regenerando imagens com prompt premium...", { duration: 10000 });
-      
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/regenerate-carousel-images`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ carousel_id: carouselId })
-        }
-      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Falha ao regenerar imagens');
+      const { data, error } = await supabase.functions.invoke("regenerate-carousel-images", {
+        body: { carousel_id: carouselId },
+      });
+
+      if (error) {
+        throw error;
       }
 
-      const result = await response.json();
-      toast.success(`✅ ${result.slides_regenerated} slides regenerados com sucesso!`);
-      
-      // Close dialog and refetch
+      toast.success(`✅ ${data?.slides_regenerated ?? 0} slides regenerados com sucesso!`);
+
       setPreviewDialogOpen(false);
       setSelectedItem(null);
-      // Trigger refetch by invalidating the query (handled by react-query)
-      window.location.reload(); // Simple approach - refetch all data
+      window.location.reload();
     } catch (error) {
       console.error('Regenerate error:', error);
       toast.error(error instanceof Error ? error.message : 'Erro ao regenerar imagens');

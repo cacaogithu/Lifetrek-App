@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  ArrowLeft, CalendarIcon, Linkedin, FileText, Clock, Check, X, ChevronLeft, ChevronRight
+  ArrowLeft, CalendarIcon, Linkedin, FileText, Clock, ChevronLeft, ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,6 +15,8 @@ import { format, startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, 
 import { ptBR } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+
+type CalendarScope = 'company' | 'mine';
 
 interface ScheduledItem {
   id: string;
@@ -30,18 +33,34 @@ export default function ContentCalendar() {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedItem, setSelectedItem] = useState<ScheduledItem | null>(null);
   const [isScheduling, setIsScheduling] = useState(false);
+  const [scope, setScope] = useState<CalendarScope>('company');
+
+  const { data: me } = useQuery({
+    queryKey: ['me'],
+    queryFn: async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      return data.user ? { id: data.user.id, email: data.user.email ?? null } : null;
+    },
+  });
 
   // Fetch approved/draft content that can be scheduled
   const { data: linkedInItems, isLoading: loadingLinkedIn } = useQuery({
-    queryKey: ['calendar-linkedin'],
+    queryKey: ['calendar-linkedin', scope, me?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let q = supabase
         .from('linkedin_carousels')
-        .select('id, topic, status, scheduled_for, created_at')
+        .select('id, topic, status, scheduled_for, created_at, admin_user_id')
         .in('status', ['draft', 'approved', 'pending_approval'])
         .order('created_at', { ascending: false });
-      
+
+      if (scope === 'mine' && me?.id) {
+        q = q.eq('admin_user_id', me.id);
+      }
+
+      const { data, error } = await q;
       if (error) throw error;
+
       return (data || []).map(item => ({
         id: item.id,
         type: 'linkedin' as const,
@@ -54,15 +73,21 @@ export default function ContentCalendar() {
   });
 
   const { data: blogItems, isLoading: loadingBlogs } = useQuery({
-    queryKey: ['calendar-blogs'],
+    queryKey: ['calendar-blogs', scope, me?.email],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let q = supabase
         .from('blog_posts')
-        .select('id, title, status, scheduled_for, created_at')
+        .select('id, title, status, scheduled_for, created_at, author_name')
         .in('status', ['draft', 'pending_review', 'published'])
         .order('created_at', { ascending: false });
-      
+
+      if (scope === 'mine' && me?.email) {
+        q = q.eq('author_name', me.email);
+      }
+
+      const { data, error } = await q;
       if (error) throw error;
+
       return (data || []).map(item => ({
         id: item.id,
         type: 'blog' as const,
@@ -146,19 +171,29 @@ export default function ContentCalendar() {
             </p>
           </div>
         </div>
-        <Badge variant="secondary" className="text-lg px-4 py-2">
-          <Clock className="h-4 w-4 mr-2" />
-          {unscheduledItems.length} não agendado(s)
-        </Badge>
+
+        <div className="flex items-center gap-3">
+          <Tabs value={scope} onValueChange={(v) => setScope(v as CalendarScope)}>
+            <TabsList>
+              <TabsTrigger value="company">Empresa</TabsTrigger>
+              <TabsTrigger value="mine">Meu</TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          <Badge variant="secondary" className="text-lg px-4 py-2">
+            <Clock className="h-4 w-4 mr-2" />
+            {unscheduledItems.length} não agendado(s)
+          </Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Backlog - Unscheduled Items */}
         <Card className="lg:col-span-1">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Backlog</CardTitle>
-            <p className="text-sm text-muted-foreground">Arraste para o calendário</p>
-          </CardHeader>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Backlog</CardTitle>
+              <p className="text-sm text-muted-foreground">Clique no item para agendar</p>
+            </CardHeader>
           <CardContent className="space-y-2 max-h-[600px] overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8 text-muted-foreground">Carregando...</div>
@@ -176,12 +211,12 @@ export default function ContentCalendar() {
                   )}
                   onClick={() => setSelectedItem(item)}
                 >
-                  <div className="flex items-start gap-2">
-                    {item.type === 'linkedin' ? (
-                      <Linkedin className="h-4 w-4 mt-0.5 text-blue-600 shrink-0" />
-                    ) : (
-                      <FileText className="h-4 w-4 mt-0.5 text-green-600 shrink-0" />
-                    )}
+                    <div className="flex items-start gap-2">
+                      {item.type === 'linkedin' ? (
+                        <Linkedin className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
+                      ) : (
+                        <FileText className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
+                      )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{item.title}</p>
                       <div className="flex items-center gap-2 mt-1">
@@ -201,13 +236,12 @@ export default function ContentCalendar() {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={undefined}
-                            onSelect={(date) => date && handleSchedule(item, date)}
-                            locale={ptBR}
-                            disabled={(date) => date < new Date()}
-                          />
+                            <Calendar
+                              mode="single"
+                              selected={undefined}
+                              onSelect={(date) => date && handleSchedule(item, date)}
+                              locale={ptBR}
+                            />
                         </PopoverContent>
                       </Popover>
                     </div>
@@ -274,9 +308,7 @@ export default function ContentCalendar() {
                         key={`${item.type}-${item.id}`}
                         className={cn(
                           "p-2 rounded text-xs group relative",
-                          item.type === 'linkedin' 
-                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                            : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                          "bg-muted text-foreground"
                         )}
                       >
                         <div className="flex items-start gap-1">
@@ -292,7 +324,8 @@ export default function ContentCalendar() {
                             className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => handleUnschedule(item)}
                           >
-                            <X className="h-3 w-3" />
+                            <span className="sr-only">Remover do dia</span>
+                            <span aria-hidden>×</span>
                           </Button>
                         </div>
                       </div>
@@ -327,12 +360,12 @@ export default function ContentCalendar() {
                   className="flex items-center gap-3 p-3 border rounded-lg"
                 >
                   {item.type === 'linkedin' ? (
-                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                      <Linkedin className="h-5 w-5 text-blue-600" />
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                      <Linkedin className="h-5 w-5 text-foreground" />
                     </div>
                   ) : (
-                    <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                      <FileText className="h-5 w-5 text-green-600" />
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-foreground" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
@@ -347,7 +380,8 @@ export default function ContentCalendar() {
                     onClick={() => handleUnschedule(item)}
                     className="shrink-0"
                   >
-                    <X className="h-4 w-4" />
+                    <span className="sr-only">Remover agendamento</span>
+                    <span aria-hidden>×</span>
                   </Button>
                 </div>
               ))}
