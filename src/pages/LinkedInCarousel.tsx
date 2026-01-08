@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Briefcase, User } from "lucide-react";
 
 interface CarouselSlide {
   headline: string;
@@ -45,6 +46,7 @@ export default function LinkedInCarousel() {
   const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
   const [carouselToDelete, setCarouselToDelete] = useState<string | null>(null);
   const [currentCarouselId, setCurrentCarouselId] = useState<string | null>(null);
+  const [profileType, setProfileType] = useState<"company" | "salesperson">("company");
 
   useEffect(() => {
     checkAdminAccess();
@@ -54,7 +56,7 @@ export default function LinkedInCarousel() {
     if (isAdmin) {
       fetchCarouselHistory();
     }
-  }, [isAdmin]);
+  }, [isAdmin, profileType]);
 
   const checkAdminAccess = async () => {
     try {
@@ -91,6 +93,7 @@ export default function LinkedInCarousel() {
       const { data, error } = await supabase
         .from("linkedin_carousels")
         .select("*")
+        .eq("profile_type", profileType)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -110,6 +113,7 @@ export default function LinkedInCarousel() {
         .from("linkedin_carousels")
         .insert([{
           admin_user_id: user.id,
+          profile_type: profileType,
           topic,
           target_audience: targetAudience,
           pain_point: painPoint,
@@ -221,6 +225,7 @@ export default function LinkedInCarousel() {
           proofPoints,
           ctaAction,
           format,
+          profileType,
         },
       });
 
@@ -290,6 +295,31 @@ ${carouselResult.caption}
           </h1>
           <p className="text-muted-foreground">
             Generate high-converting LinkedIn carousels using Hormozi's proven frameworks
+          </p>
+        </div>
+
+        <Tabs defaultValue="company" className="mb-8" onValueChange={(v) => setProfileType(v as any)}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="company" className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              Company Page
+            </TabsTrigger>
+            <TabsTrigger value="salesperson" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Salesperson Profile
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            {profileType === 'company' ? <Briefcase className="h-5 w-5" /> : <User className="h-5 w-5" />}
+            {profileType === 'company' ? 'Company Content Studio' : 'Salesperson Content Studio'}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {profileType === 'company' 
+              ? 'Creating authoritative content for the official Lifetrek page.' 
+              : 'Creating personal, expert-led content for your personal brand.'}
           </p>
         </div>
 
