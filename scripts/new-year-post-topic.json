@@ -1,0 +1,24 @@
+[
+  {
+    "topic": "Bem-vindo a 2026: O Ano da Lifetrek",
+    "targetAudience": "Parceiros da Saúde e Indústria Médica",
+    "painPoint": "N/A - Brand Story",
+    "desiredOutcome": "Inspirar confiança e celebrar a nova fase da empresa",
+    "proofPoints": "Aquisição recente, modernização, compromisso com vidas",
+    "ctaAction": "Vamos construir o futuro juntos",
+    "postType": "value",
+    "format": "single-image",
+    "numberOfCarousels": 1,
+    "caption": "2026 começa não apenas como mais um ano, mas como o início de um capítulo transformador na história da Lifetrek Medical.\n\nA aquisição da empresa marca nossa renovação e o compromisso inegociável: facilitar a vida de empresas, empresários e, principalmente, das pessoas que dependem de nossos produtos.\n\nCom nossa fábrica em Indaiatuba operando a todo vapor e novos investimentos em qualidade e tecnologia, estamos prontos para ser o parceiro que descomplica a sua cadeia de suprimentos.\n\nQue este seja um ano de crescimento, saúde e parcerias sólidas.\n\n#Lifetrek2026 #MedTech #IndústriaBrasileira #NovaFase #UsinagemDePrecisão",
+     "slides": [
+      {
+        "type": "hook",
+        "headline": "2026: O Início de uma Nova Era",
+        "body": "Facilitando a vida de quem cuida da vida.",
+        "designer_notes": "A photorealistic wide shot of the Lifetrek Medical factory exterior in Indaiatuba, Brazil. Modern, clean industrial architecture, blue sky, bright sunlight. A welcoming professional entrance. The image should look like a high-quality corporate photograph. Superimpose the 'Lifetrek Medical' logo in the top corner cleanly.",
+        "image_style": "client_perspective",
+        "showLogo": true
+      }
+    ]
+  }
+]
