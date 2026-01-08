@@ -84,18 +84,21 @@ serve(async (req) => {
     let errors: string[] = [];
 
     for (const lead of leads as LeadRow[]) {
-      // Skip if no email
-      if (!lead.email) {
+      // Skip if no email AND no company
+      if (!lead.email && !lead.company) {
         skipped++;
         continue;
       }
 
-      // Check for duplicate by email
-      if (skipDuplicates) {
+      const emailNormalized = lead.email ? lead.email.toLowerCase().trim() : null;
+      const companyNormalized = lead.company ? lead.company.trim() : null;
+
+      // Check for duplicate by email (only if email exists)
+      if (skipDuplicates && emailNormalized) {
         const { data: existing } = await supabase
           .from("contact_leads")
           .select("id")
-          .eq("email", lead.email.toLowerCase().trim())
+          .eq("email", emailNormalized)
           .single();
 
         if (existing) {
@@ -104,11 +107,22 @@ serve(async (req) => {
         }
       }
 
+      // Parse lead_score - handle string or number
+      let leadScore = 50;
+      if (lead.lead_score) {
+        const parsed = typeof lead.lead_score === 'string' 
+          ? parseFloat(lead.lead_score) 
+          : lead.lead_score;
+        if (!isNaN(parsed)) {
+          leadScore = Math.min(100, Math.max(0, Math.round(parsed)));
+        }
+      }
+
       // Prepare lead data
       const leadData = {
-        name: lead.name || "Desconhecido",
-        email: lead.email.toLowerCase().trim(),
-        company: lead.company || null,
+        name: lead.name || companyNormalized || "Desconhecido",
+        email: emailNormalized || `${companyNormalized?.toLowerCase().replace(/\s+/g, '_')}@placeholder.lead`,
+        company: companyNormalized,
         phone: lead.phone || "N/A",
         website: lead.website || null,
         city: lead.city || null,
@@ -116,7 +130,7 @@ serve(async (req) => {
         source: lead.source || "csv_import",
         industry: lead.industry || null,
         employees: lead.employees || null,
-        lead_score: lead.lead_score || 50,
+        lead_score: leadScore,
         linkedin_url: lead.linkedin_url || null,
         cnpj: lead.cnpj || null,
         revenue_range: lead.revenue_range || null,
@@ -124,16 +138,20 @@ serve(async (req) => {
         technical_requirements: lead.technical_requirements || "Importado via CSV",
         message: lead.message || null,
         status: "new" as const,
-        priority: "medium" as const,
+        priority: leadScore >= 70 ? "high" as const : leadScore >= 40 ? "medium" as const : "low" as const,
       };
 
-      const { error: insertError } = await supabase
+      // Use upsert to handle duplicates gracefully
+      const { error: upsertError } = await supabase
         .from("contact_leads")
-        .insert(leadData);
+        .upsert(leadData, { 
+          onConflict: "email",
+          ignoreDuplicates: skipDuplicates 
+        });
 
-      if (insertError) {
-        console.error(`[ImportLeads] Error inserting ${lead.email}:`, insertError);
-        errors.push(`${lead.email}: ${insertError.message}`);
+      if (upsertError) {
+        console.error(`[ImportLeads] Error upserting ${leadData.email}:`, upsertError);
+        errors.push(`${leadData.email}: ${upsertError.message}`);
       } else {
         inserted++;
       }
