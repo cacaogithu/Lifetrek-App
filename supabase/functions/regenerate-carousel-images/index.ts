@@ -66,6 +66,48 @@ serve(async (req: Request) => {
 
     const slides = carousel.slides || [];
 
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    async function fetchAiWithRetry(payload: any, label: string, maxAttempts = 3) {
+      let lastStatus: number | null = null;
+      let lastBody: string | null = null;
+
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const attemptStart = Date.now();
+        try {
+          const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (res.ok) return res;
+
+          lastStatus = res.status;
+          lastBody = await res.text().catch(() => null);
+          console.warn(
+            `[REGEN] ${label} attempt ${attempt}/${maxAttempts} failed: ${res.status} (${Date.now() - attemptStart}ms)`
+          );
+
+          // Retry only on transient failures
+          if (![429, 500, 502, 503, 504].includes(res.status)) {
+            break;
+          }
+
+          await sleep(Math.min(2000, 250 * 2 ** (attempt - 1)));
+        } catch (e) {
+          console.warn(`[REGEN] ${label} attempt ${attempt}/${maxAttempts} threw: ${String(e)}`);
+          await sleep(Math.min(2000, 250 * 2 ** (attempt - 1)));
+        }
+      }
+
+      return {
+        ok: false,
+        status: lastStatus ?? 500,
+        text: async () => lastBody ?? "",
+      } as unknown as Response;
+    }
+
     // Process slide function - generates image for a single slide
     async function processSlide(slide: any, index: number): Promise<any> {
       const slideStart = Date.now();
@@ -106,18 +148,17 @@ RULES: No labels like "HEADLINE:", leave space at ${logoPosition} for logo overl
         console.log(`[REGEN] [Slide ${slideNum}] Generating base image...`);
         const genStart = Date.now();
         
-        const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: IMAGE_MODEL,
-            messages: [
-              { role: "system", content: "Professional medical device designer. Create premium LinkedIn slides. Inter Bold font. Never include label prefixes." },
-              { role: "user", content: imagePrompt }
-            ],
-            modalities: ["image", "text"]
-          }),
-        });
+         const imgRes = await fetchAiWithRetry(
+           {
+             model: IMAGE_MODEL,
+             messages: [
+               { role: "system", content: "Professional medical device designer. Create premium LinkedIn slides. Inter Bold font. Never include label prefixes." },
+               { role: "user", content: imagePrompt },
+             ],
+             modalities: ["image", "text"],
+           },
+           `[Slide ${slideNum}] base image`
+         );
 
         if (!imgRes.ok) {
           console.error(`[REGEN] [Slide ${slideNum}] Image gen failed: ${imgRes.status}`);
@@ -139,22 +180,23 @@ RULES: No labels like "HEADLINE:", leave space at ${logoPosition} for logo overl
           const logoStart = Date.now();
           
           try {
-            const overlayRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: IMAGE_MODEL,
-                messages: [{
-                  role: "user",
-                  content: [
-                    { type: "text", text: `Overlay company logo at ${logoPosition} corner. Size: 8-10% width. Keep EXACT as provided. Don't alter rest of image.` },
-                    { type: "image_url", image_url: { url: baseImageUrl } },
-                    { type: "image_url", image_url: { url: logoAsset.url } }
-                  ]
-                }],
-                modalities: ["image", "text"]
-              }),
-            });
+             const overlayRes = await fetchAiWithRetry(
+               {
+                 model: IMAGE_MODEL,
+                 messages: [
+                   {
+                     role: "user",
+                     content: [
+                       { type: "text", text: `Overlay company logo at ${logoPosition} corner. Size: 8-10% width. Keep EXACT as provided. Don't alter rest of image.` },
+                       { type: "image_url", image_url: { url: baseImageUrl } },
+                       { type: "image_url", image_url: { url: logoAsset.url } },
+                     ],
+                   },
+                 ],
+                 modalities: ["image", "text"],
+               },
+               `[Slide ${slideNum}] logo overlay`
+             );
             
             if (overlayRes.ok) {
               const overlayData = await overlayRes.json();
@@ -175,22 +217,23 @@ RULES: No labels like "HEADLINE:", leave space at ${logoPosition} for logo overl
           const isoStart = Date.now();
           
           try {
-            const isoRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-              body: JSON.stringify({
-                model: IMAGE_MODEL,
-                messages: [{
-                  role: "user",
-                  content: [
-                    { type: "text", text: `Overlay ISO badge at bottom-left corner. Size: 6-8% width. Keep EXACT as provided. Don't alter rest.` },
-                    { type: "image_url", image_url: { url: baseImageUrl } },
-                    { type: "image_url", image_url: { url: isoAsset.url } }
-                  ]
-                }],
-                modalities: ["image", "text"]
-              }),
-            });
+             const isoRes = await fetchAiWithRetry(
+               {
+                 model: IMAGE_MODEL,
+                 messages: [
+                   {
+                     role: "user",
+                     content: [
+                       { type: "text", text: `Overlay ISO badge at bottom-left corner. Size: 6-8% width. Keep EXACT as provided. Don't alter rest.` },
+                       { type: "image_url", image_url: { url: baseImageUrl } },
+                       { type: "image_url", image_url: { url: isoAsset.url } },
+                     ],
+                   },
+                 ],
+                 modalities: ["image", "text"],
+               },
+               `[Slide ${slideNum}] ISO overlay`
+             );
             
             if (isoRes.ok) {
               const isoData = await isoRes.json();
