@@ -1,0 +1,144 @@
+import fs from 'fs';
+import path from 'path';
+import { parse } from 'csv-parse/sync';
+import { stringify } from 'csv-stringify/sync';
+
+// -- Configuration --
+const INPUT_FILE = path.join(process.cwd(), 'execution', 'FINAL_LEADS_FOR_UPLOAD.csv');
+const OUTPUT_FILE = path.join(process.cwd(), 'execution', 'RANKED_LEADS_HEATMAP.csv');
+const SUMMARY_FILE = path.join(process.cwd(), 'execution', 'LEADS_SUMMARY.md');
+
+// Ownership Rules
+const OWNERSHIP_RULES = {
+  MARCIO: [
+    "Implantes Odontológicos",
+    "Implantes Ortopédicos",
+    "Implantes Veterinários",
+    "Ferramental Customizado",
+    "Peças de Micro Precisão",
+    "Implantes Espinhais",
+    "Veterinário Ortopedia"
+  ],
+  VANESSA: [
+    "Equipamentos Odontológicos",
+    "Instrumentos Cirúrgicos",
+    "Dispositivos Médicos",
+    "Materiais Odontológicos",
+    "Distribuidor",
+    "Distribuidor Ortopedia",
+    "Materiais Consumo",
+    "Equipamentos Hospitalares",
+    "Instrumentos Odontológicos",
+    "Materiais Hospitalares",
+    "Equipamentos Médicos",
+    "Dispositivos Eletrônicos",
+    "MedTech Software",
+    "Dispositivos Diagnóstico"
+  ]
+};
+
+// Heatmap Interface
+interface RankedLead {
+  [key: string]: any;
+  heatmap_category: 'HOT 🔥' | 'WARM ⚠️' | 'COLD ❄️';
+  suggested_owner: 'Márcio' | 'Vanessa' | 'Unassigned';
+}
+
+function determineHeatmapCategory(score: number): RankedLead['heatmap_category'] {
+  if (score >= 9.0) return 'HOT 🔥';
+  if (score >= 7.0 && score < 9.0) return 'WARM ⚠️';
+  return 'COLD ❄️';
+}
+
+function determineOwner(segment: string): RankedLead['suggested_owner'] {
+  if (!segment) return 'Unassigned';
+  const normalizedSegment = segment.trim();
+
+  if (OWNERSHIP_RULES.MARCIO.includes(normalizedSegment)) return 'Márcio';
+  if (OWNERSHIP_RULES.VANESSA.includes(normalizedSegment)) return 'Vanessa';
+  
+  // Default fallback logic based on keywords if exact match fails
+  const lowerSeg = normalizedSegment.toLowerCase();
+  if (lowerSeg.includes('implante') || lowerSeg.includes('industrial') || lowerSeg.includes('ferramental')) return 'Márcio';
+  if (lowerSeg.includes('equipamento') || lowerSeg.includes('distribuidor') || lowerSeg.includes('comércio') || lowerSeg.includes('hospitalar')) return 'Vanessa';
+
+  return 'Unassigned';
+}
+
+async function main() {
+  console.log(`🚀 Starting Lead Ranking System...`);
+  console.log(`📂 Reading from: ${INPUT_FILE}`);
+
+  if (!fs.existsSync(INPUT_FILE)) {
+    console.error(`❌ Input file not found: ${INPUT_FILE}`);
+    process.exit(1);
+  }
+
+  const fileContent = fs.readFileSync(INPUT_FILE, 'utf-8');
+  
+  const records = parse(fileContent, {
+    columns: true,
+    skip_empty_lines: true
+  });
+
+  console.log(`📊 Processing ${records.length} records...`);
+
+  const rankedLeads: RankedLead[] = records.map((record: any) => {
+    // Parse scores: prefer 'v2_score', then 'predicted_score', then 'rating', default to 0
+    let score = 0;
+    if (record.v2_score) score = parseFloat(record.v2_score);
+    else if (record.predicted_score) score = parseFloat(record.predicted_score);
+    else if (record.rating) score = parseFloat(record.rating);
+
+    const segment = record.segmento || record.segment || '';
+
+    return {
+      ...record,
+      heatmap_category: determineHeatmapCategory(score),
+      suggested_owner: determineOwner(segment)
+    };
+  });
+
+  // Calculate Summary Stats
+  const summary = {
+    total: rankedLeads.length,
+    hot: rankedLeads.filter(l => l.heatmap_category.includes('HOT')).length,
+    warm: rankedLeads.filter(l => l.heatmap_category.includes('WARM')).length,
+    cold: rankedLeads.filter(l => l.heatmap_category.includes('COLD')).length,
+    marcio: rankedLeads.filter(l => l.suggested_owner === 'Márcio').length,
+    vanessa: rankedLeads.filter(l => l.suggested_owner === 'Vanessa').length,
+    unassigned: rankedLeads.filter(l => l.suggested_owner === 'Unassigned').length
+  };
+
+  // Write CSV Output
+  const outputContent = stringify(rankedLeads, { header: true });
+  fs.writeFileSync(OUTPUT_FILE, outputContent);
+  console.log(`✅ Ranked leads saved to: ${OUTPUT_FILE}`);
+
+  // Write Markdown Summary
+  const mdContent = `# Lead Ranking Summary Report
+
+**Total Leads Processed:** ${summary.total}
+
+## 🔥 Heatmap Distribution
+| Category | Count | Percentage |
+|----------|-------|------------|
+| **HOT 🔥** | ${summary.hot} | ${((summary.hot / summary.total) * 100).toFixed(1)}% |
+| **WARM ⚠️** | ${summary.warm} | ${((summary.warm / summary.total) * 100).toFixed(1)}% |
+| **COLD ❄️** | ${summary.cold} | ${((summary.cold / summary.total) * 100).toFixed(1)}% |
+
+## 👤 Ownership Assignment Strategy
+- **Márcio (Manufacturing & Industrial Focus):** ${summary.marcio} leads
+- **Vanessa (Commercial & Products Focus):** ${summary.vanessa} leads
+- **Unassigned:** ${summary.unassigned} leads
+
+## ℹ️ Generation Info
+Generated by: \`scripts/rank_leads.ts\`
+Date: ${new Date().toISOString()}
+`;
+
+  fs.writeFileSync(SUMMARY_FILE, mdContent);
+  console.log(`✅ Summary report saved to: ${SUMMARY_FILE}`);
+}
+
+main().catch(console.error);

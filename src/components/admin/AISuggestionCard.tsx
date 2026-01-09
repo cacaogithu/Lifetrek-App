@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brain, Calendar, AlertCircle, Lightbulb, Copy, CheckCircle } from "lucide-react";
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -164,9 +165,9 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
                   )}
                 </Button>
               </div>
-              <div className="text-sm whitespace-pre-wrap text-muted-foreground max-h-60 overflow-y-auto">
-                {suggestion.email_body}
-              </div>
+                <ReactMarkdown className="prose prose-sm max-w-none dark:prose-invert">
+                  {suggestion.email_body}
+                </ReactMarkdown>
             </div>
 
             {/* Key Points */}

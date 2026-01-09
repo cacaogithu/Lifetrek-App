@@ -13,26 +13,36 @@ serve(async (req) => {
 
   try {
     const { imageUrl } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not configured');
     }
 
     console.log('Analyzing image:', imageUrl);
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Fetch the image to convert to base64 if needed, or pass URL if supported.
+    // Gemini API supports image URLs via "fileData" if uploaded to File API, or base64 "inlineData".
+    // Since we have a public URL, we might need to fetch and base64 encode it for "inlineData".
+    
+    // Fetch image data
+    const imageResp = await fetch(imageUrl);
+    if (!imageResp.ok) throw new Error("Failed to fetch image");
+    const imageArrayBuffer = await imageResp.arrayBuffer();
+    const base64Image = btoa(String.fromCharCode(...new Uint8Array(imageArrayBuffer)));
+    const mimeType = imageResp.headers.get("content-type") || "image/jpeg";
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
+        contents: [
           {
-            role: 'system',
-            content: `Você é especialista em equipamentos de manufatura médica/dental da Lifetrek Medical.
+            role: "user",
+            parts: [
+              { text: `Você é especialista em equipamentos de manufatura médica/dental da Lifetrek Medical.
 
 EQUIPAMENTOS QUE VOCÊ CONHECE:
 - Tornos CNC: Citizen (L20, L20x, L32, M32), Tornos (GT13, GT26), Doosan
@@ -67,44 +77,38 @@ Analise a imagem e identifique:
 5) Modelo (se identificável na imagem)
 
 Se identificar marca/modelo específico (ex: "Citizen L32", "Zeiss Contura"), inclua no nome.
-Responda em formato JSON: {"name": "...", "description": "...", "category": "...", "brand": "...", "model": "..."}`
-          },
-          {
-            role: 'user',
-            content: [
+Responda APENAS com o JSON: {"name": "...", "description": "...", "category": "...", "brand": "...", "model": "..."}` },
               {
-                type: 'text',
-                text: 'Analise esta imagem e forneça os dados solicitados em formato JSON.'
-              },
-              {
-                type: 'image_url',
-                image_url: { url: imageUrl }
+                inline_data: {
+                  mime_type: mimeType,
+                  data: base64Image
+                }
               }
             ]
           }
         ],
+        generation_config: {
+            response_mime_type: "application/json"
+        }
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('AI API error:', response.status, errorText);
-      throw new Error(`AI API error: ${response.status}`);
+      console.error('Gemini API error:', response.status, errorText);
+      throw new Error(`Gemini API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
     console.log('AI response:', content);
 
     // Try to parse JSON from the response
     let result;
     try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        result = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
-      }
+      // Find JSON object in the response (handling potential markdown blocks or pure JSON)
+      const jsonText = content.replace(/```json\n?|```/g, '').trim();
+      result = JSON.parse(jsonText);
     } catch (e) {
       console.error('Failed to parse AI response as JSON:', e);
       result = {

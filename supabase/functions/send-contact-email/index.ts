@@ -2,7 +2,6 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,9 +9,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 interface ContactEmailRequest {
   name: string;
@@ -46,6 +43,31 @@ const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Initialize clients inside handler to prevent cold-start crashes
+  console.log("DEBUG: Available Env Keys:", Object.keys(Deno.env.toObject()));
+  
+  const resendApiKey = Deno.env.get("RESEND_API_KEY");
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+  // Fallback to hardcoded key if env var is missing (Temporary fix for secrets issue)
+  const finalResendKey = resendApiKey || "re_PK5SsLmT_5xs5uxxKGtMSo7B4HEr35eB7";
+
+  if (!finalResendKey) {
+    console.error("Missing RESEND_API_KEY");
+    return new Response(JSON.stringify({ 
+      error: "Configuration Error: Missing RESEND_API_KEY",
+      availableKeys: Object.keys(Deno.env.toObject())
+    }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+  if (!supabaseUrl || !supabaseKey) {
+     console.error("Missing SUPABASE credentials");
+     return new Response(JSON.stringify({ error: "Configuration Error: Missing Supabase Credentials" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+
+  const resend = new Resend(finalResendKey);
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
     const { name, email, company, phone, projectTypes, annualVolume, technicalRequirements, message }: ContactEmailRequest = await req.json();
@@ -127,7 +149,7 @@ const handler = async (req: Request): Promise<Response> => {
         email,
         company,
         phone,
-        project_types: projectTypes,
+        project_type: formatProjectTypes(projectTypes),
         annual_volume: annualVolume,
         technical_requirements: technicalRequirements,
         message,
@@ -212,9 +234,9 @@ const handler = async (req: Request): Promise<Response> => {
             console.error('Error calculating lead score:', scoreError);
           }
 
-          // Generate AI response suggestion using Lovable AI
-          const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-          if (lovableApiKey) {
+          // Generate AI response suggestion using Google Gemini
+          const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+          if (geminiApiKey) {
             console.log('Generating AI response suggestion...');
             
             const systemPrompt = `You are a senior B2B sales consultant for Lifetrek Medical, a precision medical device manufacturing company specializing in dental implants, orthopedic components, surgical instruments, and custom medical parts.
@@ -225,7 +247,16 @@ Your role is to analyze incoming leads and suggest professional, compelling emai
 3. Build credibility and trust
 4. Create urgency and next steps
 
-Consider the company research context when available to personalize your response.`;
+Consider the company research context when available to personalize your response.
+
+Provide your suggestion in JSON format with these fields:
+- subject_line: compelling subject line (max 80 chars)
+- email_body: complete email body (professional, warm, action-oriented)
+- key_points: array of 3-5 key talking points to emphasize
+- follow_up_date: suggested follow-up date (YYYY-MM-DD format, 2-3 days from now)
+- priority_level: "low", "medium", or "high" based on lead quality
+
+Output strictly raw JSON.`;
 
             const userPrompt = `Generate a professional email response suggestion for this new lead:
 
@@ -243,55 +274,57 @@ ${companyResearch ? `**Company Research:**
 - Domain: ${companyResearch.domain}
 - Industry: ${companyResearch.industry || 'Unknown'}
 - Website Summary: ${companyResearch.website_summary?.substring(0, 500) || 'Not available'}
-- LinkedIn Info: ${companyResearch.linkedin_info?.substring(0, 500) || 'Not available'}` : ''}
+- LinkedIn Info: ${companyResearch.linkedin_info?.substring(0, 500) || 'Not available'}` : ''}`;
 
-Provide your suggestion in JSON format with these fields:
-- subject_line: compelling subject line (max 80 chars)
-- email_body: complete email body (professional, warm, action-oriented)
-- key_points: array of 3-5 key talking points to emphasize
-- follow_up_date: suggested follow-up date (YYYY-MM-DD format, 2-3 days from now)
-- priority_level: "low", "medium", or "high" based on lead quality`;
-
-            const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+            const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${lovableApiKey}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                model: 'google/gemini-2.5-flash',
-                messages: [
-                  { role: 'system', content: systemPrompt },
-                  { role: 'user', content: userPrompt }
-                ],
-                tools: [{
-                  type: 'function',
-                  function: {
-                    name: 'generate_response_suggestion',
-                    description: 'Generate a structured email response suggestion',
-                    parameters: {
-                      type: 'object',
-                      properties: {
-                        subject_line: { type: 'string' },
-                        email_body: { type: 'string' },
-                        key_points: { 
-                          type: 'array',
-                          items: { type: 'string' }
-                        },
-                        follow_up_date: { type: 'string' },
-                        priority_level: { 
-                          type: 'string',
-                          enum: ['low', 'medium', 'high']
-                        }
-                      },
-                      required: ['subject_line', 'email_body', 'key_points', 'follow_up_date', 'priority_level'],
-                      additionalProperties: false
-                    }
-                  }
+                contents: [{
+                    role: "user",
+                    parts: [{ text: userPrompt }]
                 }],
-                tool_choice: { type: 'function', function: { name: 'generate_response_suggestion' } }
+                system_instruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generation_config: {
+                    response_mime_type: "application/json"
+                }
               }),
             });
+
+            if (aiResponse.ok) {
+              const aiData = await aiResponse.json();
+              const responseText = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
+              
+              if (responseText) {
+                try {
+                    const suggestion = JSON.parse(responseText);
+                    console.log('AI suggestion generated');
+
+                    // Save AI suggestion to database
+                    const { data: savedSuggestion } = await supabase
+                    .from('ai_response_suggestions')
+                    .insert({
+                        lead_id: leadId,
+                        subject_line: suggestion.subject_line,
+                        email_body: suggestion.email_body,
+                        key_points: suggestion.key_points,
+                        follow_up_date: suggestion.follow_up_date,
+                        priority_level: suggestion.priority_level,
+                        company_research_id: companyResearch?.id
+                    })
+                    .select()
+                    .single();
+
+                    aiSuggestion = savedSuggestion || suggestion;
+                } catch (e) {
+                    console.error("Failed to parse AI suggestion JSON", e);
+                }
+              }
+            }
 
             if (aiResponse.ok) {
               const aiData = await aiResponse.json();
@@ -439,7 +472,8 @@ Provide your suggestion in JSON format with these fields:
       leadId,
       leadScore: leadScore || null,
       hasResearch: !!companyResearch,
-      hasSuggestion: !!aiSuggestion
+      hasSuggestion: !!aiSuggestion,
+      dbError: leadError ? leadError : null
     }), {
       status: 200,
       headers: {

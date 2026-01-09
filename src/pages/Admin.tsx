@@ -45,6 +45,7 @@ export default function Admin() {
     total_companies: 0,
     recent_events: [],
   });
+  const [adminRole, setAdminRole] = useState<string | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
   const [filteredLeads, setFilteredLeads] = useState<any[]>([]);
   const [selectedLead, setSelectedLead] = useState<any | null>(null);
@@ -127,6 +128,9 @@ export default function Admin() {
       }
 
       setIsAdmin(true);
+      if (adminData.role) {
+        setAdminRole(adminData.role);
+      }
       await fetchAnalytics();
     } catch (error) {
       console.error("Error checking admin access:", error);
@@ -176,8 +180,41 @@ export default function Admin() {
 
       if (error) throw error;
 
-      setLeads(data || []);
-      setFilteredLeads(data || []);
+      // Fetch CSV leads
+      const { data: csvLeads, error: csvError } = await supabase
+        .from("leads")
+        .select("*")
+        .order("score", { ascending: false, nullsFirst: false })
+        .limit(100); // Limit for performance
+
+      const mappedCsvLeads = (csvLeads || []).map(l => ({
+        id: l.id,
+        name: l.company_name || l.email, // Use company or email as name
+        email: l.email,
+        company: l.company_name,
+        phone: l.phone,
+        project_types: l.segment ? [l.segment] : [],
+        annual_volume: null,
+        technical_requirements: l.notes || '',
+        message: null,
+        status: 'new',
+        priority: l.score >= 8 ? 'high' : l.score >= 5 ? 'medium' : 'low',
+        admin_notes: null,
+        assigned_to: null,
+        created_at: l.created_at,
+        updated_at: l.updated_at,
+        lead_score: l.score,
+        score_breakdown: null,
+        source: 'csv' // Mark as CSV source
+      }));
+
+      // Merge leads (prioritize contact leads)
+      const allLeads = [...(data || []), ...mappedCsvLeads].sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      setLeads(allLeads);
+      setFilteredLeads(allLeads);
     } catch (error) {
       console.error("Error fetching leads:", error);
       toast.error("Failed to load leads");
@@ -565,7 +602,8 @@ export default function Admin() {
 
           {/* Brand Book Tab */}
           <TabsContent value="brand">
-            <Card className="p-8">
+            {(adminRole === 'admin' || adminRole === 'ev' || true) && ( // Allow all for now, but logic is ready
+              <Card className="p-8">
               <div className="prose prose-slate max-w-none">
                 <h1 className="text-4xl font-bold mb-2">Lifetrek Medical Brand Book</h1>
                 <p className="text-muted-foreground mb-8">Version 1.0 | Internal Documentation</p>
@@ -774,6 +812,7 @@ export default function Admin() {
                 </section>
               </div>
             </Card>
+            )}
           </TabsContent>
         </Tabs>
 

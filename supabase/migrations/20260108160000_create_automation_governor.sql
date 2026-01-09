@@ -1,7 +1,7 @@
 -- Create table for storing role-based daily limits
 CREATE TABLE IF NOT EXISTS public.automation_limits (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    role TEXT NOT NULL CHECK (role IN ('founder', 'growth', 'sales_machine')),
+    role TEXT NOT NULL CHECK (role IN ('founder', 'growth', 'sales_machine')) UNIQUE,
     daily_invites INTEGER NOT NULL DEFAULT 0,
     daily_inmails INTEGER NOT NULL DEFAULT 0,
     daily_messages INTEGER NOT NULL DEFAULT 0,
@@ -80,4 +80,4 @@ INSERT INTO public.automation_limits (role, daily_invites, daily_inmails, daily_
 ('founder', 15, 0, 20),
 ('growth', 30, 0, 40),
 ('sales_machine', 80, 50, 100)
-ON CONFLICT DO NOTHING;
+ON CONFLICT (role) DO NOTHING;

@@ -11,13 +11,13 @@ serve(async (req) => {
   }
 
   try {
-    const { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format = "carousel", profileType = "company" } = await req.json();
+    const { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format = "carousel", profileType = "company", action, existingSlides } = await req.json();
 
-    console.log("Generating LinkedIn content:", { topic, targetAudience, format, profileType });
+    console.log("Processing LinkedIn content request:", { topic, action, profileType });
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY not configured");
     }
 
     // Context definitions based on profile type
@@ -30,18 +30,27 @@ serve(async (req) => {
         imageStyle: "Corporate, clean, highly engineered, official branding elements."
       },
       salesperson: {
-        role: "expert medical device consultant",
-        tone: "helpful, knowledgeable, and approachable",
+        role: "growth-focused medical device sales expert",
+        tone: "persuasive, direct, high-energy, and sales-driven",
         pronoun: "I",
-        perspective: "In my experience working with OEMs...",
-        imageStyle: "Professional but accessible, focus on the 'expert' view, slightly more dynamic."
+        perspective: "I help manufacturers cut costs and scale faster. Here is the deal...",
+        imageStyle: "Dynamic, business-focused, less abstract, more 'results-oriented' visuals (charts, handshakes, clear value prop overlays)."
       }
     };
 
     const ctx = contexts[profileType as keyof typeof contexts] || contexts.company;
 
-    // Build the system prompt with Hormozi principles and LinkedIn best practices
-    const systemPrompt = `You are an expert LinkedIn content strategist acting as a ${ctx.role}. You follow Alex Hormozi's $100M framework and LinkedIn carousel best practices.
+    let carousel: any = {};
+
+    if (action === "regenerate_images" && existingSlides) {
+        console.log("Regenerating images for existing slides...");
+        carousel = {
+            topic,
+            slides: existingSlides
+        };
+    } else {
+        // Build the system prompt with Hormozi principles and LinkedIn best practices
+        const systemPrompt = `You are an expert LinkedIn content strategist acting as a ${ctx.role}. You follow Alex Hormozi's $100M framework and LinkedIn carousel best practices.
 
 CORE PRINCIPLES:
 1. ONE core problem/question per carousel
@@ -88,52 +97,55 @@ Also create an engaging LinkedIn caption (150-200 words) that:
 - Ends with the CTA
 - Uses the "${ctx.pronoun}" voice appropriately`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "create_carousel",
-              description: "Create a LinkedIn carousel with structured slides",
-              parameters: {
-                type: "object",
-                properties: {
-                  topic: { type: "string" },
-                  targetAudience: { type: "string" },
-                  slides: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        type: {
-                          type: "string",
-                          enum: ["hook", "content", "cta"],
-                        },
-                        headline: { type: "string" },
-                        body: { type: "string" },
+        contents: [{
+          role: "user",
+          parts: [{ text: userPrompt }]
+        }],
+        system_instruction: {
+          parts: [{ text: systemPrompt }]
+        },
+        tools: [{
+          function_declarations: [{
+            name: "create_carousel",
+            description: "Create a LinkedIn carousel with structured slides",
+            parameters: {
+              type: "object",
+              properties: {
+                topic: { type: "string" },
+                targetAudience: { type: "string" },
+                slides: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      type: {
+                        type: "string",
+                        enum: ["hook", "content", "cta"],
                       },
-                      required: ["type", "headline", "body"],
+                      headline: { type: "string" },
+                      body: { type: "string" },
                     },
+                    required: ["type", "headline", "body"],
                   },
-                  caption: { type: "string" },
                 },
-                required: ["topic", "targetAudience", "slides", "caption"],
+                caption: { type: "string" },
               },
+              required: ["topic", "targetAudience", "slides", "caption"],
             },
-          },
-        ],
-        tool_choice: { type: "function", function: { name: "create_carousel" } },
+          }]
+        }],
+        tool_config: {
+          function_calling_config: {
+            mode: "ANY",
+            allowed_function_names: ["create_carousel"]
+          }
+        }
       }),
     });
 
@@ -161,14 +173,15 @@ Also create an engaging LinkedIn caption (150-200 words) that:
     const aiResponse = await response.json();
     console.log("AI response received");
 
-    const toolCall = aiResponse.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall) {
+    const functionCall = aiResponse.candidates?.[0]?.content?.parts?.[0]?.functionCall;
+    if (!functionCall) {
       throw new Error("No tool call in AI response");
     }
 
-    const carousel = JSON.parse(toolCall.function.arguments);
+    carousel = functionCall.args;
+    } // End of text generation block
 
-    console.log("Text content generated, now generating images...");
+    console.log("Text content ready, now generating images...");
 
     // Brand-specific image generation system prompt
     const imageSystemPrompt = `You are a professional graphic designer for Lifetrek Medical, a precision medical device manufacturer.
@@ -236,23 +249,26 @@ REQUIREMENTS:
 - Professional medical device aesthetic
 - Clean, modern design
 - Readable from thumbnail size
+- NO TEXT on the background image itself (only overlaid via design)
+- NO hallucinatory machinery (stick to clean, abstract technical forms or generic high-end CNC/medical visuals)
 
-Style: Professional B2B carousel slide, technical precision focus`;
+Style: Professional B2B carousel slide, technical precision focus, minimal clutter`;
 
       try {
-        const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const imageResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${GEMINI_API_KEY}`, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash-image",
-            messages: [
-              { role: "system", content: imageSystemPrompt },
-              { role: "user", content: imagePrompt }
-            ],
-            modalities: ["image", "text"]
+            instances: [{
+                prompt: `SYSTEM: ${imageSystemPrompt}
+                USER REQUEST: ${imagePrompt}`
+            }],
+            parameters: {
+                sampleCount: 1,
+                aspectRatio: "1:1"
+            }
           }),
         });
 
@@ -263,7 +279,12 @@ Style: Professional B2B carousel slide, technical precision focus`;
         }
 
         const imageData = await imageResponse.json();
-        const imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+        const b64Image = imageData.predictions?.[0]?.bytesBase64Encoded;
+        
+        let imageUrl = "";
+        if (b64Image) {
+           imageUrl = `data:image/png;base64,${b64Image}`;
+        }
         
         if (imageUrl) {
           imageUrls.push(imageUrl);
