@@ -1,0 +1,7 @@
+{
+    "nodeModulesDir": "auto",
+    "imports": {
+        "satori": "npm:satori@0.10.11",
+        "@resvg/resvg-js": "npm:@resvg/resvg-js@2.6.2"
+    }
+}

@@ -25,6 +25,22 @@ function wrapText(text: string, maxCharsPerLine: number): string[] {
     return lines;
 }
 
+// Helper: Unicode-safe base64 encoding
+function encodeBase64(str: string): string {
+    // Use TextEncoder to convert string to UTF-8 bytes
+    const encoder = new TextEncoder();
+    const utf8Bytes = encoder.encode(str);
+
+    // Convert bytes to base64
+    let binary = '';
+    const len = utf8Bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(utf8Bytes[i]);
+    }
+    return btoa(binary);
+}
+
+
 serve(async (req) => {
     if (req.method === "OPTIONS") {
         return new Response(null, { headers: corsHeaders });
@@ -181,8 +197,8 @@ VISUAL STYLE:
         const result = {
             baseImage: baseImageUrl,
             overlays: {
-                gradient: `data:image/svg+xml;base64,${btoa(gradientSvg)}`,
-                text: `data:image/svg+xml;base64,${btoa(textSvg)}`,
+                gradient: `data:image/svg+xml;base64,${encodeBase64(gradientSvg)}`,
+                text: `data:image/svg+xml;base64,${encodeBase64(textSvg)}`,
             },
             logoPosition: { x: WIDTH - 180, y: logoY },
             metadata: {
