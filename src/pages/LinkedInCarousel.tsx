@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Loader2, ChevronLeft, ChevronRight, Download, Star, Trash2, History, Image as ImageIcon } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Download, Star, Trash2, History, Image as ImageIcon, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Briefcase, User } from "lucide-react";
+import { CarouselGenerationModal } from "@/components/carousel/CarouselGenerationModal";
 
 interface CarouselSlide {
   headline: string;
@@ -46,7 +47,16 @@ export default function LinkedInCarousel() {
   const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
   const [carouselToDelete, setCarouselToDelete] = useState<string | null>(null);
   const [currentCarouselId, setCurrentCarouselId] = useState<string | null>(null);
+  const [selectedProfileType, setSelectedProfileType] = useState<'company' | 'salesperson'>('company');
+  const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
   const [profileType, setProfileType] = useState<"company" | "salesperson">("company");
+
+  const handleCarouselGenerated = () => {
+    // TODO: Refresh carousel list
+    console.log('Carousel generated, refreshing list...');
+    setIsGenerationModalOpen(false); // Close modal after generation
+    fetchCarouselHistory(); // Refresh the history list
+  };
 
   useEffect(() => {
     checkAdminAccess();
@@ -61,7 +71,7 @@ export default function LinkedInCarousel() {
   const checkAdminAccess = async () => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
+
       if (userError || !user) {
         navigate("/admin/login");
         return;
@@ -133,7 +143,7 @@ export default function LinkedInCarousel() {
         .single();
 
       if (error) throw error;
-      
+
       setCurrentCarouselId(data.id);
       await fetchCarouselHistory();
       toast.success("Carousel saved successfully");
@@ -148,7 +158,7 @@ export default function LinkedInCarousel() {
       toast.error("Invalid carousel data");
       return;
     }
-    
+
     setTopic(carousel.topic);
     setTargetAudience(carousel.target_audience);
     setPainPoint(carousel.pain_point || "");
@@ -192,12 +202,12 @@ export default function LinkedInCarousel() {
         .eq("id", carouselToDelete);
 
       if (error) throw error;
-      
+
       if (currentCarouselId === carouselToDelete) {
         setCarouselResult(null);
         setCurrentCarouselId(null);
       }
-      
+
       await fetchCarouselHistory();
       toast.success("Carousel deleted");
     } catch (error) {
@@ -208,6 +218,58 @@ export default function LinkedInCarousel() {
     }
   };
 
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!currentJobId) return;
+
+    console.log("Subscribing to job updates:", currentJobId);
+
+    const channel = supabase
+      .channel(`job - ${currentJobId} `)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'jobs',
+          filter: `id = eq.${currentJobId} `,
+        },
+        async (payload) => {
+          const newStatus = payload.new.status;
+          console.log("Job Update:", newStatus);
+
+          if (newStatus === 'processing') {
+            toast.info("AI is working on it...");
+          } else if (newStatus === 'completed') {
+            const result = payload.new.result;
+
+            if (result && result.carousel) {
+              setCarouselResult(result.carousel);
+              await saveCarousel(result.carousel);
+              toast.success("Carousel generated successfully!");
+            } else {
+              toast.error("Job completed but returned no data.");
+            }
+
+            setIsGenerating(false);
+            setCurrentJobId(null);
+            supabase.removeChannel(channel);
+          } else if (newStatus === 'failed') {
+            toast.error(`Generation Failed: ${payload.new.error || 'Unknown error'} `);
+            setIsGenerating(false);
+            setCurrentJobId(null);
+            supabase.removeChannel(channel);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentJobId]);
+
   const handleGenerate = async () => {
     if (!topic || !targetAudience || !painPoint) {
       toast.error("Please fill in at least Topic, Target Audience, and Pain Point");
@@ -215,35 +277,49 @@ export default function LinkedInCarousel() {
     }
 
     setIsGenerating(true);
+    setCarouselResult(null);
+
     try {
-      const { data, error } = await supabase.functions.invoke("generate-linkedin-carousel", {
-        body: {
-          topic,
-          targetAudience,
-          painPoint,
-          desiredOutcome,
-          proofPoints,
-          ctaAction,
-          format,
-          profileType,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data.error) {
-        toast.error(data.error);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("You must be logged in.");
+        setIsGenerating(false);
         return;
       }
 
-      setCarouselResult(data);
-      setCurrentSlide(0);
-      await saveCarousel(data);
-      toast.success(format === "single-image" ? "LinkedIn post generated!" : "Carousel generated successfully!");
+      // 1. Create Job in DB
+      const { data: job, error } = await supabase
+        .from('jobs')
+        .insert({
+          type: 'carousel_generation',
+          status: 'pending',
+          user_id: user.id,
+          payload: {
+            topic,
+            targetAudience,
+            painPoint,
+            desiredOutcome,
+            proofPoints,
+            ctaAction,
+            format,
+            profileType,
+          }
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      console.log("Job Queued:", job.id);
+      setCurrentJobId(job.id);
+      toast.success("Job Queued! You can wait here or check back later.");
+
+      // 2. Dispatcher Trigger (Webhook handled by DB, but we can also ping if needed)
+      // The DB Webhook should trigger the Dispatcher automatically.
+
     } catch (error: any) {
-      console.error("Error generating carousel:", error);
-      toast.error(error.message || "Failed to generate carousel");
-    } finally {
+      console.error("Error queueing job:", error);
+      toast.error(error.message || "Failed to start generation");
       setIsGenerating(false);
     }
   };
@@ -258,7 +334,8 @@ ${carouselResult.slides.map((slide, idx) => `
 === Slide ${idx + 1} (${slide.type.toUpperCase()}) ===
 Headline: ${slide.headline}
 Body: ${slide.body}
-`).join("\n")}
+`).join("\n")
+      }
 
 Caption:
 ${carouselResult.caption}
@@ -268,7 +345,7 @@ ${carouselResult.caption}
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `linkedin-carousel-${Date.now()}.txt`;
+    a.download = `linkedin - carousel - ${Date.now()}.txt`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Carousel exported!");
@@ -289,13 +366,19 @@ ${carouselResult.caption}
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            LinkedIn Carousel Generator
-          </h1>
-          <p className="text-muted-foreground">
-            Generate high-converting LinkedIn carousels using Hormozi's proven frameworks
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              LinkedIn Carousel Generator
+            </h1>
+            <p className="text-muted-foreground">
+              Generate high-converting LinkedIn carousels using Hormozi's proven frameworks
+            </p>
+          </div>
+          <Button onClick={() => setIsGenerationModalOpen(true)} size="lg" className="gap-2">
+            <Plus className="h-5 w-5" />
+            Generate Carousel
+          </Button>
         </div>
 
         <Tabs defaultValue="company" className="mb-8" onValueChange={(v) => setProfileType(v as any)}>
@@ -317,8 +400,8 @@ ${carouselResult.caption}
             {profileType === 'company' ? 'Company Content Studio' : 'Salesperson Content Studio'}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {profileType === 'company' 
-              ? 'Creating authoritative content for the official Lifetrek page.' 
+            {profileType === 'company'
+              ? 'Creating authoritative content for the official Lifetrek page.'
               : 'Creating personal, expert-led content for your personal brand.'}
           </p>
         </div>
@@ -424,8 +507,8 @@ ${carouselResult.caption}
                       </SelectContent>
                     </Select>
                     <p className="text-xs text-muted-foreground">
-                      {format === "carousel" 
-                        ? "Generate multiple slides with professional images for each" 
+                      {format === "carousel"
+                        ? "Generate multiple slides with professional images for each"
                         : "Generate one comprehensive image with all key points"}
                     </p>
                   </div>
@@ -456,7 +539,7 @@ ${carouselResult.caption}
                       <CardTitle>Preview</CardTitle>
                       <CardDescription>
                         {carouselResult
-                          ? `Slide ${currentSlide + 1} of ${carouselResult.slides.length}`
+                          ? `Slide ${currentSlide + 1} of ${carouselResult.slides.length} `
                           : "Generate a carousel to see the preview"}
                       </CardDescription>
                     </div>
@@ -475,9 +558,9 @@ ${carouselResult.caption}
                       <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-8 min-h-[400px] flex flex-col justify-center">
                         {carouselResult.imageUrls && carouselResult.imageUrls[currentSlide] && (
                           <div className="mb-6 rounded-lg overflow-hidden border-2 border-primary/20">
-                            <img 
-                              src={carouselResult.imageUrls[currentSlide]} 
-                              alt={`Slide ${currentSlide + 1}`}
+                            <img
+                              src={carouselResult.imageUrls[currentSlide]}
+                              alt={`Slide ${currentSlide + 1} `}
                               className="w-full h-auto"
                             />
                           </div>
@@ -499,7 +582,7 @@ ${carouselResult.caption}
                               onClick={() => {
                                 const link = document.createElement('a');
                                 link.href = carouselResult.imageUrls![currentSlide];
-                                link.download = `slide-${currentSlide + 1}.png`;
+                                link.download = `slide - ${currentSlide + 1}.png`;
                                 link.click();
                               }}
                             >
@@ -526,9 +609,8 @@ ${carouselResult.caption}
                             <button
                               key={idx}
                               onClick={() => setCurrentSlide(idx)}
-                              className={`w-2 h-2 rounded-full transition-colors ${
-                                idx === currentSlide ? "bg-primary" : "bg-muted"
-                              }`}
+                              className={`w - 2 h - 2 rounded - full transition - colors ${idx === currentSlide ? "bg-primary" : "bg-muted"
+                                } `}
                             />
                           ))}
                         </div>
@@ -650,6 +732,12 @@ ${carouselResult.caption}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <CarouselGenerationModal
+        open={isGenerationModalOpen}
+        onOpenChange={setIsGenerationModalOpen}
+        onGenerated={handleCarouselGenerated}
+      />
     </div>
   );
 }
