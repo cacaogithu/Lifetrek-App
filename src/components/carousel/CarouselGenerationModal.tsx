@@ -77,27 +77,58 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
         try {
             if (mode === 'auto') {
                 // Full Auto: Call AI orchestration endpoint
-                // TODO: Create dedicated endpoint that handles full carousel generation
-                toast({
-                    title: "Coming soon!",
-                    description: "Full Auto mode will use AI to handle everything automatically",
+                const { data: userData } = await supabase.auth.getUser();
+
+                const { data, error } = await supabase.functions.invoke('auto-generate-carousel', {
+                    body: {
+                        request: autoRequest,
+                        userId: userData.user?.id
+                    }
                 });
+
+                if (error) throw error;
+
+                toast({
+                    title: "Success!",
+                    description: `AI created your carousel! ${data.strategy.reasoning}`,
+                });
+
+                onGenerated();
+                onOpenChange(false);
                 setIsGenerating(false);
+                resetForm();
                 return;
             }
-
             // Guided Mode: Call existing compositing function
             let imageUrl = selectedImage;
 
             if (backgroundSource === 'ai-browse') {
                 // AI will browse storage and pick best image
-                // TODO: Implement AI storage browsing
-                toast({
-                    title: "Coming soon!",
-                    description: "AI storage browsing will intelligently select the best image",
+                const { data: browseData, error: browseError } = await supabase.functions.invoke('browse-storage', {
+                    body: { prompt: `${headline} - ${subhead}` }
                 });
-                setIsGenerating(false);
-                return;
+
+                if (browseError) {
+                    toast({
+                        title: "AI Browse failed",
+                        description: browseError.message,
+                        variant: "destructive"
+                    });
+                    setIsGenerating(false);
+                    return;
+                }
+
+                // Use the AI-selected image path
+                const selectedImagePath = browseData.selectedImage.path;
+
+                toast({
+                    title: "AI selected image",
+                    description: `Using: ${browseData.selectedImage.description} (${browseData.selectedImage.confidence}% confident)`,
+                });
+
+                // For now, we need the actual image data
+                // In production, this would load from Supabase Storage
+                imageUrl = selectedImagePath; // TODO: Load actual image data
             }
 
             if (backgroundSource === 'generate') {
