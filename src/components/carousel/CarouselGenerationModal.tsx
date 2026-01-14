@@ -78,27 +78,50 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
 
         try {
             if (mode === 'auto') {
-                // Full Auto: Call AI orchestration endpoint
+                // Full Auto: Dispatch to Python Agent via Job Queue
                 const { data: userData } = await supabase.auth.getUser();
 
-                const { data, error } = await supabase.functions.invoke('auto-generate-carousel', {
-                    body: {
-                        request: autoRequest,
-                        userId: userData.user?.id
-                    }
-                });
+                // Create Job
+                const { data: job, error: jobError } = await supabase
+                    .from('job_queue')
+                    .insert({
+                        job_type: 'carousel_generate',
+                        payload: { topic: autoRequest }, // Pass the request as the topic
+                        user_id: userData.user?.id
+                    })
+                    .select()
+                    .single();
 
-                if (error) throw error;
+                if (jobError) throw jobError;
 
                 toast({
-                    title: "Success!",
-                    description: `AI created your carousel! ${data.strategy.reasoning}`,
+                    title: "Agent Activated",
+                    description: "Strategist, Copywriter, and Designer agents are working...",
                 });
 
-                onGenerated();
-                onOpenChange(false);
-                setIsGenerating(false);
-                resetForm();
+                // Poll for completion (Simple polling for Modal)
+                const checkJob = async () => {
+                    const { data: updatedJob } = await supabase
+                        .from('job_queue')
+                        .select('*')
+                        .eq('id', job.id)
+                        .single();
+
+                    if (updatedJob?.status === 'completed') {
+                        onGenerated();
+                        onOpenChange(false);
+                        setIsGenerating(false);
+                        resetForm();
+                        toast({ title: "Carousel Created!", description: "High-quality carousel generated." });
+                    } else if (updatedJob?.status === 'failed') {
+                        setIsGenerating(false);
+                        toast({ title: "Generation Failed", description: updatedJob.error, variant: "destructive" });
+                    } else {
+                        setTimeout(checkJob, 2000); // Poll every 2s
+                    }
+                };
+
+                checkJob();
                 return;
             }
             // Guided Mode: Call existing compositing function

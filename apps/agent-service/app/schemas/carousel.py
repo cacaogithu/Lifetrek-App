@@ -8,6 +8,10 @@ class SlideContent(BaseModel):
     body_text: str
     visual_description: str = Field(..., description="Description for the designer agent")
 
+class CopywriterOutput(BaseModel):
+    slides: List[SlideContent]
+    linkedin_caption: str = Field(..., description="Engaging LinkedIn post caption with hashtags")
+
 class CarouselPlan(BaseModel):
     topic: str
     target_audience: str
@@ -24,4 +28,5 @@ class CarouselResult(BaseModel):
     topic: str
     plan: CarouselPlan
     images: List[GeneratedImage]
+    caption: Optional[str] = None
     final_zip_url: Optional[str] = None

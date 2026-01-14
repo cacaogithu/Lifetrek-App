@@ -3,7 +3,7 @@ import json
 import logging
 from typing import List
 from app.core.config import get_settings
-from app.schemas.carousel import CarouselPlan, SlideContent, GeneratedImage, CarouselResult
+from app.schemas.carousel import CarouselPlan, SlideContent, GeneratedImage, CarouselResult, CopywriterOutput
 
 from langchain_google_vertexai import ChatVertexAI
 from langchain.prompts import PromptTemplate
@@ -72,8 +72,9 @@ Write the headline and body text for each slide.
 - Headlines must be punchy (under 10 words).
 - Body text must be concise (under 30 words per slide).
 - Visual descriptions should be detailed for a designer.
+- Also write an engaging LinkedIn caption with hashtags.
 
-Output JSON matching the List[SlideContent] schema.
+Output JSON matching the CopywriterOutput schema.
 """
 
 DESIGNER_PROMPT_TEMPLATE = """
@@ -97,10 +98,9 @@ async def execute_carousel_generation(topic: str) -> CarouselResult:
     
     # 2. Copywriter
     # We might iterate here, but for now simple sequential
-    # We need to pass the plan to the copywriter
-    # However, to ensure Pydantic parsing, we often need to feed the raw dictionary back
-    
-    slides = await _run_copywriter(plan)
+    copy_output = await _run_copywriter(plan)
+    slides = copy_output.slides
+    caption = copy_output.linkedin_caption
     
     # 3. Designer (Parallel Image Generation)
     images = await _generate_images(slides)
@@ -108,7 +108,8 @@ async def execute_carousel_generation(topic: str) -> CarouselResult:
     return CarouselResult(
         topic=topic,
         plan=plan,
-        images=images
+        images=images,
+        caption=caption
     )
 
 async def _run_strategist(topic: str) -> CarouselPlan:
@@ -122,9 +123,9 @@ async def _run_strategist(topic: str) -> CarouselPlan:
     chain = prompt | llm | parser
     return await chain.ainvoke({"topic": topic})
 
-async def _run_copywriter(plan: CarouselPlan) -> List[SlideContent]:
+async def _run_copywriter(plan: CarouselPlan) -> CopywriterOutput:
     logger.info("Running Copywriter Agent...")
-    parser = PydanticOutputParser(pydantic_object=List[SlideContent]) # Actually this might need a wrapper object
+    parser = PydanticOutputParser(pydantic_object=CopywriterOutput)
     
     # Wrap list in object for better parsing reliability
     # But let's try direct list first or use a wrapper prompt trick

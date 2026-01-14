@@ -223,16 +223,16 @@ export default function LinkedInCarousel() {
   useEffect(() => {
     if (!currentJobId) return;
 
-    console.log("Subscribing to job updates:", currentJobId);
+    console.log("Subscribing to job updates (job_queue):", currentJobId);
 
     const channel = supabase
-      .channel(`job - ${currentJobId} `)
+      .channel(`job_queue - ${currentJobId} `)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'jobs',
+          table: 'job_queue',
           filter: `id = eq.${currentJobId} `,
         },
         async (payload) => {
@@ -240,13 +240,17 @@ export default function LinkedInCarousel() {
           console.log("Job Update:", newStatus);
 
           if (newStatus === 'processing') {
-            toast.info("AI is working on it...");
+            toast.info("Agents are working (Strategist > Copywriter > Designer)...");
           } else if (newStatus === 'completed') {
+            // Python service returns { carousel: ... } in result
             const result = payload.new.result;
 
-            if (result && result.carousel) {
-              setCarouselResult(result.carousel);
-              await saveCarousel(result.carousel);
+            if (result) { // The result is the carousel structure itself often
+              // Wait, carousel_agent returns CarouselResult object
+              // Check how job_manager saves it. It saves `result=carousel_result.model_dump()`.
+              // So result IS the carousel object.
+              setCarouselResult(result);
+              await saveCarousel(result);
               toast.success("Carousel generated successfully!");
             } else {
               toast.error("Job completed but returned no data.");
@@ -287,22 +291,27 @@ export default function LinkedInCarousel() {
         return;
       }
 
-      // 1. Create Job in DB
+      // 0. Construct Rich Topic for the Agent
+      const richTopic = `
+      TOPIC: ${topic}
+      TARGET AUDIENCE: ${targetAudience}
+      PAIN POINT: ${painPoint}
+      DESIRED OUTCOME: ${desiredOutcome}
+      PROOF POINTS: ${proofPoints}
+      CTA: ${ctaAction}
+      FORMAT: ${format}
+      PROFILE TYPE: ${profileType}
+      `;
+
+      // 1. Create Job in DB (job_queue)
       const { data: job, error } = await supabase
-        .from('jobs')
+        .from('job_queue')
         .insert({
-          type: 'carousel_generation',
+          job_type: 'carousel_generate',
           status: 'pending',
           user_id: user.id,
           payload: {
-            topic,
-            targetAudience,
-            painPoint,
-            desiredOutcome,
-            proofPoints,
-            ctaAction,
-            format,
-            profileType,
+            topic: richTopic.trim()
           }
         })
         .select()
