@@ -38,6 +38,10 @@ const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
 const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
 const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
 const RejectionAnalytics = lazy(() => import("./pages/Admin/RejectionAnalytics"));
+const ContentApproval = lazy(() => import("./pages/Admin/ContentApproval"));
+const ContentCalendar = lazy(() => import("./pages/Admin/ContentCalendar"));
+const CampaignManagement = lazy(() => import("./pages/Admin/CampaignManagement"));
+const AdminBlog = lazy(() => import("./pages/Admin/AdminBlog"));
 
 // Public Pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
@@ -107,7 +111,10 @@ const App = () => (
                 <Route path="environment-assets" element={<EnvironmentAssets />} />
                 <Route path="knowledge-base" element={<KnowledgeBase />} />
                 <Route path="rejection-analytics" element={<RejectionAnalytics />} />
-                {/* Future routes: blogs, etc. */}
+                <Route path="content-approval" element={<ContentApproval />} />
+                <Route path="content-calendar" element={<ContentCalendar />} />
+                <Route path="campaigns" element={<CampaignManagement />} />
+                <Route path="blog" element={<AdminBlog />} />
               </Route>
             </Routes>
           </BrowserRouter>

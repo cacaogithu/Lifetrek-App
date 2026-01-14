@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, Wand2, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { StorageImageSelector } from '../admin/StorageImageSelector';
 
 interface CarouselGenerationModalProps {
     open: boolean;
@@ -32,6 +33,7 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
     const [subhead, setSubhead] = useState('');
     const [textPosition, setTextPosition] = useState<'auto' | 'top' | 'bottom'>('auto');
     const [imagePrompt, setImagePrompt] = useState('');
+    const [selectorOpen, setSelectorOpen] = useState(false);
 
     const handleGenerate = async () => {
         if (mode === 'auto' && !autoRequest) {
@@ -262,9 +264,11 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
                                 </div>
                                 <div className="flex items-center space-x-2 border rounded-lg p-3">
                                     <RadioGroupItem value="manual-select" id="manual-select" />
-                                    <Label htmlFor="manual-select" className="flex-1 cursor-pointer">
+                                    <Label htmlFor="manual-select" className="flex-1 cursor-pointer" onClick={() => setSelectorOpen(true)}>
                                         <span className="font-medium">I'll Select from Storage</span>
-                                        <p className="text-xs text-muted-foreground">Manual image picker (coming soon)</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {selectedImage ? "Image selected" : "Click to browse assets"}
+                                        </p>
                                     </Label>
                                 </div>
                                 <div className="flex items-center space-x-2 border rounded-lg p-3">
@@ -344,6 +348,15 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
                     </Button>
                 </div>
             </DialogContent>
+
+            <StorageImageSelector
+                open={selectorOpen}
+                onOpenChange={setSelectorOpen}
+                onSelect={(url) => {
+                    setSelectedImage(url);
+                    setBackgroundSource('manual-select');
+                }}
+            />
         </Dialog>
     );
 }
