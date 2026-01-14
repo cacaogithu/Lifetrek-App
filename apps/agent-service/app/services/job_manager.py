@@ -65,9 +65,18 @@ async def _dispatch_job(job_type: str, payload: dict) -> dict:
         from app.services.research_agent import execute_deep_research
         return await execute_deep_research(topic)
         
-    elif job_type == "blog_generate":
-        # TODO: Call Blog Agent
-        return {"content": "Blog generation not implemented yet"}
+    elif job_type == "carousel_generate":
+        logger.info("Dispatching to Carousel Agent")
+        
+        # Extract topic from payload
+        topic = payload.get("topic")
+        if not topic:
+            raise ValueError("Payload missing 'topic'")
+            
+        from app.services.carousel_agent import execute_carousel_generation
+        # Execute and dump Pydantic model to dict
+        result = await execute_carousel_generation(topic)
+        return result.model_dump()
         
     else:
         raise ValueError(f"Unknown job type: {job_type}")
