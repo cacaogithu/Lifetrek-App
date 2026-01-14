@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-core-experience']
+stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-03-core-experience', 'step-04-emotional-response', 'step-05-inspiration']
 inputDocuments:
   - _bmad-output/planning-artifacts/prd.md
   - _bmad-output/planning-artifacts/architecture.md 
@@ -168,3 +168,85 @@ The core experience of Lifetrek-App is defined by **high-leverage, one-click int
 
 3. **Context Over Input**
    - Don't ask users to type what the system can find. Use APIs (Perplexity) to fetch context instead of asking users to paste it.
+
+## Desired Emotional Response
+
+### Primary Emotional Goals
+
+**"Organized Efficiency"**
+Users should feel a sense of **calm control** over complex data and workflows. The interface should recede, allowing the *results* (content, lead data) to take center stage. "I am a professional operating a high-precision tool."
+
+### Emotional Journey
+
+- **On Login:** clarity. A clean dashboard with whitespace showing only what needs attention. *Feeling: Focused.*
+- **During Content Gen:** trust. Watching the process progress without blocking the UI. *Feeling: Productive.*
+- **Switching Contexts:** seamlessness. Moving from Content to Outreach feels like turning a page, not changing apps. *Feeling: Fluid.*
+- **Analyzing Data:** empowerment. Seeing real analytics and enriched data presented clearly. *Feeling: Informed.*
+
+### Micro-Emotions
+
+- **Calm vs Overwhelm:** Generous whitespace breathing room preventing "data density anxiety".
+- **Confidence vs Doubt:** Real data visualization (charts, metrics) reinforces that decisions are backed by facts.
+- **Ease vs Friction:** "User-ready" drafts mean the AI did the heavy lifting, removing the friction of the "blank page".
+
+### Design Implications
+
+- **Minimalist Aesthetic:** Use whitespace aggressively to separate sections. Avoid clutter.
+- **Clear Hierarchy:** Typography and spacing must clearly delineate "Content" zones from "Outreach" zones.
+- **Progressive Disclosure:** Don't show all analytics at once. Use tabs or drill-downs to keep the top-level view clean.
+- **Unified Navigation:** Quick switcher between "Studio" (Content) and "Outreach" (CRM) without full page reloads.
+
+### Emotional Design Principles
+
+1. **"Less but Better"**
+   - Prioritize the most important action. Remove secondary buttons until needed.
+
+2. **Data needs Air**
+   - Analytics and tables should have comfortable padding. Dense spreadsheets cause anxiety; breathable tables invite analysis.
+
+3. **No Dead Ends**
+   - Every AI generation leads to a "Next SHept" (Edit, Publish, or Regenerate). Keep the momentum going.
+
+## UX Pattern Analysis & Inspiration
+
+### Inspiring Products Analysis
+
+| Product | Why it Inspires Us | Key Lesson |
+|:--- |:--- |:--- |
+| **Linear** | "Calm Density" & Speed | High information density doesn't have to feel cluttered if typography and whitespace are perfect. |
+| **Perplexity** | Trust through Verification | Don't just give an answer; show the *sources* to build trust in the AI's logic. |
+| **HubSpot** | The "Whole Story" View | A Lead isn't a row in a table; they are a timeline of interactions and events. |
+| **ChatGPT** | Streaming Feedback | Real-time streaming (token by token) makes waiting feel like progress, not latency. |
+| **Stripe** | Developer Clarity | Dashboards that respect the user's intelligence with clear metrics and no "fluff". |
+
+### Transferable UX Patterns
+
+**1. The "Streaming" Progress Indicator (from ChatGPT)**
+   - Instead of a static spinner, show *real-time logs* or "streaming" updates of what the agent is doing (e.g., "Researching Company X...", "Drafting Section 2...").
+   - **Why:** Reduces perceived latency and builds trust.
+
+**2. The "Source Citation" Card (from Perplexity)**
+   - When AI enriches a lead, show "Found via LinkedIn" or "Sourced from Website website.com" badges.
+   - **Why:** Users need to know *where* data came from to trust it.
+
+**3. The "Timeline" Sidebar (from HubSpot)**
+   - In the Lead View, use a vertical timeline to show "Opened Email", "Generated Carousel", "Enriched Profile".
+   - **Why:** Turns static data into a narrative.
+
+**4. The "Command" Interface (from Linear)**
+   - Use keyboard shortcuts and "Action Menus" (CMD+K style) for power users to generate content without clicking through 5 menus.
+   - **Why:** Speed and professional feel.
+
+### Anti-Patterns to Avoid
+
+- **The "Black Box" Spinner:** Never just show a spinning circle for >3 seconds. Always explain *what* is happening.
+- **Hidden Complexity (Notion fatigue):** Avoid "too much" blank canvas. Provide structured templates so users don't have to design their own workflows from scratch.
+- **The "Toast Storm":** Don't stack 10 notifications on top of each other. Group them (e.g., "3 jobs completed").
+
+### Design Inspiration Strategy
+
+**Strategy: "Enterprise Power, Consumer Feel"**
+We will adopt the **visual minimalism of Linear** (clean lines, muted text for labels, high contrast for data) but back it with the **data richness of HubSpot**.
+
+**Core Adaptation:**
+- We will use **Shadcn UI** (our current system) but tuned to be tighter and denser (like Linear) rather than big and airy (marketing sites), to support "high-leverage" work.

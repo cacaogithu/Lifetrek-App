@@ -13,6 +13,13 @@ export default defineConfig(({ mode }) => ({
     ],
     host: "::",
     port: 8080,
+    proxy: {
+      '/api/agent': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/agent/, ''),
+      },
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
