@@ -1,7 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import sharp from 'sharp';
 
 // 1. Load Env Vars
@@ -101,22 +101,38 @@ async function generateSlide(slide: any, index: number) {
     }
 
     // 3. Create Smart Gradient Overlay
-    // Stronger gradient with +10% opacity for better text contrast
-    const gradientSvg = `
-    <svg width="${WIDTH}" height="${HEIGHT}">
-      <defs>
+    // Alternate text position: even slides at bottom, odd slides at top
+    const isBottomText = index % 2 === 0;
+
+    let gradientDefs = '';
+    if (isBottomText) {
+        // Original: Dark at bottom
+        gradientDefs = `
         <linearGradient id="textGrad" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="25%" style="stop-color:#004F8F;stop-opacity:0" />
           <stop offset="55%" style="stop-color:#004F8F;stop-opacity:0.4" />
           <stop offset="100%" style="stop-color:#004F8F;stop-opacity:1" />
-        </linearGradient>
+        </linearGradient>`;
+    } else {
+        // New: Dark at top
+        gradientDefs = `
+        <linearGradient id="textGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#004F8F;stop-opacity:1" />
+          <stop offset="45%" style="stop-color:#004F8F;stop-opacity:0.4" />
+          <stop offset="75%" style="stop-color:#004F8F;stop-opacity:0" />
+        </linearGradient>`;
+    }
+
+    // Stronger gradient with +10% opacity for better text contrast
+    const gradientSvg = `
+    <svg width="${WIDTH}" height="${HEIGHT}">
+      <defs>
+        ${gradientDefs}
       </defs>
       <rect x="0" y="0" width="${WIDTH}" height="${HEIGHT}" fill="url(#textGrad)" />
     </svg>`;
 
     // 4. Create Text Overlay - LARGER text with SMART wrapping
-    // Alternate text position: even slides at bottom, odd slides at top
-    const isBottomText = index % 2 === 0;
 
     // Wrap text at word boundaries
     const headlineLines = wrapText(slide.headline, 20);
