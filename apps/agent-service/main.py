@@ -30,8 +30,8 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
     """
     body = await request.json()
     
-    # Validation: Ensure it's an INSERT to job_queue
-    if body.get("table") == "job_queue" and body.get("type") == "INSERT":
+    # Validation: Ensure it's an INSERT to jobs
+    if body.get("table") == "jobs" and body.get("type") == "INSERT":
         record = body.get("record", {})
         # Spawn background task
         background_tasks.add_task(process_job, record)

@@ -1,210 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-// import satori from "npm:satori@0.10.11";
-// import { Resvg } from "npm:@resvg/resvg-js@2.6.2";
+import { uploadFileToDrive, getConfig, createFolder } from "../_shared/google-drive.ts";
+
+// Story 7.2: Multi-Agent Pipeline
+import { strategistAgent, copywriterAgent, designerAgent, brandAnalystAgent } from "./agents.ts";
+import { CarouselParams, AgentMetrics } from "./types.ts";
+// Story 7.7: Vector embeddings for learning loop
+import { generateCarouselEmbedding } from "./agent_tools.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// --- Satori Helper (DISABLED FOR STABILITY - Using Local Sharp Compositing) ---
-// async function generateTextSlideWithSatori(slide: any, backgroundUrl: string, profileType: string) {
-//   try {
-//     console.log("🎨 Satori: Generating Text Overlay...", { headline: slide.headline });
-
-//     // 1. Fetch Fonts & Logos (Parallel for speed)
-//     const [fontRegular, fontBold, logoData, isoData] = await Promise.all([
-//       fetch("https://unpkg.com/@fontsource/roboto@5.0.8/files/roboto-latin-400-normal.woff").then(res => res.arrayBuffer()),
-//       fetch("https://unpkg.com/@fontsource/roboto@5.0.8/files/roboto-latin-700-normal.woff").then(res => res.arrayBuffer()),
-//       fetch("https://dlflpvmdzkeouhgqwqba.supabase.co/storage/v1/object/public/assets/logo.png").then(res => res.arrayBuffer()),
-//       fetch("https://dlflpvmdzkeouhgqwqba.supabase.co/storage/v1/object/public/assets/iso.jpg").then(res => res.arrayBuffer())
-//     ]);
-
-//     // Stack-safe Base64 conversion
-//     const toBase64 = (buffer: ArrayBuffer) => {
-//       let binary = '';
-//       const bytes = new Uint8Array(buffer);
-//       const len = bytes.byteLength;
-//       for (let i = 0; i < len; i++) {
-//         binary += String.fromCharCode(bytes[i]);
-//       }
-//       return btoa(binary);
-//     };
-
-//     const logoB64 = `data:image/png;base64,${toBase64(logoData)}`;
-//     const isoB64 = `data:image/jpeg;base64,${toBase64(isoData)}`;
-
-//     // Base Styles
-//     const isCompany = profileType === 'company';
-//     const primaryColor = isCompany ? "#004F8F" : "#1A7A3E"; // Blue for Company, Green for Salesperson
-
-//     // JSX-Like Markup
-//     const markup = {
-//       type: "div",
-//       props: {
-//         style: {
-//           display: "flex",
-//           flexDirection: "column",
-//           width: "100%",
-//           height: "100%",
-//           backgroundImage: `url('${backgroundUrl}')`,
-//           backgroundSize: "cover",
-//           color: "white",
-//           fontFamily: "Roboto",
-//         },
-//         children: [
-//           // Overlay Tint
-//           {
-//             type: "div",
-//             props: {
-//               style: {
-//                 position: "absolute",
-//                 top: 0,
-//                 left: 0,
-//                 right: 0,
-//                 bottom: 0,
-//                 background: `linear-gradient(180deg, ${primaryColor}E6 0%, ${primaryColor}99 100%)`, // Stronger Tint for readability
-//               }
-//             }
-//           },
-//           // Content Container
-//           {
-//             type: "div",
-//             props: {
-//               style: {
-//                 display: "flex",
-//                 flexDirection: "column",
-//                 justifyContent: "space-between",
-//                 width: "100%",
-//                 height: "100%",
-//                 padding: "80px",
-//                 position: "relative",
-//               },
-//               children: [
-//                 // Main Text Area
-//                 {
-//                   type: "div",
-//                   props: {
-//                     style: {
-//                       display: "flex",
-//                       flexDirection: "column",
-//                       marginTop: "100px",
-//                     },
-//                     children: [
-//                       // Headline
-//                       {
-//                         type: "h1",
-//                         props: {
-//                           style: {
-//                             fontSize: "72px",
-//                             fontWeight: 700,
-//                             marginBottom: "40px",
-//                             lineHeight: "1.1",
-//                             textShadow: "0 2px 10px rgba(0,0,0,0.3)"
-//                           },
-//                           children: slide.headline
-//                         }
-//                       },
-//                       // Body
-//                       {
-//                         type: "p",
-//                         props: {
-//                           style: {
-//                             fontSize: "36px",
-//                             fontWeight: 400,
-//                             lineHeight: "1.4",
-//                             opacity: 0.9,
-//                             maxWidth: "90%"
-//                           },
-//                           children: slide.body
-//                         }
-//                       }
-//                     ]
-//                   }
-//                 },
-//                 // Footer with Logos
-//                 {
-//                   type: "div",
-//                   props: {
-//                     style: {
-//                       display: "flex",
-//                       flexDirection: "row",
-//                       justifyContent: "space-between",
-//                       alignItems: "flex-end",
-//                       width: "100%",
-//                     },
-//                     children: [
-//                       // Left: Lifetrek Logo
-//                       {
-//                         type: "img",
-//                         props: {
-//                           src: logoB64,
-//                           style: {
-//                             height: "60px",
-//                             objectFit: "contain"
-//                           }
-//                         }
-//                       },
-//                       // Right: ISO Badge
-//                       {
-//                         type: "div",
-//                         props: {
-//                           style: {
-//                             display: "flex",
-//                             alignItems: "center",
-//                             backgroundColor: "rgba(255,255,255,0.9)",
-//                             padding: "10px 20px",
-//                             borderRadius: "8px",
-//                           },
-//                           children: [
-//                             {
-//                               type: "img",
-//                               props: {
-//                                 src: isoB64,
-//                                 style: {
-//                                   height: "50px",
-//                                   objectFit: "contain"
-//                                 }
-//                               }
-//                             }
-//                           ]
-//                         }
-//                       }
-//                     ]
-//                   }
-//                 }
-//               ]
-//             }
-//           }
-//         ]
-//       }
-//     };
-
-//     const svg = await satori(
-//       markup,
-//       {
-//         width: 1080,
-//         height: 1080,
-//         fonts: [
-//           { name: "Roboto", data: fontRegular, weight: 400, style: "normal" },
-//           { name: "Roboto", data: fontBold, weight: 700, style: "normal" },
-//         ],
-//       }
-//     );
-
-//     const resvg = new Resvg(svg, { fitTo: { mode: "width", value: 1080 } });
-//     const pngBuffer = resvg.render().asPng();
-//     return `data:image/png;base64,${toBase64(pngBuffer.buffer)}`;
-
-//   } catch (e) {
-//     console.error("❌ Satori Error:", e);
-//     return backgroundUrl; // Fallback to clean background if Satori fails
-//   }
-// }
-async function generateTextSlideWithSatori(slide: any, backgroundUrl: string, profileType: string) {
-  return backgroundUrl;
-}
+// Story 7.3: ✅ Implemented AI-native text rendering with Imagen 3
+// Story 7.1: ✅ Removed broken Satori pipeline - text rendered directly by AI model
 
 
 serve(async (req: Request) => {
@@ -221,7 +31,7 @@ serve(async (req: Request) => {
 
   try {
     const requestBody = await req.json();
-    let { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format = "carousel", profileType = "company", style = "visual", action, existingSlides } = requestBody;
+    let { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format = "carousel", profileType = "company", style = "visual", researchLevel = "light", action, existingSlides } = requestBody;
 
     // ASYNC JOB MODE CHECK
     if (requestBody.job_id) {
@@ -253,20 +63,21 @@ serve(async (req: Request) => {
       format = payload.format || "carousel";
       profileType = payload.profileType || "company";
       style = payload.style || "visual"; // Default to old style
+      researchLevel = payload.researchLevel || "light"; // Default to light research
       action = payload.action;
       existingSlides = payload.existingSlides;
     }
 
-    console.log("Processing LinkedIn content request:", { topic, action, profileType, style, mode: jobId ? 'ASYNC' : 'SYNC' });
+    console.log("Processing LinkedIn content request:", { topic, action, profileType, style, researchLevel, mode: jobId ? 'ASYNC' : 'SYNC' });
 
     // const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
     // if (!GEMINI_API_KEY) {
     //   throw new Error("GEMINI_API_KEY not configured");
     // }
 
-    const GCP_PROJECT_ID = Deno.env.get("GCP_PROJECT_ID");
-    const GCP_REGION = Deno.env.get("GCP_REGION");
-    const VERTEX_API_KEY = Deno.env.get("VERTEX_API_KEY");
+    const GCP_PROJECT_ID = await getConfig("GCP_PROJECT_ID");
+    const GCP_REGION = await getConfig("GCP_REGION");
+    const VERTEX_API_KEY = Deno.env.get("VERTEX_API_KEY") || await getConfig("VERTEX_API_KEY");
 
     if (!GCP_PROJECT_ID || !GCP_REGION || !VERTEX_API_KEY) {
       console.error("Missing GCP/Vertex configuration", { GCP_PROJECT_ID, GCP_REGION, hasVertexKey: !!VERTEX_API_KEY });
@@ -293,6 +104,31 @@ serve(async (req: Request) => {
     const ctx = contexts[profileType as keyof typeof contexts] || contexts.company;
 
     let carousel: any = {};
+    let pipelineStartTime = Date.now();
+
+    // Prepare parameters for agents
+    const agentParams: CarouselParams = {
+      topic,
+      targetAudience,
+      painPoint,
+      desiredOutcome,
+      proofPoints,
+      ctaAction,
+      profileType,
+      style,
+      researchLevel
+    };
+
+    // Initialize metrics
+    const reviewerModel = Deno.env.get("BRAND_ANALYST_MODEL") || "gemini-2.0-flash-exp";
+    let metrics: Partial<AgentMetrics> = {
+      model_versions: {
+        strategist: "gemini-2.0-flash-exp",
+        copywriter: "gemini-2.0-flash-exp",
+        designer: "imagen-3.0-generate-001", // Story 7.3: Upgraded to Imagen 3 with text rendering
+        reviewer: reviewerModel // Fixed: Using same model as Brand Analyst
+      }
+    };
 
     if (action === "regenerate_images" && existingSlides) {
       console.log("Regenerating images for existing slides...");
@@ -300,123 +136,167 @@ serve(async (req: Request) => {
         topic,
         slides: existingSlides
       };
+      // Regenerate mode: skip text generation agents
+      metrics.model_versions!.strategist = "n/a";
+      metrics.model_versions!.copywriter = "n/a";
+      metrics.strategy_time_ms = 0;
+      metrics.copywriting_time_ms = 0;
     } else {
-      // Build the system prompt
-      const systemPrompt = `You are an expert LinkedIn content strategist acting as a ${ctx.role}. You follow Alex Hormozi's $100M framework.
-CORE PRINCIPLES:
-1. ONE core problem/question per carousel
-2. Hook = Callout + Implied Value
-3. Use proof early
-4. Always include low-friction CTA
-5. Favor reusable winners
-6. VOICE & TONE: Use "${ctx.pronoun}" language. Be ${ctx.tone}.
+      // Story 7.2: Multi-Agent Pipeline - Strategist → Copywriter
+      console.log("🚀 Multi-Agent Pipeline: Starting carousel generation...");
 
-CONTENT RULES:
-- Headline: 5-8 words, punchy
-- Body: 20-30 words max
-- Use "${ctx.pronoun}" language
-- 1-2 professional emojis per slide
-`;
+      // Agent 1: Strategist (Story 7.7: passes supabase for similar carousel search)
+      const strategyStartTime = Date.now();
+      const strategy = await strategistAgent(agentParams, supabase);
+      metrics.strategy_time_ms = Date.now() - strategyStartTime;
 
-      const userPrompt = `Generate a LinkedIn carousel for my ${profileType} profile:
-Topic: ${topic}
-Target Audience: ${targetAudience}
-Core Pain Point: ${painPoint}
-${desiredOutcome ? `Desired Outcome: ${desiredOutcome}` : ""}
+      // Agent 2: Copywriter
+      const copyStartTime = Date.now();
+      carousel = await copywriterAgent(agentParams, strategy);
+      metrics.copywriting_time_ms = Date.now() - copyStartTime;
 
-Create 5-7 slides:
-1. Hook
-2. 3-5 Content
-3. CTA
-
-Also create a caption.`;
-
-      // MOCK TEXT GENERATION
-      console.log("⚠️ Using MOCK Text Generation (API Key logic simplified for brevity).");
-      carousel = {
-        topic,
-        caption: "Generated Caption...",
-        slides: [
-          { type: "hook", headline: "The Secret to Efficiency", body: "It's not what you think." },
-          { type: "content", headline: "Step 1: Automate", body: "Stop doing manual tasks." },
-          { type: "content", headline: "Step 2: Delegate", body: "Trust your team." },
-          { type: "cta", headline: "Ready to Scale?", body: "DM me 'SCALE'." }
-        ]
-      };
+      console.log(`✅ Multi-Agent Pipeline: Generated ${carousel.slides.length} slides in ${Date.now() - pipelineStartTime}ms`);
     }
 
-    // --- Image Generation Logic ---
-    const imageUrls: string[] = [];
+    // --- Agent 3: Designer - Image Generation with RAG Asset Retrieval ---
+    const designStartTime = Date.now();
+
+    const generatedImages = await designerAgent(supabase, agentParams, carousel);
+    metrics.design_time_ms = Date.now() - designStartTime;
+
+    // Extract image URLs for backward compatibility
+    const imageUrls = generatedImages.map(img => img.image_url);
+
+    const imageUrls_OLD: string[] = [];
     const slidesToGenerate = format === "single-image" ? [carousel.slides[0]] : carousel.slides;
 
-    // Brand-specific image prompt
-    const imageSystemPrompt = `You are a professional 3D artist for Lifetrek Medical.
-CRITICAL RULE: DO NOT GENERATE ANY TEXT OR LOGOS.
-Your job is to generate purely visual ${style === 'text-heavy' ? 'ABSTRACT BACKGROUNDS' : 'SCENES'}.
+    // Old image generation logic removed - now using Designer agent above
+    // Story 7.3: ✅ Designer agent uses Imagen 3 for AI-native text rendering
+    // No separate branding overlay needed - text, logo, colors rendered in single step
 
-BRAND COLORS:
-- Backgrounds: White, Light Grey, Corporate Blue (#004F8F) tinting.
-- Accents: Innovation Green (#1A7A3E)
+    // Track asset usage
+    const validAiImages = generatedImages.filter(
+      img => img.asset_source === 'ai-generated' && img.image_url && !img.image_url.startsWith("ERROR")
+    );
+    const imageErrors = generatedImages
+      .filter(img => img.image_url?.startsWith("ERROR"))
+      .map((img) => ({
+        slide_index: img.slide_index,
+        error: img.image_url
+      }));
 
-VISUAL STYLE:
-- Photorealistic or High-End 3D
-- Clean, sterile, precision medical environment
-- NO HUMANS necessary
-- ${style === 'text-heavy' ? 'Create plenty of NEGATIVE SPACE. Minimal details. Soft focus.' : 'Detailed machinery.'}`;
+    metrics.assets_used_count = generatedImages.filter(img => img.asset_source === 'real').length;
+    metrics.assets_generated_count = validAiImages.length;
 
-    for (const slide of slidesToGenerate) {
-      const imagePrompt = `Create a background for a ${slide.type} slide.
-VISUAL: ${slide.type === 'hook' ? 'Dramatic lighting' : 'Clean facility background'}
-STYLE: Minimalist, professional.
-REMINDER: NO TEXT.`;
+    // --- Agent 4: Brand Analyst - Quality Review ---
+    const reviewStartTime = Date.now();
+    const qualityReview = await brandAnalystAgent(carousel, generatedImages);
+    metrics.review_time_ms = Date.now() - reviewStartTime;
 
+    metrics.total_time_ms = Date.now() - (pipelineStartTime || Date.now());
+    metrics.regeneration_count = 0; // First attempt
+
+    // Story 7.7: Generate embedding for successful carousels (learning loop)
+    let carouselEmbedding: number[] | null = null;
+    const reviewScore = typeof qualityReview.overall_score === "number"
+      ? qualityReview.overall_score
+      : Number(qualityReview.overall_score);
+    const embeddingEligible = Number.isFinite(reviewScore) && reviewScore >= 70;
+
+    if (embeddingEligible) {
       try {
-        const vertexUrl = `https://${GCP_REGION}-aiplatform.googleapis.com/v1/projects/${GCP_PROJECT_ID}/locations/${GCP_REGION}/publishers/google/models/imagen-3.0-generate-001:predict?key=${VERTEX_API_KEY}`;
-        console.log(`Calling Vertex AI Image: ${vertexUrl}`);
-
-        const imageResponse = await fetch(vertexUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            instances: [{ prompt: `SYSTEM: ${imageSystemPrompt}\nUSER REQUEST: ${imagePrompt}` }],
-            parameters: { sampleCount: 1, aspectRatio: "1:1" }
-          }),
-        });
-
-        if (!imageResponse.ok) {
-          imageUrls.push("");
-          continue;
+        console.log("🔢 Generating embedding for successful carousel (quality >= 70)...");
+        carouselEmbedding = await generateCarouselEmbedding(carousel.topic, carousel.slides);
+        if (carouselEmbedding) {
+          console.log(`✅ Generated ${carouselEmbedding.length}d embedding for learning loop`);
+        } else {
+          console.warn("⚠️ Embedding generation returned null (check API key/config)");
         }
-
-        const imageData = await imageResponse.json();
-        const b64Image = imageData.predictions?.[0]?.bytesBase64Encoded;
-
-        let imageUrl = "";
-        if (b64Image) {
-          imageUrl = `data:image/png;base64,${b64Image}`;
-
-          // HYBRID RENDERING CHECK
-          if (style === 'text-heavy') {
-            // Overlay Text using Satori
-            // imageUrl = await generateTextSlideWithSatori(slide, imageUrl, profileType);
-            console.log("Satori disabled. Returning raw background.");
-          }
-        }
-
-        if (imageUrl) imageUrls.push(imageUrl);
-        else imageUrls.push("");
-
-      } catch (imageError) {
-        console.error("Error generating image:", imageError);
-        imageUrls.push("");
+      } catch (error) {
+        console.warn("⚠️ Failed to generate embedding (non-critical):", error);
       }
+    }
+
+    console.log(`🏁 Multi-Agent Pipeline Complete:
+  ├─ Strategy: ${metrics.strategy_time_ms || 0}ms
+  ├─ Copywriting: ${metrics.copywriting_time_ms || 0}ms
+  ├─ Design: ${metrics.design_time_ms}ms (${metrics.assets_used_count} real assets, ${metrics.assets_generated_count} AI-generated)
+  ├─ Review: ${metrics.review_time_ms}ms
+  └─ Total: ${metrics.total_time_ms}ms
+
+  Quality Score: ${qualityReview.overall_score}/100 ${qualityReview.needs_regeneration ? '(NEEDS REGENERATION)' : '✅ (APPROVED)'}
+  Feedback: ${qualityReview.feedback}`);
+
+    // --- Google Drive Upload Logic ---
+    const GOOGLE_DRIVE_FOLDER_ID = await getConfig("GOOGLE_DRIVE_FOLDER_ID");
+
+    if (GOOGLE_DRIVE_FOLDER_ID) {
+      console.log("📂 Uploading images to Google Drive...");
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const cleanTopic = topic.replace(/[^a-zA-Z0-9]/g, "_").substring(0, 30);
+
+      // Create a subfolder for this specific post
+      const subFolderName = `${timestamp}_${cleanTopic}`;
+      const postFolderId = await createFolder(subFolderName, GOOGLE_DRIVE_FOLDER_ID);
+
+      const targetFolderId = postFolderId || GOOGLE_DRIVE_FOLDER_ID; // Fallback to root if folder creation fails
+
+      // We need to fetch the image data again to upload it, or decode the base64
+      // Since we have the base64 string, we can convert it to a Blob
+      await Promise.all(imageUrls.map(async (dataUrl, index) => {
+        if (!dataUrl) return;
+
+        // Skip error messages
+        if (dataUrl.startsWith("ERROR")) {
+          console.warn(`⚠️ Skipping upload for slide ${index + 1} due to generation error: ${dataUrl}`);
+          return;
+        }
+
+        try {
+          // dataUrl is "data:image/png;base64,..."
+          const base64Data = dataUrl.split(",")[1];
+          const binaryString = atob(base64Data);
+          const len = binaryString.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+
+          const filename = `slide_${index + 1}.png`;
+          await uploadFileToDrive(filename, bytes, targetFolderId);
+        } catch (e) {
+          console.error(`Failed to prepare upload for slide ${index + 1}:`, e);
+        }
+      }));
+    } else {
+      console.warn("⚠️ GOOGLE_DRIVE_FOLDER_ID not set. Skipping Drive upload.");
     }
 
     console.log(`Content generation complete: ${imageUrls.length} images generated`);
 
+    // Collect asset URLs for metadata
+    const assets_used = generatedImages
+      .filter(img => img.asset_source === 'real' && img.asset_url)
+      .map(img => img.asset_url!);
+
+    // Story 7.2 & 7.8: Include metadata and quality score in response
+    // Story 7.7: Include embedding for learning loop
     const result = {
       carousel: { ...carousel, format, imageUrls },
-      debug: { imageCount: imageUrls.length }
+      metadata: {
+        generation_metadata: metrics,
+        quality_score: qualityReview.overall_score,
+        quality_feedback: qualityReview.feedback,
+        assets_used: assets_used,
+        regeneration_count: 0,
+        content_embedding: carouselEmbedding // Story 7.7: For saving to vector store
+      },
+      debug: {
+        imageCount: imageUrls.length,
+        realAssets: metrics.assets_used_count,
+        aiGenerated: metrics.assets_generated_count,
+        imageErrors
+      }
     };
 
     if (jobId) {
@@ -446,5 +326,4 @@ REMINDER: NO TEXT.`;
     return new Response(JSON.stringify({ error: errorMsg }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 });
   }
 });
-
 

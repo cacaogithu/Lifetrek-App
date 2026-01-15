@@ -11,19 +11,47 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, mode = 'general' } = await req.json();
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 
     if (!GEMINI_API_KEY) {
       throw new Error("GEMINI_API_KEY is not configured");
     }
 
-    const systemPrompt = `[SYSTEM PROMPT OMITTED FOR BREVITY - SAME AS BEFORE]`;
-    // Note: I will inject the full system prompt content here in the actual tool call, 
-    // but for this thought trace I'm abbreviating. 
-    // Wait, I must provide the full content in the tool call.
+    const ORCHESTRATOR_SYSTEM_PROMPT = `You are the Content Orchestrator for Lifetrek. Your goal is to help users brainstorm and refine content strategies before generation.
 
-    const fullSystemPrompt = `You are an expert AI assistant for Lifetrek, a precision medical device contract manufacturer based in Brazil. You have comprehensive knowledge about:
+YOUR ROLE:
+- Act as a Senior Content Strategist.
+- Guide the user from a vague idea to a concrete content plan.
+- Support two formats: "LinkedIn Carousel" and "Blog Post".
+
+WORKFLOW:
+1. **Discovery**: Ask the user what they want to write about. Ask for the Target Audience and the Main Pain Point/Goal.
+2. **Brainstorming**: Suggest 3 distinct "Angles" or "Hooks" for the content (e.g., Contrarian, Educational, Story-driven).
+3. **Refinement**: Help the user pick an angle and refine the outline.
+4. **Handoff**: When the user is ready to generate, output a SPECIAL JSON BLOCK that the system will use to trigger the generation job.
+
+HANDOFF FORMAT:
+If the user says "Go ahead", "Generate it", or confirms the plan, output EXACTLY this JSON block at the end of your response:
+
+\`\`\`json
+{
+  "handoff_action": "trigger_job",
+  "job_type": "carousel_generate" (or "blog_generate"),
+  "payload": {
+    "topic": "The final refined topic",
+    "targetAudience": "The specific audience",
+    "painPoint": "The pain point addressed",
+    "desiredOutcome": "The goal of the post",
+    "angle": "The selected angle",
+    "format": "carousel" (or "blog")
+  }
+}
+\`\`\`
+
+Do not make up facts about Lifetrek's manufacturing capabilities. Focus on CONTENT STRATEGY.`;
+
+    const GENERAL_SYSTEM_PROMPT = `You are an expert AI assistant for Lifetrek, a precision medical device contract manufacturer based in Brazil. You have comprehensive knowledge about:
 
 COMPANY OVERVIEW:
 - 30+ years of experience in precision Swiss CNC machining
@@ -68,6 +96,8 @@ Always provide helpful, accurate information about Lifetrek's capabilities. If a
 
 Do not output "**" or *. Write quick short sentences that might help the user navigate. Usually, ask questions back to try to better understand the user, and collect informatino from him. Answer the first question, and ask for their segment to help them out better. Then name, email e .`;
 
+    const activeSystemPrompt = mode === 'orchestrator' ? ORCHESTRATOR_SYSTEM_PROMPT : GENERAL_SYSTEM_PROMPT;
+
     // Convert OpenAI messages to Gemini format
     // OpenAI: { role: "user" | "assistant" | "system", content: string }
     // Gemini: { role: "user" | "model", parts: [{ text: string }] }
@@ -76,7 +106,55 @@ Do not output "**" or *. Write quick short sentences that might help the user na
     const geminiContent = messages.map((msg: any) => ({
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }]
-    })).filter((msg: any) => msg.role !== 'system'); // Remove system prompt from history if present
+    })).filter((msg: any) => msg.role !== 'system');
+
+    // --- RAG IMPLEMENTATION ---
+    let ragContext = "";
+    try {
+        const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content;
+        
+        if (lastUserMessage) {
+            // 1. Generate Embedding
+            const embedResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: { parts: [{ text: lastUserMessage }] }
+                })
+            });
+            
+            if (embedResponse.ok) {
+                const embedData = await embedResponse.json();
+                const embedding = embedData.embedding.values;
+
+                // 2. Search Supabase
+                // Create a new client to access DB (reuse existing if possible or create new)
+                const supabaseClient = createClient(
+                    Deno.env.get('SUPABASE_URL') ?? '',
+                    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+                    { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+                );
+
+                const { data: documents } = await supabaseClient.rpc('match_product_assets', {
+                    query_embedding: embedding,
+                    match_threshold: 0.5,
+                    match_count: 3
+                });
+
+                if (documents && documents.length > 0) {
+                    ragContext = "\n\nRELEVANT KNOWLEDGE BASE:\n" + documents.map((doc: any) => 
+                        `- ${doc.name}: ${doc.description} (${doc.image_url || 'No Image'})`
+                    ).join("\n");
+                }
+            }
+        }
+    } catch (err) {
+        console.error("RAG Error:", err);
+        // Continue without RAG if it fails
+    }
+
+    // Append RAG Context to System Prompt
+    const finalSystemPrompt = activeSystemPrompt + ragContext;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: "POST",
@@ -86,7 +164,7 @@ Do not output "**" or *. Write quick short sentences that might help the user na
       body: JSON.stringify({
         contents: geminiContent,
         system_instruction: {
-          parts: [{ text: fullSystemPrompt }]
+          parts: [{ text: finalSystemPrompt }]
         }
       }),
     });

@@ -42,6 +42,9 @@ const ContentApproval = lazy(() => import("./pages/Admin/ContentApproval"));
 const ContentCalendar = lazy(() => import("./pages/Admin/ContentCalendar"));
 const CampaignManagement = lazy(() => import("./pages/Admin/CampaignManagement"));
 const AdminBlog = lazy(() => import("./pages/Admin/AdminBlog"));
+const JobMonitor = lazy(() => import("./pages/Admin/JobMonitor"));
+const Research = lazy(() => import("./pages/Admin/Research"));
+const ContentOrchestrator = lazy(() => import("./pages/Admin/ContentOrchestrator"));
 
 // Public Pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
@@ -115,6 +118,9 @@ const App = () => (
                 <Route path="content-calendar" element={<ContentCalendar />} />
                 <Route path="campaigns" element={<CampaignManagement />} />
                 <Route path="blog" element={<AdminBlog />} />
+                <Route path="jobs" element={<JobMonitor />} />
+                <Route path="research" element={<Research />} />
+                <Route path="orchestrator" element={<ContentOrchestrator />} />
               </Route>
             </Routes>
           </BrowserRouter>

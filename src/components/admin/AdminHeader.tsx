@@ -21,7 +21,9 @@ import {
     LucideIcon,
     Eye,
     X,
-    CalendarDays
+    CalendarDays,
+    ListChecks,
+    MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -44,6 +46,8 @@ interface NavItem {
 
 const allNavItems: NavItem[] = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
+    { path: "/admin/jobs", label: "Jobs", icon: ListChecks },
     { path: "/admin/leads", label: "Leads", icon: Database },
     { path: "/admin/image-processor", label: "Imagens", icon: Sparkles },
     { path: "/admin/gallery", label: "Galeria", icon: Images },

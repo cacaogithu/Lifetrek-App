@@ -51,11 +51,38 @@ export default function LinkedInCarousel() {
   const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
   const [profileType, setProfileType] = useState<"company" | "salesperson">("company");
 
-  const handleCarouselGenerated = () => {
-    // TODO: Refresh carousel list
-    console.log('Carousel generated, refreshing list...');
-    setIsGenerationModalOpen(false); // Close modal after generation
-    fetchCarouselHistory(); // Refresh the history list
+  const handleCarouselGenerated = (result?: any) => {
+    console.log('Carousel generated, received result:', result);
+
+    if (result && result.carousel && Array.isArray(result.carousel)) {
+      // Map 'repurpose-content' output to 'CarouselResult'
+      const slides = result.carousel.map((slide: any) => ({
+        headline: slide.title || "Headline",
+        body: slide.body || "",
+        type: slide.slide_number === 1 ? "hook" : "content" // Simple heuristic
+      }));
+
+      const newCarousel: CarouselResult = {
+        topic: result.source === 'url' ? 'Repurposed URL' : 'Repurposed Content',
+        targetAudience: "General Audience", // Inferred
+        slides: slides,
+        caption: "Check out this carousel! #content", // TODO: Generate caption in Edge Function
+        format: "carousel"
+      };
+
+      setCarouselResult(newCarousel);
+      setTopic(newCarousel.topic);
+      setTargetAudience(newCarousel.targetAudience);
+      setCurrentSlide(0);
+
+      toast.success("Content Repurposed Successfully!");
+    } else {
+      // Fallback or legacy handled (e.g. just refresh list)
+      console.log("No structured result received or legacy mode.");
+    }
+
+    setIsGenerationModalOpen(false);
+    fetchCarouselHistory();
   };
 
   useEffect(() => {

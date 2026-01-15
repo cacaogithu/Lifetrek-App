@@ -18,17 +18,17 @@ async def process_job(job_record: dict):
     logger.info(f"Processing Job {job_id} of type {job_type}")
 
     # 1. Update status to Processing
-    supabase.table("job_queue").update({
+    supabase.table("jobs").update({
         "status": "processing",
         "started_at": datetime.utcnow().isoformat()
     }).eq("id", job_id).execute()
 
     try:
         # 2. Route to specific handler
-        result = await _dispatch_job(job_type, payload)
+        result = await _dispatch_job(job_type, payload, job_id)
         
         # 3. Update status to Completed
-        supabase.table("job_queue").update({
+        supabase.table("jobs").update({
             "status": "completed",
             "result": result,
             "completed_at": datetime.utcnow().isoformat()
@@ -39,13 +39,13 @@ async def process_job(job_record: dict):
     except Exception as e:
         logger.error(f"Job {job_id} failed: {str(e)}")
         # 4. Update status to Failed
-        supabase.table("job_queue").update({
+        supabase.table("jobs").update({
             "status": "failed",
             "error": str(e),
             "completed_at": datetime.utcnow().isoformat()
         }).eq("id", job_id).execute()
 
-async def _dispatch_job(job_type: str, payload: dict) -> dict:
+async def _dispatch_job(job_type: str, payload: dict, job_id: str = None) -> dict:
     """
     Switch case for job types. 
     Ideally this uses a strategy pattern or registry in the future.
@@ -77,6 +77,14 @@ async def _dispatch_job(job_type: str, payload: dict) -> dict:
         # Execute and dump Pydantic model to dict
         result = await execute_carousel_generation(topic)
         return result.model_dump()
+
+    elif job_type == "blog_generate":
+        logger.info(f"Dispatching to Blog Agent (Job {job_id})")
+        if not job_id:
+             raise ValueError("Job ID required for blog generation (checkpointing)")
+             
+        from app.services.blog_agent import execute_blog_generation
+        return await execute_blog_generation(payload, job_id)
         
     else:
         raise ValueError(f"Unknown job type: {job_type}")

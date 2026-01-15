@@ -11,11 +11,12 @@ import { Sparkles, Wand2, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { StorageImageSelector } from '../admin/StorageImageSelector';
+import { dispatchRepurposeJob, getJobStatus } from '@/lib/agents';
 
 interface CarouselGenerationModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onGenerated: () => void;
+    onGenerated: (result?: any) => void;
 }
 
 export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: CarouselGenerationModalProps) {
@@ -78,44 +79,39 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
 
         try {
             if (mode === 'auto') {
-                // Full Auto: Dispatch to Python Agent via Job Queue
-                const { data: userData } = await supabase.auth.getUser();
-
-                // Create Job
-                const { data: job, error: jobError } = await supabase
-                    .from('job_queue')
-                    .insert({
-                        job_type: 'carousel_generate',
-                        payload: { topic: autoRequest }, // Pass the request as the topic
-                        user_id: userData.user?.id
-                    })
-                    .select()
-                    .single();
-
-                if (jobError) throw jobError;
+                // Full Auto: Dispatch to Repurpose Content Agent (Edge Function)
+                // 1. Dispatch Job
+                const jobId = await dispatchRepurposeJob({
+                    content: autoRequest,
+                    url: autoRequest.startsWith('http') ? autoRequest : undefined
+                });
 
                 toast({
                     title: "Agent Activated",
-                    description: "Strategist, Copywriter, and Designer agents are working...",
+                    description: "Repurposing content and generating carousel...",
                 });
 
-                // Poll for completion (Simple polling for Modal)
+                // 2. Poll for completion
                 const checkJob = async () => {
-                    const { data: updatedJob } = await supabase
-                        .from('job_queue')
-                        .select('*')
-                        .eq('id', job.id)
-                        .single();
+                    const job = await getJobStatus(jobId);
 
-                    if (updatedJob?.status === 'completed') {
-                        onGenerated();
+                    if (job.status === 'completed') {
+                        // Success!
+                        // The result contains the carousel JSON. We need to parse/handle it.
+                        // For now, let's just notify and close.
+                        // In Next Step: Populate Editor with `job.result.carousel`
+                        console.log("Job Result:", job.result);
+
+                        onGenerated(job.result);
                         onOpenChange(false);
                         setIsGenerating(false);
                         resetForm();
                         toast({ title: "Carousel Created!", description: "High-quality carousel generated." });
-                    } else if (updatedJob?.status === 'failed') {
+
+                    } else if (job.status === 'failed') {
                         setIsGenerating(false);
-                        toast({ title: "Generation Failed", description: updatedJob.error, variant: "destructive" });
+                        toast({ title: "Generation Failed", description: job.error, variant: "destructive" });
+
                     } else {
                         setTimeout(checkJob, 2000); // Poll every 2s
                     }
