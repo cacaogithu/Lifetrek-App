@@ -55,7 +55,7 @@ workflow_status:
     required: true
 
   - id: "create-epics-and-stories"
-    status: "pending"
+    status: "completed"
     phase: 3
     name: "Epics & Stories"
     agent: "pm"

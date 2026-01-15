@@ -60,6 +60,13 @@ The system requires a robust **Async Job Engine** to handle three distinct workl
 *   **Architectural Impact**: The `worker-dispatcher` must be designed to handle not just "User Initiatives" (Outgoing) but also "Webhook Events" (Incoming).
 *   **Decision**: We will provision the `jobs` table to support `type: 'incoming_webhook'` to allow using the same Async Engine for processing inbound LinkedIn messages later.
 
+### Cross-Cutting Research Integration (Google Cloud Agents)
+*   **Hybrid Runtime**: We will adopt a **Hybrid Microservices** architecture.
+    *   **Frontend**: Next.js (Supabase Auth/UI).
+    *   **AI Backend**: Python FastAPI on **Cloud Run** (for access to advanced RAG/Deep Research tools).
+*   **State Management**: **Supabase-First**. We will store LangChain history in Supabase (Postgres) to keep a "Single Source of Truth", avoiding a split-brain with Firestore.
+*   **Deployment**: **Cloud Run** over Vertex AI Endpoints (Scale-to-Zero cost efficiency).
+
 ## Architecture Decision: Separated Workflow Systems (Step 3)
 
 ### The Challenge
@@ -74,20 +81,27 @@ Attempting to use a unified async job engine would create unnecessary complexity
 
 We will implement **two independent systems**, each optimized for its specific purpose:
 
-#### System 1: Content Generation (Current + Enhancement)
+#### System 1: Content Generation (Hybrid Microservice Model)
 
-**Scope:** LinkedIn Carousels, Blog Posts, Research
-**Current State:** Carousel generation already working via `supabase/functions/generate-linkedin-carousel/index.ts`
+**Scope:** LinkedIn Carousels, Blog Posts, Deep Research
+**Current State:** Carousel generation working via Edge Functions. Blog/Research requiring Python migration.
 
 **Architecture:**
-- **Direct Edge Function Invocation** (keep current approach)
+- **Hybrid Runtime Split:**
+    - **Simple/Fast (Carousels):** Direct Edge Function Invocation (Keep As-Is).
+    - **Complex/Slow (Deep Research):** Python FastAPI Service on **Google Cloud Run**.
+- **Async Job Pattern:**
+    - UI creates `job` row in Supabase.
+    - **Database Webhook** triggers Cloud Run Python Service.
+    - Service executes LangChain Workflow -> Updates `job` row with result.
+- **State Management:**
+    - All conversation history stored in Supabase `chat_history` table.
 - **Optional Audit Trail:** Add `content_history` table for analytics (non-blocking)
 - **Realtime Updates:** Use Supabase Realtime for progress notifications
 
-**Why Keep It Simple:**
-- Already working and fast
-- No need for job queue overhead
-- Clean, maintainable code
+**Why Hybrid:**
+- **Edge Functions**: Great for simple logic, but poor for long-running AI agents or heavy Python libraries.
+- **Cloud Run (Python)**: Essential for "Deep Research" agents using Google ADK and complex LangGraphs. Scales to zero (cheap).
 
 #### System 2: LinkedIn Automation (Future Phase)
 
@@ -465,13 +479,49 @@ graph TD
     style RESULT2 fill:#FFB74D,stroke:#E65100
 ```
 
-## Implementation Readiness
+### Hybrid System Overview (New)
 
+```mermaid
+graph TB
+    subgraph "Frontend Layer (Next.js)"
+        UI[User Interface]
+        AUTH[Supabase Auth]
+        UI --> AUTH
+    end
+
+    subgraph "Data Layer (Supabase)"
+        DB[(Postgres)]
+        VEC[(pgvector)]
+        REAL[Realtime]
+        STO[Storage]
+        
+        DB <--> VEC
+        DB --> REAL
+    end
+
+    subgraph "Compute Layer (Hybrid)"
+        EDGE[Edge Functions<br/>(TypeScript)]
+        RUN[Cloud Run Service<br/>(Python Agent)]
+        
+        EDGE -->|Fast| DB
+        RUN -->|Deep| DB
+        RUN -->|RAG| VEC
+    end
+    
+    UI -->|Invoke| EDGE
+    UI -->|Insert Job| DB
+    DB -->|Webhook| RUN
+    
+    style RUN fill:#FF9800,stroke:#E65100,color:#fff
+```
+
+### Implementation Readiness
 
 ### Phase 1 Scope (Current)
-- ✅ Architecture defined for content generation
-- ✅ Carousel generation already working
-- ✅ Clean separation from future outreach system
+- ✅ Architecture defined for content generation (Hybrid Model)
+- ✅ Carousel generation working (Edge Function)
+- 📋 **To Build**: Python Cloud Run Service for "Deep Research" & Blog Agents
+- 📋 **To Build**: Async Job Queue (Webhooks)
 - ⏭️ Optional: Add `content_history` table for analytics
 
 ### Phase 2 Scope (Future)
