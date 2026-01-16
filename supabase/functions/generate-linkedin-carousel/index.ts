@@ -300,6 +300,56 @@ serve(async (req: Request) => {
     };
 
     if (jobId) {
+      // Story 7.2: Save to linkedin_carousels autonomously (worker-side)
+      // This ensures posts appear in Content Approval even if user navigates away
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const userId = user?.id || job.user_id;
+
+        const { data: carouselRecord, error: insertError } = await supabase
+          .from("linkedin_carousels")
+          .insert([{
+            admin_user_id: userId,
+            profile_type: profileType,
+            topic: topic,
+            target_audience: targetAudience,
+            pain_point: painPoint,
+            desired_outcome: desiredOutcome,
+            proof_points: proofPoints,
+            cta_action: ctaAction,
+            slides: carousel.slides as any,
+            caption: carousel.caption,
+            format: format,
+            image_urls: imageUrls,
+            status: 'pending_approval', // Default for autonomous generation
+            generation_settings: {
+              model: metrics.model_versions?.copywriter || "gemini-2.0-flash-exp",
+              timestamp: new Date().toISOString(),
+              quality_score: qualityReview.overall_score,
+              metrics: metrics
+            }
+          }])
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error("Error inserting into linkedin_carousels:", insertError);
+        } else {
+          console.log(`✅ Saved carousel ${carouselRecord.id} to database`);
+
+          // Add embedding if available
+          if (carouselEmbedding && carouselRecord.id) {
+            await supabase.from('carousel_embeddings').insert({
+              carousel_id: carouselRecord.id,
+              embedding: carouselEmbedding,
+              topic: topic
+            });
+          }
+        }
+      } catch (saveError) {
+        console.error("Critical error in autonomous save:", saveError);
+      }
+
       await supabase.from('jobs').update({
         status: 'completed',
         result: result,

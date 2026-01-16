@@ -37,25 +37,25 @@ function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T
 async function callAI(apiKey: string, body: object, timeoutMs = 25000): Promise<any> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-  
+
   try {
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
-      headers: { 
-        Authorization: `Bearer ${apiKey}`, 
-        "Content-Type": "application/json" 
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(body),
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`AI API error ${response.status}:`, errorText);
       throw new Error(`AI API error: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     clearTimeout(timeoutId);
@@ -69,7 +69,7 @@ serve(async (req) => {
   }
 
   const startTime = Date.now();
-  
+
   try {
     const { generateNews, topic, category, research_context, skipImage } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -85,7 +85,7 @@ serve(async (req) => {
     if (PERPLEXITY_API_KEY && !contextToUse) {
       console.log("🔍 [Phase 1] Deep Research with Perplexity sonar-pro...");
       const researchStart = Date.now();
-      
+
       try {
         const deepResearchPrompt = `Você é um pesquisador especialista em dispositivos médicos e manufatura de precisão no Brasil.
 
@@ -131,16 +131,16 @@ Forneça informações factuais com fontes quando possível. Resposta em Portugu
             search_recency_filter: "month", // Focus on recent content
           }),
         }).then(r => r.json());
-        
+
         const pData = await withTimeout(researchPromise, 20000, { choices: [], citations: [] });
         contextToUse = pData.choices?.[0]?.message?.content || "";
-        
+
         // Store citations for reference (not shown to users)
         const citations = pData.citations || [];
         if (citations.length > 0) {
           console.log(`📚 Research sources: ${citations.slice(0, 5).join(", ")}`);
         }
-        
+
         console.log(`✅ [Phase 1] Deep Research complete in ${Date.now() - researchStart}ms (${contextToUse.length} chars)`);
       } catch (e) {
         console.error("⚠️ Perplexity deep research failed, continuing without research", e);
@@ -150,7 +150,7 @@ Forneça informações factuais com fontes quando possível. Resposta em Portugu
     // 2. STRATEGIST AGENT (Fast model)
     console.log("🧠 [Phase 2] Strategist is working...");
     const stratStart = Date.now();
-    
+
     const stratSystemPrompt = `You are the Content Strategist for Lifetrek Medical.
     Plan a high-impact blog post that positions Lifetrek as a Technical Authority.
     
@@ -170,12 +170,12 @@ Forneça informações factuais com fontes quando possível. Resposta em Portugu
     const stratData = await callAI(LOVABLE_API_KEY, {
       model: "google/gemini-2.5-flash-lite", // Faster model
       messages: [
-        { role: "system", content: stratSystemPrompt }, 
+        { role: "system", content: stratSystemPrompt },
         { role: "user", content: "Create the strategy. Be concise." }
       ],
       response_format: { type: "json_object" },
     }, 15000);
-    
+
     let strategy;
     try {
       strategy = JSON.parse(stratData.choices[0].message.content);
@@ -197,7 +197,7 @@ Forneça informações factuais com fontes quando possível. Resposta em Portugu
     // Moved BEFORE image generation to ensure content is always generated
     console.log("✍️ [Phase 3] Copywriter is working...");
     const writeStart = Date.now();
-    
+
     const writerSystemPrompt = `You are a Senior Manufacturing Engineer writing for Lifetrek Medical.
     
     BASICS:
@@ -231,12 +231,12 @@ Forneça informações factuais com fontes quando possível. Resposta em Portugu
     const writerData = await callAI(LOVABLE_API_KEY, {
       model: "google/gemini-2.5-flash", // Standard model for quality
       messages: [
-        { role: "system", content: writerSystemPrompt }, 
+        { role: "system", content: writerSystemPrompt },
         { role: "user", content: "Write the article now." }
       ],
       response_format: { type: "json_object" },
     }, 30000);
-    
+
     let finalPost;
     try {
       finalPost = JSON.parse(writerData.choices[0].message.content);
@@ -251,7 +251,7 @@ Forneça informações factuais com fontes quando possível. Resposta em Portugu
     if (!skipImage) {
       console.log("🎨 [Phase 4] Attempting image generation (optional)...");
       const imgStart = Date.now();
-      
+
       try {
         // Quick asset fetch
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -294,17 +294,17 @@ CRITICAL:
 
 The image should convey: Trust, Precision, Innovation, Medical Excellence.`;
 
-        type ContentPart = 
+        type ContentPart =
           | { type: "text"; text: string }
           | { type: "image_url"; image_url: { url: string } };
 
         const userContent: ContentPart[] = [{ type: "text", text: designPrompt }];
-        
+
         // Add product reference for visual consistency
         if (productImages.length > 0) {
-          userContent.push({ 
-            type: "image_url", 
-            image_url: { url: productImages[0].url } 
+          userContent.push({
+            type: "image_url",
+            image_url: { url: productImages[0].url }
           });
         }
 
@@ -314,7 +314,7 @@ The image should convey: Trust, Precision, Innovation, Medical Excellence.`;
           messages: [{ role: "user", content: userContent }],
           modalities: ["image", "text"]
         }, 25000);
-        
+
         const imgData = await withTimeout(imgPromise, 20000, null);
         if (imgData) {
           imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
@@ -350,6 +350,66 @@ The image should convey: Trust, Precision, Innovation, Medical Excellence.`;
 
     const totalTime = Date.now() - startTime;
     console.log(`🎉 [COMPLETE] Blog post generated in ${totalTime}ms`);
+
+    // ASYNC JOB MODE: Save to DB autonomously
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const body = await req.json();
+    const jobId = body.job_id;
+
+    if (jobId) {
+      console.log(`[Job ${jobId}] Saving result to blog_posts...`);
+
+      try {
+        // Get job details to find user_id
+        const { data: job } = await supabase.from('jobs').select('user_id').eq('id', jobId).single();
+
+        const { data: blogRecord, error: insertError } = await supabase
+          .from("blog_posts")
+          .insert([{
+            author_id: job?.user_id || (await supabase.auth.getUser())?.data?.user?.id,
+            title: result.title,
+            content: result.content,
+            excerpt: result.excerpt,
+            featured_image: result.featured_image,
+            category_id: body.category_id, // Pass from payload if possible
+            status: 'pending_review',
+            slug: result.slug,
+            seo_title: result.seo_title,
+            seo_description: result.seo_description,
+            ai_generated: true,
+            metadata: {
+              strategy: strategy,
+              generation_time_ms: totalTime,
+              keywords: result.keywords || []
+            }
+          }])
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error("Error inserting blog post:", insertError);
+          await supabase.from('jobs').update({
+            status: 'failed',
+            error: `Database Insert Error: ${insertError.message}`,
+            completed_at: new Date().toISOString()
+          }).eq('id', jobId);
+        } else {
+          console.log(`✅ Saved blog post ${blogRecord.id} to database`);
+          await supabase.from('jobs').update({
+            status: 'completed',
+            result: result,
+            completed_at: new Date().toISOString()
+          }).eq('id', jobId);
+        }
+      } catch (err) {
+        console.error("Critical error in blog worker save:", err);
+      }
+
+      return new Response("Job Processed", { status: 200 });
+    }
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
