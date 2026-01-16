@@ -55,15 +55,15 @@ development_status:
   epic-2-retrospective: optional
 
   epic-3: in-progress
-  3-1-create-jobs-schema-rls-policies: in-progress
-  3-2-build-job-monitor-admin-dashboard: backlog
+  3-1-create-jobs-schema-rls-policies: done
+  3-2-build-job-monitor-admin-dashboard: done
   3-3-implement-retry-logic-for-failed-jobs: backlog
   3-4-add-realtime-toast-notifications: backlog
   epic-3-retrospective: optional
 
-  epic-4: backlog
+  epic-4: in-progress
   4-1-migrate-lead-scoring-scripts-to-python-service: backlog
-  4-2-build-sales-engineer-dashboard: backlog
+  4-2-build-sales-engineer-dashboard: done
   4-3-implement-engagement-signal-tracking: backlog
   epic-4-retrospective: optional
 

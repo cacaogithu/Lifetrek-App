@@ -23,7 +23,10 @@ import {
     X,
     CalendarDays,
     ListChecks,
-    MessageSquare
+    MessageSquare,
+    ChevronDown,
+    Building2,
+    Briefcase
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -36,6 +39,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface NavItem {
     path: string;
@@ -44,22 +55,48 @@ interface NavItem {
     requiresSuperAdmin?: boolean;
 }
 
-const allNavItems: NavItem[] = [
+interface NavGroup {
+    label: string;
+    icon: LucideIcon;
+    items: NavItem[];
+}
+
+type NavEntry = NavItem | NavGroup;
+
+const navStructure: NavEntry[] = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
-    { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
-    { path: "/admin/jobs", label: "Jobs", icon: ListChecks },
+    {
+        label: "Conteúdo",
+        icon: FileText,
+        items: [
+            { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
+            { path: "/admin/blog", label: "Blog", icon: FileText },
+            { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
+        ]
+    },
+    {
+        label: "Empresa",
+        icon: Building2,
+        items: [
+            { path: "/admin/gallery", label: "Galeria", icon: Images },
+            { path: "/admin/image-processor", label: "Imagens", icon: Sparkles },
+            { path: "/admin/knowledge-base", label: "Knowledge", icon: BookOpen, requiresSuperAdmin: true },
+            { path: "/admin/product-assets", label: "Assets", icon: Upload, requiresSuperAdmin: true },
+            { path: "/admin/environment-assets", label: "Ambiente", icon: Camera, requiresSuperAdmin: true },
+        ]
+    },
+    {
+        label: "Gestão",
+        icon: Briefcase,
+        items: [
+            { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
+            { path: "/admin/content-calendar", label: "Calendário", icon: CalendarDays },
+            { path: "/admin/jobs", label: "Jobs", icon: ListChecks },
+            { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
+            { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3, requiresSuperAdmin: true },
+        ]
+    },
     { path: "/admin/leads", label: "Leads", icon: Database },
-    { path: "/admin/image-processor", label: "Imagens", icon: Sparkles },
-    { path: "/admin/gallery", label: "Galeria", icon: Images },
-    { path: "/admin/blog", label: "Blog", icon: FileText },
-    { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
-    { path: "/admin/content-calendar", label: "Calendário", icon: CalendarDays },
-    { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
-    { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
-    { path: "/admin/product-assets", label: "Assets", icon: Upload, requiresSuperAdmin: true },
-    { path: "/admin/environment-assets", label: "Ambiente", icon: Camera, requiresSuperAdmin: true },
-    { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3, requiresSuperAdmin: true },
-    { path: "/admin/knowledge-base", label: "Knowledge", icon: BookOpen, requiresSuperAdmin: true },
 ];
 
 export function AdminHeader() {
@@ -86,13 +123,14 @@ export function AdminHeader() {
         ? getEffectivePermissionLevel() === "super_admin"
         : isSuperAdmin;
 
-    // Filter nav items based on EFFECTIVE permissions (impersonated or real)
-    const navItems = allNavItems.filter(item => {
-        if (item.requiresSuperAdmin && !effectiveIsSuperAdmin) {
-            return false;
-        }
-        return true;
-    });
+    const filterItems = (items: NavItem[]) => {
+        return items.filter(item => {
+            if (item.requiresSuperAdmin && !effectiveIsSuperAdmin) {
+                return false;
+            }
+            return true;
+        });
+    };
 
     const effectiveUserName = isImpersonating
         ? impersonatedUser?.display_name || impersonatedUser?.email?.split('@')[0]
@@ -150,7 +188,54 @@ export function AdminHeader() {
 
                 {/* Navigation */}
                 <nav className="flex items-center gap-1 flex-1 overflow-x-auto">
-                    {navItems.map((item) => {
+                    {navStructure.map((entry, index) => {
+                        // Check if it's a group
+                        if ('items' in entry) {
+                            const filteredItems = filterItems(entry.items);
+                            if (filteredItems.length === 0) return null;
+
+                            const isActive = filteredItems.some(item => location.pathname === item.path);
+                            const Icon = entry.icon;
+
+                            return (
+                                <DropdownMenu key={index}>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className={cn(
+                                                "gap-1.5 h-9",
+                                                isActive && "bg-accent text-accent-foreground"
+                                            )}
+                                        >
+                                            <Icon className="h-4 w-4" />
+                                            <span className="hidden md:inline">{entry.label}</span>
+                                            <ChevronDown className="h-3 w-3 opacity-50" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start">
+                                        <DropdownMenuLabel>{entry.label}</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {filteredItems.map((item) => {
+                                            const ItemIcon = item.icon;
+                                            return (
+                                                <DropdownMenuItem key={item.path} asChild>
+                                                    <Link to={item.path} className="gap-2 cursor-pointer w-full">
+                                                        <ItemIcon className="h-4 w-4" />
+                                                        {item.label}
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            );
+                                        })}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            );
+                        }
+
+                        // Single item
+                        const item = entry as NavItem;
+                        if (item.requiresSuperAdmin && !effectiveIsSuperAdmin) return null;
+
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
 

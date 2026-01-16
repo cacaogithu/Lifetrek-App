@@ -21,6 +21,8 @@ export default function Leads() {
     const [priorityFilter, setPriorityFilter] = useState("all");
     const [loading, setLoading] = useState(true);
 
+    const [totalCount, setTotalCount] = useState(0);
+
     useEffect(() => {
         fetchLeads();
     }, []);
@@ -49,16 +51,19 @@ export default function Leads() {
 
     const fetchLeads = async () => {
         try {
-            const { data, error } = await supabase
+            // First get the total count and data up to 5000 records
+            const { data, error, count } = await supabase
                 .from("contact_leads")
-                .select("*")
+                .select("*", { count: 'exact' })
                 .order("lead_score", { ascending: false, nullsFirst: false })
-                .order("created_at", { ascending: false });
+                .order("created_at", { ascending: false })
+                .range(0, 4999);
 
             if (error) throw error;
 
             setLeads(data || []);
             setFilteredLeads(data || []);
+            setTotalCount(count || 0);
         } catch (error) {
             console.error("Error fetching leads:", error);
             toast.error("Falha ao carregar leads");
@@ -101,10 +106,10 @@ export default function Leads() {
             lead.status === 'new' || lead.status === 'contacted' || lead.status === 'in_progress'
         ).length;
         const closedLeads = leads.filter(lead => lead.status === 'closed').length;
-        const conversionRate = leads.length > 0 ? (closedLeads / leads.length) * 100 : 0;
+        const conversionRate = totalCount > 0 ? (closedLeads / totalCount) * 100 : 0;
 
         return {
-            totalLeads: leads.length,
+            totalLeads: totalCount,
             newLeads,
             pendingLeads,
             conversionRate
@@ -120,7 +125,7 @@ export default function Leads() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
             <div>
                 <h1 className="text-3xl font-bold">Leads</h1>
                 <p className="text-muted-foreground">Gerencie todos os leads recebidos</p>
