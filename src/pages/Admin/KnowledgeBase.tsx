@@ -12,9 +12,12 @@ import { Search, Plus, Trash2, Edit2, Link as LinkIcon, Save, X, BookOpen } from
 
 interface KnowledgeItem {
     id: string;
-    category: string;
-    question: string;
-    answer: string;
+    category?: string;
+    question?: string;
+    answer?: string;
+    content?: string;
+    metadata?: any;
+    source_type?: string;
     tags?: string[];
     created_at: string;
 }
@@ -65,17 +68,23 @@ export default function KnowledgeBase() {
     });
 
     // Filter items
-    const filteredItems = kbItems?.filter(item =>
-        item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.answer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    const filteredItems = kbItems?.filter(item => {
+        const searchStr = searchTerm.toLowerCase();
+        return (
+            (item.question?.toLowerCase().includes(searchStr)) ||
+            (item.answer?.toLowerCase().includes(searchStr)) ||
+            (item.content?.toLowerCase().includes(searchStr)) ||
+            (item.category?.toLowerCase().includes(searchStr)) ||
+            (item.source_type?.toLowerCase().includes(searchStr)) ||
+            (item.tags?.some(tag => tag.toLowerCase().includes(searchStr)))
+        );
+    });
 
-    // Group by category
+    // Group by category (fallback to source_type then "General")
     const groupedItems = filteredItems?.reduce((acc, item) => {
-        if (!acc[item.category]) acc[item.category] = [];
-        acc[item.category].push(item);
+        const cat = item.category || item.source_type || "General";
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(item);
         return acc;
     }, {} as Record<string, KnowledgeItem[]>) || {};
 
@@ -263,16 +272,21 @@ export default function KnowledgeBase() {
                                         <AccordionItem key={item.id} value={item.id} className="px-4">
                                             <AccordionTrigger className="hover:no-underline py-4">
                                                 <div className="text-left">
-                                                    <p className="font-medium text-base">{item.question}</p>
-                                                    {item.tags && item.tags.length > 0 && (
-                                                        <div className="flex gap-2 mt-1">
-                                                            {item.tags.map(tag => (
-                                                                <Badge key={tag} variant="secondary" className="text-[10px] h-5 px-1.5 font-normal">
-                                                                    {tag}
-                                                                </Badge>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                    <p className="font-medium text-base">
+                                                        {item.question || (item.metadata?.title) || "Documento"}
+                                                    </p>
+                                                    <div className="flex gap-2 mt-1 items-center">
+                                                        {item.source_type && (
+                                                            <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-normal uppercase tracking-wider">
+                                                                {item.source_type}
+                                                            </Badge>
+                                                        )}
+                                                        {item.tags && item.tags.length > 0 && item.tags.map(tag => (
+                                                            <Badge key={tag} variant="secondary" className="text-[10px] h-5 px-1.5 font-normal">
+                                                                {tag}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </AccordionTrigger>
                                             <AccordionContent className="pb-4">
@@ -299,14 +313,16 @@ export default function KnowledgeBase() {
                                                             </div>
                                                         </div>
                                                         <Input
-                                                            value={editForm.question}
+                                                            value={editForm.question || ""}
                                                             onChange={(e) => setEditForm({ ...editForm, question: e.target.value })}
                                                             className="font-medium"
+                                                            placeholder="Pergunta ou Tópico"
                                                         />
                                                         <Textarea
-                                                            value={editForm.answer}
+                                                            value={editForm.answer || editForm.content || ""}
                                                             onChange={(e) => setEditForm({ ...editForm, answer: e.target.value })}
                                                             rows={5}
+                                                            placeholder="Resposta ou Conteúdo"
                                                         />
                                                         <div className="flex justify-end gap-2">
                                                             <Button size="sm" variant="ghost" onClick={() => setIsEditing(null)}>Cancelar</Button>
@@ -316,9 +332,15 @@ export default function KnowledgeBase() {
                                                 ) : (
                                                     <div className="space-y-4">
                                                         <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap">
-                                                            {item.answer}
+                                                            {item.answer || item.content}
                                                         </div>
+                                                        {item.metadata && Object.keys(item.metadata).length > 0 && (
+                                                            <div className="bg-muted/30 p-2 rounded text-[10px] font-mono text-muted-foreground">
+                                                                Metadata: {JSON.stringify(item.metadata)}
+                                                            </div>
+                                                        )}
                                                         <div className="flex justify-end gap-2 pt-2 border-t mt-2">
+
                                                             <Button
                                                                 size="sm"
                                                                 variant="ghost"
