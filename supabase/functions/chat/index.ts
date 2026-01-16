@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -104,7 +105,7 @@ Do not output "**" or *. Write quick short sentences that might help the user na
     // OpenAI: { role: "user" | "assistant" | "system", content: string }
     // Gemini: { role: "user" | "model", parts: [{ text: string }] }
     // System prompt goes into specific system_instruction field or prepended
-    
+
     const geminiContent = messages.map((msg: any) => ({
       role: msg.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: msg.content }]
@@ -113,46 +114,46 @@ Do not output "**" or *. Write quick short sentences that might help the user na
     // --- RAG IMPLEMENTATION ---
     let ragContext = "";
     try {
-        const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content;
-        
-        if (lastUserMessage) {
-            // 1. Generate Embedding
-            const embedResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    content: { parts: [{ text: lastUserMessage }] }
-                })
-            });
-            
-            if (embedResponse.ok) {
-                const embedData = await embedResponse.json();
-                const embedding = embedData.embedding.values;
+      const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content;
 
-                // 2. Search Supabase
-                // Create a new client to access DB (reuse existing if possible or create new)
-                const supabaseClient = createClient(
-                    Deno.env.get('SUPABASE_URL') ?? '',
-                    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-                    { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
-                );
+      if (lastUserMessage) {
+        // 1. Generate Embedding
+        const embedResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${GEMINI_API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: { parts: [{ text: lastUserMessage }] }
+          })
+        });
 
-                const { data: documents } = await supabaseClient.rpc('match_product_assets', {
-                    query_embedding: embedding,
-                    match_threshold: 0.5,
-                    match_count: 3
-                });
+        if (embedResponse.ok) {
+          const embedData = await embedResponse.json();
+          const embedding = embedData.embedding.values;
 
-                if (documents && documents.length > 0) {
-                    ragContext = "\n\nRELEVANT KNOWLEDGE BASE:\n" + documents.map((doc: any) => 
-                        `- ${doc.name}: ${doc.description} (${doc.image_url || 'No Image'})`
-                    ).join("\n");
-                }
-            }
+          // 2. Search Supabase
+          // Create a new client to access DB (reuse existing if possible or create new)
+          const supabaseClient = createClient(
+            Deno.env.get('SUPABASE_URL') ?? '',
+            Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+            { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+          );
+
+          const { data: documents } = await supabaseClient.rpc('match_product_assets', {
+            query_embedding: embedding,
+            match_threshold: 0.5,
+            match_count: 3
+          });
+
+          if (documents && documents.length > 0) {
+            ragContext = "\n\nRELEVANT KNOWLEDGE BASE:\n" + documents.map((doc: any) =>
+              `- ${doc.name}: ${doc.description} (${doc.image_url || 'No Image'})`
+            ).join("\n");
+          }
         }
+      }
     } catch (err) {
-        console.error("RAG Error:", err);
-        // Continue without RAG if it fails
+      console.error("RAG Error:", err);
+      // Continue without RAG if it fails
     }
 
     // Append RAG Context to System Prompt
@@ -179,6 +180,40 @@ Do not output "**" or *. Write quick short sentences that might help the user na
 
     const data = await response.json();
     const assistantMessage = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    // --- AUTO-DISPATCH CAROUSEL GENERATION ---
+    // Check if orchestrator included handoff JSON for carousel generation
+    if (mode === 'orchestrator' && assistantMessage) {
+      const handoffMatch = assistantMessage.match(/```json\n([\s\S]*?)\n```/);
+      if (handoffMatch && handoffMatch[1]) {
+        try {
+          const handoffData = JSON.parse(handoffMatch[1]);
+          if (handoffData.handoff_action === 'trigger_job' && handoffData.job_type === 'carousel_generate') {
+            // Automatically dispatch the carousel job 
+            const supabaseClient = createClient(
+              Deno.env.get('SUPABASE_URL') ?? '',
+              Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+              { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+            );
+
+            const { data: { user } } = await supabaseClient.auth.getUser(req.headers.get('Authorization')?.replace('Bearer ', '') || '');
+
+            if (user) {
+              await supabaseClient.from('jobs').insert({
+                job_type: 'carousel_generate',
+                payload: handoffData.payload,
+                user_id: user.id,
+                status: 'queued'
+              });
+
+              console.log('✅ Auto-dispatched carousel job:', handoffData.payload.topic);
+            }
+          }
+        } catch (e) {
+          console.error('Failed to auto-dispatch job:', e);
+        }
+      }
+    }
 
     return new Response(JSON.stringify({ response: assistantMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
