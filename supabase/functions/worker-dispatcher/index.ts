@@ -16,31 +16,34 @@ serve(async (req: Request) => {
             return new Response("Ignored non-INSERT event", { status: 200 });
         }
 
-        console.log(`Received Job ${record.id} [${record.type}]`);
+        console.log(`Received Job ${record.id} [${record.job_type}]`);
 
         // 1. Check Schedule (Buffer of 10s for clock skew / processing time)
-        // If scheduled_for is in the future, we IGNORE it. The 'Governor' (pg_cron) will pick it up later.
-        const scheduledTime = new Date(record.scheduled_for).getTime();
-        const now = Date.now();
+        // If scheduled_for is in the future, we IGNORE it. 
+        if (record.scheduled_for) {
+            const scheduledTime = new Date(record.scheduled_for).getTime();
+            const now = Date.now();
 
-        // If job is 10s or more in the future, skip dispatch
-        if (scheduledTime > now + 10000) {
-            console.log(`Job ${record.id} is scheduled for future (${record.scheduled_for}). Skipping dispatch.`);
-            return new Response("Scheduled (Future)", { status: 200 });
+            // If job is 10s or more in the future, skip dispatch
+            if (scheduledTime > now + 10000) {
+                console.log(`Job ${record.id} is scheduled for future (${record.scheduled_for}). Skipping dispatch.`);
+                return new Response("Scheduled (Future)", { status: 200 });
+            }
         }
 
         // 2. Route to Worker
         const workerMap: Record<string, string> = {
             'carousel_generation': 'generate-linkedin-carousel',
-            'generate_linkedin_carousel': 'generate-linkedin-carousel', // Added for consistency
+            'carousel_generate': 'generate-linkedin-carousel',
+            'generate_linkedin_carousel': 'generate-linkedin-carousel',
             'blog_generation': 'generate-blog-post',
-            // 'lead_enrichment': 'enrich-leads-worker' // Future
+            'blog_generate': 'generate-blog-post'
         };
 
-        const functionName = workerMap[record.type];
+        const functionName = workerMap[record.job_type];
 
         if (!functionName) {
-            console.error(`No worker mapped for job type: ${record.type}`);
+            console.error(`No worker mapped for job type: ${record.job_type}`);
             return new Response("Unknown Job Type", { status: 400 });
         }
 

@@ -24,7 +24,7 @@ export const dispatchRepurposeJob = async (input: RepurposeJobInput): Promise<st
     const { data: job, error: jobError } = await supabase
         .from('jobs')
         .insert({
-            type: 'repurpose_content',
+            job_type: 'repurpose_content',
             status: 'pending',
             payload: input, // Storing full input in payload
             user_id: user.id
@@ -71,7 +71,7 @@ export const dispatchResearchJob = async (topic: string, depth: 'deep' | 'compre
     const { data: job, error: jobError } = await supabase
         .from('jobs')
         .insert({
-            type: 'deep_research',
+            job_type: 'deep_research',
             status: 'pending',
             payload: { topic, depth },
             user_id: user.id

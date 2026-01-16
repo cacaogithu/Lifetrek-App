@@ -250,17 +250,17 @@ export default function LinkedInCarousel() {
   useEffect(() => {
     if (!currentJobId) return;
 
-    console.log("Subscribing to job updates (job_queue):", currentJobId);
+    console.log("Subscribing to job updates (jobs):", currentJobId);
 
     const channel = supabase
-      .channel(`job_queue - ${currentJobId} `)
+      .channel(`jobs-${currentJobId}`)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'job_queue',
-          filter: `id = eq.${currentJobId} `,
+          table: 'jobs',
+          filter: `id=eq.${currentJobId}`,
         },
         async (payload) => {
           const newStatus = payload.new.status;
@@ -330,15 +330,22 @@ export default function LinkedInCarousel() {
       PROFILE TYPE: ${profileType}
       `;
 
-      // 1. Create Job in DB (job_queue)
+      // 1. Create Job in DB (jobs)
       const { data: job, error } = await supabase
-        .from('job_queue')
+        .from('jobs')
         .insert({
           job_type: 'carousel_generate',
           status: 'pending',
           user_id: user.id,
           payload: {
-            topic: richTopic.trim()
+            topic: richTopic.trim(),
+            targetAudience,
+            painPoint,
+            desiredOutcome,
+            proofPoints,
+            ctaAction,
+            format,
+            profileType
           }
         })
         .select()

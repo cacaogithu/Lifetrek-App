@@ -35,24 +35,26 @@ WORKFLOW:
 4. **Handoff**: When the user is ready to generate, output a SPECIAL JSON BLOCK that the system will use to trigger the generation job.
 
 HANDOFF FORMAT:
-If the user says "Go ahead", "Generate it", or confirms the plan, output EXACTLY this JSON block at the end of your response:
+Se o usuário disser "Vá em frente", "Pode gerar", "Gere o conteúdo" ou confirmar o plano, você DEVE responder com uma conclusão curta em texto limpo e anexar EXATAMENTE este bloco JSON ao final:
 
 \`\`\`json
 {
   "handoff_action": "trigger_job",
-  "job_type": "carousel_generate" (or "blog_generate"),
+  "job_type": "carousel_generate",
   "payload": {
-    "topic": "The final refined topic",
-    "targetAudience": "The specific audience",
-    "painPoint": "The pain point addressed",
-    "desiredOutcome": "The goal of the post",
-    "angle": "The selected angle",
-    "format": "carousel" (or "blog")
+    "topic": "O tópico final refinado",
+    "targetAudience": "O público-alvo específico",
+    "painPoint": "A dor abordada",
+    "desiredOutcome": "O objetivo do post",
+    "angle": "O ângulo selecionado",
+    "format": "carousel"
   }
 }
 \`\`\`
 
-Do not make up facts about Lifetrek's manufacturing capabilities. Focus on CONTENT STRATEGY.`;
+Para postagens de blog, use \`job_type: "blog_generate"\` e \`format: "blog"\`.
+
+Regra de Ouro: Nunca invente fatos sobre a capacidade da Lifetrek. Foque na ESTRATÉGIA DE CONTEÚDO. Responda SEMPRE em Português sem Markdown.`;
 
     const GENERAL_SYSTEM_PROMPT = `You are an expert AI assistant for Lifetrek, a precision medical device contract manufacturer based in Brazil. You have comprehensive knowledge about:
 
