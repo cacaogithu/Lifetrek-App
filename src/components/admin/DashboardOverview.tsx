@@ -18,42 +18,18 @@ import {
     CheckCircle2,
     Eye
 } from "lucide-react";
+import { useAdminPermissions } from "@/hooks/useAdminPermissions";
 import { MarketingGoals } from "@/components/admin/MarketingGoals";
 
-export function DashboardOverview() {
-    // ... existing hook calls ...
-
-    // ... existing fetchDashboardData ...
-
-    return (
-        <div className="space-y-8">
-            {/* Welcome Section */}
-            {/* ... */}
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {/* ... existing stats cards ... */}
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-muted-foreground">Produtos</p>
-                                <p className="text-3xl font-bold">{stats.totalProducts}</p>
-                            </div>
-                            <div className="p-3 rounded-full bg-green-500/10">
-                                <Image className="h-5 w-5 text-green-500" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Marketing & Sales Goals */}
-            <MarketingGoals />
-
-            {/* Quick Actions */}
-            <div className="space-y-4">
-                {/* ... */}
+interface DashboardStats {
+    totalLeads: number;
+    newLeads: number;
+    highPriorityLeads: number;
+    pendingApprovals: number;
+    pendingCarousels: number;
+    pendingBlogs: number;
+    totalProducts: number;
+}
 
 interface QuickAction {
     title: string;
@@ -304,6 +280,7 @@ export function DashboardOverview() {
                 </Card>
             </div>
 
+            {/* Marketing & Sales Goals */}
             <MarketingGoals />
 
             {/* Quick Actions */}
