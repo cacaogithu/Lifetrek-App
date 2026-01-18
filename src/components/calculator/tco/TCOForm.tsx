@@ -3,10 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, Globe, Home, Plane, Truck } from "lucide-react";
+import { Calculator, Globe, Home, Plane, Truck, Settings } from "lucide-react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
+export type ComponentCategory = 'swiss_machining' | 'cnc_turning' | 'injection_molding' | '3d_printing' | 'other';
 
 export interface TCOInputs {
     componentType: string;
+    category: ComponentCategory;
     annualVolume: number;
     importUnitPrice: number;
     importFreight: number;
@@ -23,6 +33,7 @@ interface TCOFormProps {
 export function TCOForm({ onCalculate }: TCOFormProps) {
     const [formData, setFormData] = useState<TCOInputs>({
         componentType: "Bone Screw (Titânio)",
+        category: "swiss_machining",
         annualVolume: 12000,
         importUnitPrice: 45.00,
         importFreight: 2500,
@@ -40,28 +51,57 @@ export function TCOForm({ onCalculate }: TCOFormProps) {
         }));
     };
 
+    const handleCategoryChange = (value: ComponentCategory) => {
+        setFormData(prev => ({ ...prev, category: value }));
+    };
+
     return (
         <Card className="shadow-xl border-primary/10 overflow-hidden">
             <CardHeader className="bg-primary/5 border-b">
-                <CardTitle className="flex items-center gap-2">
-                    <Calculator className="w-5 h-5 text-primary" />
-                    Parâmetros de Análise
+                <CardTitle className="flex items-center gap-2 text-primary font-black uppercase tracking-widest text-sm">
+                    <Calculator className="w-5 h-5" />
+                    Parâmetros de Manufatura
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="componentType">Tipo de Componente</Label>
-                        <Input id="componentType" name="componentType" value={formData.componentType} onChange={handleChange} />
+                        <Input id="componentType" name="componentType" value={formData.componentType} onChange={handleChange} placeholder="Ex: Parafuso Ósseo" />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="annualVolume">Volume Anual (Unidades)</Label>
-                        <Input id="annualVolume" name="annualVolume" type="number" value={formData.annualVolume} onChange={handleChange} />
+                        <Label htmlFor="category">Categoria Produtiva</Label>
+                        <Select value={formData.category} onValueChange={handleCategoryChange}>
+                            <SelectTrigger id="category" className="bg-white">
+                                <SelectValue placeholder="Selecione a categoria" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="swiss_machining">Usinagem Suíça (Swiss-type)</SelectItem>
+                                <SelectItem value="cnc_turning">Torno CNC Convencional</SelectItem>
+                                <SelectItem value="injection_molding">Injeção Plástica</SelectItem>
+                                <SelectItem value="3d_printing">Impressão 3D Industrial</SelectItem>
+                                <SelectItem value="other">Outros Processos</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
-                <div className="space-y-4 pt-4 border-t">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <div className="space-y-2">
+                        <Label htmlFor="annualVolume">Volume Anual Estimado</Label>
+                        <div className="relative">
+                            <Input id="annualVolume" name="annualVolume" type="number" value={formData.annualVolume} onChange={handleChange} className="pl-8" />
+                            <Settings className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground opacity-50" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="stockCoverageMonths">Cobertura de Estoque (Meses)</Label>
+                        <Input id="stockCoverageMonths" name="stockCoverageMonths" type="number" value={formData.stockCoverageMonths} onChange={handleChange} />
+                    </div>
+                </div>
+
+                <div className="space-y-4 pt-6 border-t">
+                    <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
                         <Plane className="w-4 h-4" /> Cenário de Importação (USD)
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -74,35 +114,31 @@ export function TCOForm({ onCalculate }: TCOFormProps) {
                             <Input id="importFreight" name="importFreight" type="number" value={formData.importFreight} onChange={handleChange} />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="importTaxesPercent">Impostos Totais (%)</Label>
+                            <Label htmlFor="importTaxesPercent">Tarifa Impostos (%)</Label>
                             <Input id="importTaxesPercent" name="importTaxesPercent" type="number" value={formData.importTaxesPercent} onChange={handleChange} />
                         </div>
                     </div>
                 </div>
 
-                <div className="space-y-4 pt-4 border-t">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <div className="space-y-4 pt-6 border-t">
+                    <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground/80 flex items-center gap-2">
                         <Globe className="w-4 h-4" /> Logística & Financeiro
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="exchangeRate">Câmbio (R$/USD)</Label>
+                            <Label htmlFor="exchangeRate">Câmbio Base (R$/USD)</Label>
                             <Input id="exchangeRate" name="exchangeRate" type="number" step="0.01" value={formData.exchangeRate} onChange={handleChange} />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="importLeadTimeDays">Lead Time Global (Dias)</Label>
+                            <Label htmlFor="importLeadTimeDays">Lead Time Total (Dias)</Label>
                             <Input id="importLeadTimeDays" name="importLeadTimeDays" type="number" value={formData.importLeadTimeDays} onChange={handleChange} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="stockCoverageMonths">Meses de Estoque Atual</Label>
-                            <Input id="stockCoverageMonths" name="stockCoverageMonths" type="number" value={formData.stockCoverageMonths} onChange={handleChange} />
                         </div>
                     </div>
                 </div>
 
-                <Button className="w-full py-6 text-lg gap-2" onClick={() => onCalculate(formData)}>
+                <Button className="w-full py-7 text-lg gap-2 shadow-xl shadow-primary/20 font-black uppercase tracking-widest" onClick={() => onCalculate(formData)}>
                     <Calculator className="w-5 h-5" />
-                    Calcular ROI de Nacionalização
+                    Gerar Simulação de TCO
                 </Button>
             </CardContent>
         </Card>

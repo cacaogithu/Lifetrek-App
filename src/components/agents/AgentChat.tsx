@@ -191,46 +191,34 @@ const AGENT_CONFIGS: Record<AgentType, AgentConfig> = {
     style Scoring fill:#e8f5e9
     style Output fill:#fce4ec
     style Tools fill:#f3e5f5`,
-        systemPrompt: `You are the Brand Analyst for Lifetrek Medical, a precision medical device manufacturing company in Brazil.
+        systemPrompt: `You are the Lead Brand & Quality Analyst for Lifetrek Medical, a premium precision manufacturer certified under ISO 13485 and ANVISA.
 
 ## ROLE
-You are a strict brand quality analyst who reviews content for quality and brand alignment. You have access to tools to help you analyze, score, and improve content.
+You are the ultimate guardian of brand quality and regulatory credibility. Your mission is to ensure every piece of content published reflects Lifetrek's commitment to "Engineering Excellence for Healthcare Innovation."
 
 ## BRAND IDENTITY
-- **Company**: Lifetrek Medical
-- **Tagline**: "Engineering Excellence for Healthcare Innovation"
-- **Brand Essence**: Precision • Quality • Partnership
-- **Primary Color**: #004F8F (Corporate Blue)
-- **Accent Colors**: #1A7A3E (Innovation Green), #F07818 (Energy Orange)
-- **Tone**: Professional, authoritative, technically precise, confident, quality-focused
-- **Certifications**: ISO 13485, ANVISA, FDA Registered
+- Company: Lifetrek Medical
+- Brand Essence: Precision • Quality • Partnership
+- Key Differentiators: 30+ years experience, Citizen Swiss CNC technology, Class 10,000 Cleanrooms, Mirror Finish Electropolishing.
+- Tone: Professional, authoritative, technically precise, confident.
 
 ## QUALITY CRITERIA
-1. **Content Quality (30 points)**: Clear value proposition, specific insights, no generic corporate speak
-2. **Structure (25 points)**: Strong hook, logical flow, clear CTA
-3. **Brand Alignment (25 points)**: Reflects expertise, appropriate technical language
-4. **Engagement Potential (20 points)**: Would stop scroll, encourages sharing
+1. **Regulatory Safety (Critical)**: Content must never suggest non-compliance or lack of traceability. 
+2. **Technical Precision**: Use correct terminology (mícrons, Ra, tolerances, CNC multi-axis).
+3. **Value Clarity**: Does the content clearly show a benefit for the ICP? 
+4. **Brand Voice**: Is it confident without being arrogant? Professional without being cold?
 
-## SCORING GUIDELINES
-- 90-100: Excellent - Publish immediately
-- 75-89: Good - Minor tweaks acceptable
-- 60-74: Acceptable - Some improvements needed
-- 0-59: Poor - Needs regeneration
+## SCORING SYSTEM (0-100)
+- 90-100: Lead Level - Exceptional quality, ready for high-stakes LinkedIn visibility.
+- 75-89: Compliant - Good quality, minor technical or tone adjustments suggested.
+- 60-74: Needs Rework - Significant brand or quality gaps.
+- <60: Non-Compliant - Fails to represent Lifetrek's standards.
 
 ## INSTRUCTIONS
-1. When asked to review content, use the analyze_content and score_quality tools
-2. Always provide specific, actionable feedback
-3. Reference brand guidelines when pointing out issues
-4. Be critical but constructive
-5. When comparing content, use compare_versions tool
-
-## AVAILABLE TOOLS
-- analyze_content: Deep analysis of content quality
-- score_quality: Generate quality score with breakdown
-- check_brand_guidelines: Verify brand compliance
-- suggest_improvements: Generate improvement suggestions
-- compare_versions: Compare two content versions
-- get_brand_guidelines: Retrieve brand guidelines`
+1. Use analyze_content and score_quality for every review.
+2. Be a strict critic. If a hook is weak or a CTA is pushy, point it out.
+3. Reference specific brand differentiators (e.g., "Mentioning our ISO 7 cleanroom would strengthen this proof point").
+4. Always suggest one specific technical term or metric to increase credibility.`
     },
     'copywriter': {
         name: 'Copywriter',
@@ -371,49 +359,94 @@ You are a strict brand quality analyst who reviews content for quality and brand
     style Generation fill:#fce4ec
     style Output fill:#f3e5f5
     style Tools fill:#ede7f6`,
-        systemPrompt: `You are an expert LinkedIn Copywriter for Lifetrek Medical, a precision medical device manufacturing company.
+        systemPrompt: `You are the Lead LinkedIn Copywriter for Lifetrek Medical, a Brazilian ISO 13485 and ANVISA-approved precision manufacturer of medical, dental, and veterinary components.
 
 ## ROLE
-You write compelling, high-converting LinkedIn content that drives engagement and generates leads. You have access to tools to help you generate, rewrite, and optimize content.
+Write high-performing LinkedIn content in three formats:
+- TEXT_POST (only text)
+- SINGLE_IMAGE (1 image + caption)
+- CAROUSEL (multi-slide)
+
+Your content must:
+- Attract the right people,
+- Deliver real, concrete value,
+- Drive low-friction actions (DMs, comments, clicks, email capture).
 
 ## BRAND VOICE
-- **Company**: Lifetrek Medical
-- **Tone**: Professional but approachable, technically credible, confident
-- **Language**: Portuguese Brazilian (PT-BR) unless otherwise specified
-- **Style**: Benefit-focused, specific, actionable
+- Company: Lifetrek Medical
+- Tone: Professional but approachable, technically credible, confident
+- Language: Portuguese Brazilian (pt-BR) by default
+- Style: Benefit-focused, specific, actionable, no fluff
 
-## VALUE PROPOSITION FRAMEWORK (Alex Hormozi)
-- **Dream Outcome**: What the client ultimately wants
-- **Perceived Probability**: Proof points that build confidence
-- **Time Delay**: Speed to value
-- **Effort/Sacrifice**: Ease of working with us
+## CORE STRUCTURE (MANDATORY)
+Every piece of content, regardless of format, MUST follow:
 
-## HOOK TYPES (Killer Hooks Playbook)
-1. **Question Hook**: "Still struggling with..."
-2. **Challenge Hook**: "Most manufacturers fail at..."
-3. **Number Hook**: "3 ways to..."
-4. **Result Hook**: "How we helped X achieve Y"
-5. **Mistake Hook**: "The #1 mistake in..."
+1) CALLOUT (HOOK)
+   - Make the ICP think “isso é pra mim”.
+   - Use one of the killer hook types:
+     • Question: “Ainda depende de importação para…?”
+     • Challenge: “A maioria dos fabricantes erra ao…”
+     • Number: “3 formas de reduzir…”
+     • Result: “Como um OEM reduziu o lead time de X para Y…”
+     • Mistake: “O erro nº1 em DFM para implantes é…”
 
-## SLIDE STRUCTURE
-- **Hook Slide**: Attention-grabbing (max 60 chars headline)
-- **Content Slides**: Value delivery (max 70 chars headline, max 140 chars body)
-- **CTA Slide**: Clear call to action
+2) VALUE (APPLY HORMOZI VALUE EQUATION)
+   Explicitly use the Value Equation in the body:
+   - Dream Outcome: highlight the ideal result (less lead time, fewer NCs, less inventory, more regulatory safety).
+   - Perceived Probability: add proof (ISO 13485, ANVISA, CMM, Swiss CNC, client logos/cases).
+   - Time Delay: show speed (local production lead time vs import, prototyping speed).
+   - Effort/Sacrifice: show what becomes easier (less firefighting with suppliers, less rework, simpler audits).
+
+3) CTA (LOW-FRICTION CALL TO ACTION)
+   - Always end with ONE clear, simple next step:
+     • Comment a keyword to receive a checklist/planilha/PDF,
+     • DM a keyword for a case or template,
+     • Click a link (if provided).
+   - CTAs should be value-led (“get more help”) not pushy (“buy now”).
+
+## FORMATS
+
+1) TEXT_POST
+- Use when: concept, opinion, framework, or story doesn’t need a visual.
+- Structure:
+  • 1–2 lines: strong hook with avatar + payoff.
+  • 3–7 short paragraphs: deliver one narrow insight, framework, checklist, or mini-case.
+  • 1 line: CTA.
+
+2) SINGLE_IMAGE
+- You must output:
+  • image_headline: max 60 characters, to go ON the image (strong hook).
+  • caption: full text (hook → value → CTA).
+- Use when: there is a strong visual (machine, CMM, part, cleanroom, simple chart).
+- The image carries the hook; the caption deepens the value and contains the CTA.
+
+3) CAROUSEL
+- Use when: teaching a multi-step process, framework, comparison, or case.
+- Structure:
+  • Slide 1 (Hook Slide):
+    - Headline: max 60 characters.
+    - Must include avatar callout + implied benefit.
+  • Content Slides (Slides 2–N):
+    - Title: max 70 characters.
+    - Body: max 140 characters.
+    - ONE key idea per slide.
+    - Focus on one pillar per slide (Supply Chain, Quality/Reg, DFM/Engineering, Finance/Inventory).
+  • Final Slide (CTA Slide):
+    - Single, clear CTA tied to the topic (e.g., comment a keyword to get a checklist, DM for case, link to resource).
+
+## STYLE RULES
+- Always write in active voice.
+- Prefer short sentences and concrete language.
+- Never mention features (Citizen M32, CMM, ISO 7) without attaching a client-relevant benefit.
+- Sound like a senior engineer/BD who understands medtech reality, not a hyped marketer.
+- Every piece of content must be independently valuable, even if the reader never becomes a client.
 
 ## INSTRUCTIONS
-1. Use generate_carousel_copy for full carousel creation
-2. Use generate_hooks for A/B testing different openings
-3. Always use active voice and power words
-4. Focus on benefits over features
-5. Apply Hormozi framework for high-conversion copy
-
-## AVAILABLE TOOLS
-- generate_carousel_copy: Create complete carousel content
-- generate_hooks: Generate multiple hook options
-- rewrite_content: Rewrite with different tone
-- generate_caption: Create captions with hashtags
-- apply_hormozi_framework: Apply value proposition framework
-- translate_content: Translate between PT-BR and EN`
+1. When asked for content, first use generate_hooks to explore options.
+2. Apply the Hormozi Value Equation explicitly.
+3. For Carousels, use generate_carousel_copy.
+4. For Single Image or Carousels, use generate_caption for the LinkedIn part.
+5. Use active voice and ensure everything is in pt-BR by default.`
     },
     'designer': {
         name: 'Designer',
@@ -546,53 +579,36 @@ You write compelling, high-converting LinkedIn content that drives engagement an
     style Assets fill:#fce4ec
     style Output fill:#f3e5f5
     style Tools fill:#c8e6c9`,
-        systemPrompt: `You are a Visual Designer for Lifetrek Medical, specializing in B2B LinkedIn content.
+        systemPrompt: `You are the Lead Visual Designer for Lifetrek Medical, specialized in B2B technical aesthetic and precision manufacturing.
 
 ## ROLE
-You create visual concepts and image prompts for professional LinkedIn carousels and posts. You have access to tools to help you design, search assets, and optimize visuals.
+You translate complex engineering concepts into "100k-aesthetic" visual prompts. Your goal is to make Lifetrek's LinkedIn presence look as precise and high-end as our products.
 
 ## BRAND VISUAL IDENTITY
-- **Primary Color**: #004F8F (Corporate Blue)
-- **Innovation Green**: #1A7A3E
-- **Energy Orange**: #F07818
-- **Typography**: Inter font family, clean modern sans-serif
-- **Logo**: "LM" mark in bottom-right corner
+- Corporate Blue: #004F8F (Used for trust and stability)
+- Innovation Green: #1A7A3E (Used for technical advancement)
+- Energy Orange: #F07818 (Used for highlighting CTAs or key metrics)
+- Typography: Inter Font Family (Modern, clean, legible)
 
-## PHOTOGRAPHY STYLE
-- **Characteristics**: Clean, well-lit, high-end professional
-- **Lighting**: Bright, clean, professional
-- **Color Treatment**: Natural tones with slight blue tint
-- **Subjects**: CNC machines, quality control, cleanroom, precision engineering
-
-## DESIGN PRINCIPLES
-1. **Precision First**: Clean, exact, technical aesthetic
-2. **Modern Minimalism**: Focus on content, reduce noise
-3. **Premium Quality**: Elevated, sophisticated feel
-4. **Technical Excellence**: Engineering-inspired design
-
-## IMAGE PROMPT STRUCTURE
-Always include:
-- Subject/scene description
-- Lighting and mood
-- Color palette reference
-- Technical/medical context
-- Aspect ratio (1:1 for LinkedIn)
-- Text placement considerations
+## AESTHETIC PRINCIPLES
+1. **Precisionism**: Every layout must feel balanced and intentional.
+2. **Macro Focus**: Use high-detail "macro" shots of precision components (mirror finishes, perfect threads).
+3. **Environment**: Industrial-Chic. Use cleanroom ISO 7 lighting (bright, clinical, premium) or high-tech machine shop backgrounds (dark, bokeh-effect on multi-axis machines).
+4. **Technical Overlays**: Use subtle UI-inspired overlays (milli-meter indicators, graph lines) to reinforce the "Engineering" vibe.
 
 ## INSTRUCTIONS
-1. Use generate_image_prompt for AI image generation
-2. Use search_company_assets before generating new images
-3. Follow brand color guidelines strictly
-4. Optimize all designs for LinkedIn 1:1 format
-5. Consider text overlay placement in visual designs
+1. Use generate_image_prompt to create detailed Midjourney/Vertex-style prompts.
+2. Always suggest a "Visual Hook" (e.g., "A reflection of a surgeon's mask on a mirror-polished orthopedic screw").
+3. For Carousels, suggest a color progression that guide the eye from Hook (high contrast) to CTA (actionable orange).
+4. Follow the Lifetrek Brand Book strictly: never use generic stock photos. Suggest prompts that describe real Lifetrek assets (Citizen CNCs, ZEISS CMM).`
 
 ## AVAILABLE TOOLS
 - generate_image_prompt: Create AI image generation prompts
 - suggest_layout: Recommend slide layouts
-- recommend_colors: Get brand-compliant color suggestions
-- search_company_assets: Search company image library
-- create_slide_mockup: Create wireframe mockups
-- optimize_for_linkedin: Optimize designs for LinkedIn`
+- recommend_colors: Get brand - compliant color suggestions
+    - search_company_assets: Search company image library
+        - create_slide_mockup: Create wireframe mockups
+            - optimize_for_linkedin: Optimize designs for LinkedIn`
     }
 };
 
@@ -632,439 +648,438 @@ export function AgentChat({ agentType }: AgentChatProps) {
             id: 'welcome',
             role: 'assistant',
             content: `Hello! I'm the **${config.name}** for Lifetrek Medical.\n\n${config.description}.\n\n**I can help you with:**\n${config.capabilities.map(c => `- ${c}`).join('\n')}\n\nI have **${config.tools.length} tools** available to assist you. Check the "Info" tab to see my architecture and available tools.\n\nHow can I assist you today?`,
-            timestamp: new Date()
+timestamp: new Date()
         };
-        setMessages([welcomeMessage]);
+setMessages([welcomeMessage]);
     }, [agentType]);
 
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [messages]);
+useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+}, [messages]);
 
-    const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
-        const userMessage: Message = {
-            id: Date.now().toString(),
+    const userMessage: Message = {
+        id: Date.now().toString(),
+        role: 'user',
+        content: input.trim(),
+        timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+        const conversationHistory = messages
+            .filter(m => m.id !== 'welcome')
+            .map(m => ({
+                role: m.role,
+                content: m.content
+            }));
+
+        conversationHistory.push({
             role: 'user',
-            content: input.trim(),
+            content: userMessage.content
+        });
+
+        const { data, error } = await supabase.functions.invoke('agent-chat', {
+            body: {
+                agentType,
+                messages: conversationHistory,
+                systemPrompt: activeSystemPrompt,
+                tools: config.tools
+            }
+        });
+
+        if (error) throw error;
+
+        const assistantMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: data.response || 'I apologize, but I was unable to generate a response.',
             timestamp: new Date()
         };
 
-        setMessages(prev => [...prev, userMessage]);
-        setInput('');
-        setIsLoading(true);
+        setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+        console.error('Chat error:', error);
+        toast.error('Failed to get response from agent');
 
-        try {
-            const conversationHistory = messages
-                .filter(m => m.id !== 'welcome')
-                .map(m => ({
-                    role: m.role,
-                    content: m.content
-                }));
+        const errorMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: 'I apologize, but I encountered an error. Please try again.',
+            timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
+    } finally {
+        setIsLoading(false);
+    }
+};
 
-            conversationHistory.push({
-                role: 'user',
-                content: userMessage.content
-            });
+const handleCopy = async (content: string, id: string) => {
+    await navigator.clipboard.writeText(content);
+    setCopiedId(id);
+    toast.success('Copied to clipboard');
+    setTimeout(() => setCopiedId(null), 2000);
+};
 
-            const { data, error } = await supabase.functions.invoke('agent-chat', {
-                body: {
-                    agentType,
-                    messages: conversationHistory,
-                    systemPrompt: activeSystemPrompt,
-                    tools: config.tools
-                }
-            });
+const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+    }
+};
 
-            if (error) throw error;
+const handleStartEditPrompt = () => {
+    setEditedPrompt(activeSystemPrompt);
+    setIsEditingPrompt(true);
+    setShowSystemPrompt(true);
+};
 
-            const assistantMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                role: 'assistant',
-                content: data.response || 'I apologize, but I was unable to generate a response.',
-                timestamp: new Date()
-            };
-
-            setMessages(prev => [...prev, assistantMessage]);
-        } catch (error) {
-            console.error('Chat error:', error);
-            toast.error('Failed to get response from agent');
-
-            const errorMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                role: 'assistant',
-                content: 'I apologize, but I encountered an error. Please try again.',
-                timestamp: new Date()
-            };
-            setMessages(prev => [...prev, errorMessage]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleCopy = async (content: string, id: string) => {
-        await navigator.clipboard.writeText(content);
-        setCopiedId(id);
-        toast.success('Copied to clipboard');
-        setTimeout(() => setCopiedId(null), 2000);
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
-    };
-
-    const handleStartEditPrompt = () => {
-        setEditedPrompt(activeSystemPrompt);
-        setIsEditingPrompt(true);
-        setShowSystemPrompt(true);
-    };
-
-    const handleSavePrompt = () => {
-        if (editedPrompt.trim()) {
-            saveCustomPrompt(agentType, editedPrompt.trim());
-            setCustomPrompt(editedPrompt.trim());
-            setIsEditingPrompt(false);
-            toast.success('System prompt saved');
-        }
-    };
-
-    const handleResetPrompt = () => {
-        deleteCustomPrompt(agentType);
-        setCustomPrompt(null);
-        setEditedPrompt('');
+const handleSavePrompt = () => {
+    if (editedPrompt.trim()) {
+        saveCustomPrompt(agentType, editedPrompt.trim());
+        setCustomPrompt(editedPrompt.trim());
         setIsEditingPrompt(false);
-        toast.success('System prompt reset to default');
-    };
+        toast.success('System prompt saved');
+    }
+};
 
-    const handleCancelEdit = () => {
-        setIsEditingPrompt(false);
-        setEditedPrompt('');
-    };
+const handleResetPrompt = () => {
+    deleteCustomPrompt(agentType);
+    setCustomPrompt(null);
+    setEditedPrompt('');
+    setIsEditingPrompt(false);
+    toast.success('System prompt reset to default');
+};
 
-    return (
-        <div className="flex flex-col h-[calc(100vh-8rem)]">
-            {/* Header */}
-            <Card className="mb-4">
-                <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <Avatar className={`h-12 w-12 ${config.color}`}>
-                                <AvatarFallback className="text-white font-bold text-lg">
-                                    {config.avatar}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <CardTitle className="flex items-center gap-2">
-                                    {config.name}
-                                    <Badge variant="outline" className="text-xs">
-                                        <Sparkles className="w-3 h-3 mr-1" />
-                                        AI Agent
-                                    </Badge>
-                                    <Badge variant="secondary" className="text-xs">
-                                        <Wrench className="w-3 h-3 mr-1" />
-                                        {config.tools.length} Tools
-                                    </Badge>
-                                </CardTitle>
-                                <CardDescription>{config.description}</CardDescription>
-                            </div>
+const handleCancelEdit = () => {
+    setIsEditingPrompt(false);
+    setEditedPrompt('');
+};
+
+return (
+    <div className="flex flex-col h-[calc(100vh-8rem)]">
+        {/* Header */}
+        <Card className="mb-4">
+            <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Avatar className={`h-12 w-12 ${config.color}`}>
+                            <AvatarFallback className="text-white font-bold text-lg">
+                                {config.avatar}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <CardTitle className="flex items-center gap-2">
+                                {config.name}
+                                <Badge variant="outline" className="text-xs">
+                                    <Sparkles className="w-3 h-3 mr-1" />
+                                    AI Agent
+                                </Badge>
+                                <Badge variant="secondary" className="text-xs">
+                                    <Wrench className="w-3 h-3 mr-1" />
+                                    {config.tools.length} Tools
+                                </Badge>
+                            </CardTitle>
+                            <CardDescription>{config.description}</CardDescription>
                         </div>
-                        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'chat' | 'info')}>
-                            <TabsList>
-                                <TabsTrigger value="chat" className="gap-1">
-                                    <Bot className="w-4 h-4" />
-                                    Chat
-                                </TabsTrigger>
-                                <TabsTrigger value="info" className="gap-1">
-                                    <Info className="w-4 h-4" />
-                                    Info
-                                </TabsTrigger>
-                            </TabsList>
-                        </Tabs>
                     </div>
-                </CardHeader>
-            </Card>
+                    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'chat' | 'info')}>
+                        <TabsList>
+                            <TabsTrigger value="chat" className="gap-1">
+                                <Bot className="w-4 h-4" />
+                                Chat
+                            </TabsTrigger>
+                            <TabsTrigger value="info" className="gap-1">
+                                <Info className="w-4 h-4" />
+                                Info
+                            </TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
+            </CardHeader>
+        </Card>
 
-            {activeTab === 'chat' ? (
-                /* Chat Interface */
-                <Card className="flex-1 flex flex-col overflow-hidden">
-                    <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-                        <ScrollArea className="flex-1 p-4">
-                            <div className="space-y-4">
-                                {messages.map((message) => (
-                                    <div
-                                        key={message.id}
-                                        className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                                    >
-                                        {message.role === 'assistant' && (
-                                            <Avatar className={`h-8 w-8 ${config.color} shrink-0`}>
-                                                <AvatarFallback className="text-white text-xs font-bold">
-                                                    {config.avatar}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                        )}
-
-                                        <div
-                                            className={`group relative max-w-[80%] rounded-lg px-4 py-3 ${
-                                                message.role === 'user'
-                                                    ? 'bg-primary text-primary-foreground'
-                                                    : 'bg-muted'
-                                            }`}
-                                        >
-                                            <div className="prose prose-sm dark:prose-invert max-w-none">
-                                                <ReactMarkdown>{message.content}</ReactMarkdown>
-                                            </div>
-
-                                            {message.role === 'assistant' && message.id !== 'welcome' && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="absolute -right-10 top-0 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
-                                                    onClick={() => handleCopy(message.content, message.id)}
-                                                >
-                                                    {copiedId === message.id ? (
-                                                        <Check className="h-4 w-4 text-green-500" />
-                                                    ) : (
-                                                        <Copy className="h-4 w-4" />
-                                                    )}
-                                                </Button>
-                                            )}
-                                        </div>
-
-                                        {message.role === 'user' && (
-                                            <Avatar className="h-8 w-8 bg-slate-600 shrink-0">
-                                                <AvatarFallback className="text-white text-xs">
-                                                    <User className="h-4 w-4" />
-                                                </AvatarFallback>
-                                            </Avatar>
-                                        )}
-                                    </div>
-                                ))}
-
-                                {isLoading && (
-                                    <div className="flex gap-3 justify-start">
+        {activeTab === 'chat' ? (
+            /* Chat Interface */
+            <Card className="flex-1 flex flex-col overflow-hidden">
+                <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+                    <ScrollArea className="flex-1 p-4">
+                        <div className="space-y-4">
+                            {messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                                >
+                                    {message.role === 'assistant' && (
                                         <Avatar className={`h-8 w-8 ${config.color} shrink-0`}>
                                             <AvatarFallback className="text-white text-xs font-bold">
                                                 {config.avatar}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <div className="bg-muted rounded-lg px-4 py-3">
-                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div ref={scrollRef} />
-                            </div>
-                        </ScrollArea>
-
-                        <div className="p-4 border-t bg-background">
-                            <div className="flex gap-2">
-                                <Textarea
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    placeholder={`Message ${config.name}...`}
-                                    className="min-h-[60px] max-h-[120px] resize-none"
-                                    disabled={isLoading}
-                                />
-                                <Button
-                                    onClick={handleSend}
-                                    disabled={!input.trim() || isLoading}
-                                    size="icon"
-                                    className="h-[60px] w-[60px] shrink-0"
-                                >
-                                    {isLoading ? (
-                                        <Loader2 className="h-5 w-5 animate-spin" />
-                                    ) : (
-                                        <Send className="h-5 w-5" />
                                     )}
-                                </Button>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-2">
-                                Press Enter to send, Shift+Enter for new line
-                            </p>
-                        </div>
-                    </CardContent>
-                </Card>
-            ) : (
-                /* Info Panel */
-                <div className="flex-1 overflow-auto space-y-4">
-                    {/* Architecture Diagram */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <GitBranch className="w-5 h-5" />
-                                Architecture
-                            </CardTitle>
-                            <CardDescription>
-                                Visual representation of the agent's processing pipeline
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg overflow-x-auto">
-                                <Mermaid chart={config.architectureDiagram} />
-                            </div>
-                        </CardContent>
-                    </Card>
 
-                    {/* Tools */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Wrench className="w-5 h-5" />
-                                Available Tools ({config.tools.length})
-                            </CardTitle>
-                            <CardDescription>
-                                Functions the agent can use to accomplish tasks
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            {config.tools.map((tool, index) => (
-                                <Collapsible key={index}>
-                                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors">
-                                        <div className="flex items-center gap-2">
-                                            <Code className="w-4 h-4 text-blue-500" />
-                                            <span className="font-mono text-sm font-medium">{tool.name}</span>
+                                    <div
+                                        className={`group relative max-w-[80%] rounded-lg px-4 py-3 ${message.role === 'user'
+                                            ? 'bg-primary text-primary-foreground'
+                                            : 'bg-muted'
+                                            }`}
+                                    >
+                                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                                            <ReactMarkdown>{message.content}</ReactMarkdown>
                                         </div>
-                                        <ChevronDown className="w-4 h-4" />
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                                        <p className="text-sm text-muted-foreground mb-3">{tool.description}</p>
-                                        <div className="space-y-2">
-                                            <p className="text-xs font-medium text-muted-foreground uppercase">Parameters:</p>
-                                            {tool.parameters.map((param, pIndex) => (
-                                                <div key={pIndex} className="flex items-start gap-2 text-sm pl-2 border-l-2 border-muted">
-                                                    <code className="text-xs bg-muted px-1 rounded">{param.name}</code>
-                                                    <span className="text-muted-foreground">
-                                                        ({param.type}){param.required && <span className="text-red-500">*</span>}
-                                                    </span>
-                                                    <span className="text-xs text-muted-foreground">- {param.description}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </CollapsibleContent>
-                                </Collapsible>
-                            ))}
-                        </CardContent>
-                    </Card>
 
-                    {/* System Prompt */}
-                    <Card>
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <FileText className="w-5 h-5" />
-                                        System Prompt
-                                        {hasCustomPrompt && (
-                                            <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
-                                                Customized
-                                            </Badge>
-                                        )}
-                                    </CardTitle>
-                                    <CardDescription>
-                                        The instructions that define this agent's behavior
-                                    </CardDescription>
-                                </div>
-                                <div className="flex gap-2">
-                                    {!isEditingPrompt && (
-                                        <Button variant="outline" size="sm" onClick={handleStartEditPrompt}>
-                                            <Pencil className="w-4 h-4 mr-1" />
-                                            Edit
-                                        </Button>
-                                    )}
-                                    {hasCustomPrompt && !isEditingPrompt && (
-                                        <Button variant="outline" size="sm" onClick={handleResetPrompt}>
-                                            <RotateCcw className="w-4 h-4 mr-1" />
-                                            Reset
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            {isEditingPrompt ? (
-                                <div className="space-y-3">
-                                    <Textarea
-                                        value={editedPrompt}
-                                        onChange={(e) => setEditedPrompt(e.target.value)}
-                                        className="min-h-[400px] font-mono text-xs"
-                                        placeholder="Enter custom system prompt..."
-                                    />
-                                    <div className="flex justify-between items-center">
-                                        <p className="text-xs text-muted-foreground">
-                                            {editedPrompt.length} characters
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <Button variant="outline" size="sm" onClick={handleCancelEdit}>
-                                                Cancel
-                                            </Button>
-                                            <Button size="sm" onClick={handleSavePrompt}>
-                                                <Save className="w-4 h-4 mr-1" />
-                                                Save Prompt
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <Collapsible open={showSystemPrompt} onOpenChange={setShowSystemPrompt}>
-                                    <CollapsibleTrigger asChild>
-                                        <Button variant="outline" className="w-full justify-between">
-                                            {showSystemPrompt ? 'Hide System Prompt' : 'Show System Prompt'}
-                                            <ChevronDown className={`w-4 h-4 transition-transform ${showSystemPrompt ? 'rotate-180' : ''}`} />
-                                        </Button>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="mt-3">
-                                        <div className="relative">
+                                        {message.role === 'assistant' && message.id !== 'welcome' && (
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="absolute top-2 right-2 h-8 w-8"
-                                                onClick={() => handleCopy(activeSystemPrompt, 'system-prompt')}
+                                                className="absolute -right-10 top-0 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                                                onClick={() => handleCopy(message.content, message.id)}
                                             >
-                                                {copiedId === 'system-prompt' ? (
+                                                {copiedId === message.id ? (
                                                     <Check className="h-4 w-4 text-green-500" />
                                                 ) : (
                                                     <Copy className="h-4 w-4" />
                                                 )}
                                             </Button>
-                                            <pre className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg overflow-x-auto text-xs whitespace-pre-wrap font-mono">
-                                                {activeSystemPrompt}
-                                            </pre>
-                                        </div>
-                                    </CollapsibleContent>
-                                </Collapsible>
-                            )}
-                        </CardContent>
-                    </Card>
+                                        )}
+                                    </div>
 
-                    {/* Capabilities */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Sparkles className="w-5 h-5" />
-                                Capabilities
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <ul className="space-y-2">
-                                {config.capabilities.map((capability, index) => (
-                                    <li key={index} className="flex items-center gap-2 text-sm">
-                                        <div className={`w-2 h-2 rounded-full ${config.color}`} />
-                                        {capability}
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
-        </div>
-    );
+                                    {message.role === 'user' && (
+                                        <Avatar className="h-8 w-8 bg-slate-600 shrink-0">
+                                            <AvatarFallback className="text-white text-xs">
+                                                <User className="h-4 w-4" />
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    )}
+                                </div>
+                            ))}
+
+                            {isLoading && (
+                                <div className="flex gap-3 justify-start">
+                                    <Avatar className={`h-8 w-8 ${config.color} shrink-0`}>
+                                        <AvatarFallback className="text-white text-xs font-bold">
+                                            {config.avatar}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="bg-muted rounded-lg px-4 py-3">
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div ref={scrollRef} />
+                        </div>
+                    </ScrollArea>
+
+                    <div className="p-4 border-t bg-background">
+                        <div className="flex gap-2">
+                            <Textarea
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                placeholder={`Message ${config.name}...`}
+                                className="min-h-[60px] max-h-[120px] resize-none"
+                                disabled={isLoading}
+                            />
+                            <Button
+                                onClick={handleSend}
+                                disabled={!input.trim() || isLoading}
+                                size="icon"
+                                className="h-[60px] w-[60px] shrink-0"
+                            >
+                                {isLoading ? (
+                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                ) : (
+                                    <Send className="h-5 w-5" />
+                                )}
+                            </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                            Press Enter to send, Shift+Enter for new line
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
+        ) : (
+            /* Info Panel */
+            <div className="flex-1 overflow-auto space-y-4">
+                {/* Architecture Diagram */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <GitBranch className="w-5 h-5" />
+                            Architecture
+                        </CardTitle>
+                        <CardDescription>
+                            Visual representation of the agent's processing pipeline
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg overflow-x-auto">
+                            <Mermaid chart={config.architectureDiagram} />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Tools */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Wrench className="w-5 h-5" />
+                            Available Tools ({config.tools.length})
+                        </CardTitle>
+                        <CardDescription>
+                            Functions the agent can use to accomplish tasks
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        {config.tools.map((tool, index) => (
+                            <Collapsible key={index}>
+                                <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors">
+                                    <div className="flex items-center gap-2">
+                                        <Code className="w-4 h-4 text-blue-500" />
+                                        <span className="font-mono text-sm font-medium">{tool.name}</span>
+                                    </div>
+                                    <ChevronDown className="w-4 h-4" />
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                    <p className="text-sm text-muted-foreground mb-3">{tool.description}</p>
+                                    <div className="space-y-2">
+                                        <p className="text-xs font-medium text-muted-foreground uppercase">Parameters:</p>
+                                        {tool.parameters.map((param, pIndex) => (
+                                            <div key={pIndex} className="flex items-start gap-2 text-sm pl-2 border-l-2 border-muted">
+                                                <code className="text-xs bg-muted px-1 rounded">{param.name}</code>
+                                                <span className="text-muted-foreground">
+                                                    ({param.type}){param.required && <span className="text-red-500">*</span>}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground">- {param.description}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        ))}
+                    </CardContent>
+                </Card>
+
+                {/* System Prompt */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="flex items-center gap-2">
+                                    <FileText className="w-5 h-5" />
+                                    System Prompt
+                                    {hasCustomPrompt && (
+                                        <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+                                            Customized
+                                        </Badge>
+                                    )}
+                                </CardTitle>
+                                <CardDescription>
+                                    The instructions that define this agent's behavior
+                                </CardDescription>
+                            </div>
+                            <div className="flex gap-2">
+                                {!isEditingPrompt && (
+                                    <Button variant="outline" size="sm" onClick={handleStartEditPrompt}>
+                                        <Pencil className="w-4 h-4 mr-1" />
+                                        Edit
+                                    </Button>
+                                )}
+                                {hasCustomPrompt && !isEditingPrompt && (
+                                    <Button variant="outline" size="sm" onClick={handleResetPrompt}>
+                                        <RotateCcw className="w-4 h-4 mr-1" />
+                                        Reset
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {isEditingPrompt ? (
+                            <div className="space-y-3">
+                                <Textarea
+                                    value={editedPrompt}
+                                    onChange={(e) => setEditedPrompt(e.target.value)}
+                                    className="min-h-[400px] font-mono text-xs"
+                                    placeholder="Enter custom system prompt..."
+                                />
+                                <div className="flex justify-between items-center">
+                                    <p className="text-xs text-muted-foreground">
+                                        {editedPrompt.length} characters
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                                            Cancel
+                                        </Button>
+                                        <Button size="sm" onClick={handleSavePrompt}>
+                                            <Save className="w-4 h-4 mr-1" />
+                                            Save Prompt
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <Collapsible open={showSystemPrompt} onOpenChange={setShowSystemPrompt}>
+                                <CollapsibleTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-between">
+                                        {showSystemPrompt ? 'Hide System Prompt' : 'Show System Prompt'}
+                                        <ChevronDown className={`w-4 h-4 transition-transform ${showSystemPrompt ? 'rotate-180' : ''}`} />
+                                    </Button>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="mt-3">
+                                    <div className="relative">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="absolute top-2 right-2 h-8 w-8"
+                                            onClick={() => handleCopy(activeSystemPrompt, 'system-prompt')}
+                                        >
+                                            {copiedId === 'system-prompt' ? (
+                                                <Check className="h-4 w-4 text-green-500" />
+                                            ) : (
+                                                <Copy className="h-4 w-4" />
+                                            )}
+                                        </Button>
+                                        <pre className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg overflow-x-auto text-xs whitespace-pre-wrap font-mono">
+                                            {activeSystemPrompt}
+                                        </pre>
+                                    </div>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Capabilities */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Sparkles className="w-5 h-5" />
+                            Capabilities
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-2">
+                            {config.capabilities.map((capability, index) => (
+                                <li key={index} className="flex items-center gap-2 text-sm">
+                                    <div className={`w-2 h-2 rounded-full ${config.color}`} />
+                                    {capability}
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
+            </div>
+        )}
+    </div>
+);
 }

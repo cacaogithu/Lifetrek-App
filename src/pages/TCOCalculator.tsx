@@ -33,26 +33,33 @@ export default function TCOCalculator() {
     const handleCalculate = (data: TCOInputs) => {
         // Core Logic
         // 1. Import Landed Price (BRL)
-        const freightPerUnitBRL = (data.importFreight / (data.annualVolume / 12)) * data.exchangeRate; // Assuming monthly batches
+        const freightPerUnitBRL = (data.importFreight / (data.annualVolume / 10)) * data.exchangeRate; // Weighted freight
         const priceBRL = data.importUnitPrice * data.exchangeRate;
         const totalTaxMult = 1 + (data.importTaxesPercent / 100);
 
-        const importLanded = (priceBRL + (data.importFreight * data.exchangeRate / (data.annualVolume / 10))) * totalTaxMult;
-        // Simplified: (Unit + Weighted Freight) * Taxes
+        const importLanded = (priceBRL + freightPerUnitBRL) * totalTaxMult;
 
-        // 2. Local Price (Lifetrek)
-        // Assume Lifetrek is 15-25% more efficient due to zero import taxes and local logistics
-        const localLanded = importLanded * 0.78;
+        // 2. Local Price (Lifetrek) logic with category deltas
+        // deltas show the typical savings coefficient (Lifetrek vs Import Landed)
+        const deltas = {
+            swiss_machining: 0.78, // 22% savings
+            cnc_turning: 0.85,    // 15% savings
+            injection_molding: 0.90, // 10% savings (too high tooling usually)
+            '3d_printing': 0.70,     // 30% savings vs US/EU specialized shops
+            other: 0.80
+        };
+
+        const savingsMult = deltas[data.category] || 0.80;
+        const localLanded = importLanded * savingsMult;
 
         const annualImportTotal = importLanded * data.annualVolume;
         const annualLocalTotal = localLanded * data.annualVolume;
         const annualSavings = annualImportTotal - annualLocalTotal;
 
         // 3. Capital Released
-        // Capital = Months coverage * Monthly Volume * Landed Cost
         const monthlyVol = data.annualVolume / 12;
         const capitalImport = data.stockCoverageMonths * monthlyVol * importLanded;
-        const capitalLocal = 1 * monthlyVol * localLanded; // Local assumes 1 month or less
+        const capitalLocal = 1.0 * monthlyVol * localLanded; // Local assumes 1 month or less
         const capitalReleased = capitalImport - capitalLocal;
 
         setResults({
@@ -61,9 +68,9 @@ export default function TCOCalculator() {
             annualImportTotal,
             annualLocalTotal,
             annualSavings,
-            leadTimeReduction: data.importLeadTimeDays - 30, // Lifetrek AVG 30-45d
+            leadTimeReduction: data.importLeadTimeDays - 15, // Lifetrek AVG 15-20d for continuous supply
             capitalReleased,
-            savingsPercent: 22 // Based on 0.78 mult
+            savingsPercent: Math.round((1 - savingsMult) * 100)
         });
 
         window.scrollTo({ top: 400, behavior: 'smooth' });
