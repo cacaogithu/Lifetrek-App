@@ -7,11 +7,35 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Loader2, Send, User, Bot, Sparkles, Copy, Check, ChevronDown, Code, Wrench, GitBranch, FileText, Info } from 'lucide-react';
+import { Loader2, Send, User, Bot, Sparkles, Copy, Check, ChevronDown, Code, Wrench, GitBranch, FileText, Info, Pencil, RotateCcw, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import ReactMarkdown from 'react-markdown';
 import Mermaid from './Mermaid';
+
+// Helper to get/set custom prompts from localStorage
+const CUSTOM_PROMPTS_KEY = 'lifetrek_agent_custom_prompts';
+
+function getCustomPrompts(): Record<string, string> {
+    try {
+        const stored = localStorage.getItem(CUSTOM_PROMPTS_KEY);
+        return stored ? JSON.parse(stored) : {};
+    } catch {
+        return {};
+    }
+}
+
+function saveCustomPrompt(agentType: string, prompt: string) {
+    const prompts = getCustomPrompts();
+    prompts[agentType] = prompt;
+    localStorage.setItem(CUSTOM_PROMPTS_KEY, JSON.stringify(prompts));
+}
+
+function deleteCustomPrompt(agentType: string) {
+    const prompts = getCustomPrompts();
+    delete prompts[agentType];
+    localStorage.setItem(CUSTOM_PROMPTS_KEY, JSON.stringify(prompts));
+}
 
 export type AgentType = 'brand-analyst' | 'copywriter' | 'designer';
 
@@ -583,9 +607,24 @@ export function AgentChat({ agentType }: AgentChatProps) {
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'chat' | 'info'>('chat');
     const [showSystemPrompt, setShowSystemPrompt] = useState(false);
+    const [isEditingPrompt, setIsEditingPrompt] = useState(false);
+    const [editedPrompt, setEditedPrompt] = useState('');
+    const [customPrompt, setCustomPrompt] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const config = AGENT_CONFIGS[agentType];
+
+    // Load custom prompt from localStorage on mount
+    useEffect(() => {
+        const saved = getCustomPrompts()[agentType];
+        if (saved) {
+            setCustomPrompt(saved);
+        }
+    }, [agentType]);
+
+    // Get the active system prompt (custom or default)
+    const activeSystemPrompt = customPrompt || config.systemPrompt;
+    const hasCustomPrompt = customPrompt !== null;
 
     useEffect(() => {
         // Add welcome message
@@ -635,7 +674,7 @@ export function AgentChat({ agentType }: AgentChatProps) {
                 body: {
                     agentType,
                     messages: conversationHistory,
-                    systemPrompt: config.systemPrompt,
+                    systemPrompt: activeSystemPrompt,
                     tools: config.tools
                 }
             });
@@ -678,6 +717,34 @@ export function AgentChat({ agentType }: AgentChatProps) {
             e.preventDefault();
             handleSend();
         }
+    };
+
+    const handleStartEditPrompt = () => {
+        setEditedPrompt(activeSystemPrompt);
+        setIsEditingPrompt(true);
+        setShowSystemPrompt(true);
+    };
+
+    const handleSavePrompt = () => {
+        if (editedPrompt.trim()) {
+            saveCustomPrompt(agentType, editedPrompt.trim());
+            setCustomPrompt(editedPrompt.trim());
+            setIsEditingPrompt(false);
+            toast.success('System prompt saved');
+        }
+    };
+
+    const handleResetPrompt = () => {
+        deleteCustomPrompt(agentType);
+        setCustomPrompt(null);
+        setEditedPrompt('');
+        setIsEditingPrompt(false);
+        toast.success('System prompt reset to default');
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditingPrompt(false);
+        setEditedPrompt('');
     };
 
     return (
@@ -890,42 +957,90 @@ export function AgentChat({ agentType }: AgentChatProps) {
                     {/* System Prompt */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <FileText className="w-5 h-5" />
-                                System Prompt
-                            </CardTitle>
-                            <CardDescription>
-                                The instructions that define this agent's behavior
-                            </CardDescription>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <FileText className="w-5 h-5" />
+                                        System Prompt
+                                        {hasCustomPrompt && (
+                                            <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+                                                Customized
+                                            </Badge>
+                                        )}
+                                    </CardTitle>
+                                    <CardDescription>
+                                        The instructions that define this agent's behavior
+                                    </CardDescription>
+                                </div>
+                                <div className="flex gap-2">
+                                    {!isEditingPrompt && (
+                                        <Button variant="outline" size="sm" onClick={handleStartEditPrompt}>
+                                            <Pencil className="w-4 h-4 mr-1" />
+                                            Edit
+                                        </Button>
+                                    )}
+                                    {hasCustomPrompt && !isEditingPrompt && (
+                                        <Button variant="outline" size="sm" onClick={handleResetPrompt}>
+                                            <RotateCcw className="w-4 h-4 mr-1" />
+                                            Reset
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
-                            <Collapsible open={showSystemPrompt} onOpenChange={setShowSystemPrompt}>
-                                <CollapsibleTrigger asChild>
-                                    <Button variant="outline" className="w-full justify-between">
-                                        {showSystemPrompt ? 'Hide System Prompt' : 'Show System Prompt'}
-                                        <ChevronDown className={`w-4 h-4 transition-transform ${showSystemPrompt ? 'rotate-180' : ''}`} />
-                                    </Button>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="mt-3">
-                                    <div className="relative">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="absolute top-2 right-2 h-8 w-8"
-                                            onClick={() => handleCopy(config.systemPrompt, 'system-prompt')}
-                                        >
-                                            {copiedId === 'system-prompt' ? (
-                                                <Check className="h-4 w-4 text-green-500" />
-                                            ) : (
-                                                <Copy className="h-4 w-4" />
-                                            )}
-                                        </Button>
-                                        <pre className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg overflow-x-auto text-xs whitespace-pre-wrap font-mono">
-                                            {config.systemPrompt}
-                                        </pre>
+                            {isEditingPrompt ? (
+                                <div className="space-y-3">
+                                    <Textarea
+                                        value={editedPrompt}
+                                        onChange={(e) => setEditedPrompt(e.target.value)}
+                                        className="min-h-[400px] font-mono text-xs"
+                                        placeholder="Enter custom system prompt..."
+                                    />
+                                    <div className="flex justify-between items-center">
+                                        <p className="text-xs text-muted-foreground">
+                                            {editedPrompt.length} characters
+                                        </p>
+                                        <div className="flex gap-2">
+                                            <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                                                Cancel
+                                            </Button>
+                                            <Button size="sm" onClick={handleSavePrompt}>
+                                                <Save className="w-4 h-4 mr-1" />
+                                                Save Prompt
+                                            </Button>
+                                        </div>
                                     </div>
-                                </CollapsibleContent>
-                            </Collapsible>
+                                </div>
+                            ) : (
+                                <Collapsible open={showSystemPrompt} onOpenChange={setShowSystemPrompt}>
+                                    <CollapsibleTrigger asChild>
+                                        <Button variant="outline" className="w-full justify-between">
+                                            {showSystemPrompt ? 'Hide System Prompt' : 'Show System Prompt'}
+                                            <ChevronDown className={`w-4 h-4 transition-transform ${showSystemPrompt ? 'rotate-180' : ''}`} />
+                                        </Button>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="mt-3">
+                                        <div className="relative">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="absolute top-2 right-2 h-8 w-8"
+                                                onClick={() => handleCopy(activeSystemPrompt, 'system-prompt')}
+                                            >
+                                                {copiedId === 'system-prompt' ? (
+                                                    <Check className="h-4 w-4 text-green-500" />
+                                                ) : (
+                                                    <Copy className="h-4 w-4" />
+                                                )}
+                                            </Button>
+                                            <pre className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg overflow-x-auto text-xs whitespace-pre-wrap font-mono">
+                                                {activeSystemPrompt}
+                                            </pre>
+                                        </div>
+                                    </CollapsibleContent>
+                                </Collapsible>
+                            )}
                         </CardContent>
                     </Card>
 
