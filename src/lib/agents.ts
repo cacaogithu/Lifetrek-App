@@ -96,6 +96,41 @@ export const dispatchResearchJob = async (topic: string, depth: 'deep' | 'compre
 };
 
 /**
+ * Dispatches a Lead Magnet generation job.
+ */
+export const dispatchLeadMagnetJob = async (persona: string, topic: string, templateId: string): Promise<string> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not authenticated");
+
+    console.log("dispatchLeadMagnetJob: Creating job...");
+
+    const { data: job, error: jobError } = await supabase
+        .from('jobs')
+        .insert({
+            job_type: 'generate_lead_magnet',
+            status: 'pending',
+            payload: { persona, topic, templateId },
+            user_id: user.id
+        })
+        .select()
+        .single();
+
+    if (jobError) throw new Error(`Failed to create job: ${jobError.message}`);
+
+    // Invoke Edge Function
+    const { error: invokeError } = await supabase.functions.invoke('generate-lead-magnet', {
+        body: { job_id: job.id, persona, topic, templateId }
+    });
+
+    if (invokeError) {
+        await supabase.from('jobs').update({ status: 'failed', error: 'Invocation failed' }).eq('id', job.id);
+        throw new Error(`Failed to start lead magnet generator: ${invokeError.message}`);
+    }
+
+    return job.id;
+};
+
+/**
  * Fetches the current status and result of a job.
  */
 export const getJobStatus = async (jobId: string) => {

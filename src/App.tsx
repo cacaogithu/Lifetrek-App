@@ -21,6 +21,7 @@ const About = lazy(() => import("./pages/About"));
 const WhatWeDo = lazy(() => import("./pages/WhatWeDo"));
 const Products = lazy(() => import("./pages/Products"));
 const Capabilities = lazy(() => import("./pages/Capabilities"));
+const TCOCalculator = lazy(() => import("./pages/TCOCalculator"));
 const Clients = lazy(() => import("./pages/Clients"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -45,6 +46,7 @@ const AdminBlog = lazy(() => import("./pages/Admin/AdminBlog"));
 const JobMonitor = lazy(() => import("./pages/Admin/JobMonitor"));
 const Research = lazy(() => import("./pages/Admin/Research"));
 const ContentOrchestrator = lazy(() => import("./pages/Admin/ContentOrchestrator"));
+const LeadMagnetStudio = lazy(() => import("./pages/Admin/LeadMagnetStudio"));
 
 // Agent Chat Pages
 const BrandAnalyst = lazy(() => import("./pages/Admin/Agents/BrandAnalyst"));
@@ -91,6 +93,7 @@ const App = () => (
                 <Route path="/what-we-do" element={<WhatWeDo />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/capabilities" element={<Capabilities />} />
+                <Route path="/calc" element={<TCOCalculator />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/assessment" element={<Assessment />} />
@@ -126,6 +129,7 @@ const App = () => (
                 <Route path="jobs" element={<JobMonitor />} />
                 <Route path="research" element={<Research />} />
                 <Route path="orchestrator" element={<ContentOrchestrator />} />
+                <Route path="lead-magnets" element={<LeadMagnetStudio />} />
                 {/* Agent Chat Pages */}
                 <Route path="agents/brand-analyst" element={<BrandAnalyst />} />
                 <Route path="agents/copywriter" element={<Copywriter />} />

@@ -30,7 +30,8 @@ import {
     Bot,
     Palette,
     PenTool,
-    Search
+    Search,
+    Magnet
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -75,6 +76,7 @@ const navStructure: NavEntry[] = [
         items: [
             { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
             { path: "/admin/blog", label: "Blog", icon: FileText },
+            { path: "/admin/lead-magnets", label: "Lead Magnets", icon: Magnet },
             { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
         ]
     },
