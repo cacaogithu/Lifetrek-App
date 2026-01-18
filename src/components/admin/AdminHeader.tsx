@@ -78,12 +78,6 @@ const navStructure: NavEntry[] = [
             { path: "/admin/blog", label: "Blog", icon: FileText },
             { path: "/admin/lead-magnets", label: "Lead Magnets", icon: Magnet },
             { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
-        ]
-    },
-    {
-        label: "Agents",
-        icon: Bot,
-        items: [
             { path: "/admin/agents/brand-analyst", label: "Brand Analyst", icon: Search },
             { path: "/admin/agents/copywriter", label: "Copywriter", icon: PenTool },
             { path: "/admin/agents/designer", label: "Designer", icon: Palette },
