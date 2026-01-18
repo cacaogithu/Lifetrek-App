@@ -46,6 +46,11 @@ const JobMonitor = lazy(() => import("./pages/Admin/JobMonitor"));
 const Research = lazy(() => import("./pages/Admin/Research"));
 const ContentOrchestrator = lazy(() => import("./pages/Admin/ContentOrchestrator"));
 
+// Agent Chat Pages
+const BrandAnalyst = lazy(() => import("./pages/Admin/Agents/BrandAnalyst"));
+const Copywriter = lazy(() => import("./pages/Admin/Agents/Copywriter"));
+const Designer = lazy(() => import("./pages/Admin/Agents/Designer"));
+
 // Public Pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
@@ -121,6 +126,10 @@ const App = () => (
                 <Route path="jobs" element={<JobMonitor />} />
                 <Route path="research" element={<Research />} />
                 <Route path="orchestrator" element={<ContentOrchestrator />} />
+                {/* Agent Chat Pages */}
+                <Route path="agents/brand-analyst" element={<BrandAnalyst />} />
+                <Route path="agents/copywriter" element={<Copywriter />} />
+                <Route path="agents/designer" element={<Designer />} />
               </Route>
             </Routes>
           </BrowserRouter>

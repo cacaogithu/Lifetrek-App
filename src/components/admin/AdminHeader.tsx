@@ -26,7 +26,11 @@ import {
     MessageSquare,
     ChevronDown,
     Building2,
-    Briefcase
+    Briefcase,
+    Bot,
+    Palette,
+    PenTool,
+    Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -72,6 +76,15 @@ const navStructure: NavEntry[] = [
             { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
             { path: "/admin/blog", label: "Blog", icon: FileText },
             { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
+        ]
+    },
+    {
+        label: "Agents",
+        icon: Bot,
+        items: [
+            { path: "/admin/agents/brand-analyst", label: "Brand Analyst", icon: Search },
+            { path: "/admin/agents/copywriter", label: "Copywriter", icon: PenTool },
+            { path: "/admin/agents/designer", label: "Designer", icon: Palette },
         ]
     },
     {

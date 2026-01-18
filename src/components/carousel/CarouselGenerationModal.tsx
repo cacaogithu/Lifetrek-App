@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sparkles, Wand2, Loader2 } from 'lucide-react';
+import { Sparkles, Wand2, Loader2, Zap, Brain, LayoutTemplate } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { StorageImageSelector } from '../admin/StorageImageSelector';
 import { dispatchRepurposeJob, getJobStatus } from '@/lib/agents';
+import { Badge } from '@/components/ui/badge';
 
 interface CarouselGenerationModalProps {
     open: boolean;
@@ -19,10 +20,21 @@ interface CarouselGenerationModalProps {
     onGenerated: (result?: any) => void;
 }
 
+// V1 Template options
+const V1_TEMPLATES = [
+    { value: 'quem-somos', label: 'Quem Somos', description: 'Company introduction' },
+    { value: 'capacidades', label: 'Capacidades', description: 'Manufacturing capabilities' },
+    { value: 'custom', label: 'Custom', description: 'Custom slides' },
+];
+
 export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: CarouselGenerationModalProps) {
     const [mode, setMode] = useState<'auto' | 'guided'>('auto');
+    const [generationVersion, setGenerationVersion] = useState<'v1' | 'v2'>('v2');
     const [isGenerating, setIsGenerating] = useState(false);
     const { toast } = useToast();
+
+    // V1 Template state
+    const [selectedTemplate, setSelectedTemplate] = useState('quem-somos');
 
     // Full Auto mode state
     const [autoRequest, setAutoRequest] = useState('');
@@ -37,7 +49,18 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
     const [selectorOpen, setSelectorOpen] = useState(false);
 
     const handleGenerate = async () => {
-        if (mode === 'auto' && !autoRequest) {
+        // V1 Template validation
+        if (generationVersion === 'v1' && !selectedTemplate) {
+            toast({
+                title: "Missing template",
+                description: "Please select a template",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        // V2 Auto mode validation
+        if (generationVersion === 'v2' && mode === 'auto' && !autoRequest) {
             toast({
                 title: "Missing request",
                 description: "Please describe what you want to create",
@@ -46,7 +69,8 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
             return;
         }
 
-        if (mode === 'guided') {
+        // V2 Guided mode validation
+        if (generationVersion === 'v2' && mode === 'guided') {
             if (!headline || !subhead) {
                 toast({
                     title: "Missing content",
@@ -78,6 +102,31 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
         setIsGenerating(true);
 
         try {
+            // V1 Template-based generation
+            if (generationVersion === 'v1') {
+                toast({
+                    title: "V1 Classic Generation",
+                    description: `Using template: ${selectedTemplate}`,
+                });
+
+                const { data, error } = await supabase.functions.invoke('v1-generate-carousel', {
+                    body: {
+                        template: selectedTemplate,
+                        profileType: 'company'
+                    }
+                });
+
+                if (error) throw error;
+
+                onGenerated(data);
+                onOpenChange(false);
+                setIsGenerating(false);
+                resetForm();
+                toast({ title: "Carousel Created!", description: "V1 template carousel generated." });
+                return;
+            }
+
+            // V2 AI-powered generation
             if (mode === 'auto') {
                 // Full Auto: Dispatch to Repurpose Content Agent (Edge Function)
                 // 1. Dispatch Job
@@ -214,16 +263,102 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
         setImagePrompt('');
         setSelectedImage(null);
         setBackgroundSource('ai-browse');
+        setSelectedTemplate('quem-somos');
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Generate Carousel Image</DialogTitle>
+                    <DialogTitle>Generate Carousel</DialogTitle>
+                    <DialogDescription>
+                        Choose between V1 Classic (template-based) or V2 AI-Powered generation
+                    </DialogDescription>
                 </DialogHeader>
 
-                <Tabs value={mode} onValueChange={(v) => setMode(v as 'auto' | 'guided')}>
+                {/* Version Selector */}
+                <div className="mb-4">
+                    <Label className="text-sm font-medium mb-2 block">Generation Engine</Label>
+                    <RadioGroup
+                        value={generationVersion}
+                        onValueChange={(v) => setGenerationVersion(v as 'v1' | 'v2')}
+                        className="grid grid-cols-2 gap-3"
+                    >
+                        <div className={`flex items-start space-x-3 border rounded-lg p-4 cursor-pointer transition-colors ${generationVersion === 'v1' ? 'border-primary bg-primary/5' : 'border-muted hover:border-primary/50'}`}>
+                            <RadioGroupItem value="v1" id="v1" className="mt-1" />
+                            <Label htmlFor="v1" className="flex-1 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <LayoutTemplate className="w-4 h-4 text-blue-500" />
+                                    <span className="font-semibold">V1 Classic</span>
+                                    <Badge variant="secondary" className="text-xs">Fast</Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    Template-based with real company photos. Predictable, fast results.
+                                </p>
+                            </Label>
+                        </div>
+                        <div className={`flex items-start space-x-3 border rounded-lg p-4 cursor-pointer transition-colors ${generationVersion === 'v2' ? 'border-primary bg-primary/5' : 'border-muted hover:border-primary/50'}`}>
+                            <RadioGroupItem value="v2" id="v2" className="mt-1" />
+                            <Label htmlFor="v2" className="flex-1 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <Brain className="w-4 h-4 text-purple-500" />
+                                    <span className="font-semibold">V2 AI-Powered</span>
+                                    <Badge variant="default" className="text-xs bg-purple-500">Smart</Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    Multi-agent AI pipeline. Creative, dynamic content generation.
+                                </p>
+                            </Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+
+                {/* V1 Template Selection */}
+                {generationVersion === 'v1' && (
+                    <div className="space-y-4 p-4 bg-blue-50/50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center gap-2 mb-2">
+                            <LayoutTemplate className="w-5 h-5 text-blue-500" />
+                            <span className="font-medium">V1 Classic - Template Selection</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                            Choose a pre-designed template with optimized layouts and real company photos.
+                        </p>
+                        <div>
+                            <Label>Select Template</Label>
+                            <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                                <SelectTrigger className="mt-1">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {V1_TEMPLATES.map(template => (
+                                        <SelectItem key={template.value} value={template.value}>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{template.label}</span>
+                                                <span className="text-xs text-muted-foreground">{template.description}</span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="bg-white dark:bg-slate-900 p-3 rounded border text-sm">
+                            <p className="font-medium mb-1">Template Preview:</p>
+                            {selectedTemplate === 'quem-somos' && (
+                                <p className="text-muted-foreground">5 slides: Company intro, Mission, Stats, Vision, CTA</p>
+                            )}
+                            {selectedTemplate === 'capacidades' && (
+                                <p className="text-muted-foreground">5 slides: Capabilities, CNC, Cleanroom, Quality, CTA</p>
+                            )}
+                            {selectedTemplate === 'custom' && (
+                                <p className="text-muted-foreground">Custom slides - define your own content</p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* V2 AI-Powered Options */}
+                {generationVersion === 'v2' && (
+                    <Tabs value={mode} onValueChange={(v) => setMode(v as 'auto' | 'guided')}>
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="auto" className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4" />
@@ -356,6 +491,7 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
                         </div>
                     </TabsContent>
                 </Tabs>
+                )}
 
                 <div className="flex justify-end gap-2 mt-6">
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -363,7 +499,19 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
                     </Button>
                     <Button onClick={handleGenerate} disabled={isGenerating}>
                         {isGenerating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                        {mode === 'auto' ? 'Generate with AI' : 'Generate'}
+                        {generationVersion === 'v1' ? (
+                            <>
+                                <LayoutTemplate className="w-4 h-4 mr-2" />
+                                Generate V1 Classic
+                            </>
+                        ) : mode === 'auto' ? (
+                            <>
+                                <Brain className="w-4 h-4 mr-2" />
+                                Generate with AI
+                            </>
+                        ) : (
+                            'Generate'
+                        )}
                     </Button>
                 </div>
             </DialogContent>
