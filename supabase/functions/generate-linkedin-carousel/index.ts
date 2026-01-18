@@ -27,26 +27,31 @@ serve(async (req: Request) => {
   const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  let jobId: string | null = null;
 
   try {
     const requestBody = await req.json();
     let { topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, format = "carousel", profileType = "company", style = "visual", researchLevel = "light", action, existingSlides } = requestBody;
 
+    let jobId = requestBody.job_id;
+    let job: any = null;
+
     // ASYNC JOB MODE CHECK
-    if (requestBody.job_id) {
-      jobId = requestBody.job_id;
+    if (jobId) {
       console.log(`Processing Async Job: ${jobId}`);
 
-      const { data: job, error: jobError } = await supabase
+      const { data: jobData, error: jobError } = await supabase
         .from('jobs')
         .select('*')
         .eq('id', jobId)
         .single();
 
+      job = jobData;
+
       if (jobError || !job) {
         throw new Error(`Job ${jobId} not found: ${jobError?.message}`);
       }
+
+      console.log(`Job Topic: ${job.payload?.topic}`);
 
       await supabase.from('jobs').update({
         status: 'processing',
@@ -188,6 +193,11 @@ serve(async (req: Request) => {
     metrics.assets_used_count = generatedImages.filter(img => img.asset_source === 'real').length;
     metrics.assets_generated_count = validAiImages.length;
 
+    // NEW: Gracefully handle quota/generation errors
+    if (imageErrors.length > 0) {
+      console.warn(`⚠️ ${imageErrors.length} slide images failed generation. Continuing with available assets.`);
+    }
+
     // --- Agent 4: Brand Analyst - Quality Review ---
     const reviewStartTime = Date.now();
     const qualityReview = await brandAnalystAgent(carousel, generatedImages);
@@ -240,6 +250,17 @@ serve(async (req: Request) => {
       const postFolderId = await createFolder(subFolderName, GOOGLE_DRIVE_FOLDER_ID);
 
       const targetFolderId = postFolderId || GOOGLE_DRIVE_FOLDER_ID; // Fallback to root if folder creation fails
+
+      // NEW: Upload a text file with the slides content and caption
+      try {
+        const slidesText = carousel.slides.map((s: any, i: number) => `--- SLIDE ${i + 1} ---\nTITLE: ${s.title || ''}\nCONTENT: ${s.content || ''}\n${s.footer ? `FOOTER: ${s.footer}` : ''}`).join('\n\n');
+        const fullText = `TOPIC: ${topic}\n\nCAPTION:\n${carousel.caption}\n\nSLIDES CONTENT:\n${slidesText}`;
+        const textBytes = new TextEncoder().encode(fullText);
+        await uploadFileToDrive("slides.txt", textBytes, targetFolderId, "text/plain");
+        console.log("✅ Uploaded slides.txt to Drive");
+      } catch (textError) {
+        console.error("Failed to upload slides.txt to Drive:", textError);
+      }
 
       // We need to fetch the image data again to upload it, or decode the base64
       // Since we have the base64 string, we can convert it to a Blob
@@ -303,37 +324,52 @@ serve(async (req: Request) => {
       // Story 7.2: Save to linkedin_carousels autonomously (worker-side)
       // This ensures posts appear in Content Approval even if user navigates away
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        const userId = user?.id || job.user_id;
+        const userId = job?.user_id || (await supabase.auth.getUser())?.data?.user?.id;
+        if (!userId) {
+          console.warn("No user_id found for carousel save, skipping autonomous save.");
+          return;
+        }
+
+        const insertData = {
+          admin_user_id: userId,
+          user_id: userId, // Set both for compatibility
+          profile_type: profileType,
+          topic: topic,
+          target_audience: targetAudience,
+          pain_point: painPoint,
+          desired_outcome: desiredOutcome,
+          proof_points: proofPoints,
+          cta_action: ctaAction,
+          slides: carousel.slides as any,
+          caption: carousel.caption,
+          format: format,
+          image_urls: imageUrls,
+          status: 'pending_approval',
+          quality_score: qualityReview.overall_score,
+          generation_metadata: metrics,
+          assets_used: assets_used,
+          regeneration_count: 0,
+          generation_settings: {
+            model: metrics.model_versions?.copywriter || "gemini-2.0-flash-exp",
+            timestamp: new Date().toISOString(),
+            quality_score: qualityReview.overall_score,
+            metrics: metrics
+          }
+        };
 
         const { data: carouselRecord, error: insertError } = await supabase
           .from("linkedin_carousels")
-          .insert([{
-            admin_user_id: userId,
-            profile_type: profileType,
-            topic: topic,
-            target_audience: targetAudience,
-            pain_point: painPoint,
-            desired_outcome: desiredOutcome,
-            proof_points: proofPoints,
-            cta_action: ctaAction,
-            slides: carousel.slides as any,
-            caption: carousel.caption,
-            format: format,
-            image_urls: imageUrls,
-            status: 'pending_approval', // Default for autonomous generation
-            generation_settings: {
-              model: metrics.model_versions?.copywriter || "gemini-2.0-flash-exp",
-              timestamp: new Date().toISOString(),
-              quality_score: qualityReview.overall_score,
-              metrics: metrics
-            }
-          }])
+          .insert([insertData])
           .select()
           .single();
 
         if (insertError) {
           console.error("Error inserting into linkedin_carousels:", insertError);
+          // NEW: Save the insertion error to the job record so we can see it in Job Monitor
+          await supabase.from('jobs').update({
+            error: `Carousel Save Error: ${insertError.message} (${insertError.code})`,
+            checkpoint_data: { insert_failed: true, insert_error: insertError, insert_payload: insertData }
+          }).eq('id', jobId);
         } else {
           console.log(`✅ Saved carousel ${carouselRecord.id} to database`);
 
@@ -348,6 +384,10 @@ serve(async (req: Request) => {
         }
       } catch (saveError) {
         console.error("Critical error in autonomous save:", saveError);
+        const errorMsg = saveError instanceof Error ? saveError.message : "Unknown error";
+        await supabase.from('jobs').update({
+          error: `Autonomous Save Critical Error: ${errorMsg}`
+        }).eq('id', jobId);
       }
 
       await supabase.from('jobs').update({

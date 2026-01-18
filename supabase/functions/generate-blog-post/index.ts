@@ -71,7 +71,8 @@ serve(async (req) => {
   const startTime = Date.now();
 
   try {
-    const { generateNews, topic, category, research_context, skipImage } = await req.json();
+    const body = await req.json();
+    const { generateNews, topic, category, research_context, skipImage, job_id: jobIdFromReq } = body;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
 
@@ -351,50 +352,103 @@ The image should convey: Trust, Precision, Innovation, Medical Excellence.`;
     const totalTime = Date.now() - startTime;
     console.log(`🎉 [COMPLETE] Blog post generated in ${totalTime}ms`);
 
+    // --- Google Drive Upload Logic ---
+    try {
+      const { uploadFileToDrive, getConfig, createFolder } = await import("../_shared/google-drive.ts");
+      const GOOGLE_DRIVE_FOLDER_ID = await getConfig("GOOGLE_DRIVE_FOLDER_ID");
+
+      if (GOOGLE_DRIVE_FOLDER_ID) {
+        console.log("📂 Uploading blog content to Google Drive...");
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        const cleanTitle = (result.title || "blog").replace(/[^a-zA-Z0-9]/g, "_").substring(0, 30);
+        const subFolderName = `${timestamp}_${cleanTitle}`;
+
+        const postFolderId = await createFolder(subFolderName, GOOGLE_DRIVE_FOLDER_ID);
+        const targetFolderId = postFolderId || GOOGLE_DRIVE_FOLDER_ID;
+
+        // 1. Upload the blog content as Markdown
+        const mdContent = `# ${result.title}\n\n**SEO Title**: ${result.seo_title}\n**SEO Description**: ${result.seo_description}\n**Keywords**: ${result.keywords.join(", ")}\n\n---\n\n${result.content}`;
+        const textBytes = new TextEncoder().encode(mdContent);
+        await uploadFileToDrive("blog_content.md", textBytes, targetFolderId, "text/markdown");
+
+        // 2. Upload strategy brief
+        const strategyText = `TARGET PERSONA: ${strategy.target_persona}\nANGLE: ${strategy.angle}\nVISUAL CONCEPT: ${strategy.visual_concept}\n\nOUTLINE:\n${strategy.outline.map((o: any) => `- ${o.title}: ${o.key_points}`).join("\n")}`;
+        const strategyBytes = new TextEncoder().encode(strategyText);
+        await uploadFileToDrive("strategy_brief.txt", strategyBytes, targetFolderId, "text/plain");
+
+        // 3. Upload header image if generated
+        if (imageUrl) {
+          try {
+            const imgResp = await fetch(imageUrl);
+            if (imgResp.ok) {
+              const imgBlob = await imgResp.blob();
+              const imgBytes = new Uint8Array(await imgBlob.arrayBuffer());
+              await uploadFileToDrive("header_image.png", imgBytes, targetFolderId, "image/png");
+              console.log("✅ Uploaded header image to Drive");
+            }
+          } catch (imgFetchErr) {
+            console.error("Failed to fetch image for Drive upload:", imgFetchErr);
+          }
+        }
+
+        console.log("✅ Blog Drive upload complete");
+      }
+    } catch (driveErr) {
+      console.warn("⚠️ Google Drive upload failed (non-critical):", driveErr);
+    }
+
     // ASYNC JOB MODE: Save to DB autonomously
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const body = await req.json();
-    const jobId = body.job_id;
+    const jobId = jobIdFromReq;
 
     if (jobId) {
       console.log(`[Job ${jobId}] Saving result to blog_posts...`);
 
       try {
         // Get job details to find user_id
-        const { data: job } = await supabase.from('jobs').select('user_id').eq('id', jobId).single();
+        const { data: jobData } = await supabase.from('jobs').select('user_id').eq('id', jobId).single();
+        const userId = jobData?.user_id || (await supabase.auth.getUser())?.data?.user?.id;
+
+        if (!userId) {
+          console.warn("No userId found for blog save, skipping.");
+          return;
+        }
+
+        const insertData = {
+          author_id: userId,
+          user_id: userId, // Set both for compatibility if it exists
+          title: result.title,
+          content: result.content,
+          excerpt: result.excerpt,
+          featured_image: result.featured_image,
+          category_id: body.category_id,
+          status: 'pending_review',
+          slug: result.slug,
+          seo_title: result.seo_title,
+          seo_description: result.seo_description,
+          ai_generated: true,
+          metadata: {
+            strategy: strategy,
+            generation_time_ms: totalTime,
+            keywords: result.keywords || []
+          }
+        };
 
         const { data: blogRecord, error: insertError } = await supabase
           .from("blog_posts")
-          .insert([{
-            author_id: job?.user_id || (await supabase.auth.getUser())?.data?.user?.id,
-            title: result.title,
-            content: result.content,
-            excerpt: result.excerpt,
-            featured_image: result.featured_image,
-            category_id: body.category_id, // Pass from payload if possible
-            status: 'pending_review',
-            slug: result.slug,
-            seo_title: result.seo_title,
-            seo_description: result.seo_description,
-            ai_generated: true,
-            metadata: {
-              strategy: strategy,
-              generation_time_ms: totalTime,
-              keywords: result.keywords || []
-            }
-          }])
+          .insert([insertData])
           .select()
           .single();
 
         if (insertError) {
           console.error("Error inserting blog post:", insertError);
+          // NEW: Save error to job record
           await supabase.from('jobs').update({
-            status: 'failed',
-            error: `Database Insert Error: ${insertError.message}`,
-            completed_at: new Date().toISOString()
+            error: `Blog Save Error: ${insertError.message} (${insertError.code})`,
+            checkpoint_data: { insert_failed: true, insert_error: insertError, insert_payload: insertData }
           }).eq('id', jobId);
         } else {
           console.log(`✅ Saved blog post ${blogRecord.id} to database`);
@@ -406,6 +460,10 @@ The image should convey: Trust, Precision, Innovation, Medical Excellence.`;
         }
       } catch (err) {
         console.error("Critical error in blog worker save:", err);
+        const errorMsg = err instanceof Error ? err.message : "Unknown error";
+        await supabase.from('jobs').update({
+          error: `Blog Post Save Critical Error: ${errorMsg}`
+        }).eq('id', jobId);
       }
 
       return new Response("Job Processed", { status: 200 });
