@@ -39,22 +39,8 @@ export const dispatchRepurposeJob = async (input: RepurposeJobInput): Promise<st
 
     console.log("dispatchRepurposeJob: Job created", job.id);
 
-    // 3. Invoke Edge Function (Fire and Forget - it's async)
-    const { error: invokeError } = await supabase.functions.invoke('repurpose-content', {
-        body: {
-            job_id: job.id,
-            content: input.content,
-            url: input.url
-        }
-    });
-
-    if (invokeError) {
-        console.error("Edge Function Invocation Error:", invokeError);
-        // Note: Even if invocation fails, the job is in DB. But it will stay pending.
-        // We might want to mark it failed if invoke fails.
-        await supabase.from('jobs').update({ status: 'failed', error: 'Invocation failed' }).eq('id', job.id);
-        throw new Error(`Failed to start agent: ${invokeError.message}`);
-    }
+    // 3. Invoke Edge Function (REMOVED: Now handled by Python Agent Service via Webhook)
+    // The Python service listens to INSERTs on the 'jobs' table and picks this up automatically.
 
     return job.id;
 };
@@ -81,16 +67,9 @@ export const dispatchResearchJob = async (topic: string, depth: 'deep' | 'compre
 
     if (jobError) throw new Error(`Failed to create job: ${jobError.message}`);
 
-    // Invoke Edge Function
-    const { error: invokeError } = await supabase.functions.invoke('deep-research', {
-        body: { job_id: job.id, topic, depth }
-    });
+    if (jobError) throw new Error(`Failed to create job: ${jobError.message}`);
 
-    if (invokeError) {
-        // Mark failed if dispatch fails
-        await supabase.from('jobs').update({ status: 'failed', error: 'Invocation failed' }).eq('id', job.id);
-        throw new Error(`Failed to start researcher: ${invokeError.message}`);
-    }
+    // Invoke Edge Function (REMOVED: Handled by Python Agent Service)
 
     return job.id;
 };
@@ -117,15 +96,34 @@ export const dispatchLeadMagnetJob = async (persona: string, topic: string, temp
 
     if (jobError) throw new Error(`Failed to create job: ${jobError.message}`);
 
-    // Invoke Edge Function
-    const { error: invokeError } = await supabase.functions.invoke('generate-lead-magnet', {
-        body: { job_id: job.id, persona, topic, templateId }
-    });
+    if (jobError) throw new Error(`Failed to create job: ${jobError.message}`);
 
-    if (invokeError) {
-        await supabase.from('jobs').update({ status: 'failed', error: 'Invocation failed' }).eq('id', job.id);
-        throw new Error(`Failed to start lead magnet generator: ${invokeError.message}`);
-    }
+    // Invoke Edge Function (REMOVED: Handled by Python Agent Service)
+
+    return job.id;
+};
+
+/**
+ * Dispatches a Blog Post generation job.
+ */
+export const dispatchBlogPostJob = async (topic: string, keywords: string[], category: string): Promise<string> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("User not authenticated");
+
+    console.log("dispatchBlogPostJob: Creating job...");
+
+    const { data: job, error: jobError } = await supabase
+        .from('jobs')
+        .insert({
+            job_type: 'generate_blog_post',
+            status: 'pending',
+            payload: { topic, keywords, category },
+            user_id: user.id
+        })
+        .select()
+        .single();
+
+    if (jobError) throw new Error(`Failed to create job: ${jobError.message}`);
 
     return job.id;
 };

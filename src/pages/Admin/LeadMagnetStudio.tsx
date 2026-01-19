@@ -20,9 +20,13 @@ import {
     Download,
     Eye,
     Edit3,
-    ArrowLeft
+    ArrowLeft,
+    Globe,
+    Share2
 } from "lucide-react";
 import { dispatchLeadMagnetJob, getJobStatus } from "@/lib/agents";
+import { useCreateResource } from "@/hooks/useResources";
+import { supabase } from "@/integrations/supabase/client";
 
 const TEMPLATES = [
     {
@@ -79,6 +83,38 @@ export default function LeadMagnetStudio() {
     const [content, setContent] = useState("");
     const [activeTab, setActiveTab] = useState<"edit" | "preview">("preview");
     const previewRef = useRef<HTMLDivElement>(null);
+    const publishResource = useCreateResource();
+
+    const handlePublish = async () => {
+        if (!selectedTemplate || !content) return;
+
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                toast.error("Você precisa estar logado para publicar.");
+                return;
+            }
+
+            const slug = `${selectedTemplate.id}-${Date.now()}`;
+
+            await publishResource.mutateAsync({
+                title: selectedTemplate.title,
+                description: selectedTemplate.description,
+                content: content,
+                type: (selectedTemplate.id.includes('calculator') ? 'calculator' : 'checklist') as any,
+                persona: selectedTemplate.persona,
+                slug: slug,
+                status: 'published',
+                user_id: user.id,
+                metadata: {
+                    template_id: selectedTemplate.id,
+                    generated_topic: topic
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleGenerate = async () => {
         if (!selectedTemplate) {
@@ -160,6 +196,19 @@ export default function LeadMagnetStudio() {
                         </div>
                         <Button variant="outline" className="gap-2" onClick={handlePrint}>
                             <Download className="w-4 h-4" /> Exportar PDF
+                        </Button>
+                        <Button
+                            variant="default"
+                            className="gap-2 bg-blue-600 hover:bg-blue-700"
+                            onClick={handlePublish}
+                            disabled={publishResource.isPending}
+                        >
+                            {publishResource.isPending ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <Globe className="w-4 h-4" />
+                            )}
+                            Publicar no Hub
                         </Button>
                     </div>
                 </div>
