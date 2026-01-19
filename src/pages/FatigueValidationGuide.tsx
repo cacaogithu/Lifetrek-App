@@ -31,41 +31,41 @@ const FatigueValidationGuide = () => {
     const mermaidChart = `
     graph TD
         %% Nodes
-        Start([Novo Design de Implante<br/>(CAD)])
+        Start(["Novo Design de Implante (CAD)"])
         
-        subgraph Validacao["1. Validação de Geometria (3D)"]
-            Print3D[Impressão 3D Médica<br/>(Polímero/Resina)]
-            CheckGeo{Geometria/Encaixe<br/>Aprovados?}
+        subgraph Validacao["1. Validacao de Geometria"]
+            Print3D["Impressao 3D Medica (Polimero/Resina)"]
+            CheckGeo{"Geometria/Encaixe Aprovados?"}
         end
 
-        subgraph Prep["2. Seleção de Material"]
-            CheckMat{Material Final é<br/>Ti, Nitinol ou PEEK?}
-            RejectMat[Rever Projeto/Material<br/>(Fora do Escopo)]
+        subgraph Prep["2. Selecao de Material"]
+            CheckMat{"Material Final: Ti, Nitinol ou PEEK?"}
+            RejectMat["Rever Projeto/Material (Fora do Escopo)"]
         end
 
-        subgraph CNC["3. Preparação & Usinagem CNC"]
-            DefCrit[Definir Superfícies Críticas<br/>& Tolerâncias de Mícron]
-            Machining[Usinagem CNC<br/>Citizen M32 / 5 Eixos]
+        subgraph CNC["3. Preparacao e Usinagem CNC"]
+            DefCrit["Definir Superficies Criticas e Tolerancias"]
+            Machining["Usinagem CNC Citizen M32 / 5 Eixos"]
         end
 
-        subgraph Quality["4. Metrologia & Documentação"]
-            Metro[Metrologia CMM<br/>Laudo Dimensional ISO 13485]
+        subgraph Quality["4. Metrologia e Documentacao"]
+            Metro["Metrologia CMM - Laudo ISO 13485"]
         end
 
-        subgraph Test["5. Validação"]
-            Fatigue[Ensaio de Fadiga]
-            CheckResult{Resultados<br/>dentro da Meta?}
-            Loop[Analise de Falha<br/>Rever Geometria ou Processo]
-            Final([Congelar Especificação<br/>Validação Final / Registro])
+        subgraph Test["5. Validacao"]
+            Fatigue["Ensaio de Fadiga"]
+            CheckResult{"Resultados dentro da Meta?"}
+            Loop["Analise de Falha - Rever Processo"]
+            Final(["Congelar Especificacao - Validacao Final"])
         end
 
         %% Connections
         Start --> Print3D
         Print3D --> CheckGeo
-        CheckGeo -- Não --> Start
+        CheckGeo -- Nao --> Start
         CheckGeo -- Sim --> CheckMat
 
-        CheckMat -- Não --> RejectMat
+        CheckMat -- Nao --> RejectMat
         CheckMat -- Sim --> DefCrit
 
         DefCrit --> Machining
@@ -73,7 +73,7 @@ const FatigueValidationGuide = () => {
         Metro --> Fatigue
         Fatigue --> CheckResult
 
-        CheckResult -- Não --> Loop
+        CheckResult -- Nao --> Loop
         Loop --> Start
         CheckResult -- Sim --> Final
 
