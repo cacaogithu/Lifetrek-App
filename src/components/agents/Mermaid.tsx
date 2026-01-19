@@ -10,12 +10,13 @@ mermaid.initialize({
     startOnLoad: false,
     theme: 'base',
     themeVariables: {
-        primaryColor: '#004F8F',
-        primaryTextColor: '#fff',
-        primaryBorderColor: '#003d75',
-        lineColor: '#1A7A3E',
-        secondaryColor: '#f3f4f6',
-        tertiaryColor: '#e5e7eb'
+        primaryColor: '#EAF2FA',
+        primaryTextColor: '#1F2937',
+        primaryBorderColor: '#004F8F',
+        lineColor: '#004F8F',
+        secondaryColor: '#F8FAFC',
+        tertiaryColor: '#E2E8F0',
+        edgeLabelBackground: '#F1F5F9'
     },
     flowchart: {
         useMaxWidth: true,

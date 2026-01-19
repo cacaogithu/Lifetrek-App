@@ -78,10 +78,11 @@ const FatigueValidationGuide = () => {
         CheckResult -- Sim --> Final
 
         %% Styling
-        classDef default fill:#ffffff,stroke:#334155,stroke-width:1px,color:#0f172a;
-        classDef startend fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a,font-weight:bold;
-        classDef decision fill:#fffbeb,stroke:#d97706,stroke-width:2px,color:#78350f;
-        classDef process fill:#f8fafc,stroke:#64748b,stroke-width:1px;
+        classDef default fill:#F8FAFC,stroke:#CBD5E1,stroke-width:1px,color:#1F2937;
+        classDef startend fill:#EAF2FA,stroke:#004F8F,stroke-width:2px,color:#1F2937,font-weight:bold;
+        classDef decision fill:#F8FAFC,stroke:#004F8F,stroke-width:2px,color:#1F2937;
+        classDef process fill:#F8FAFC,stroke:#CBD5E1,stroke-width:1px,color:#1F2937;
+        linkStyle default stroke:#004F8F,stroke-width:1px;
 
         class Start,Final startend;
         class CheckGeo,CheckMat,CheckResult decision;
@@ -161,6 +162,16 @@ const FatigueValidationGuide = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8 print:p-0 print:bg-white">
+            <style>{`
+                .mermaid-container .edgeLabel rect {
+                    fill: #F1F5F9;
+                    stroke: #CBD5E1;
+                }
+                .mermaid-container .edgeLabel text {
+                    fill: #1F2937;
+                    font-weight: 600;
+                }
+            `}</style>
             {/* Header / CTA Bar */}
             <div className="max-w-5xl mx-auto mb-8 flex flex-col sm:flex-row justify-between items-center print:hidden gap-4">
                 <div>
@@ -179,8 +190,8 @@ const FatigueValidationGuide = () => {
                 /* Locked State - Call to Action */
                 <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 p-12 text-center">
                     <div className="mb-6 flex justify-center">
-                        <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-full">
-                            <Lock className="h-16 w-16 text-blue-600 dark:text-blue-400" />
+                        <div className="p-6 bg-primary/10 dark:bg-primary/20 rounded-full">
+                            <Lock className="h-16 w-16 text-primary" />
                         </div>
                     </div>
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
@@ -193,15 +204,15 @@ const FatigueValidationGuide = () => {
                         <h3 className="font-semibold text-slate-900 dark:text-white mb-4">📊 O que você vai receber:</h3>
                         <ul className="text-left space-y-3 max-w-md mx-auto">
                             <li className="flex items-start gap-3">
-                                <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                                 <span className="text-slate-700 dark:text-slate-300">Fluxograma interativo: Do CAD ao teste de fadiga</span>
                             </li>
                             <li className="flex items-start gap-3">
-                                <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                                 <span className="text-slate-700 dark:text-slate-300">Checklist técnico com parâmetros críticos</span>
                             </li>
                             <li className="flex items-start gap-3">
-                                <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                                 <span className="text-slate-700 dark:text-slate-300">Download/Print do guia completo em PDF</span>
                             </li>
                         </ul>
@@ -218,7 +229,7 @@ const FatigueValidationGuide = () => {
                         <div className="p-8">
                             <div className="flex justify-between items-start mb-6">
                                 <div>
-                                    <span className="text-xs font-semibold tracking-wider text-blue-600 uppercase mb-1 block">Framework Lifetrek</span>
+                                    <span className="text-xs font-semibold tracking-wider text-primary uppercase mb-1 block">Framework Lifetrek</span>
                                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Do CAD ao Teste de Fadiga em Semanas</h2>
                                     <p className="text-slate-500 mt-2 max-w-2xl">
                                         Combine impressão 3D médica para validar geometria com usinagem CNC em materiais de grau implante para testar fadiga em condições reais.
@@ -236,7 +247,7 @@ const FatigueValidationGuide = () => {
 
                             <div className="mt-6 flex gap-6 text-sm text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-6">
                                 <div className="flex items-start gap-3">
-                                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/20">
+                                    <div className="p-2 bg-primary/10 text-primary rounded-lg dark:bg-primary/20">
                                         <Info className="h-5 w-5" />
                                     </div>
                                     <div>
@@ -245,7 +256,7 @@ const FatigueValidationGuide = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <div className="p-2 bg-green-50 text-green-600 rounded-lg dark:bg-green-900/20">
+                                    <div className="p-2 bg-primary/10 text-primary rounded-lg dark:bg-primary/20">
                                         <CheckCircle className="h-5 w-5" />
                                     </div>
                                     <div>
@@ -366,6 +377,34 @@ const FatigueValidationGuide = () => {
                 </>
             )
             }
+
+            <div className="max-w-4xl mx-auto mt-12 print:hidden">
+                <Card className="border border-slate-200 shadow-lg">
+                    <CardHeader>
+                        <CardTitle className="text-2xl">Quer revisar seu projeto com um engenheiro?</CardTitle>
+                        <CardDescription>
+                            Fale direto com nossa equipe técnica e tire dúvidas sobre validação e requisitos.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                        <Button
+                            asChild
+                            className="bg-primary hover:bg-primary/90 text-white"
+                        >
+                            <a
+                                href="https://wa.me/5511945336226?text=Quero%20revisar%20meu%20projeto%20com%20um%20engenheiro%20Lifetrek."
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Falar no WhatsApp
+                            </a>
+                        </Button>
+                        <p className="text-sm text-muted-foreground">
+                            WhatsApp: +55 11 94533-6226
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
 
             {/* Email Capture Modal */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
