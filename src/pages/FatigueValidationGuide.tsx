@@ -119,9 +119,12 @@ const FatigueValidationGuide = () => {
                     name: formData.name,
                     email: formData.email,
                     company: formData.company,
-                    source: 'lead_magnet_fatigue',
+                    phone: "Nao informado",
+                    project_type: "orthopedic_implants",
+                    project_types: ["orthopedic_implants"],
+                    technical_requirements: "Lead magnet: Fluxo de Validacao de Fadiga.",
+                    source: "website",
                     status: 'new',
-                    project_types: ['fatigue_validation']
                 });
 
             if (error) {
