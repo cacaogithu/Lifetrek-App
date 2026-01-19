@@ -14,7 +14,7 @@ serve(async (req) => {
     }
 
     try {
-        const { job_id, content, url } = await req.json();
+        const { job_id, content, url, format = 'carousel', postType = 'value' } = await req.json();
 
         const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GOOGLE_API_KEY');
         const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -62,9 +62,32 @@ serve(async (req) => {
 
                 // 3. Generate Carousel
                 const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+                const formatInstruction = format === 'single-image'
+                    ? `Generate a SINGLE-IMAGE post with:
+                       - 1 powerful hero image specification
+                       - A comprehensive, value-packed caption (200-500 words)
+                       - Focus on Hook → Insight/Framework → Low-friction CTA
+                       Output as JSON: { "image_headline": "...", "image_description": "...", "caption": "..." }`
+                    : `Generate a 5-slide CAROUSEL with:
+                       - Slide 1: Hook (callout + payoff)
+                       - Slides 2-4: Value/insights
+                       - Slide 5: CTA
+                       Output as JSON Array: [{ "slide_number": 1, "title": "Hook", "body": "...", "design_note": "..." }, ...]`;
+
+                const postTypeInstruction = postType === 'value'
+                    ? `This is an EDUCATIONAL/VALUE post (80% content mix). CTA should be low-friction (PDF, checklist, DM "KEYWORD").`
+                    : `This is a COMMERCIAL OFFER post (20% content mix). CTA can be stronger (schedule call, quote request).`;
+
                 const prompt = `
-                Role: Expert LinkedIn Content Creator.
-                Task: Create a high-viral LinkedIn Carousel based on the User Content.
+                Role: Expert LinkedIn Content Creator for Lifetrek Medical.
+                Task: Create high-engagement LinkedIn content based on the User Content.
+                
+                FORMAT: ${format.toUpperCase()}
+                POST TYPE: ${postType.toUpperCase()}
+                
+                ${formatInstruction}
+                
+                ${postTypeInstruction}
                 
                 Reference Styles (Use these for structural inspiration only):
                 ${ragContext}
@@ -72,11 +95,9 @@ serve(async (req) => {
                 User Content:
                 "${content || url}"
                 
-                Output Format (JSON Array):
-                [
-                  { "slide_number": 1, "title": "Hook", "body": "...", "design_note": "..." },
-                  ...
-                ]
+                IMPORTANT: All content must be in PORTUGUESE (pt-BR).
+                Use technical but accessible language.
+                Focus on engineer-to-engineer tone, not salesy.
                 `;
 
                 const result = await model.generateContent(prompt);
@@ -87,7 +108,9 @@ serve(async (req) => {
                 const responseData = {
                     source: content ? 'text' : 'url',
                     rag_references: similarSlides?.length || 0,
-                    carousel: generatedJson || text
+                    carousel: generatedJson || text,
+                    format: format,
+                    postType: postType
                 };
 
                 // Update Job

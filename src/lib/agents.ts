@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 export interface RepurposeJobInput {
     content?: string;
     url?: string;
+    format?: 'single-image' | 'carousel';
+    postType?: 'value' | 'commercial';
 }
 
 /**

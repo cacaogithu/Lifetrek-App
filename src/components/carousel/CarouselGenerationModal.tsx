@@ -38,6 +38,8 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
 
     // Full Auto mode state
     const [autoRequest, setAutoRequest] = useState('');
+    const [format, setFormat] = useState<'single-image' | 'carousel'>('carousel');
+    const [postType, setPostType] = useState<'value' | 'commercial'>('value');
 
     // Guided mode state
     const [backgroundSource, setBackgroundSource] = useState<'ai-browse' | 'manual-select' | 'generate'>('ai-browse');
@@ -132,7 +134,9 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
                 // 1. Dispatch Job
                 const jobId = await dispatchRepurposeJob({
                     content: autoRequest,
-                    url: autoRequest.startsWith('http') ? autoRequest : undefined
+                    url: autoRequest.startsWith('http') ? autoRequest : undefined,
+                    format: format,
+                    postType: postType
                 });
 
                 toast({
@@ -264,6 +268,8 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
         setSelectedImage(null);
         setBackgroundSource('ai-browse');
         setSelectedTemplate('quem-somos');
+        setFormat('carousel');
+        setPostType('value');
     };
 
     return (
@@ -359,138 +365,188 @@ export function CarouselGenerationModal({ open, onOpenChange, onGenerated }: Car
                 {/* V2 AI-Powered Options */}
                 {generationVersion === 'v2' && (
                     <Tabs value={mode} onValueChange={(v) => setMode(v as 'auto' | 'guided')}>
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="auto" className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4" />
-                            Full Auto
-                        </TabsTrigger>
-                        <TabsTrigger value="guided" className="flex items-center gap-2">
-                            <Wand2 className="w-4 h-4" />
-                            Guided Creation
-                        </TabsTrigger>
-                    </TabsList>
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="auto" className="flex items-center gap-2">
+                                <Sparkles className="w-4 h-4" />
+                                Full Auto
+                            </TabsTrigger>
+                            <TabsTrigger value="guided" className="flex items-center gap-2">
+                                <Wand2 className="w-4 h-4" />
+                                Guided Creation
+                            </TabsTrigger>
+                        </TabsList>
 
-                    <TabsContent value="auto" className="space-y-4 mt-4">
-                        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                            <p className="text-sm font-medium">🤖 AI Autopilot Mode</p>
-                            <p className="text-xs text-muted-foreground">
-                                Describe what you want, and AI will:
-                            </p>
-                            <ul className="text-xs text-muted-foreground space-y-1 ml-4">
-                                <li>✓ Browse your image library or generate new backgrounds</li>
-                                <li>✓ Write compelling headlines and copy</li>
-                                <li>✓ Position text optimally</li>
-                                <li>✓ Apply brand styling</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <Label>Your Request</Label>
-                            <Textarea
-                                placeholder="Example: Create a carousel about our new 5000m² cleanroom facility, emphasizing our ISO certification and advanced manufacturing capabilities"
-                                value={autoRequest}
-                                onChange={(e) => setAutoRequest(e.target.value)}
-                                rows={5}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">
-                                Be as detailed or high-level as you want. The AI will handle the rest.
-                            </p>
-                        </div>
-                    </TabsContent>
-
-                    <TabsContent value="guided" className="space-y-4 mt-4">
-                        <div className="bg-muted/50 rounded-lg p-4">
-                            <p className="text-sm font-medium">🎨 You're in control</p>
-                            <p className="text-xs text-muted-foreground">
-                                Direct the AI with specific choices for images, text, and layout.
-                            </p>
-                        </div>
-
-                        <div>
-                            <Label>Background Source</Label>
-                            <RadioGroup value={backgroundSource} onValueChange={(v: any) => setBackgroundSource(v)}>
-                                <div className="flex items-center space-x-2 border rounded-lg p-3">
-                                    <RadioGroupItem value="ai-browse" id="ai-browse" />
-                                    <Label htmlFor="ai-browse" className="flex-1 cursor-pointer">
-                                        <span className="font-medium">AI Browse Storage</span>
-                                        <p className="text-xs text-muted-foreground">AI picks best match from your assets</p>
-                                    </Label>
-                                </div>
-                                <div className="flex items-center space-x-2 border rounded-lg p-3">
-                                    <RadioGroupItem value="manual-select" id="manual-select" />
-                                    <Label htmlFor="manual-select" className="flex-1 cursor-pointer" onClick={() => setSelectorOpen(true)}>
-                                        <span className="font-medium">I'll Select from Storage</span>
-                                        <p className="text-xs text-muted-foreground">
-                                            {selectedImage ? "Image selected" : "Click to browse assets"}
-                                        </p>
-                                    </Label>
-                                </div>
-                                <div className="flex items-center space-x-2 border rounded-lg p-3">
-                                    <RadioGroupItem value="generate" id="generate" />
-                                    <Label htmlFor="generate" className="flex-1 cursor-pointer">
-                                        <span className="font-medium">Generate New</span>
-                                        <p className="text-xs text-muted-foreground">AI creates a custom background</p>
-                                    </Label>
-                                </div>
-                            </RadioGroup>
-                        </div>
-
-                        {backgroundSource === 'generate' && (
-                            <div>
-                                <Label>Image Description</Label>
-                                <Textarea
-                                    placeholder="Modern medical cleanroom with precision equipment..."
-                                    value={imagePrompt}
-                                    onChange={(e) => setImagePrompt(e.target.value)}
-                                    rows={3}
-                                />
+                        <TabsContent value="auto" className="space-y-4 mt-4">
+                            <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                                <p className="text-sm font-medium">🤖 AI Autopilot Mode</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Describe what you want, and AI will:
+                                </p>
+                                <ul className="text-xs text-muted-foreground space-y-1 ml-4">
+                                    <li>✓ Browse your image library or generate new backgrounds</li>
+                                    <li>✓ Write compelling headlines and copy</li>
+                                    <li>✓ Position text optimally</li>
+                                    <li>✓ Apply brand styling</li>
+                                </ul>
                             </div>
-                        )}
 
-                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label>Format</Label>
+                                    <Select value={format} onValueChange={(v: any) => setFormat(v)}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="carousel">
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">Carousel (5 slides)</span>
+                                                    <span className="text-xs text-muted-foreground">Hook → Value → CTA</span>
+                                                </div>
+                                            </SelectItem>
+                                            <SelectItem value="single-image">
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">Single Image</span>
+                                                    <span className="text-xs text-muted-foreground">1 hero image + long caption</span>
+                                                </div>
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div>
+                                    <Label>Post Type</Label>
+                                    <Select value={postType} onValueChange={(v: any) => setPostType(v)}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="value">
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">Value / Educational</span>
+                                                    <span className="text-xs text-muted-foreground">80% content mix</span>
+                                                </div>
+                                            </SelectItem>
+                                            <SelectItem value="commercial">
+                                                <div className="flex flex-col">
+                                                    <span className="font-medium">Commercial Offer</span>
+                                                    <span className="text-xs text-muted-foreground">20% content mix</span>
+                                                </div>
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
                             <div>
-                                <Label>Headline</Label>
-                                <Input
-                                    placeholder="INOVAÇÃO MÉDICA"
-                                    value={headline}
-                                    onChange={(e) => setHeadline(e.target.value)}
-                                    maxLength={40}
+                                <Label>Your Request</Label>
+                                <Textarea
+                                    placeholder="Example: Create a carousel about our new 5000m² cleanroom facility, emphasizing our ISO certification and advanced manufacturing capabilities"
+                                    value={autoRequest}
+                                    onChange={(e) => setAutoRequest(e.target.value)}
+                                    rows={5}
                                 />
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    {headline.length}/40
+                                    {format === 'single-image'
+                                        ? 'For single-image posts, describe the main theme. AI will create 1 strong visual + comprehensive caption.'
+                                        : 'Be as detailed or high-level as you want. The AI will handle the rest.'}
+                                </p>
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="guided" className="space-y-4 mt-4">
+                            <div className="bg-muted/50 rounded-lg p-4">
+                                <p className="text-sm font-medium">🎨 You're in control</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Direct the AI with specific choices for images, text, and layout.
                                 </p>
                             </div>
 
                             <div>
-                                <Label>Text Position</Label>
-                                <Select value={textPosition} onValueChange={(v: any) => setTextPosition(v)}>
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="auto">Auto (AI decides)</SelectItem>
-                                        <SelectItem value="top">Top</SelectItem>
-                                        <SelectItem value="bottom">Bottom</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Label>Background Source</Label>
+                                <RadioGroup value={backgroundSource} onValueChange={(v: any) => setBackgroundSource(v)}>
+                                    <div className="flex items-center space-x-2 border rounded-lg p-3">
+                                        <RadioGroupItem value="ai-browse" id="ai-browse" />
+                                        <Label htmlFor="ai-browse" className="flex-1 cursor-pointer">
+                                            <span className="font-medium">AI Browse Storage</span>
+                                            <p className="text-xs text-muted-foreground">AI picks best match from your assets</p>
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2 border rounded-lg p-3">
+                                        <RadioGroupItem value="manual-select" id="manual-select" />
+                                        <Label htmlFor="manual-select" className="flex-1 cursor-pointer" onClick={() => setSelectorOpen(true)}>
+                                            <span className="font-medium">I'll Select from Storage</span>
+                                            <p className="text-xs text-muted-foreground">
+                                                {selectedImage ? "Image selected" : "Click to browse assets"}
+                                            </p>
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2 border rounded-lg p-3">
+                                        <RadioGroupItem value="generate" id="generate" />
+                                        <Label htmlFor="generate" className="flex-1 cursor-pointer">
+                                            <span className="font-medium">Generate New</span>
+                                            <p className="text-xs text-muted-foreground">AI creates a custom background</p>
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
                             </div>
-                        </div>
 
-                        <div>
-                            <Label>Subheadline</Label>
-                            <Textarea
-                                placeholder="Tecnologia de ponta para a saúde do futuro"
-                                value={subhead}
-                                onChange={(e) => setSubhead(e.target.value)}
-                                rows={2}
-                                maxLength={100}
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {subhead.length}/100
-                            </p>
-                        </div>
-                    </TabsContent>
-                </Tabs>
+                            {backgroundSource === 'generate' && (
+                                <div>
+                                    <Label>Image Description</Label>
+                                    <Textarea
+                                        placeholder="Modern medical cleanroom with precision equipment..."
+                                        value={imagePrompt}
+                                        onChange={(e) => setImagePrompt(e.target.value)}
+                                        rows={3}
+                                    />
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label>Headline</Label>
+                                    <Input
+                                        placeholder="INOVAÇÃO MÉDICA"
+                                        value={headline}
+                                        onChange={(e) => setHeadline(e.target.value)}
+                                        maxLength={40}
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        {headline.length}/40
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <Label>Text Position</Label>
+                                    <Select value={textPosition} onValueChange={(v: any) => setTextPosition(v)}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="auto">Auto (AI decides)</SelectItem>
+                                            <SelectItem value="top">Top</SelectItem>
+                                            <SelectItem value="bottom">Bottom</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <Label>Subheadline</Label>
+                                <Textarea
+                                    placeholder="Tecnologia de ponta para a saúde do futuro"
+                                    value={subhead}
+                                    onChange={(e) => setSubhead(e.target.value)}
+                                    rows={2}
+                                    maxLength={100}
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {subhead.length}/100
+                                </p>
+                            </div>
+                        </TabsContent>
+                    </Tabs>
                 )}
 
                 <div className="flex justify-end gap-2 mt-6">

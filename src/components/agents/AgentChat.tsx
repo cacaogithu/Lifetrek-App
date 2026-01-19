@@ -600,15 +600,15 @@ You translate complex engineering concepts into "100k-aesthetic" visual prompts.
 1. Use generate_image_prompt to create detailed Midjourney/Vertex-style prompts.
 2. Always suggest a "Visual Hook" (e.g., "A reflection of a surgeon's mask on a mirror-polished orthopedic screw").
 3. For Carousels, suggest a color progression that guide the eye from Hook (high contrast) to CTA (actionable orange).
-4. Follow the Lifetrek Brand Book strictly: never use generic stock photos. Suggest prompts that describe real Lifetrek assets (Citizen CNCs, ZEISS CMM).`
+4. Follow the Lifetrek Brand Book strictly: never use generic stock photos. Suggest prompts that describe real Lifetrek assets (Citizen CNCs, ZEISS CMM).
 
-## AVAILABLE TOOLS
+AVAILABLE TOOLS:
 - generate_image_prompt: Create AI image generation prompts
 - suggest_layout: Recommend slide layouts
-- recommend_colors: Get brand - compliant color suggestions
-    - search_company_assets: Search company image library
-        - create_slide_mockup: Create wireframe mockups
-            - optimize_for_linkedin: Optimize designs for LinkedIn`
+- recommend_colors: Get brand-compliant color suggestions
+- search_company_assets: Search company image library
+- create_slide_mockup: Create wireframe mockups
+- optimize_for_linkedin: Optimize designs for LinkedIn`
     }
 };
 
@@ -648,438 +648,438 @@ export function AgentChat({ agentType }: AgentChatProps) {
             id: 'welcome',
             role: 'assistant',
             content: `Hello! I'm the **${config.name}** for Lifetrek Medical.\n\n${config.description}.\n\n**I can help you with:**\n${config.capabilities.map(c => `- ${c}`).join('\n')}\n\nI have **${config.tools.length} tools** available to assist you. Check the "Info" tab to see my architecture and available tools.\n\nHow can I assist you today?`,
-timestamp: new Date()
+            timestamp: new Date()
         };
-setMessages([welcomeMessage]);
+        setMessages([welcomeMessage]);
     }, [agentType]);
 
-useEffect(() => {
-    if (scrollRef.current) {
-        scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-}, [messages]);
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
 
-const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    const handleSend = async () => {
+        if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = {
-        id: Date.now().toString(),
-        role: 'user',
-        content: input.trim(),
-        timestamp: new Date()
+        const userMessage: Message = {
+            id: Date.now().toString(),
+            role: 'user',
+            content: input.trim(),
+            timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+        setInput('');
+        setIsLoading(true);
+
+        try {
+            const conversationHistory = messages
+                .filter(m => m.id !== 'welcome')
+                .map(m => ({
+                    role: m.role,
+                    content: m.content
+                }));
+
+            conversationHistory.push({
+                role: 'user',
+                content: userMessage.content
+            });
+
+            const { data, error } = await supabase.functions.invoke('agent-chat', {
+                body: {
+                    agentType,
+                    messages: conversationHistory,
+                    systemPrompt: activeSystemPrompt,
+                    tools: config.tools
+                }
+            });
+
+            if (error) throw error;
+
+            const assistantMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                role: 'assistant',
+                content: data.response || 'I apologize, but I was unable to generate a response.',
+                timestamp: new Date()
+            };
+
+            setMessages(prev => [...prev, assistantMessage]);
+        } catch (error) {
+            console.error('Chat error:', error);
+            toast.error('Failed to get response from agent');
+
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                role: 'assistant',
+                content: 'I apologize, but I encountered an error. Please try again.',
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    setIsLoading(true);
+    const handleCopy = async (content: string, id: string) => {
+        await navigator.clipboard.writeText(content);
+        setCopiedId(id);
+        toast.success('Copied to clipboard');
+        setTimeout(() => setCopiedId(null), 2000);
+    };
 
-    try {
-        const conversationHistory = messages
-            .filter(m => m.id !== 'welcome')
-            .map(m => ({
-                role: m.role,
-                content: m.content
-            }));
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+        }
+    };
 
-        conversationHistory.push({
-            role: 'user',
-            content: userMessage.content
-        });
+    const handleStartEditPrompt = () => {
+        setEditedPrompt(activeSystemPrompt);
+        setIsEditingPrompt(true);
+        setShowSystemPrompt(true);
+    };
 
-        const { data, error } = await supabase.functions.invoke('agent-chat', {
-            body: {
-                agentType,
-                messages: conversationHistory,
-                systemPrompt: activeSystemPrompt,
-                tools: config.tools
-            }
-        });
+    const handleSavePrompt = () => {
+        if (editedPrompt.trim()) {
+            saveCustomPrompt(agentType, editedPrompt.trim());
+            setCustomPrompt(editedPrompt.trim());
+            setIsEditingPrompt(false);
+            toast.success('System prompt saved');
+        }
+    };
 
-        if (error) throw error;
-
-        const assistantMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: 'assistant',
-            content: data.response || 'I apologize, but I was unable to generate a response.',
-            timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-        console.error('Chat error:', error);
-        toast.error('Failed to get response from agent');
-
-        const errorMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: 'assistant',
-            content: 'I apologize, but I encountered an error. Please try again.',
-            timestamp: new Date()
-        };
-        setMessages(prev => [...prev, errorMessage]);
-    } finally {
-        setIsLoading(false);
-    }
-};
-
-const handleCopy = async (content: string, id: string) => {
-    await navigator.clipboard.writeText(content);
-    setCopiedId(id);
-    toast.success('Copied to clipboard');
-    setTimeout(() => setCopiedId(null), 2000);
-};
-
-const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSend();
-    }
-};
-
-const handleStartEditPrompt = () => {
-    setEditedPrompt(activeSystemPrompt);
-    setIsEditingPrompt(true);
-    setShowSystemPrompt(true);
-};
-
-const handleSavePrompt = () => {
-    if (editedPrompt.trim()) {
-        saveCustomPrompt(agentType, editedPrompt.trim());
-        setCustomPrompt(editedPrompt.trim());
+    const handleResetPrompt = () => {
+        deleteCustomPrompt(agentType);
+        setCustomPrompt(null);
+        setEditedPrompt('');
         setIsEditingPrompt(false);
-        toast.success('System prompt saved');
-    }
-};
+        toast.success('System prompt reset to default');
+    };
 
-const handleResetPrompt = () => {
-    deleteCustomPrompt(agentType);
-    setCustomPrompt(null);
-    setEditedPrompt('');
-    setIsEditingPrompt(false);
-    toast.success('System prompt reset to default');
-};
+    const handleCancelEdit = () => {
+        setIsEditingPrompt(false);
+        setEditedPrompt('');
+    };
 
-const handleCancelEdit = () => {
-    setIsEditingPrompt(false);
-    setEditedPrompt('');
-};
-
-return (
-    <div className="flex flex-col h-[calc(100vh-8rem)]">
-        {/* Header */}
-        <Card className="mb-4">
-            <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Avatar className={`h-12 w-12 ${config.color}`}>
-                            <AvatarFallback className="text-white font-bold text-lg">
-                                {config.avatar}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <CardTitle className="flex items-center gap-2">
-                                {config.name}
-                                <Badge variant="outline" className="text-xs">
-                                    <Sparkles className="w-3 h-3 mr-1" />
-                                    AI Agent
-                                </Badge>
-                                <Badge variant="secondary" className="text-xs">
-                                    <Wrench className="w-3 h-3 mr-1" />
-                                    {config.tools.length} Tools
-                                </Badge>
-                            </CardTitle>
-                            <CardDescription>{config.description}</CardDescription>
+    return (
+        <div className="flex flex-col h-[calc(100vh-8rem)]">
+            {/* Header */}
+            <Card className="mb-4">
+                <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Avatar className={`h-12 w-12 ${config.color}`}>
+                                <AvatarFallback className="text-white font-bold text-lg">
+                                    {config.avatar}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <CardTitle className="flex items-center gap-2">
+                                    {config.name}
+                                    <Badge variant="outline" className="text-xs">
+                                        <Sparkles className="w-3 h-3 mr-1" />
+                                        AI Agent
+                                    </Badge>
+                                    <Badge variant="secondary" className="text-xs">
+                                        <Wrench className="w-3 h-3 mr-1" />
+                                        {config.tools.length} Tools
+                                    </Badge>
+                                </CardTitle>
+                                <CardDescription>{config.description}</CardDescription>
+                            </div>
                         </div>
+                        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'chat' | 'info')}>
+                            <TabsList>
+                                <TabsTrigger value="chat" className="gap-1">
+                                    <Bot className="w-4 h-4" />
+                                    Chat
+                                </TabsTrigger>
+                                <TabsTrigger value="info" className="gap-1">
+                                    <Info className="w-4 h-4" />
+                                    Info
+                                </TabsTrigger>
+                            </TabsList>
+                        </Tabs>
                     </div>
-                    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'chat' | 'info')}>
-                        <TabsList>
-                            <TabsTrigger value="chat" className="gap-1">
-                                <Bot className="w-4 h-4" />
-                                Chat
-                            </TabsTrigger>
-                            <TabsTrigger value="info" className="gap-1">
-                                <Info className="w-4 h-4" />
-                                Info
-                            </TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-                </div>
-            </CardHeader>
-        </Card>
+                </CardHeader>
+            </Card>
 
-        {activeTab === 'chat' ? (
-            /* Chat Interface */
-            <Card className="flex-1 flex flex-col overflow-hidden">
-                <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-                    <ScrollArea className="flex-1 p-4">
-                        <div className="space-y-4">
-                            {messages.map((message) => (
-                                <div
-                                    key={message.id}
-                                    className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    {message.role === 'assistant' && (
+            {activeTab === 'chat' ? (
+                /* Chat Interface */
+                <Card className="flex-1 flex flex-col overflow-hidden">
+                    <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+                        <ScrollArea className="flex-1 p-4">
+                            <div className="space-y-4">
+                                {messages.map((message) => (
+                                    <div
+                                        key={message.id}
+                                        className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                                    >
+                                        {message.role === 'assistant' && (
+                                            <Avatar className={`h-8 w-8 ${config.color} shrink-0`}>
+                                                <AvatarFallback className="text-white text-xs font-bold">
+                                                    {config.avatar}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        )}
+
+                                        <div
+                                            className={`group relative max-w-[80%] rounded-lg px-4 py-3 ${message.role === 'user'
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-muted'
+                                                }`}
+                                        >
+                                            <div className="prose prose-sm dark:prose-invert max-w-none">
+                                                <ReactMarkdown>{message.content}</ReactMarkdown>
+                                            </div>
+
+                                            {message.role === 'assistant' && message.id !== 'welcome' && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="absolute -right-10 top-0 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                                                    onClick={() => handleCopy(message.content, message.id)}
+                                                >
+                                                    {copiedId === message.id ? (
+                                                        <Check className="h-4 w-4 text-green-500" />
+                                                    ) : (
+                                                        <Copy className="h-4 w-4" />
+                                                    )}
+                                                </Button>
+                                            )}
+                                        </div>
+
+                                        {message.role === 'user' && (
+                                            <Avatar className="h-8 w-8 bg-slate-600 shrink-0">
+                                                <AvatarFallback className="text-white text-xs">
+                                                    <User className="h-4 w-4" />
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        )}
+                                    </div>
+                                ))}
+
+                                {isLoading && (
+                                    <div className="flex gap-3 justify-start">
                                         <Avatar className={`h-8 w-8 ${config.color} shrink-0`}>
                                             <AvatarFallback className="text-white text-xs font-bold">
                                                 {config.avatar}
                                             </AvatarFallback>
                                         </Avatar>
-                                    )}
-
-                                    <div
-                                        className={`group relative max-w-[80%] rounded-lg px-4 py-3 ${message.role === 'user'
-                                            ? 'bg-primary text-primary-foreground'
-                                            : 'bg-muted'
-                                            }`}
-                                    >
-                                        <div className="prose prose-sm dark:prose-invert max-w-none">
-                                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                                        <div className="bg-muted rounded-lg px-4 py-3">
+                                            <Loader2 className="h-5 w-5 animate-spin" />
                                         </div>
+                                    </div>
+                                )}
 
-                                        {message.role === 'assistant' && message.id !== 'welcome' && (
+                                <div ref={scrollRef} />
+                            </div>
+                        </ScrollArea>
+
+                        <div className="p-4 border-t bg-background">
+                            <div className="flex gap-2">
+                                <Textarea
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    placeholder={`Message ${config.name}...`}
+                                    className="min-h-[60px] max-h-[120px] resize-none"
+                                    disabled={isLoading}
+                                />
+                                <Button
+                                    onClick={handleSend}
+                                    disabled={!input.trim() || isLoading}
+                                    size="icon"
+                                    className="h-[60px] w-[60px] shrink-0"
+                                >
+                                    {isLoading ? (
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                    ) : (
+                                        <Send className="h-5 w-5" />
+                                    )}
+                                </Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-2">
+                                Press Enter to send, Shift+Enter for new line
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+            ) : (
+                /* Info Panel */
+                <div className="flex-1 overflow-auto space-y-4">
+                    {/* Architecture Diagram */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <GitBranch className="w-5 h-5" />
+                                Architecture
+                            </CardTitle>
+                            <CardDescription>
+                                Visual representation of the agent's processing pipeline
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg overflow-x-auto">
+                                <Mermaid chart={config.architectureDiagram} />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Tools */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Wrench className="w-5 h-5" />
+                                Available Tools ({config.tools.length})
+                            </CardTitle>
+                            <CardDescription>
+                                Functions the agent can use to accomplish tasks
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            {config.tools.map((tool, index) => (
+                                <Collapsible key={index}>
+                                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors">
+                                        <div className="flex items-center gap-2">
+                                            <Code className="w-4 h-4 text-blue-500" />
+                                            <span className="font-mono text-sm font-medium">{tool.name}</span>
+                                        </div>
+                                        <ChevronDown className="w-4 h-4" />
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                        <p className="text-sm text-muted-foreground mb-3">{tool.description}</p>
+                                        <div className="space-y-2">
+                                            <p className="text-xs font-medium text-muted-foreground uppercase">Parameters:</p>
+                                            {tool.parameters.map((param, pIndex) => (
+                                                <div key={pIndex} className="flex items-start gap-2 text-sm pl-2 border-l-2 border-muted">
+                                                    <code className="text-xs bg-muted px-1 rounded">{param.name}</code>
+                                                    <span className="text-muted-foreground">
+                                                        ({param.type}){param.required && <span className="text-red-500">*</span>}
+                                                    </span>
+                                                    <span className="text-xs text-muted-foreground">- {param.description}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </CollapsibleContent>
+                                </Collapsible>
+                            ))}
+                        </CardContent>
+                    </Card>
+
+                    {/* System Prompt */}
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <FileText className="w-5 h-5" />
+                                        System Prompt
+                                        {hasCustomPrompt && (
+                                            <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+                                                Customized
+                                            </Badge>
+                                        )}
+                                    </CardTitle>
+                                    <CardDescription>
+                                        The instructions that define this agent's behavior
+                                    </CardDescription>
+                                </div>
+                                <div className="flex gap-2">
+                                    {!isEditingPrompt && (
+                                        <Button variant="outline" size="sm" onClick={handleStartEditPrompt}>
+                                            <Pencil className="w-4 h-4 mr-1" />
+                                            Edit
+                                        </Button>
+                                    )}
+                                    {hasCustomPrompt && !isEditingPrompt && (
+                                        <Button variant="outline" size="sm" onClick={handleResetPrompt}>
+                                            <RotateCcw className="w-4 h-4 mr-1" />
+                                            Reset
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            {isEditingPrompt ? (
+                                <div className="space-y-3">
+                                    <Textarea
+                                        value={editedPrompt}
+                                        onChange={(e) => setEditedPrompt(e.target.value)}
+                                        className="min-h-[400px] font-mono text-xs"
+                                        placeholder="Enter custom system prompt..."
+                                    />
+                                    <div className="flex justify-between items-center">
+                                        <p className="text-xs text-muted-foreground">
+                                            {editedPrompt.length} characters
+                                        </p>
+                                        <div className="flex gap-2">
+                                            <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                                                Cancel
+                                            </Button>
+                                            <Button size="sm" onClick={handleSavePrompt}>
+                                                <Save className="w-4 h-4 mr-1" />
+                                                Save Prompt
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <Collapsible open={showSystemPrompt} onOpenChange={setShowSystemPrompt}>
+                                    <CollapsibleTrigger asChild>
+                                        <Button variant="outline" className="w-full justify-between">
+                                            {showSystemPrompt ? 'Hide System Prompt' : 'Show System Prompt'}
+                                            <ChevronDown className={`w-4 h-4 transition-transform ${showSystemPrompt ? 'rotate-180' : ''}`} />
+                                        </Button>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent className="mt-3">
+                                        <div className="relative">
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="absolute -right-10 top-0 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
-                                                onClick={() => handleCopy(message.content, message.id)}
+                                                className="absolute top-2 right-2 h-8 w-8"
+                                                onClick={() => handleCopy(activeSystemPrompt, 'system-prompt')}
                                             >
-                                                {copiedId === message.id ? (
+                                                {copiedId === 'system-prompt' ? (
                                                     <Check className="h-4 w-4 text-green-500" />
                                                 ) : (
                                                     <Copy className="h-4 w-4" />
                                                 )}
                                             </Button>
-                                        )}
-                                    </div>
-
-                                    {message.role === 'user' && (
-                                        <Avatar className="h-8 w-8 bg-slate-600 shrink-0">
-                                            <AvatarFallback className="text-white text-xs">
-                                                <User className="h-4 w-4" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                </div>
-                            ))}
-
-                            {isLoading && (
-                                <div className="flex gap-3 justify-start">
-                                    <Avatar className={`h-8 w-8 ${config.color} shrink-0`}>
-                                        <AvatarFallback className="text-white text-xs font-bold">
-                                            {config.avatar}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="bg-muted rounded-lg px-4 py-3">
-                                        <Loader2 className="h-5 w-5 animate-spin" />
-                                    </div>
-                                </div>
+                                            <pre className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg overflow-x-auto text-xs whitespace-pre-wrap font-mono">
+                                                {activeSystemPrompt}
+                                            </pre>
+                                        </div>
+                                    </CollapsibleContent>
+                                </Collapsible>
                             )}
+                        </CardContent>
+                    </Card>
 
-                            <div ref={scrollRef} />
-                        </div>
-                    </ScrollArea>
-
-                    <div className="p-4 border-t bg-background">
-                        <div className="flex gap-2">
-                            <Textarea
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder={`Message ${config.name}...`}
-                                className="min-h-[60px] max-h-[120px] resize-none"
-                                disabled={isLoading}
-                            />
-                            <Button
-                                onClick={handleSend}
-                                disabled={!input.trim() || isLoading}
-                                size="icon"
-                                className="h-[60px] w-[60px] shrink-0"
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="h-5 w-5 animate-spin" />
-                                ) : (
-                                    <Send className="h-5 w-5" />
-                                )}
-                            </Button>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-2">
-                            Press Enter to send, Shift+Enter for new line
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-        ) : (
-            /* Info Panel */
-            <div className="flex-1 overflow-auto space-y-4">
-                {/* Architecture Diagram */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <GitBranch className="w-5 h-5" />
-                            Architecture
-                        </CardTitle>
-                        <CardDescription>
-                            Visual representation of the agent's processing pipeline
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg overflow-x-auto">
-                            <Mermaid chart={config.architectureDiagram} />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Tools */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Wrench className="w-5 h-5" />
-                            Available Tools ({config.tools.length})
-                        </CardTitle>
-                        <CardDescription>
-                            Functions the agent can use to accomplish tasks
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                        {config.tools.map((tool, index) => (
-                            <Collapsible key={index}>
-                                <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors">
-                                    <div className="flex items-center gap-2">
-                                        <Code className="w-4 h-4 text-blue-500" />
-                                        <span className="font-mono text-sm font-medium">{tool.name}</span>
-                                    </div>
-                                    <ChevronDown className="w-4 h-4" />
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                                    <p className="text-sm text-muted-foreground mb-3">{tool.description}</p>
-                                    <div className="space-y-2">
-                                        <p className="text-xs font-medium text-muted-foreground uppercase">Parameters:</p>
-                                        {tool.parameters.map((param, pIndex) => (
-                                            <div key={pIndex} className="flex items-start gap-2 text-sm pl-2 border-l-2 border-muted">
-                                                <code className="text-xs bg-muted px-1 rounded">{param.name}</code>
-                                                <span className="text-muted-foreground">
-                                                    ({param.type}){param.required && <span className="text-red-500">*</span>}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">- {param.description}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </CollapsibleContent>
-                            </Collapsible>
-                        ))}
-                    </CardContent>
-                </Card>
-
-                {/* System Prompt */}
-                <Card>
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="flex items-center gap-2">
-                                    <FileText className="w-5 h-5" />
-                                    System Prompt
-                                    {hasCustomPrompt && (
-                                        <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
-                                            Customized
-                                        </Badge>
-                                    )}
-                                </CardTitle>
-                                <CardDescription>
-                                    The instructions that define this agent's behavior
-                                </CardDescription>
-                            </div>
-                            <div className="flex gap-2">
-                                {!isEditingPrompt && (
-                                    <Button variant="outline" size="sm" onClick={handleStartEditPrompt}>
-                                        <Pencil className="w-4 h-4 mr-1" />
-                                        Edit
-                                    </Button>
-                                )}
-                                {hasCustomPrompt && !isEditingPrompt && (
-                                    <Button variant="outline" size="sm" onClick={handleResetPrompt}>
-                                        <RotateCcw className="w-4 h-4 mr-1" />
-                                        Reset
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {isEditingPrompt ? (
-                            <div className="space-y-3">
-                                <Textarea
-                                    value={editedPrompt}
-                                    onChange={(e) => setEditedPrompt(e.target.value)}
-                                    className="min-h-[400px] font-mono text-xs"
-                                    placeholder="Enter custom system prompt..."
-                                />
-                                <div className="flex justify-between items-center">
-                                    <p className="text-xs text-muted-foreground">
-                                        {editedPrompt.length} characters
-                                    </p>
-                                    <div className="flex gap-2">
-                                        <Button variant="outline" size="sm" onClick={handleCancelEdit}>
-                                            Cancel
-                                        </Button>
-                                        <Button size="sm" onClick={handleSavePrompt}>
-                                            <Save className="w-4 h-4 mr-1" />
-                                            Save Prompt
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <Collapsible open={showSystemPrompt} onOpenChange={setShowSystemPrompt}>
-                                <CollapsibleTrigger asChild>
-                                    <Button variant="outline" className="w-full justify-between">
-                                        {showSystemPrompt ? 'Hide System Prompt' : 'Show System Prompt'}
-                                        <ChevronDown className={`w-4 h-4 transition-transform ${showSystemPrompt ? 'rotate-180' : ''}`} />
-                                    </Button>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="mt-3">
-                                    <div className="relative">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="absolute top-2 right-2 h-8 w-8"
-                                            onClick={() => handleCopy(activeSystemPrompt, 'system-prompt')}
-                                        >
-                                            {copiedId === 'system-prompt' ? (
-                                                <Check className="h-4 w-4 text-green-500" />
-                                            ) : (
-                                                <Copy className="h-4 w-4" />
-                                            )}
-                                        </Button>
-                                        <pre className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg overflow-x-auto text-xs whitespace-pre-wrap font-mono">
-                                            {activeSystemPrompt}
-                                        </pre>
-                                    </div>
-                                </CollapsibleContent>
-                            </Collapsible>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* Capabilities */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Sparkles className="w-5 h-5" />
-                            Capabilities
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="space-y-2">
-                            {config.capabilities.map((capability, index) => (
-                                <li key={index} className="flex items-center gap-2 text-sm">
-                                    <div className={`w-2 h-2 rounded-full ${config.color}`} />
-                                    {capability}
-                                </li>
-                            ))}
-                        </ul>
-                    </CardContent>
-                </Card>
-            </div>
-        )}
-    </div>
-);
+                    {/* Capabilities */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Sparkles className="w-5 h-5" />
+                                Capabilities
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="space-y-2">
+                                {config.capabilities.map((capability, index) => (
+                                    <li key={index} className="flex items-center gap-2 text-sm">
+                                        <div className={`w-2 h-2 rounded-full ${config.color}`} />
+                                        {capability}
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+        </div>
+    );
 }

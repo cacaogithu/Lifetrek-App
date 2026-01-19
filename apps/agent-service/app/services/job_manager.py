@@ -86,5 +86,27 @@ async def _dispatch_job(job_type: str, payload: dict, job_id: str = None) -> dic
         from app.services.blog_agent import execute_blog_generation
         return await execute_blog_generation(payload, job_id)
         
+    elif job_type == "generate_lead_magnet":
+        logger.info(f"Dispatching to Lead Magnet Agent (Job {job_id})")
+        from app.services.lead_magnet_agent import execute_lead_magnet_generation
+        
+        persona = payload.get("persona")
+        topic = payload.get("topic")
+        template_id = payload.get("templateId")
+        
+        if not all([persona, topic, template_id]):
+             raise ValueError("Missing required fields for lead magnet (persona, topic, templateId)")
+             
+        return await execute_lead_magnet_generation(persona, topic, template_id)
+
+    elif job_type == "repurpose_content":
+         # Map repurpose_content to carousel_generate for now, or handle specifically
+         logger.info("Dispatching Repurpose Job (using Carousel Agent logic)")
+         topic = payload.get("content") or payload.get("topic") or "Repurposed Content"
+         from app.services.carousel_agent import execute_carousel_generation
+         result = await execute_carousel_generation(topic)
+         return result.model_dump()
+
     else:
-        raise ValueError(f"Unknown job type: {job_type}")
+        logger.warning(f"Unknown job type: {job_type} - Ignoring (leaving as pending/processing)")
+        return None # Do not raise, so we don't fail jobs handled by Edge Functions or others

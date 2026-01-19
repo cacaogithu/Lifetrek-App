@@ -54,20 +54,23 @@ export default function LinkedInCarousel() {
   const handleCarouselGenerated = (result?: any) => {
     console.log('Carousel generated, received result:', result);
 
-    if (result && result.carousel && Array.isArray(result.carousel)) {
-      // Map 'repurpose-content' output to 'CarouselResult'
-      const slides = result.carousel.map((slide: any) => ({
-        headline: slide.title || "Headline",
+    if (result && result.carousel) {
+      const carouselData = result.carousel;
+      const slidesArray = Array.isArray(carouselData) ? carouselData : (carouselData.slides || []);
+      const captionText = carouselData.caption || "Check out this content! #medtech #lifetrek";
+
+      const slides = slidesArray.map((slide: any) => ({
+        headline: slide.title || slide.headline || "Headline",
         body: slide.body || "",
-        type: slide.slide_number === 1 ? "hook" : "content" // Simple heuristic
+        type: (slide.slide_number === 1 || slide.type === 'hook') ? "hook" : (slide.type || "content")
       }));
 
       const newCarousel: CarouselResult = {
         topic: result.source === 'url' ? 'Repurposed URL' : 'Repurposed Content',
-        targetAudience: "General Audience", // Inferred
+        targetAudience: "Inferred from content",
         slides: slides,
-        caption: "Check out this carousel! #content", // TODO: Generate caption in Edge Function
-        format: "carousel"
+        caption: captionText,
+        format: result.format || (slides.length === 1 ? "single-image" : "carousel")
       };
 
       setCarouselResult(newCarousel);
@@ -77,7 +80,6 @@ export default function LinkedInCarousel() {
 
       toast.success("Content Repurposed Successfully!");
     } else {
-      // Fallback or legacy handled (e.g. just refresh list)
       console.log("No structured result received or legacy mode.");
     }
 
