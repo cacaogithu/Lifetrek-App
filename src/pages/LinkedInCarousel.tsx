@@ -50,6 +50,7 @@ export default function LinkedInCarousel() {
   const [selectedProfileType, setSelectedProfileType] = useState<'company' | 'salesperson'>('company');
   const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
   const [profileType, setProfileType] = useState<"company" | "salesperson">("company");
+  const [postType, setPostType] = useState<"value" | "commercial">("value");
 
   const handleCarouselGenerated = (result?: any) => {
     console.log('Carousel generated, received result:', result);
@@ -329,6 +330,7 @@ export default function LinkedInCarousel() {
       PROOF POINTS: ${proofPoints}
       CTA: ${ctaAction}
       FORMAT: ${format}
+      POST TYPE: ${postType}
       PROFILE TYPE: ${profileType}
       `;
 
@@ -347,6 +349,7 @@ export default function LinkedInCarousel() {
             proofPoints,
             ctaAction,
             format,
+            postType,
             profileType
           }
         })
@@ -538,6 +541,19 @@ ${carouselResult.caption}
                       value={ctaAction}
                       onChange={(e) => setCtaAction(e.target.value)}
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="postType">Post Type</Label>
+                    <Select value={postType} onValueChange={(value: "value" | "commercial") => setPostType(value)}>
+                      <SelectTrigger id="postType">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="value">Value / Educational (80% strategy)</SelectItem>
+                        <SelectItem value="commercial">Commercial Offer (20% strategy)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">

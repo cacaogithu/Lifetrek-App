@@ -26,7 +26,7 @@ interface Carousel {
   targetAudience: string;
   slides: CarouselSlide[];
   imageUrls?: string[];
-  caption?: string; 
+  caption?: string;
 }
 
 // Serve handling...
@@ -74,11 +74,11 @@ serve(async (req: Request) => {
 
     // --- HANDLE IMAGE ONLY MODE ---
     if (mode === "image_only") {
-         const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-         if (!LOVABLE_API_KEY) throw new Error("Missing Lovable Key");
+      const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+      if (!LOVABLE_API_KEY) throw new Error("Missing Lovable Key");
 
-         // Clean prompt without literal HEADLINE:/CONTEXT: prefixes
-         const finalPrompt = `Crie uma imagem profissional para carrossel do LinkedIn da Lifetrek Medical.
+      // Clean prompt without literal HEADLINE:/CONTEXT: prefixes
+      const finalPrompt = `Crie uma imagem profissional para carrossel do LinkedIn da Lifetrek Medical.
 
 === ESTILO OBRIGATÓRIO ===
 - Dimensões: 1080x1350px (retrato)
@@ -103,25 +103,25 @@ ${imagePrompt || "Professional medical manufacturing scene, precision CNC machin
 3. Logo "LM" pequena no canto inferior direito
 4. Estilo editorial premium, NÃO vendedor`;
 
-        const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-            model: IMAGE_MODEL,
-            messages: [
-                { role: "system", content: "You are an expert professional medical device designer. You create premium, editorial-quality LinkedIn slides with burned-in text. Never include label prefixes like 'HEADLINE:' in the image." },
-                { role: "user", content: finalPrompt }
-            ],
-            modalities: ["image", "text"]
-            }),
-        });
-        const imgData = await imgRes.json();
-        const imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
-        
-        return new Response(
-            JSON.stringify({ imageUrl }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+      const imgRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: IMAGE_MODEL,
+          messages: [
+            { role: "system", content: "You are an expert professional medical device designer. You create premium, editorial-quality LinkedIn slides with burned-in text. Never include label prefixes like 'HEADLINE:' in the image." },
+            { role: "user", content: finalPrompt }
+          ],
+          modalities: ["image", "text"]
+        }),
+      });
+      const imgData = await imgRes.json();
+      const imageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
+
+      return new Response(
+        JSON.stringify({ imageUrl }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
 
@@ -161,7 +161,7 @@ ${imagePrompt || "Professional medical manufacturing scene, precision CNC machin
       console.warn("Could not fetch company assets (non-fatal):", companyAssetsError.message);
     }
 
-    const companyAssetsContext = companyAssets?.map((a: any) => 
+    const companyAssetsContext = companyAssets?.map((a: any) =>
       `- [${a.type.toUpperCase()}] URL: ${a.url} (${a.name || 'No name'})`
     ).join("\n") || "No company assets available.";
 
@@ -179,22 +179,22 @@ ${imagePrompt || "Professional medical manufacturing scene, precision CNC machin
     const productsContext = products?.map((p: any) =>
       `- [${p.category || 'general'}] ${p.name}: ${p.enhanced_url}`
     ).join("\n") || "No product images available.";
-    
-    console.log("📚 RAG Context loaded:", { 
-      contentAssets: assets?.length || 0, 
+
+    console.log("📚 RAG Context loaded:", {
+      contentAssets: assets?.length || 0,
       companyAssets: companyAssets?.length || 0,
-      products: products?.length || 0 
+      products: products?.length || 0
     });
 
     // Combined System Prompt with EMBEDDED CONTEXT
     const SYSTEM_PROMPT = constructSystemPrompt(assetsContext, companyAssetsContext, productsContext, selectedEquipment, referenceImage);
 
     // Construct User Prompt
-    let userPrompt = constructUserPrompt(topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, isBatch, numberOfCarousels);
-    
+    let userPrompt = constructUserPrompt(topic, targetAudience, painPoint, desiredOutcome, proofPoints, ctaAction, isBatch, numberOfCarousels, format, postType);
+
     // --- PLAN MODE ADJUSTMENT ---
     if (mode === 'plan') {
-        userPrompt += "\n\nIMPORTANT: The user wants to see 3 DISTINCT STRATEGIC ANGLES/PLANS for this topic. Generate 3 variants (Batch Mode) so the user can choose the best one. Focus on the HEADLINES and HOOKS diffentiation.";
+      userPrompt += "\n\nIMPORTANT: The user wants to see 3 DISTINCT STRATEGIC ANGLES/PLANS for this topic. Generate 3 variants (Batch Mode) so the user can choose the best one. Focus on the HEADLINES and HOOKS diffentiation.";
     }
 
     // Define Tools
@@ -247,17 +247,17 @@ ${imagePrompt || "Professional medical manufacturing scene, precision CNC machin
     // If Mode is 'plan', we return here WITHOUT generating images or running critique.
     // The user just wants to see the text plans.
     if (mode === 'plan') {
-         return new Response(
-            JSON.stringify({ carousels: resultCarousels, mode: 'plan_results' }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+      return new Response(
+        JSON.stringify({ carousels: resultCarousels, mode: 'plan_results' }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // --- CRITIQUE LOOP (BRAND ANALYST) ---
     // Only run if not in mock mode and not image_only
     if (LOVABLE_API_KEY !== "mock-key-for-testing" && mode !== "image_only") {
       console.log("🧐 Agente Analista: Revisando conteúdo contra Brand Book...");
-      
+
       const critiqueSystemPrompt = `Você é o Analista de Marca & Qualidade da Lifetrek Medical.
 Missão: Revisar rascunhos para garantir Voz on-brand, Credibilidade técnica e Alinhamento estratégico.
 
@@ -287,44 +287,44 @@ Foque pesadamente no GANCHO (Slide 1) e PROVA (Especificidades técnicas).
 Retorne o objeto JSON refinado (array de carrosséis).
 IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
 
-       try {
-         const critiqueRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model: TEXT_MODEL,
-              messages: [
-                { role: "system", content: critiqueSystemPrompt },
-                { role: "user", content: critiqueUserPrompt }
-              ],
-               // We reuse the same tool definition to force structured output
-               tools: tools,
-               tool_choice: { type: "function", function: { name: isBatch ? "create_batch_carousels" : "create_carousel" } },
-            }),
-         });
+      try {
+        const critiqueRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: TEXT_MODEL,
+            messages: [
+              { role: "system", content: critiqueSystemPrompt },
+              { role: "user", content: critiqueUserPrompt }
+            ],
+            // We reuse the same tool definition to force structured output
+            tools: tools,
+            tool_choice: { type: "function", function: { name: isBatch ? "create_batch_carousels" : "create_carousel" } },
+          }),
+        });
 
-         if (!critiqueRes.ok) {
-           if (critiqueRes.status === 429 || critiqueRes.status === 402) {
-             console.warn(`Critique API rate limit/payment issue: ${critiqueRes.status}`);
-           } else {
-             console.warn(`Critique API error: ${critiqueRes.status}`);
-           }
-         }
-         
-         const critiqueData = await critiqueRes.json();
-         const refinedToolCall = critiqueData.choices?.[0]?.message?.tool_calls?.[0];
-         
-         if (refinedToolCall) {
-            const refinedArgs = JSON.parse(refinedToolCall.function.arguments);
-            const refinedCarousels = isBatch ? refinedArgs.carousels : [refinedArgs];
-            if (refinedCarousels && refinedCarousels.length > 0) {
-               console.log("✅ Content refined by Analyst Agent.");
-               resultCarousels = refinedCarousels;
-            }
-         }
-       } catch (e) {
-         console.warn("⚠️ Analyst Agent critique failed, using original draft:", e);
-       }
+        if (!critiqueRes.ok) {
+          if (critiqueRes.status === 429 || critiqueRes.status === 402) {
+            console.warn(`Critique API rate limit/payment issue: ${critiqueRes.status}`);
+          } else {
+            console.warn(`Critique API error: ${critiqueRes.status}`);
+          }
+        }
+
+        const critiqueData = await critiqueRes.json();
+        const refinedToolCall = critiqueData.choices?.[0]?.message?.tool_calls?.[0];
+
+        if (refinedToolCall) {
+          const refinedArgs = JSON.parse(refinedToolCall.function.arguments);
+          const refinedCarousels = isBatch ? refinedArgs.carousels : [refinedArgs];
+          if (refinedCarousels && refinedCarousels.length > 0) {
+            console.log("✅ Content refined by Analyst Agent.");
+            resultCarousels = refinedCarousels;
+          }
+        }
+      } catch (e) {
+        console.warn("⚠️ Analyst Agent critique failed, using original draft:", e);
+      }
     }
 
     // Process Images for ALL carousels
@@ -370,19 +370,19 @@ IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
                     modalities: ["image", "text"]
                   }),
                 });
-                
+
                 if (res.status === 429) {
                   console.warn(`Rate limited on attempt ${attempt}, waiting ${attempt * 2}s...`);
                   await new Promise(r => setTimeout(r, attempt * 2000));
                   continue;
                 }
                 if (res.ok) return res;
-                
+
                 console.warn(`Image gen attempt ${attempt} failed with status ${res.status}`);
               } catch (e) {
                 console.error(`Image gen attempt ${attempt} error:`, e);
               }
-              
+
               if (attempt < maxRetries) {
                 await new Promise(r => setTimeout(r, attempt * 1000));
               }
@@ -393,7 +393,7 @@ IMPORTANTE: Mantenha todo texto em Português Brasileiro.`;
           try {
             // Premium prompt structure with full Brand Book compliance
             const logoPosition = slide.logoPosition || 'top-right';
-            
+
             let imagePrompt = `=== LIFETREK MEDICAL - PREMIUM IMAGE GENERATION ===
 
 **MANDATORY DIMENSIONS**: 1080x1350px (portrait, LinkedIn carousel)
@@ -464,11 +464,11 @@ Focus on atmosphere, lighting, and brand color palette.`;
 
             // Generate base image with retry logic
             const imgRes = await generateImageWithRetry(imagePrompt);
-            
+
             if (imgRes) {
               const imgData = await imgRes.json();
               let baseImageUrl = imgData.choices?.[0]?.message?.images?.[0]?.image_url?.url || "";
-              
+
               // Overlay real logo via image editing if showLogo is true and we have the asset
               if (baseImageUrl && slide.showLogo && companyAssets) {
                 const logoAsset = companyAssets.find((a: any) => a.type === 'logo' || a.type === 'lifetrek_logo');
@@ -484,7 +484,8 @@ Focus on atmosphere, lighting, and brand color palette.`;
                         messages: [{
                           role: "user",
                           content: [
-                            { type: "text", text: `You are a professional graphic designer. Overlay this company logo onto the slide image.
+                            {
+                              type: "text", text: `You are a professional graphic designer. Overlay this company logo onto the slide image.
 
 CRITICAL RULES:
 - Place logo in the ${logoPos} corner of the image
@@ -501,7 +502,7 @@ CRITICAL RULES:
                         modalities: ["image", "text"]
                       }),
                     });
-                    
+
                     if (overlayRes.ok) {
                       const overlayData = await overlayRes.json();
                       const overlayedUrl = overlayData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
@@ -530,7 +531,8 @@ CRITICAL RULES:
                         messages: [{
                           role: "user",
                           content: [
-                            { type: "text", text: `You are a professional graphic designer. Overlay this ISO certification badge onto the slide image.
+                            {
+                              type: "text", text: `You are a professional graphic designer. Overlay this ISO certification badge onto the slide image.
 
 CRITICAL RULES:
 - Place badge in the bottom-left corner of the image (opposite to logo)
@@ -547,7 +549,7 @@ CRITICAL RULES:
                         modalities: ["image", "text"]
                       }),
                     });
-                    
+
                     if (isoOverlayRes.ok) {
                       const isoData = await isoOverlayRes.json();
                       const isoOverlayedUrl = isoData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
@@ -561,21 +563,21 @@ CRITICAL RULES:
                   }
                 }
               }
-              
+
               // Upload base64 image to Storage to avoid storing in DB
               if (baseImageUrl && baseImageUrl.startsWith('data:image')) {
                 try {
                   const base64Data = baseImageUrl.split(',')[1];
                   const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
                   const fileName = `carousel-${Date.now()}-slide-${processedSlides.length + 1}.png`;
-                  
+
                   const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('carousel-images')
                     .upload(fileName, imageBytes, {
                       contentType: 'image/png',
                       upsert: false
                     });
-                  
+
                   if (!uploadError && uploadData) {
                     const { data: publicUrlData } = supabase.storage
                       .from('carousel-images')
@@ -713,7 +715,7 @@ CRITICAL RULES:
       timestamp: new Date().toISOString()
     });
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error instanceof Error ? error.message : "An internal error occurred",
         details: "Check edge function logs for more information"
       }),

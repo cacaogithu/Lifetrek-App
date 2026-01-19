@@ -63,52 +63,57 @@ serve(async (req) => {
                 // 3. Generate Carousel
                 const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
                 const formatInstruction = format === 'single-image'
-                    ? `Generate a SINGLE-IMAGE post with:
-                       - 1 powerful hero image specification
-                       - A comprehensive, value-packed caption (200-500 words)
-                       - Focus on Hook → Insight/Framework → Low-friction CTA
-                       Output as JSON: { "image_headline": "...", "image_description": "...", "caption": "..." }`
-                    : `Generate a 5-slide CAROUSEL with:
-                       - Slide 1: Hook (callout + payoff)
-                       - Slides 2-4: Value/insights
-                       - Slide 5: CTA
-                       Output as JSON Array: [{ "slide_number": 1, "title": "Hook", "body": "...", "design_note": "..." }, ...]`;
+                    ? `Generate a SINGLE-IMAGE post structure:
+                       - Exactly 1 slide in the "slides" array for the Hero Image visual context.
+                       - Use "image_headline" as the "title" of that slide.
+                       - A comprehensive, "mini-article" style caption in the "caption" field (300-600 words).
+                       - Caption structure: Hook → Framework/Insight → Results → CTA.`
+                    : `Generate a CAROUSEL post structure:
+                       - 5-7 slides in the "slides" array.
+                       - Slide 1: Hook. Slides 2-N: Value. Final Slide: CTA.
+                       - A concise, engaging caption in the "caption" field (50-100 words).`;
 
                 const postTypeInstruction = postType === 'value'
-                    ? `This is an EDUCATIONAL/VALUE post (80% content mix). CTA should be low-friction (PDF, checklist, DM "KEYWORD").`
-                    : `This is a COMMERCIAL OFFER post (20% content mix). CTA can be stronger (schedule call, quote request).`;
+                    ? `POST TYPE: EDUCATIONAL/VALUE. Focus on teaching, frameworks, and standalone value (80% strategy). CTA: Low-friction resource (PDF, Checklist, or DM keyword).`
+                    : `POST TYPE: COMMERCIAL. Focus on the Lifetrek solution, co-engineering, and manufacturing capacity (20% strategy). CTA: Stronger (Schedule meeting or Request quote).`;
 
                 const prompt = `
-                Role: Expert LinkedIn Content Creator for Lifetrek Medical.
-                Task: Create high-engagement LinkedIn content based on the User Content.
+                Role: Expert LinkedIn Content Strategist for Lifetrek Medical (ISO 13485 Manufacturing).
+                Goal: Repurpose the provided content into a high-engagement LinkedIn post.
                 
                 FORMAT: ${format.toUpperCase()}
-                POST TYPE: ${postType.toUpperCase()}
-                
                 ${formatInstruction}
                 
                 ${postTypeInstruction}
                 
-                Reference Styles (Use these for structural inspiration only):
+                Reference Styles for inspiration:
                 ${ragContext}
                 
-                User Content:
+                User Content to repurpose:
                 "${content || url}"
                 
-                IMPORTANT: All content must be in PORTUGUESE (pt-BR).
-                Use technical but accessible language.
-                Focus on engineer-to-engineer tone, not salesy.
+                OUTPUT JSON FORMAT (STRICT):
+                {
+                  "slides": [
+                    { "slide_number": 1, "title": "Headline", "body": "...", "design_note": "..." },
+                    ...
+                  ],
+                  "caption": "Full LinkedIn post text here..."
+                }
+
+                LANGUAGE: All text MUST be in PORTUGUESE (pt-BR).
+                Tone: Expert, technical, but conversion-focused. Avoid generic "marketing-speak".
                 `;
 
                 const result = await model.generateContent(prompt);
                 const text = result.response.text();
-                const jsonMatch = text.match(/\[[\s\S]*\]/);
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
                 const generatedJson = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
 
                 const responseData = {
                     source: content ? 'text' : 'url',
                     rag_references: similarSlides?.length || 0,
-                    carousel: generatedJson || text,
+                    carousel: generatedJson, // Standardized structure: { slides, caption }
                     format: format,
                     postType: postType
                 };

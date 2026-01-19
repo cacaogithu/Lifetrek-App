@@ -141,9 +141,16 @@ export function constructUserPrompt(
     proofPoints: string,
     ctaAction: string,
     isBatch: boolean,
-    numberOfCarousels: number
+    numberOfCarousels: number,
+    format: "carousel" | "single-image" = "carousel",
+    postType: "value" | "commercial" = "value"
 ): string {
-    let userPrompt = `Tema: ${topic}
+    const formatLabel = format === "single-image" ? "SINGLE IMAGE (1 slide + Artigo longo)" : "CARROSSEL (5-8 slides)";
+    const strategyLabel = postType === "value" ? "CONTEÚDO DE VALOR (80% strategy - Educacional)" : "OFERTA COMERCIAL (20% strategy - Venda)";
+
+    let userPrompt = `FORMATO: ${formatLabel}
+ESTRATÉGIA: ${strategyLabel}
+Tema: ${topic}
 Público-Alvo: ${targetAudience}
 Ponto de Dor: ${painPoint}
 ${desiredOutcome ? `Resultado Desejado: ${desiredOutcome}` : ""}
@@ -151,10 +158,17 @@ ${proofPoints ? `Pontos de Prova: ${proofPoints}` : ""}
 ${ctaAction ? `CTA: ${ctaAction}` : ""}
 `;
 
+    if (format === "single-image") {
+        userPrompt += `\nESTRATÉGIA SINGLE IMAGE:
+1. Gere EXATAMENTE 1 slide (Hook).
+2. A LEGENDA (caption) deve ser um "mini-artigo" completo (300-600 palavras).
+3. Estrutura da Legenda: Gancho → Insight Técnico → Framework Lifetrek → CTA de Baixa Fricção.`;
+    }
+
     if (isBatch) {
         userPrompt += `\nGere ${numberOfCarousels} carrosséis distintos para um calendário de conteúdo. Cada um deve ter um ângulo diferente.`;
     } else {
-        userPrompt += `\nGere um único carrossel de alto impacto seguindo a estrutura de melhores práticas.`;
+        userPrompt += `\nGere um único conteúdo de alto impacto seguindo a estrutura de melhores práticas.`;
     }
     return userPrompt;
 }
@@ -177,8 +191,8 @@ const slideSchema = {
         showISOBadge: { type: "boolean", description: "Se deve mostrar badge de certificação ISO 13485:2016. Use quando conteúdo menciona qualidade/certificação." },
         logoPosition: { type: "string", enum: ["top-left", "top-right", "bottom-left", "bottom-right"], description: "Posição do logo Lifetrek. Padrão: top-right" },
         // CAMPOS DE REFERÊNCIA DE PRODUTOS
-        productReferenceUrls: { 
-            type: "array", 
+        productReferenceUrls: {
+            type: "array",
             items: { type: "string" },
             description: "Array de URLs de imagens de produtos para usar como referência visual na geração de imagens. Use quando o tema se relaciona a produtos específicos."
         }
@@ -192,7 +206,7 @@ export function getTools(isBatch: boolean): any[] {
             type: "function",
             function: {
                 name: isBatch ? "create_batch_carousels" : "create_carousel",
-                description: isBatch ? "Criar múltiplos carrosséis" : "Criar um único carrossel",
+                description: isBatch ? "Criar múltiplos conteúdos" : "Criar um único carrossel ou post de imagem",
                 parameters: {
                     type: "object",
                     properties: isBatch ? {
@@ -201,21 +215,25 @@ export function getTools(isBatch: boolean): any[] {
                             items: {
                                 type: "object",
                                 properties: {
-                                    topic: { type: "string", description: "Tema do carrossel - EM PORTUGUÊS" },
+                                    format: { type: "string", enum: ["carousel", "single-image"] },
+                                    postType: { type: "string", enum: ["value", "commercial"] },
+                                    topic: { type: "string", description: "Tema do conteúdo - EM PORTUGUÊS" },
                                     targetAudience: { type: "string", description: "Público-alvo - EM PORTUGUÊS" },
                                     slides: { type: "array", items: slideSchema },
-                                    caption: { type: "string", description: "Legenda para o LinkedIn - EM PORTUGUÊS, sem markdown" }
+                                    caption: { type: "string", description: "Legenda para o LinkedIn (ESTILO ARTIGO se for single-image) - EM PORTUGUÊS, sem markdown" }
                                 },
-                                required: ["topic", "targetAudience", "slides", "caption"]
+                                required: ["topic", "targetAudience", "slides", "caption", "format", "postType"]
                             }
                         }
                     } : {
-                        topic: { type: "string", description: "Tema do carrossel - EM PORTUGUÊS" },
+                        format: { type: "string", enum: ["carousel", "single-image"] },
+                        postType: { type: "string", enum: ["value", "commercial"] },
+                        topic: { type: "string", description: "Tema do conteúdo - EM PORTUGUÊS" },
                         targetAudience: { type: "string", description: "Público-alvo - EM PORTUGUÊS" },
                         slides: { type: "array", items: slideSchema },
-                        caption: { type: "string", description: "Legenda para o LinkedIn - EM PORTUGUÊS, sem markdown" }
+                        caption: { type: "string", description: "Legenda para o LinkedIn (ESTILO ARTIGO se for single-image) - EM PORTUGUÊS, sem markdown" }
                     },
-                    required: isBatch ? ["carousels"] : ["topic", "targetAudience", "slides", "caption"]
+                    required: isBatch ? ["carousels"] : ["topic", "targetAudience", "slides", "caption", "format", "postType"]
                 }
             }
         }
@@ -223,17 +241,17 @@ export function getTools(isBatch: boolean): any[] {
 }
 
 export function constructSystemPrompt(
-    assetsContext: string, 
-    companyAssetsContext: string = "", 
+    assetsContext: string,
+    companyAssetsContext: string = "",
     productsContext: string = "",
     selectedEquipment: string[] = [],
     referenceImage: string = ""
 ): string {
-    const equipmentContext = selectedEquipment.length > 0 
+    const equipmentContext = selectedEquipment.length > 0
         ? `\n=== EQUIPAMENTOS SELECIONADOS PELO USUÁRIO ===\nO usuário quer destacar estes equipamentos/produtos específicos nas imagens:\n${selectedEquipment.map(e => `- ${e}`).join('\n')}\nPRIORIZE estes visuais!`
         : "";
-    
-    const referenceContext = referenceImage 
+
+    const referenceContext = referenceImage
         ? `\n=== IMAGEM DE REFERÊNCIA ===\nO usuário forneceu uma imagem de referência. Use-a como inspiração visual para estilo, composição ou conteúdo.`
         : "";
 
