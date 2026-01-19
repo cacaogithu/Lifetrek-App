@@ -167,174 +167,202 @@ const FatigueValidationGuide = () => {
                 <div className="flex gap-4">
                     <Button onClick={handlePrintClick} size="lg" className="gap-2 shadow-lg hover:shadow-xl transition-all">
                         {hasAccess ? <Printer className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
-                        {hasAccess ? "Imprimir / Salvar PDF" : "Baixar PDF do Guia"}
+                        {hasAccess ? "Imprimir / Salvar PDF" : "Desbloquear Guia Completo"}
                     </Button>
                 </div>
             </div>
 
-            {/* Page 1: Flowchart */}
-            <div className="max-w-5xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700 mb-8 print:shadow-none print:border-none print:mb-0 print:break-after-page">
-                <div className="p-8">
-                    <div className="flex justify-between items-start mb-6">
-                        <div>
-                            <span className="text-xs font-semibold tracking-wider text-blue-600 uppercase mb-1 block">Framework Lifetrek</span>
-                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Do CAD ao Teste de Fadiga em Semanas</h2>
-                            <p className="text-slate-500 mt-2 max-w-2xl">
-                                Combine impressão 3D médica para validar geometria com usinagem CNC em materiais de grau implante para testar fadiga em condições reais.
-                            </p>
-                        </div>
-                        <div className="hidden print:block text-right">
-                            <h3 className="text-lg font-bold text-slate-900">Lifetrek Medical</h3>
-                            <p className="text-sm text-slate-500">lifetrek.io</p>
+            {!hasAccess ? (
+                /* Locked State - Call to Action */
+                <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 p-12 text-center">
+                    <div className="mb-6 flex justify-center">
+                        <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-full">
+                            <Lock className="h-16 w-16 text-blue-600 dark:text-blue-400" />
                         </div>
                     </div>
-
-                    <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 border border-slate-100 dark:border-slate-700">
-                        <Mermaid chart={mermaidChart} />
+                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+                        Conteúdo Exclusivo Bloqueado 🔒
+                    </h2>
+                    <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+                        O <strong>Fluxograma Completo</strong> e o <strong>Checklist Técnico</strong> estão disponíveis gratuitamente após fornecer seu email.
+                    </p>
+                    <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 mb-8">
+                        <h3 className="font-semibold text-slate-900 dark:text-white mb-4">📊 O que você vai receber:</h3>
+                        <ul className="text-left space-y-3 max-w-md mx-auto">
+                            <li className="flex items-start gap-3">
+                                <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-slate-700 dark:text-slate-300">Fluxograma interativo: Do CAD ao teste de fadiga</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-slate-700 dark:text-slate-300">Checklist técnico com parâmetros críticos</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-slate-700 dark:text-slate-300">Download/Print do guia completo em PDF</span>
+                            </li>
+                        </ul>
                     </div>
-
-                    <div className="mt-6 flex gap-6 text-sm text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-6">
-                        <div className="flex items-start gap-3">
-                            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/20">
-                                <Info className="h-5 w-5" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Por que CNC é obrigatório?</h4>
-                                <p>Impressão 3D valida forma. Fadiga exige peça usinada em titânio/PEEK com tolerâncias de mícron.</p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                            <div className="p-2 bg-green-50 text-green-600 rounded-lg dark:bg-green-900/20">
-                                <CheckCircle className="h-5 w-5" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Resultado ANVISA/FDA</h4>
-                                <p>Materiais reais usinados (F136, Nitinol) geram dados confiáveis para submissão regulatória.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <Button onClick={() => setIsModalOpen(true)} size="lg" className="text-lg px-8 py-6">
+                        <Lock className="mr-2 h-5 w-5" />
+                        Desbloquear Agora (Grátis)
+                    </Button>
                 </div>
-            </div>
+            ) : (
+                <>
+                    {/* Page 1: Flowchart */}
+                    <div className="max-w-5xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700 mb-8 print:shadow-none print:border-none print:mb-0 print:break-after-page">
+                        <div className="p-8">
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    <span className="text-xs font-semibold tracking-wider text-blue-600 uppercase mb-1 block">Framework Lifetrek</span>
+                                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Do CAD ao Teste de Fadiga em Semanas</h2>
+                                    <p className="text-slate-500 mt-2 max-w-2xl">
+                                        Combine impressão 3D médica para validar geometria com usinagem CNC em materiais de grau implante para testar fadiga em condições reais.
+                                    </p>
+                                </div>
+                                <div className="hidden print:block text-right">
+                                    <h3 className="text-lg font-bold text-slate-900">Lifetrek Medical</h3>
+                                    <p className="text-sm text-slate-500">lifetrek.io</p>
+                                </div>
+                            </div>
 
-            {/* Page 2: Checklist */}
-            <div className="max-w-5xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700 print:shadow-none print:border-none">
-                <div className="p-8">
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Checklist Técnico & Decisões Críticas</h2>
-                        <p className="text-slate-500">Parâmetros para execução segura do pipeline 3D + CNC.</p>
+                            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 border border-slate-100 dark:border-slate-700">
+                                <Mermaid chart={mermaidChart} />
+                            </div>
+
+                            <div className="mt-6 flex gap-6 text-sm text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-6">
+                                <div className="flex items-start gap-3">
+                                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/20">
+                                        <Info className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Por que CNC é obrigatório?</h4>
+                                        <p>Impressão 3D valida forma. Fadiga exige peça usinada em titânio/PEEK com tolerâncias de mícron.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="p-2 bg-green-50 text-green-600 rounded-lg dark:bg-green-900/20">
+                                        <CheckCircle className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Resultado ANVISA/FDA</h4>
+                                        <p>Materiais reais usinados (F136, Nitinol) geram dados confiáveis para submissão regulatória.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {/* Section A */}
-                        <section>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm dark:bg-blue-900/30">A</div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Impressão 3D (Setup)</h3>
+                    {/* Page 2: Checklist */}
+                    <div className="max-w-5xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700 print:shadow-none print:border-none">
+                        <div className="p-8">
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Checklist Técnico & Decisões Críticas</h2>
+                                <p className="text-slate-500">Parâmetros para execução segura do pipeline 3D + CNC.</p>
                             </div>
-                            <Card className="border-l-4 border-l-blue-500 shadow-sm">
-                                <CardContent className="pt-6">
-                                    <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-3">
-                                        <CheckCircle className="h-4 w-4 text-green-500" /> Quando usar:
-                                    </h4>
-                                    <ul className="space-y-2 mb-6">
-                                        <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5" />
-                                            Validar forma, encaixe e ergonomia.
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5" />
-                                            Verificar acesso de instrumentais cirúrgicos.
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5" />
-                                            Aprovação visual de design.
-                                        </li>
-                                    </ul>
-                                    <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-3">
-                                        <AlertTriangle className="h-4 w-4 text-amber-500" /> Quando NÃO usar:
-                                    </h4>
+
+                            <div className="space-y-6">
+                                {/* Section A */}
+                                <section>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">A. Impressão 3D (Setup)</h3>
+                                    <div className="space-y-3">
+                                        <h4 className="font-semibold text-slate-700 dark:text-slate-300 text-sm">Quando usar:</h4>
+                                        <ul className="space-y-2">
+                                            <li className="flex items-start gap-3">
+                                                <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                                <span className="text-sm text-slate-600 dark:text-slate-300">Validar forma, encaixe e ergonomia</span>
+                                            </li>
+                                            <li className="flex items-start gap-3">
+                                                <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                                <span className="text-sm text-slate-600 dark:text-slate-300">Verificar acesso de instrumentais cirúrgicos</span>
+                                            </li>
+                                            <li className="flex items-start gap-3">
+                                                <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                                <span className="text-sm text-slate-600 dark:text-slate-300">Aprovação visual de design</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </section>
+
+                                <Separator />
+
+                                {/* Section B */}
+                                <section>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">B. CNC & Manufatura</h3>
                                     <ul className="space-y-2">
-                                        <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5" />
-                                            Conclusão final de fadiga (anisotropia do material diverge do real).
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <div>
+                                                <span className="font-semibold text-sm text-slate-900 dark:text-white">Material Real: </span>
+                                                <span className="text-sm text-slate-600 dark:text-slate-300">Ti ASTM F136, Nitinol ou PEEK (nunca substitutos)</span>
+                                            </div>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <div>
+                                                <span className="font-semibold text-sm text-slate-900 dark:text-white">Regiões Críticas: </span>
+                                                <span className="text-sm text-slate-600 dark:text-slate-300">Identificar áreas de tensão (roscas, mudanças de seção)</span>
+                                            </div>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <div>
+                                                <span className="font-semibold text-sm text-slate-900 dark:text-white">Acabamento: </span>
+                                                <span className="text-sm text-slate-600 dark:text-slate-300">Especificar rugosidade (Ra) em zonas de contato</span>
+                                            </div>
                                         </li>
                                     </ul>
-                                </CardContent>
-                            </Card>
-                        </section>
+                                </section>
 
-                        {/* Section B */}
-                        <section>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-8 w-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm dark:bg-indigo-900/30">B</div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">CNC & Manufatura</h3>
-                            </div>
-                            <Card className="border-l-4 border-l-indigo-500 shadow-sm">
-                                <CardContent className="pt-6 text-sm text-slate-600 dark:text-slate-300 space-y-4">
-                                    <div className="space-y-2">
-                                        <h5 className="font-semibold text-slate-900 dark:text-white">Material Real</h5>
-                                        <p>Utilizar Ti ASTM F136, Nitinol ou PEEK equivalente ao produto final. Não use substitutos para teste de fadiga.</p>
-                                    </div>
-                                    <Separator />
-                                    <div className="space-y-2">
-                                        <h5 className="font-semibold text-slate-900 dark:text-white">Regiões Críticas</h5>
-                                        <p>Identificar áreas de maior tensão (roscas, mudanças de seção). Tolerâncias de mícron são mandatórias aqui.</p>
-                                    </div>
-                                    <Separator />
-                                    <div className="space-y-2">
-                                        <h5 className="font-semibold text-slate-900 dark:text-white">Acabamento</h5>
-                                        <p>Especificar rugosidade (Ra) em zonas de contato ósseo ou articular.</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </section>
+                                <Separator />
 
-                        {/* Section C */}
-                        <section>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-8 w-8 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm dark:bg-teal-900/30">C</div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Metrologia & Doc</h3>
-                            </div>
-                            <ul className="space-y-3">
-                                <li className="flex items-start gap-3 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg">
-                                    <CheckCircle className="h-5 w-5 text-teal-500 shrink-0" />
-                                    <span className="text-sm text-slate-700 dark:text-slate-300">Medir 100% das regiões críticas em CMM.</span>
-                                </li>
-                                <li className="flex items-start gap-3 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg">
-                                    <CheckCircle className="h-5 w-5 text-teal-500 shrink-0" />
-                                    <span className="text-sm text-slate-700 dark:text-slate-300">Vincular laudo dimensional ao lote do material e ao programa CNC usado.</span>
-                                </li>
-                                <li className="flex items-start gap-3 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg">
-                                    <CheckCircle className="h-5 w-5 text-teal-500 shrink-0" />
-                                    <span className="text-sm text-slate-700 dark:text-slate-300">Rastreabilidade total (ISO 13485).</span>
-                                </li>
-                            </ul>
-                        </section>
+                                {/* Section C */}
+                                <section>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">C. Metrologia & Documentação</h3>
+                                    <ul className="space-y-2">
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <span className="text-sm text-slate-600 dark:text-slate-300">Medir 100% das regiões críticas em CMM</span>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <span className="text-sm text-slate-600 dark:text-slate-300">Vincular laudo dimensional ao lote e programa CNC</span>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <span className="text-sm text-slate-600 dark:text-slate-300">Rastreabilidade total (ISO 13485)</span>
+                                        </li>
+                                    </ul>
+                                </section>
 
-                        {/* Section D */}
-                        <section>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-8 w-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-sm dark:bg-orange-900/30">D</div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Iteração & Aprendizado</h3>
+                                <Separator />
+
+                                {/* Section D */}
+                                <section>
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">D. Iteração & Aprendizado</h3>
+                                    <ul className="space-y-2">
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <span className="text-sm text-slate-600 dark:text-slate-300">Mudar apenas UMA variável por vez (geometria OU processo)</span>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-slate-300" />
+                                            <span className="text-sm text-slate-600 dark:text-slate-300">Documentar mudanças e resultados para próximas iterações</span>
+                                        </li>
+                                    </ul>
+                                </section>
                             </div>
-                            <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-100 dark:border-orange-800">
-                                <h4 className="font-semibold text-orange-800 dark:text-orange-300 mb-2">Regra de Ouro</h4>
-                                <p className="text-sm text-orange-700 dark:text-orange-400 italic">
-                                    "Só mudar UMA variável por vez (geometria OU processo) nos loops de teste."
-                                </p>
-                                <p className="text-xs text-orange-600 dark:text-orange-500 mt-2">
-                                    Se mudar ambos, você não saberá se a falha foi design ou usinagem.
-                                </p>
+
+                            <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700 text-center print:mt-4">
+                                <p className="font-medium text-slate-900 dark:text-white">Lifetrek Medical — Parceiro de Manufatura Avançada</p>
+                                <p className="text-slate-500 text-sm mt-1">lifetrek.io • ISO 13485 Certified</p>
                             </div>
-                        </section>
+                        </div>
                     </div>
-
-                    <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700 text-center print:mt-4">
-                        <p className="font-medium text-slate-900 dark:text-white">Lifetrek Medical — Parceiro de Manufatura Avançada</p>
-                        <p className="text-slate-500 text-sm mt-1">lifetrek.io • ISO 13485 Certified</p>
-                    </div>
-                </div>
-            </div>
+                </>
+            )
+            }
 
             {/* Email Capture Modal */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -384,7 +412,7 @@ const FatigueValidationGuide = () => {
                     </form>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 };
 
