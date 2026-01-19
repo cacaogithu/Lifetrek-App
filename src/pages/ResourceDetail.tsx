@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import Mermaid from "@/components/agents/Mermaid";
 
 export default function ResourceDetail() {
     const { slug } = useParams();
@@ -102,6 +103,21 @@ export default function ResourceDetail() {
                                 ul: ({ node, ...props }) => <ul className="list-disc pl-6 space-y-2 mb-6" {...props} />,
                                 li: ({ node, ...props }) => <li className="text-slate-700 leading-relaxed" {...props} />,
                                 p: ({ node, ...props }) => <p className="text-slate-700 leading-relaxed mb-6" {...props} />,
+                                code: ({ className, children, ...props }) => {
+                                    const language = className?.replace("language-", "");
+                                    if (language === "mermaid") {
+                                        return (
+                                            <div className="my-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                                                <Mermaid chart={String(children).trim()} />
+                                            </div>
+                                        );
+                                    }
+                                    return (
+                                        <code className="rounded bg-slate-100 px-1 py-0.5 text-sm text-slate-800" {...props}>
+                                            {children}
+                                        </code>
+                                    );
+                                },
                                 blockquote: ({ node, ...props }) => (
                                     <blockquote className="border-l-4 border-primary bg-slate-50 p-4 rounded-r italic text-slate-700 my-6" {...props} />
                                 )
