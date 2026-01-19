@@ -27,6 +27,9 @@ const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Assessment = lazy(() => import("./pages/Assessment"));
 const Calculator = lazy(() => import("./pages/Calculator"));
+const Resources = lazy(() => import("./pages/Resources"));
+const Blog = lazy(() => import("./pages/Blog"));
+
 
 // Admin Pages
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -56,6 +59,9 @@ const Designer = lazy(() => import("./pages/Admin/Agents/Designer"));
 // Public Pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
+const ResourceDetail = lazy(() => import("./pages/ResourceDetail"));
+const BlogPostDetails = lazy(() => import("./pages/BlogPostDetails"));
+const FatigueValidationGuide = lazy(() => import("./pages/FatigueValidationGuide"));
 
 const queryClient = new QueryClient();
 
@@ -100,6 +106,12 @@ const App = () => (
                 <Route path="/calculator" element={<Calculator />} />
                 <Route path="/product-catalog" element={<ProductCatalog />} />
                 <Route path="/pitch-deck" element={<PitchDeck />} />
+                <Route path="/blog" element={<Blog />} />
+
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/resources/fatigue-validation-guide" element={<FatigueValidationGuide />} />
+                <Route path="/resources/:slug" element={<ResourceDetail />} />
+                <Route path="/blog/:slug" element={<BlogPostDetails />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
 
