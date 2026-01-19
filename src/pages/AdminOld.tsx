@@ -180,41 +180,12 @@ export default function Admin() {
 
       if (error) throw error;
 
-      // Fetch CSV leads
-      const { data: csvLeads, error: csvError } = await supabase
-        .from("leads")
-        .select("*")
-        .order("score", { ascending: false, nullsFirst: false })
-        .limit(100); // Limit for performance
-
-      const mappedCsvLeads = (csvLeads || []).map(l => ({
-        id: l.id,
-        name: l.company_name || l.email, // Use company or email as name
-        email: l.email,
-        company: l.company_name,
-        phone: l.phone,
-        project_types: l.segment ? [l.segment] : [],
-        annual_volume: null,
-        technical_requirements: l.notes || '',
-        message: null,
-        status: 'new',
-        priority: l.score >= 8 ? 'high' : l.score >= 5 ? 'medium' : 'low',
-        admin_notes: null,
-        assigned_to: null,
-        created_at: l.created_at,
-        updated_at: l.updated_at,
-        lead_score: l.score,
-        score_breakdown: null,
-        source: 'csv' // Mark as CSV source
-      }));
-
-      // Merge leads (prioritize contact leads)
-      const allLeads = [...(data || []), ...mappedCsvLeads].sort((a, b) => 
+      const sortedLeads = (data || []).sort((a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
-      setLeads(allLeads);
-      setFilteredLeads(allLeads);
+      setLeads(sortedLeads);
+      setFilteredLeads(sortedLeads);
     } catch (error) {
       console.error("Error fetching leads:", error);
       toast.error("Failed to load leads");

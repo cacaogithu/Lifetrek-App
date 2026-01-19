@@ -149,10 +149,12 @@ const handler = async (req: Request): Promise<Response> => {
         email,
         company,
         phone,
-        project_type: formatProjectTypes(projectTypes),
+        project_type: projectTypes?.[0] || 'other_medical',
+        project_types: projectTypes,
         annual_volume: annualVolume,
         technical_requirements: technicalRequirements,
         message,
+        source: 'website',
         status: 'new',
         priority: 'medium',
         lead_score: 0

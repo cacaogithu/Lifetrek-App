@@ -178,6 +178,7 @@ export type Database = {
             | Database["public"]["Enums"]["project_type_option"][]
             | null
           score_breakdown: Json | null
+          source: Database["public"]["Enums"]["lead_source"]
           status: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at: string
@@ -200,6 +201,7 @@ export type Database = {
             | Database["public"]["Enums"]["project_type_option"][]
             | null
           score_breakdown?: Json | null
+          source?: Database["public"]["Enums"]["lead_source"]
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements: string
           updated_at?: string
@@ -222,6 +224,7 @@ export type Database = {
             | Database["public"]["Enums"]["project_type_option"][]
             | null
           score_breakdown?: Json | null
+          source?: Database["public"]["Enums"]["lead_source"]
           status?: Database["public"]["Enums"]["lead_status"]
           technical_requirements?: string
           updated_at?: string
@@ -503,6 +506,7 @@ export type Database = {
         | "quoted"
         | "closed"
         | "rejected"
+      lead_source: "website" | "unipile"
       project_type_option:
         | "dental_implants"
         | "orthopedic_implants"

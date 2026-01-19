@@ -20,7 +20,8 @@ interface Lead {
   email: string;
   company: string | null;
   phone: string;
-  project_types: string[];
+  project_type?: string | null;
+  project_types: string[] | null;
   annual_volume: string | null;
   technical_requirements: string;
   message: string | null;
@@ -32,6 +33,7 @@ interface Lead {
   updated_at: string;
   lead_score: number | null;
   score_breakdown: any | null;
+  source?: 'website' | 'unipile' | string | null;
 }
 
 const PROJECT_TYPE_LABELS: Record<string, string> = {
@@ -97,6 +99,12 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
   }, [lead?.id, open]);
 
   if (!lead) return null;
+
+  const projectTypes = (lead.project_types && lead.project_types.length > 0)
+    ? lead.project_types
+    : lead.project_type
+      ? [lead.project_type]
+      : [];
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -175,6 +183,10 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
                 <a href={`tel:${lead.phone}`} className="text-primary hover:underline">
                   {lead.phone}
                 </a>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-muted-foreground">Origem</Label>
+                <p className="font-medium">{lead.source === "unipile" ? "Unipile" : "Website"}</p>
               </div>
             </div>
           </div>
@@ -257,11 +269,15 @@ export const LeadDetailsModal = ({ lead, open, onOpenChange, onUpdate }: LeadDet
               <div className="col-span-2 space-y-2">
                 <Label className="text-muted-foreground">Tipos de Projeto</Label>
                 <div className="flex flex-wrap gap-2">
-                  {lead.project_types.map((type) => (
-                    <Badge key={type} variant="secondary">
-                      {PROJECT_TYPE_LABELS[type] || type}
-                    </Badge>
-                  ))}
+                  {projectTypes.length > 0 ? (
+                    projectTypes.map((type) => (
+                      <Badge key={type} variant="secondary">
+                        {PROJECT_TYPE_LABELS[type] || type}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-muted-foreground">-</span>
+                  )}
                 </div>
               </div>
               <div className="space-y-2">

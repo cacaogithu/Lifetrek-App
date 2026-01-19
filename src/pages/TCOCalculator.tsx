@@ -87,8 +87,10 @@ export default function TCOCalculator() {
                 company: leadInfo.company,
                 phone: leadInfo.phone,
                 project_type: 'micro_precision_parts',
+                project_types: ['micro_precision_parts'],
                 technical_requirements: `TCO CALC: ${results?.annualSavings.toLocaleString()} savings/year. Visit Requested: ${leadInfo.scheduleVisit ? 'YES' : 'NO'}`,
-                message: `Lead generated from /calc. Potential annual savings: R$ ${results?.annualSavings.toFixed(2)}. Capital release: R$ ${results?.capitalReleased.toFixed(2)}.`
+                message: `Lead generated from /calc. Potential annual savings: R$ ${results?.annualSavings.toFixed(2)}. Capital release: R$ ${results?.capitalReleased.toFixed(2)}.`,
+                source: 'website'
             });
 
             if (error) throw error;
