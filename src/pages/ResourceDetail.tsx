@@ -34,6 +34,13 @@ export default function ResourceDetail() {
         quality: 3,
         capital: 3
     });
+    const [productionChecklist, setProductionChecklist] = useState({
+        volume: false,
+        leadTime: false,
+        impact: false,
+        quality: false,
+        capital: false
+    });
 
     useEffect(() => {
         if (!resource?.slug) return;
@@ -54,6 +61,12 @@ export default function ResourceDetail() {
         : scorecardTotal <= 18
             ? "Criar plano de contingencia e revisar fornecedores criticos."
             : "Priorizar nearshoring/fornecedor local critico.";
+    const productionYesCount = Object.values(productionChecklist).filter(Boolean).length;
+    const productionRecommendation = productionYesCount >= 4
+        ? "Prioridade alta para migracao."
+        : productionYesCount >= 3
+            ? "Avaliar piloto local."
+            : "Monitorar e reavaliar quando mudar o cenario.";
 
     const handleUnlock = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -152,6 +165,58 @@ export default function ResourceDetail() {
                 variant: "destructive",
                 title: "Erro",
                 description: "Nao foi possivel salvar o scorecard."
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleProductionChecklistSave = async () => {
+        if (!resource) return;
+        if (!formData.name || !formData.email) {
+            setIsModalOpen(true);
+            toast({
+                variant: "destructive",
+                title: "Dados necessarios",
+                description: "Informe nome e email para salvar o checklist."
+            });
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                checklist: productionChecklist,
+                yesCount: productionYesCount
+            };
+
+            const { error: insertError } = await supabase
+                .from("contact_leads")
+                .insert({
+                    name: formData.name,
+                    email: formData.email,
+                    company: formData.company,
+                    phone: "Nao informado",
+                    project_type: "other_medical",
+                    project_types: ["other_medical"],
+                    technical_requirements: `Checklist producao local: ${productionYesCount} SIM.`,
+                    message: `Resource slug: ${resource.slug}. Responses: ${JSON.stringify(payload)}`,
+                    source: "website",
+                    status: "new"
+                });
+
+            if (insertError) throw insertError;
+
+            toast({
+                title: "Checklist salvo",
+                description: "Respostas registradas no CRM interno."
+            });
+        } catch (err) {
+            console.error("Error saving checklist:", err);
+            toast({
+                variant: "destructive",
+                title: "Erro",
+                description: "Nao foi possivel salvar o checklist."
             });
         } finally {
             setIsSubmitting(false);
@@ -337,6 +402,50 @@ export default function ResourceDetail() {
                                 <div className="mt-4">
                                     <Button onClick={handleScorecardSave} disabled={isSubmitting}>
                                         {isSubmitting ? "Salvando..." : "Salvar respostas no CRM"}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {resource.slug === "checklist-producao-local" && (
+                            <div className="mt-12 rounded-xl border border-slate-200 bg-white p-6">
+                                <h3 className="text-xl font-semibold text-slate-900 mb-4">Checklist interativo</h3>
+                                <div className="space-y-3">
+                                    {[
+                                        { id: "volume", label: "Volume anual relevante" },
+                                        { id: "leadTime", label: "Lead time de importacao > X dias" },
+                                        { id: "impact", label: "Alto impacto se faltar (linha para)" },
+                                        { id: "quality", label: "Problema recorrente de qualidade/NC" },
+                                        { id: "capital", label: "Alto valor em estoque parado" }
+                                    ].map((item) => (
+                                        <label key={item.id} className="flex items-center gap-3 text-sm text-slate-700">
+                                            <input
+                                                type="checkbox"
+                                                checked={productionChecklist[item.id as keyof typeof productionChecklist]}
+                                                onChange={(event) =>
+                                                    setProductionChecklist((prev) => ({
+                                                        ...prev,
+                                                        [item.id]: event.target.checked
+                                                    }))
+                                                }
+                                                className="h-4 w-4 accent-primary"
+                                            />
+                                            {item.label}
+                                        </label>
+                                    ))}
+                                </div>
+
+                                <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">SIM marcados</span>
+                                        <span className="text-lg font-bold text-slate-900">{productionYesCount}</span>
+                                    </div>
+                                    <p className="mt-2 text-sm text-slate-600">{productionRecommendation}</p>
+                                </div>
+
+                                <div className="mt-4">
+                                    <Button onClick={handleProductionChecklistSave} disabled={isSubmitting}>
+                                        {isSubmitting ? "Salvando..." : "Salvar checklist no CRM"}
                                     </Button>
                                 </div>
                             </div>
