@@ -33,7 +33,7 @@ import { ptBR } from "date-fns/locale";
 
 export default function Resources() {
     const { t } = useLanguage();
-    const { data: resources, isLoading } = useResources(true);
+    const { data: resources, isLoading, error } = useResources(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState("all");
 
@@ -112,6 +112,14 @@ export default function Resources() {
                         {[1, 2, 3].map((n) => (
                             <div key={n} className="h-96 bg-gray-200 animate-pulse rounded-xl" />
                         ))}
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-20">
+                        <div className="bg-red-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                            <Search className="w-10 h-10 text-red-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-slate-800">Erro ao carregar recursos</h3>
+                        <p className="text-slate-500 mt-2">Verifique o ambiente do Supabase e tente novamente.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
