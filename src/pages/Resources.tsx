@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Resource } from "@/types/resources";
 import {
     Card,
     CardContent,
@@ -38,35 +37,7 @@ export default function Resources() {
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState("all");
 
-    const staticResources: Resource[] = [
-        {
-            id: "fatigue-validation-guide",
-            title: "Fluxo de Validacao de Fadiga",
-            description: "Guia 3D + CNC para implantes ortopedicos com checklist tecnico.",
-            content: "Guia completo de validacao de fadiga para implantes ortopedicos.",
-            type: "guide",
-            persona: "Engenharia de Produto / QA",
-            thumbnail_url: undefined,
-            status: "published",
-            slug: "fatigue-validation-guide",
-            metadata: {
-                featured: true,
-                source: "static"
-            },
-            user_id: undefined,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-        }
-    ];
-
-    const mergedResources = [
-        ...staticResources.filter(resource =>
-            !resources?.some(existing => existing.slug === resource.slug)
-        ),
-        ...(resources ?? [])
-    ];
-
-    const filteredResources = mergedResources.filter(resource => {
+    const filteredResources = resources?.filter(resource => {
         const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             resource.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesType = activeTab === "all" || resource.type === activeTab;
