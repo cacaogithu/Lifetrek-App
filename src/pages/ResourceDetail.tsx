@@ -27,12 +27,33 @@ export default function ResourceDetail() {
         email: "",
         company: ""
     });
+    const [scorecard, setScorecard] = useState({
+        dependency: 3,
+        volatility: 3,
+        leadTime: 3,
+        quality: 3,
+        capital: 3
+    });
 
     useEffect(() => {
         if (!resource?.slug) return;
         const unlocked = localStorage.getItem(`lifetrek_resource_unlocked_${resource.slug}`);
         setHasAccess(unlocked === "true");
     }, [resource?.slug]);
+
+    const roadmapMermaid = `
+    flowchart LR
+      A[Semanas 1-2: NDA + selecao de SKUs] --> B[Semanas 3-6: DFM + prototipo CNC]
+      B --> C[Semanas 7-12: Lote piloto + ajuste MRP]
+    `;
+
+    const scorecardTotal = Object.values(scorecard).reduce((sum, value) => sum + value, 0);
+    const scorecardBand = scorecardTotal <= 10 ? "Baixo" : scorecardTotal <= 18 ? "Medio" : "Alto";
+    const scorecardRecommendation = scorecardTotal <= 10
+        ? "Manter monitoramento e revisar trimestralmente."
+        : scorecardTotal <= 18
+            ? "Criar plano de contingencia e revisar fornecedores criticos."
+            : "Priorizar nearshoring/fornecedor local critico.";
 
     const handleUnlock = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -78,6 +99,59 @@ export default function ResourceDetail() {
                 variant: "destructive",
                 title: "Erro",
                 description: "Nao foi possivel liberar o recurso. Tente novamente."
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleScorecardSave = async () => {
+        if (!resource) return;
+        if (!formData.name || !formData.email) {
+            setIsModalOpen(true);
+            toast({
+                variant: "destructive",
+                title: "Dados necessarios",
+                description: "Informe nome e email para salvar o scorecard."
+            });
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                scorecard,
+                total: scorecardTotal,
+                band: scorecardBand
+            };
+
+            const { error: insertError } = await supabase
+                .from("contact_leads")
+                .insert({
+                    name: formData.name,
+                    email: formData.email,
+                    company: formData.company,
+                    phone: "Nao informado",
+                    project_type: "other_medical",
+                    project_types: ["other_medical"],
+                    technical_requirements: `Scorecard ${resource.title}: ${scorecardTotal} (${scorecardBand}).`,
+                    message: `Resource slug: ${resource.slug}. Responses: ${JSON.stringify(payload)}`,
+                    source: "website",
+                    status: "new"
+                });
+
+            if (insertError) throw insertError;
+
+            toast({
+                title: "Scorecard salvo",
+                description: "Respostas registradas no CRM interno."
+            });
+        } catch (err) {
+            console.error("Error saving scorecard:", err);
+            toast({
+                variant: "destructive",
+                title: "Erro",
+                description: "Nao foi possivel salvar o scorecard."
             });
         } finally {
             setIsSubmitting(false);
@@ -208,6 +282,65 @@ export default function ResourceDetail() {
                                 {resource.content}
                             </ReactMarkdown>
                         </div>
+
+                        {resource.slug === "roadmap-90-dias-migracao-skus" && (
+                            <div className="mt-10 rounded-lg border border-slate-200 bg-slate-50 p-6">
+                                <h3 className="text-xl font-semibold text-slate-900 mb-4">Linha do tempo visual</h3>
+                                <Mermaid chart={roadmapMermaid} />
+                            </div>
+                        )}
+
+                        {resource.slug === "scorecard-risco-supply-chain-2026" && (
+                            <div className="mt-12 rounded-xl border border-slate-200 bg-white p-6">
+                                <h3 className="text-xl font-semibold text-slate-900 mb-4">Scorecard interativo</h3>
+                                <div className="space-y-4">
+                                    {[
+                                        { id: "dependency", label: "Dependencia geografica" },
+                                        { id: "volatility", label: "Volatilidade cambial/materia-prima" },
+                                        { id: "leadTime", label: "Lead time e logistica" },
+                                        { id: "quality", label: "Qualidade/compliance fornecedor" },
+                                        { id: "capital", label: "Capital preso em estoque" }
+                                    ].map((item) => (
+                                        <div key={item.id} className="space-y-2">
+                                            <div className="flex items-center justify-between text-sm text-slate-600">
+                                                <span>{item.label}</span>
+                                                <span className="font-semibold text-slate-900">{scorecard[item.id as keyof typeof scorecard]}</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min={1}
+                                                max={5}
+                                                value={scorecard[item.id as keyof typeof scorecard]}
+                                                onChange={(event) =>
+                                                    setScorecard((prev) => ({
+                                                        ...prev,
+                                                        [item.id]: Number(event.target.value)
+                                                    }))
+                                                }
+                                                className="w-full accent-primary"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">Total</span>
+                                        <span className="text-lg font-bold text-slate-900">{scorecardTotal}</span>
+                                    </div>
+                                    <div className="mt-2 text-sm text-slate-700">
+                                        Faixa: <span className="font-semibold">{scorecardBand}</span>
+                                    </div>
+                                    <p className="mt-2 text-sm text-slate-600">{scorecardRecommendation}</p>
+                                </div>
+
+                                <div className="mt-4">
+                                    <Button onClick={handleScorecardSave} disabled={isSubmitting}>
+                                        {isSubmitting ? "Salvando..." : "Salvar respostas no CRM"}
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
 
                         {/* CTA Footer */}
                         <div className="mt-16 pt-8 border-t bg-slate-50 -mx-8 -mb-8 md:-mx-12 md:-mb-12 p-8 md:p-12 text-center rounded-b-xl">
