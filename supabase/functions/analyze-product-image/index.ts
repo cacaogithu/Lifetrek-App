@@ -1,48 +1,163 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.75.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_PUBLISHABLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY')!;
+
+// Verify user is admin - check both admin_users table (legacy) and user_roles table
+async function verifyAdmin(authHeader: string | null): Promise<boolean> {
+  console.log('verifyAdmin called, authHeader exists:', !!authHeader);
+  
+  if (!authHeader) {
+    console.log('No auth header provided');
+    return false;
+  }
+  
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    console.log('Token extracted, length:', token.length);
+    console.log('supabaseUrl:', supabaseUrl);
+    console.log('supabaseAnonKey exists:', !!supabaseAnonKey);
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
+    // In server-side contexts, pass the JWT explicitly to avoid "Auth session missing!"
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    console.log('getUser result - user:', user?.id, 'error:', userError?.message);
+    
+    if (userError || !user) {
+      console.log('User verification failed');
+      return false;
+    }
+    
+    // Check admin_users table first (user can see their own record)
+    const { data: adminData, error: adminError } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    
+    console.log('admin_users query - data:', adminData, 'error:', adminError?.message);
+    
+    if (adminData) {
+      console.log('User is admin via admin_users table');
+      return true;
+    }
+    
+    // Also check user_roles table for admin role
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+    
+    console.log('user_roles query - data:', roleData, 'error:', roleError?.message);
+    
+    const isAdmin = !!roleData;
+    console.log('Final admin check result:', isAdmin);
+    return isAdmin;
+  } catch (e) {
+    console.error('Exception in verifyAdmin:', e);
+    return false;
+  }
+}
+
+// Input validation
+function validateInput(data: unknown): { imageUrl: string } | null {
+  console.log('validateInput called, data type:', typeof data);
+  
+  if (!data || typeof data !== 'object') {
+    console.log('Invalid: data is not an object');
+    return null;
+  }
+  
+  const obj = data as Record<string, unknown>;
+  
+  if (typeof obj.imageUrl !== 'string') {
+    console.log('Invalid: imageUrl is not a string, got:', typeof obj.imageUrl);
+    return null;
+  }
+  
+  const imageUrl = obj.imageUrl.trim();
+  console.log('imageUrl length:', imageUrl.length, 'starts with:', imageUrl.substring(0, 30));
+  
+  // Validate URL format (must be http/https or data URL)
+  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:image/')) {
+    console.log('Invalid: URL does not start with http/https/data:image');
+    return null;
+  }
+  
+  // Limit URL length to 10MB for base64 images
+  if (imageUrl.length > 10000000) {
+    console.log('Invalid: URL too long:', imageUrl.length);
+    return null;
+  }
+  
+  console.log('Input validation passed');
+  return { imageUrl };
+}
+
 serve(async (req) => {
+  console.log('Request received, method:', req.method);
+  console.log('ENV check - SUPABASE_URL:', !!supabaseUrl, 'ANON_KEY:', !!supabaseAnonKey);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { imageUrl } = await req.json();
-    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-
-    if (!GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY not configured');
+    // Verify admin authorization
+    const authHeader = req.headers.get('authorization');
+    const isAdmin = await verifyAdmin(authHeader);
+    
+    if (!isAdmin) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Admin access required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    console.log('Analyzing image:', imageUrl);
-
-    // Fetch the image to convert to base64 if needed, or pass URL if supported.
-    // Gemini API supports image URLs via "fileData" if uploaded to File API, or base64 "inlineData".
-    // Since we have a public URL, we might need to fetch and base64 encode it for "inlineData".
+    // Validate input
+    const rawData = await req.json();
+    const validatedInput = validateInput(rawData);
     
-    // Fetch image data
-    const imageResp = await fetch(imageUrl);
-    if (!imageResp.ok) throw new Error("Failed to fetch image");
-    const imageArrayBuffer = await imageResp.arrayBuffer();
-    const base64Image = btoa(String.fromCharCode(...new Uint8Array(imageArrayBuffer)));
-    const mimeType = imageResp.headers.get("content-type") || "image/jpeg";
+    if (!validatedInput) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input - provide valid imageUrl' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    const { imageUrl } = validatedInput;
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY not configured');
+    }
+
+    console.log('Analyzing image for admin user');
+
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [
+        model: 'google/gemini-2.5-flash',
+        messages: [
           {
-            role: "user",
-            parts: [
-              { text: `Você é especialista em equipamentos de manufatura médica/dental da Lifetrek Medical.
+            role: 'system',
+            content: `Você é especialista em equipamentos de manufatura médica/dental da Lifetrek Medical.
 
 EQUIPAMENTOS QUE VOCÊ CONHECE:
 - Tornos CNC: Citizen (L20, L20x, L32, M32), Tornos (GT13, GT26), Doosan
@@ -77,38 +192,44 @@ Analise a imagem e identifique:
 5) Modelo (se identificável na imagem)
 
 Se identificar marca/modelo específico (ex: "Citizen L32", "Zeiss Contura"), inclua no nome.
-Responda APENAS com o JSON: {"name": "...", "description": "...", "category": "...", "brand": "...", "model": "..."}` },
+Responda em formato JSON: {"name": "...", "description": "...", "category": "...", "brand": "...", "model": "..."}`
+          },
+          {
+            role: 'user',
+            content: [
               {
-                inline_data: {
-                  mime_type: mimeType,
-                  data: base64Image
-                }
+                type: 'text',
+                text: 'Analise esta imagem e forneça os dados solicitados em formato JSON.'
+              },
+              {
+                type: 'image_url',
+                image_url: { url: imageUrl }
               }
             ]
           }
         ],
-        generation_config: {
-            response_mime_type: "application/json"
-        }
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
-      throw new Error(`Gemini API error: ${response.status}`);
+      console.error('AI API error:', response.status, errorText);
+      throw new Error(`AI API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    console.log('AI response:', content);
+    const content = data.choices[0].message.content;
+    console.log('AI analysis completed');
 
     // Try to parse JSON from the response
     let result;
     try {
-      // Find JSON object in the response (handling potential markdown blocks or pure JSON)
-      const jsonText = content.replace(/```json\n?|```/g, '').trim();
-      result = JSON.parse(jsonText);
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        result = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON found in response');
+      }
     } catch (e) {
       console.error('Failed to parse AI response as JSON:', e);
       result = {

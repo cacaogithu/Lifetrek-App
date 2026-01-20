@@ -6,7 +6,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 
@@ -28,8 +27,8 @@ const PROJECT_TYPE_OPTIONS = [
   { value: "spinal_implants", label: "Implantes Espinhais" },
   { value: "veterinary_implants", label: "Implantes Veterinários" },
   { value: "surgical_instruments", label: "Instrumentos Cirúrgicos" },
-  { value: "micro_precision_parts", label: "Peças de Micro Precisão" },
-  { value: "custom_tooling", label: "Ferramental Customizado" },
+  { value: "micro_precision_parts", label: "Micro Precisão" },
+  { value: "custom_tooling", label: "Ferramentas Sob Medida" },
   { value: "medical_devices", label: "Dispositivos Médicos" },
   { value: "measurement_tools", label: "Ferramentas de Medição" },
   { value: "other_medical", label: "Outros Médicos" },
@@ -64,14 +63,14 @@ export const AnalyticsFilters = ({
                   {dateRange?.from ? (
                     dateRange.to ? (
                       <>
-                        {format(dateRange.from, "dd/MM/yy", { locale: ptBR })} -{" "}
-                        {format(dateRange.to, "dd/MM/yy", { locale: ptBR })}
+                        {format(dateRange.from, "dd/MM/yy")} -{" "}
+                        {format(dateRange.to, "dd/MM/yy")}
                       </>
                     ) : (
-                      format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })
+                      format(dateRange.from, "dd/MM/yyyy")
                     )
                   ) : (
-                    <span>Selecione o período</span>
+                    <span>Selecionar período</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -116,7 +115,7 @@ export const AnalyticsFilters = ({
                 <SelectItem value="new">Novo</SelectItem>
                 <SelectItem value="contacted">Contatado</SelectItem>
                 <SelectItem value="in_progress">Em Andamento</SelectItem>
-                <SelectItem value="quoted">Cotado</SelectItem>
+                <SelectItem value="quoted">Orçado</SelectItem>
                 <SelectItem value="closed">Fechado</SelectItem>
                 <SelectItem value="rejected">Rejeitado</SelectItem>
               </SelectContent>

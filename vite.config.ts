@@ -2,15 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    allowedHosts: [
-      "f2ed7667-54dc-48f8-aca8-3fc20a3e643d-00-2figax8w6b8vp.riker.replit.dev",
-      // or simply ".replit.dev" if you want to allow all replit subdomains
-      // ".replit.dev"
-    ],
     host: "::",
     port: 8080,
   },
@@ -18,6 +15,14 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [
+        tailwindcss({ config: "./tailwind.config.ts" }),
+        autoprefixer(),
+      ],
     },
   },
   build: {

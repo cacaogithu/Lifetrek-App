@@ -6,7 +6,6 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 interface AISuggestion {
   id: string;
@@ -55,7 +54,7 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Falha ao copiar para área de transferência",
+        description: "Falha ao copiar para a área de transferência",
       });
     }
   };
@@ -96,7 +95,7 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
             )}
             {research.industry && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Setor</p>
+                <p className="text-sm font-medium text-muted-foreground">Indústria</p>
                 <Badge variant="secondary">{research.industry}</Badge>
               </div>
             )}
@@ -121,7 +120,7 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
                   Sugestão de Resposta IA
                 </CardTitle>
                 <CardDescription>
-                  Gerado em {format(new Date(suggestion.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                  Gerado em {format(new Date(suggestion.created_at), "dd/MM/yyyy 'às' HH:mm")}
                 </CardDescription>
               </div>
               <Badge className={priorityConfig[suggestion.priority_level].color}>
@@ -175,7 +174,7 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
               <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
                 <div className="flex items-center gap-2 mb-3">
                   <Lightbulb className="h-4 w-4 text-amber-600" />
-                  <p className="text-xs font-semibold text-amber-900">PONTOS-CHAVE PARA DESTACAR</p>
+                  <p className="text-xs font-semibold text-amber-900">PONTOS-CHAVE A DESTACAR</p>
                 </div>
                 <ul className="space-y-2">
                   {suggestion.key_points.map((point, index) => (
@@ -194,7 +193,7 @@ export const AISuggestionCard = ({ suggestion, research, leadEmail }: AISuggesti
                 <Calendar className="h-4 w-4" />
                 <span>Follow-up sugerido:</span>
                 <Badge variant="outline">
-                  {format(new Date(suggestion.follow_up_date), "dd/MM/yyyy", { locale: ptBR })}
+                  {format(new Date(suggestion.follow_up_date), "dd/MM/yyyy")}
                 </Badge>
               </div>
               <Button onClick={openEmailClient} className="gap-2">

@@ -1,10 +1,13 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.75.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
 interface LeadScoringRequest {
   lead: {
@@ -38,10 +41,76 @@ interface ScoreBreakdown {
   total: number;
 }
 
+// Input validation
+function validateInput(data: unknown): LeadScoringRequest | null {
+  if (!data || typeof data !== 'object') return null;
+  
+  const obj = data as Record<string, unknown>;
+  
+  if (!obj.lead || typeof obj.lead !== 'object') return null;
+  
+  const lead = obj.lead as Record<string, unknown>;
+  
+  // Validate required fields
+  if (typeof lead.name !== 'string' || lead.name.length > 200) return null;
+  if (typeof lead.email !== 'string' || lead.email.length > 255) return null;
+  if (typeof lead.phone !== 'string' || lead.phone.length > 50) return null;
+  if (typeof lead.technical_requirements !== 'string' || lead.technical_requirements.length > 5000) return null;
+  
+  // Validate arrays
+  if (!Array.isArray(lead.project_types) || lead.project_types.length > 20) return null;
+  for (const pt of lead.project_types) {
+    if (typeof pt !== 'string' || pt.length > 100) return null;
+  }
+  
+  // Optional fields
+  if (lead.annual_volume !== undefined && (typeof lead.annual_volume !== 'string' || lead.annual_volume.length > 100)) return null;
+  if (lead.message !== undefined && (typeof lead.message !== 'string' || lead.message.length > 5000)) return null;
+  if (lead.company !== undefined && (typeof lead.company !== 'string' || lead.company.length > 200)) return null;
+  
+  return {
+    lead: {
+      project_types: lead.project_types as string[],
+      annual_volume: lead.annual_volume as string | undefined,
+      technical_requirements: lead.technical_requirements as string,
+      message: lead.message as string | undefined,
+      company: lead.company as string | undefined,
+      name: lead.name as string,
+      email: lead.email as string,
+      phone: lead.phone as string,
+    },
+    companyResearch: obj.companyResearch as LeadScoringRequest['companyResearch']
+  };
+}
+
+// Verify user is admin
+async function verifyAdmin(authHeader: string | null): Promise<boolean> {
+  if (!authHeader) return false;
+  
+  try {
+    const token = authHeader.replace('Bearer ', '');
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) return false;
+    
+    const { data: adminData } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    
+    return !!adminData;
+  } catch {
+    return false;
+  }
+}
+
 function extractEmployeeCount(linkedinInfo?: string): number {
   if (!linkedinInfo) return 0;
   
-  // Look for patterns like "500 employees", "100-500 employees", etc.
   const patterns = [
     /(\d+)\s*[-–]\s*(\d+)\s*(?:employees|funcionários)/i,
     /(\d+)\+?\s*(?:employees|funcionários)/i,
@@ -50,7 +119,6 @@ function extractEmployeeCount(linkedinInfo?: string): number {
   for (const pattern of patterns) {
     const match = linkedinInfo.match(pattern);
     if (match) {
-      // If range, take the average
       if (match[2]) {
         return (parseInt(match[1]) + parseInt(match[2])) / 2;
       }
@@ -75,7 +143,7 @@ function calculateLeadScore(lead: LeadScoringRequest['lead'], companyResearch?: 
     total: 0
   };
 
-  // Company Size (15 points) - Good weight
+  // Company Size (15 points)
   const employeeCount = extractEmployeeCount(companyResearch?.linkedin_info);
   if (employeeCount > 500) breakdown.companySize = 15;
   else if (employeeCount > 100) breakdown.companySize = 12;
@@ -83,7 +151,7 @@ function calculateLeadScore(lead: LeadScoringRequest['lead'], companyResearch?: 
   else if (employeeCount > 20) breakdown.companySize = 6;
   else if (employeeCount > 0) breakdown.companySize = 3;
 
-  // Industry Match (15 points) - Good weight
+  // Industry Match (15 points)
   const targetIndustries = [
     'medical devices', 'dental', 'orthopedic', 'healthcare',
     'dispositivos médicos', 'odontologia', 'ortopedia', 'saúde'
@@ -97,7 +165,7 @@ function calculateLeadScore(lead: LeadScoringRequest['lead'], companyResearch?: 
     breakdown.industryMatch = 5;
   }
 
-  // Website Quality (20 points) - HIGH weight as requested
+  // Website Quality (20 points)
   const websiteLength = companyResearch?.website_summary?.length || 0;
   if (websiteLength > 2000) breakdown.websiteQuality = 20;
   else if (websiteLength > 1000) breakdown.websiteQuality = 16;
@@ -105,7 +173,7 @@ function calculateLeadScore(lead: LeadScoringRequest['lead'], companyResearch?: 
   else if (websiteLength > 200) breakdown.websiteQuality = 8;
   else if (websiteLength > 0) breakdown.websiteQuality = 4;
 
-  // LinkedIn Presence (20 points) - HIGH weight as requested
+  // LinkedIn Presence (20 points)
   const linkedinLength = companyResearch?.linkedin_info?.length || 0;
   if (linkedinLength > 1000) breakdown.linkedinPresence = 20;
   else if (linkedinLength > 500) breakdown.linkedinPresence = 16;
@@ -113,11 +181,11 @@ function calculateLeadScore(lead: LeadScoringRequest['lead'], companyResearch?: 
   else if (linkedinLength > 100) breakdown.linkedinPresence = 8;
   else if (linkedinLength > 0) breakdown.linkedinPresence = 4;
 
-  // Project Complexity (15 points) - HIGH weight as requested
+  // Project Complexity (15 points)
   const projectCount = lead.project_types?.length || 0;
   breakdown.projectComplexity = Math.min(projectCount * 5, 15);
 
-  // Annual Volume (15 points) - HIGH weight as requested
+  // Annual Volume (15 points)
   const volume = lead.annual_volume?.toLowerCase() || '';
   if (volume.includes('10,000') || volume.includes('10.000')) breakdown.annualVolume = 15;
   else if (volume.includes('5,000') || volume.includes('5.000')) breakdown.annualVolume = 12;
@@ -125,19 +193,19 @@ function calculateLeadScore(lead: LeadScoringRequest['lead'], companyResearch?: 
   else if (volume.includes('500')) breakdown.annualVolume = 6;
   else if (volume) breakdown.annualVolume = 3;
 
-  // Technical Detail (5 points) - Medium weight
+  // Technical Detail (5 points)
   const techLength = lead.technical_requirements?.length || 0;
   if (techLength > 300) breakdown.technicalDetail = 5;
   else if (techLength > 150) breakdown.technicalDetail = 4;
   else if (techLength > 50) breakdown.technicalDetail = 3;
   else breakdown.technicalDetail = 1;
 
-  // Form Completeness (3 points) - LOW weight as requested
+  // Form Completeness (3 points)
   if (lead.company) breakdown.completeness += 1;
   if (lead.annual_volume) breakdown.completeness += 1;
   if (lead.message) breakdown.completeness += 1;
 
-  // Urgency Keywords (2 points) - LOW weight as requested
+  // Urgency Keywords (2 points)
   const urgentKeywords = [
     'urgente', 'asap', 'imediato', 'prazo curto', 'urgent', 
     'immediately', 'priority', 'prioridade', 'rápido', 'quick'
@@ -162,7 +230,29 @@ serve(async (req) => {
   }
 
   try {
-    const { lead, companyResearch }: LeadScoringRequest = await req.json();
+    // Verify admin authorization
+    const authHeader = req.headers.get('authorization');
+    const isAdmin = await verifyAdmin(authHeader);
+    
+    if (!isAdmin) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Admin access required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate input
+    const rawData = await req.json();
+    const validatedInput = validateInput(rawData);
+    
+    if (!validatedInput) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input data' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { lead, companyResearch } = validatedInput;
 
     console.log('Calculating lead score for:', lead.email);
 

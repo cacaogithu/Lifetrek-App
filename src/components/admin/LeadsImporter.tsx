@@ -1,0 +1,368 @@
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Upload, FileText, CheckCircle, XCircle, Loader2, AlertTriangle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import Papa from "papaparse";
+
+interface ImportResult {
+  success: boolean;
+  inserted: number;
+  skipped: number;
+  totalErrors: number;
+  errors: string[];
+}
+
+// CSV column mapping - MASTER_ENRICHED_LEADS.csv compatible
+const COLUMN_MAP: Record<string, string> = {
+  // Company - from MASTER CSV "Company" column
+  "company": "company",
+  "empresa": "company",
+  "nome empresa": "company",
+  "company name": "company",
+  "nome_empresa": "company",
+  
+  // Email - from MASTER CSV "Email" column
+  "email": "email",
+  "e-mail": "email",
+  
+  // Name/Contact - from MASTER CSV "Decision_Maker" column
+  "name": "name",
+  "nome": "name",
+  "decision_maker": "name",
+  "decision maker": "name",
+  "contato": "name",
+  "decisor": "name",
+  
+  // Phone
+  "phone": "phone",
+  "telefone": "phone",
+  "tel": "phone",
+  
+  // Website
+  "website": "website",
+  "site": "website",
+  "url": "website",
+  
+  // City - from MASTER CSV "Perplexity_City" column
+  "city": "city",
+  "cidade": "city",
+  "perplexity_city": "city",
+  
+  // State - from MASTER CSV "Perplexity_State" column  
+  "state": "state",
+  "estado": "state",
+  "uf": "state",
+  "perplexity_state": "state",
+  
+  // Source
+  "source": "source",
+  "fonte": "source",
+  "origem": "source",
+  
+  // Industry - from MASTER CSV "Perplexity_Segment" column
+  "industry": "industry",
+  "industria": "industry",
+  "setor": "industry",
+  "perplexity_segment": "industry",
+  "segment": "industry",
+  
+  // Employees
+  "employees": "employees",
+  "funcionarios": "employees",
+  "empregados": "employees",
+  
+  // Lead Score - from MASTER CSV "Lead_Score", "V2_Score", "Confidence_Score"
+  "lead_score": "lead_score",
+  "score": "lead_score",
+  "pontuacao": "lead_score",
+  "v2_score": "lead_score",
+  "confidence_score": "lead_score",
+  
+  // LinkedIn - from MASTER CSV "LinkedIn_Company" column
+  "linkedin_url": "linkedin_url",
+  "linkedin": "linkedin_url",
+  "linkedin_company": "linkedin_url",
+  
+  // Products/Technical - from MASTER CSV "Products" column
+  "products": "technical_requirements",
+  "produtos": "technical_requirements",
+  "technical_requirements": "technical_requirements",
+  
+  // CNPJ
+  "cnpj": "cnpj",
+  
+  // Revenue
+  "revenue_range": "revenue_range",
+  "faturamento": "revenue_range",
+  "revenue": "revenue_range",
+};
+
+function parseCSV(text: string): { rows: Record<string, string>[]; rawLineCount: number } {
+  // Use PapaParse for robust CSV parsing (handles quotes, commas in fields, etc.)
+  const result = Papa.parse<Record<string, string>>(text, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: (header: string) => {
+      // Normalize header: lowercase, trim, remove quotes, replace spaces/dashes with underscore
+      const normalized = header.trim().toLowerCase().replace(/["']/g, "").replace(/[\s-]+/g, "_");
+      return COLUMN_MAP[normalized] || normalized;
+    },
+  });
+
+  const rawLineCount = result.data.length;
+  
+  // Filter rows that have email OR company
+  const rows = result.data.filter(row => {
+    const email = row.email?.trim();
+    const company = row.company?.trim();
+    return email || company;
+  });
+
+  return { rows, rawLineCount };
+}
+
+interface LeadsImporterProps {
+  onImportComplete: () => void;
+}
+
+export function LeadsImporter({ onImportComplete }: LeadsImporterProps) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [result, setResult] = useState<ImportResult | null>(null);
+  const [skipDuplicates, setSkipDuplicates] = useState(true);
+  const [preview, setPreview] = useState<{ total: number; sample: Record<string, string>[] } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [parseWarning, setParseWarning] = useState<string | null>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const text = await file.text();
+    const { rows, rawLineCount } = parseCSV(text);
+    
+    if (rows.length === 0) {
+      toast.error("Arquivo vazio ou formato inválido");
+      return;
+    }
+
+    // Warn if parsed rows are significantly less than raw lines (possible parsing issue)
+    if (rawLineCount > 100 && rows.length < rawLineCount * 0.5) {
+      setParseWarning(`Atenção: ${rawLineCount} linhas no arquivo, mas apenas ${rows.length} leads válidos. Verifique o formato do CSV.`);
+    } else {
+      setParseWarning(null);
+    }
+
+    setPreview({
+      total: rows.length,
+      sample: rows.slice(0, 3),
+    });
+    setResult(null);
+  };
+
+  const handleImport = async () => {
+    const file = fileInputRef.current?.files?.[0];
+    if (!file) {
+      toast.error("Selecione um arquivo primeiro");
+      return;
+    }
+
+    setIsProcessing(true);
+    setResult(null);
+
+    try {
+      const text = await file.text();
+      const { rows: leads } = parseCSV(text);
+
+      if (leads.length === 0) {
+        throw new Error("Nenhum lead válido encontrado no arquivo");
+      }
+
+      // Process in batches of 200 for better performance
+      const batchSize = 200;
+      let totalInserted = 0;
+      let totalSkipped = 0;
+      let allErrors: string[] = [];
+
+      for (let i = 0; i < leads.length; i += batchSize) {
+        const batch = leads.slice(i, i + batchSize);
+        
+        const { data, error } = await supabase.functions.invoke("import-leads", {
+          body: { leads: batch, skipDuplicates },
+        });
+
+        if (error) throw error;
+
+        totalInserted += data.inserted || 0;
+        totalSkipped += data.skipped || 0;
+        if (data.errors) {
+          allErrors = [...allErrors, ...data.errors];
+        }
+      }
+
+      setResult({
+        success: true,
+        inserted: totalInserted,
+        skipped: totalSkipped,
+        totalErrors: allErrors.length,
+        errors: allErrors.slice(0, 10),
+      });
+
+      if (totalInserted > 0) {
+        toast.success(`${totalInserted} leads importados com sucesso!`);
+        onImportComplete();
+      }
+    } catch (error: any) {
+      console.error("Import error:", error);
+      toast.error(`Erro na importação: ${error.message}`);
+      setResult({
+        success: false,
+        inserted: 0,
+        skipped: 0,
+        totalErrors: 1,
+        errors: [error.message],
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const resetImport = () => {
+    setPreview(null);
+    setResult(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Upload className="h-5 w-5" />
+          Importar Leads via CSV
+        </CardTitle>
+        <CardDescription>
+          Faça upload de um arquivo CSV com seus leads. Colunas suportadas: email, name/decision_maker, 
+          company, phone, website, city, state, source, industry, employees, lead_score
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center gap-4">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,.txt"
+            onChange={handleFileSelect}
+            className="hidden"
+            id="csv-upload"
+          />
+          <label htmlFor="csv-upload">
+            <Button variant="outline" asChild className="cursor-pointer">
+              <span>
+                <FileText className="h-4 w-4 mr-2" />
+                Selecionar Arquivo CSV
+              </span>
+            </Button>
+          </label>
+          
+          <div className="flex items-center gap-2">
+            <Switch
+              id="skip-duplicates"
+              checked={skipDuplicates}
+              onCheckedChange={setSkipDuplicates}
+            />
+            <Label htmlFor="skip-duplicates">Ignorar duplicados (por email)</Label>
+          </div>
+        </div>
+
+        {parseWarning && (
+          <div className="flex items-center gap-2 p-3 border border-yellow-500/50 bg-yellow-500/10 rounded-lg text-sm text-yellow-700">
+            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+            <span>{parseWarning}</span>
+          </div>
+        )}
+
+        {preview && (
+          <div className="border rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">{preview.total} leads encontrados</span>
+              <Button variant="ghost" size="sm" onClick={resetImport}>
+                Limpar
+              </Button>
+            </div>
+            
+            <div className="text-sm text-muted-foreground">
+              <p className="font-medium mb-1">Amostra (primeiros 3):</p>
+              {preview.sample.map((row, i) => (
+                <p key={i} className="truncate">
+                  <span className="text-foreground">{row.company || "—"}</span>
+                  {" | "}
+                  <span>{row.email || "sem email"}</span>
+                  {" | "}
+                  <span>{row.name || "—"}</span>
+                </p>
+              ))}
+            </div>
+
+            <Button 
+              onClick={handleImport} 
+              disabled={isProcessing}
+              className="w-full"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Importando...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Importar {preview.total} Leads
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+
+        {result && (
+          <div className={`border rounded-lg p-4 ${result.success ? "border-green-500/50 bg-green-500/5" : "border-red-500/50 bg-red-500/5"}`}>
+            <div className="flex items-center gap-2 mb-2">
+              {result.success ? (
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              ) : (
+                <XCircle className="h-5 w-5 text-red-500" />
+              )}
+              <span className="font-medium">
+                {result.success ? "Importação concluída" : "Erro na importação"}
+              </span>
+            </div>
+            
+            <div className="text-sm space-y-1">
+              <p className="text-green-600">✓ {result.inserted} leads inseridos</p>
+              {result.skipped > 0 && (
+                <p className="text-yellow-600">⊘ {result.skipped} ignorados (duplicados)</p>
+              )}
+              {result.totalErrors > 0 && (
+                <p className="text-red-600">✗ {result.totalErrors} erros</p>
+              )}
+            </div>
+
+            {result.errors.length > 0 && (
+              <div className="mt-2 text-xs text-muted-foreground">
+                <p className="font-medium">Erros:</p>
+                {result.errors.map((err, i) => (
+                  <p key={i} className="truncate">{err}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

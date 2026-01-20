@@ -347,12 +347,48 @@ All colors MUST be HSL.
     content-visibility: auto;
   }
   
+
   /* Optimize animations for mobile */
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media print {
+    @page {
+      size: 1920px 1080px landscape;
+      margin: 0;
+    }
+
+    body {
+      background: none;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Hide UI elements during print */
+    .no-print, 
+    button, 
+    [role="button"],
+    .fixed {
+      display: none !important;
+    }
+
+    /* Ensure specific elements are visible */
+    .print-only {
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Ensure backgrounds and images are printed */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
     }
   }
 }

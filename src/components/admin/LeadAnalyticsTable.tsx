@@ -4,7 +4,6 @@ import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadPriorityIndicator } from "./LeadPriorityIndicator";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 interface LeadAnalytics {
   id: string;
@@ -33,10 +32,10 @@ const PROJECT_TYPE_LABELS: Record<string, string> = {
   veterinary_implants: "Implantes Veterinários",
   surgical_instruments: "Instrumentos Cirúrgicos",
   micro_precision_parts: "Micro Precisão",
-  custom_tooling: "Ferramental",
-  medical_devices: "Dispositivos",
-  measurement_tools: "Medição",
-  other_medical: "Outros",
+  custom_tooling: "Ferramentas Sob Medida",
+  medical_devices: "Dispositivos Médicos",
+  measurement_tools: "Ferramentas de Medição",
+  other_medical: "Outros Médicos",
 };
 
 export const LeadAnalyticsTable = ({ data, onViewDetails }: LeadAnalyticsTableProps) => {
@@ -45,7 +44,7 @@ export const LeadAnalyticsTable = ({ data, onViewDetails }: LeadAnalyticsTablePr
       <CardHeader>
         <CardTitle>Análise Detalhada de Leads</CardTitle>
         <CardDescription>
-          Visualização completa dos leads com tipos de projeto e métricas
+          Visão completa dos leads com tipos de projeto e métricas
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -94,7 +93,7 @@ export const LeadAnalyticsTable = ({ data, onViewDetails }: LeadAnalyticsTablePr
                     <LeadPriorityIndicator priority={lead.priority} />
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {format(new Date(lead.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                    {format(new Date(lead.created_at), "dd/MM/yyyy")}
                   </TableCell>
                 </TableRow>
               ))
