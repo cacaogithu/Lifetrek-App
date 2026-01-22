@@ -62,14 +62,7 @@ serve(async (req) => {
                 },
             });
 
-            const systemPrompt = `You are the Orchestrator Agent for Lifetrek Medical.
-        You coordinate a team of agents (Strategist, Copywriter, Designer).
-        Currently, you can answer questions directly or delegate.
-        
-        User Request: ${message}
-        `;
-
-            const result = await chat.sendMessage(message); // History is loaded, just send next msg
+            const result = await chat.sendMessage(message);
             responseText = result.response.text();
         }
 
