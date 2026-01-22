@@ -15,7 +15,7 @@ export default function UnifiedStudio() {
     };
 
     return (
-        <div className="flex flex-col gap-6 p-6 h-[calc(100vh-4rem)]">
+        <div className="flex flex-col gap-6 p-6 h-[calc(100vh-4rem)] bg-background min-h-screen">
             <div className="flex flex-col gap-2 shrink-0">
                 <h1 className="text-3xl font-bold tracking-tight">Unified Studio</h1>
                 <p className="text-muted-foreground">
