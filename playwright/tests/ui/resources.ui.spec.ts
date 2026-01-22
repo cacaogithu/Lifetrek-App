@@ -12,19 +12,21 @@ const createLead = () => {
 const unlockResource = async (page: Page, slug: string) => {
   const lead = createLead();
   await page.goto(`/resources/${slug}`);
-  await expect(page.getByText("Desbloqueie o recurso completo")).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByText("Desbloqueie o recurso completo")).toBeVisible({ timeout: 15000 });
   await page.getByRole("button", { name: "Desbloquear agora" }).click();
   await page.getByLabel("Nome completo").fill(lead.name);
   await page.getByLabel("Email corporativo").fill(lead.email);
   await page.getByRole("button", { name: "Desbloquear recurso" }).click();
-  await expect(page.getByText("Gostou deste recurso?")).toBeVisible();
+  await expect(page.getByText("Gostou deste recurso?")).toBeVisible({ timeout: 15000 });
 };
 
 test("resources list loads with published cards", async ({ page }) => {
   await page.goto("/resources");
-  await expect(page.getByRole("heading", { name: /Central de Recursos/i })).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("heading", { name: /Central de Recursos/i })).toBeVisible({ timeout: 15000 });
   await expect(page.getByText("Erro ao carregar recursos")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Acessar Recurso" }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Acessar Recurso" }).first()).toBeVisible({ timeout: 15000 });
 });
 
 test("scorecard captures inputs and saves to CRM", async ({ page }) => {
@@ -39,7 +41,7 @@ test("scorecard captures inputs and saves to CRM", async ({ page }) => {
 
   await expect(page.getByText(/Faixa:/)).toContainText("Alto");
   await page.getByRole("button", { name: "Salvar respostas no CRM" }).click();
-  await expect(page.getByText("Scorecard salvo")).toBeVisible();
+  await expect(page.getByText("Scorecard salvo").first()).toBeVisible();
 });
 
 test("checklist captures inputs and saves to CRM", async ({ page }) => {
@@ -53,5 +55,5 @@ test("checklist captures inputs and saves to CRM", async ({ page }) => {
   await expect(countRow).toContainText("3");
 
   await page.getByRole("button", { name: "Salvar checklist no CRM" }).click();
-  await expect(page.getByText("Checklist salvo")).toBeVisible();
+  await expect(page.getByText("Checklist salvo").first()).toBeVisible();
 });

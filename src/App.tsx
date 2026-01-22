@@ -49,7 +49,9 @@ const AdminBlog = lazy(() => import("./pages/Admin/AdminBlog"));
 const JobMonitor = lazy(() => import("./pages/Admin/JobMonitor"));
 const Research = lazy(() => import("./pages/Admin/Research"));
 const ContentOrchestrator = lazy(() => import("./pages/Admin/ContentOrchestrator"));
+const UnifiedStudio = lazy(() => import("./pages/Admin/UnifiedStudio"));
 const LeadMagnetStudio = lazy(() => import("./pages/Admin/LeadMagnetStudio"));
+const AgentHealth = lazy(() => import("./pages/Admin/AgentHealth"));
 
 // Agent Chat Pages
 const BrandAnalyst = lazy(() => import("./pages/Admin/Agents/BrandAnalyst"));
@@ -138,9 +140,12 @@ const App = () => (
                 <Route path="content-calendar" element={<ContentCalendar />} />
                 <Route path="campaigns" element={<CampaignManagement />} />
                 <Route path="blog" element={<AdminBlog />} />
+                <Route path="blog" element={<AdminBlog />} />
                 <Route path="jobs" element={<JobMonitor />} />
+                <Route path="agent-health" element={<AgentHealth />} />
                 <Route path="research" element={<Research />} />
                 <Route path="orchestrator" element={<ContentOrchestrator />} />
+                <Route path="studio" element={<UnifiedStudio />} />
                 <Route path="lead-magnets" element={<LeadMagnetStudio />} />
                 {/* Agent Chat Pages */}
                 <Route path="agents/brand-analyst" element={<BrandAnalyst />} />

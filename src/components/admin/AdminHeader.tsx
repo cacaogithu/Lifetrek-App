@@ -78,6 +78,7 @@ const navStructure: NavEntry[] = [
             { path: "/admin/blog", label: "Blog", icon: FileText },
             { path: "/admin/lead-magnets", label: "Lead Magnets", icon: Magnet },
             { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
+            { path: "/admin/studio", label: "Studio", icon: Bot },
             { path: "/admin/agents/brand-analyst", label: "Brand Analyst", icon: Search },
             { path: "/admin/agents/copywriter", label: "Copywriter", icon: PenTool },
             { path: "/admin/agents/designer", label: "Designer", icon: Palette },
@@ -103,6 +104,7 @@ const navStructure: NavEntry[] = [
             { path: "/admin/jobs", label: "Jobs", icon: ListChecks },
             { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
             { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3, requiresSuperAdmin: true },
+            { path: "/admin/agent-health", label: "Agent Health", icon: Activity, requiresSuperAdmin: true },
         ]
     },
     { path: "/admin/leads", label: "Leads", icon: Database },
