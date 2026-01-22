@@ -2,8 +2,9 @@ import { defineConfig } from "@playwright/test";
 import { baseConfig } from "./base.config";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL;
+const isStaging = process.env.TEST_ENV === "staging";
 
-if (!baseURL) {
+if (isStaging && !baseURL) {
   throw new Error("PLAYWRIGHT_BASE_URL is required for staging tests.");
 }
 
