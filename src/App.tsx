@@ -140,7 +140,6 @@ const App = () => (
                 <Route path="content-calendar" element={<ContentCalendar />} />
                 <Route path="campaigns" element={<CampaignManagement />} />
                 <Route path="blog" element={<AdminBlog />} />
-                <Route path="blog" element={<AdminBlog />} />
                 <Route path="jobs" element={<JobMonitor />} />
                 <Route path="agent-health" element={<AgentHealth />} />
                 <Route path="research" element={<Research />} />

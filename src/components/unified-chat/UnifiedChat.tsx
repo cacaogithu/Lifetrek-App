@@ -17,7 +17,7 @@ interface Message {
     timestamp: Date;
 }
 
-export function UnifiedChat() {
+export function UnifiedChat({ onEdit }: { onEdit?: (content: any) => void }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -145,6 +145,18 @@ export function UnifiedChat() {
                                     </div>
                                 )}
                                 <div className="whitespace-pre-wrap">{msg.content}</div>
+
+                                {msg.role === "assistant" && onEdit && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="mt-2 h-7 text-xs gap-1 border border-primary/20 hover:bg-primary/10"
+                                        onClick={() => onEdit({ text: msg.content })}
+                                    >
+                                        <Bot className="h-3 w-3" />
+                                        Edit in Studio
+                                    </Button>
+                                )}
                             </div>
 
                             {msg.role === "user" && (
