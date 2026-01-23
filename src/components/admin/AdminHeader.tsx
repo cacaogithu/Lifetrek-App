@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import {
     LayoutDashboard,
     Images,
-    Presentation,
     FileText,
     CheckCircle,
     BookOpen,
@@ -16,23 +15,11 @@ import {
     BarChart3,
     Target,
     Crown,
-    Users,
-    Sparkles,
-    LucideIcon,
-    Eye,
-    X,
-    CalendarDays,
-    ListChecks,
-    MessageSquare,
     ChevronDown,
     Building2,
     Briefcase,
-    Bot,
-    Palette,
-    PenTool,
     Search,
-    Magnet,
-    Activity
+    MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -75,14 +62,9 @@ const navStructure: NavEntry[] = [
         label: "Conteúdo",
         icon: FileText,
         items: [
-            { path: "/admin/linkedin-carousel", label: "LinkedIn", icon: Presentation, requiresSuperAdmin: true },
-            { path: "/admin/blog", label: "Blog", icon: FileText },
-            { path: "/admin/lead-magnets", label: "Lead Magnets", icon: Magnet },
             { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
-            { path: "/admin/studio", label: "Studio", icon: Bot },
-            { path: "/admin/agents/brand-analyst", label: "Brand Analyst", icon: Search },
-            { path: "/admin/agents/copywriter", label: "Copywriter", icon: PenTool },
-            { path: "/admin/agents/designer", label: "Designer", icon: Palette },
+            { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
+            { path: "/admin/content-calendar", label: "Calendário", icon: CalendarDays },
         ]
     },
     {
@@ -90,7 +72,6 @@ const navStructure: NavEntry[] = [
         icon: Building2,
         items: [
             { path: "/admin/gallery", label: "Galeria", icon: Images },
-            { path: "/admin/image-processor", label: "Imagens", icon: Sparkles },
             { path: "/admin/knowledge-base", label: "Knowledge", icon: BookOpen, requiresSuperAdmin: true },
             { path: "/admin/product-assets", label: "Assets", icon: Upload, requiresSuperAdmin: true },
             { path: "/admin/environment-assets", label: "Ambiente", icon: Camera, requiresSuperAdmin: true },
@@ -100,12 +81,8 @@ const navStructure: NavEntry[] = [
         label: "Gestão",
         icon: Briefcase,
         items: [
-            { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
-            { path: "/admin/content-calendar", label: "Calendário", icon: CalendarDays },
-            { path: "/admin/jobs", label: "Jobs", icon: ListChecks },
             { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
             { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3, requiresSuperAdmin: true },
-            { path: "/admin/agent-health", label: "Agent Health", icon: Activity, requiresSuperAdmin: true },
         ]
     },
     { path: "/admin/leads", label: "Leads", icon: Database },

@@ -36,8 +36,6 @@ const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const DashboardOverview = lazy(() => import("./components/admin/DashboardOverview").then(module => ({ default: module.DashboardOverview })));
 const Leads = lazy(() => import("./pages/Admin/Leads"));
 const Gallery = lazy(() => import("./pages/Admin/Gallery"));
-const ProductImageProcessor = lazy(() => import("./pages/ProductImageProcessor"));
-const LinkedInCarousel = lazy(() => import("./pages/LinkedInCarousel"));
 const ProductAssets = lazy(() => import("./pages/Admin/ProductAssets"));
 const EnvironmentAssets = lazy(() => import("./pages/Admin/EnvironmentAssets"));
 const KnowledgeBase = lazy(() => import("./pages/Admin/KnowledgeBase"));
@@ -46,17 +44,8 @@ const ContentApproval = lazy(() => import("./pages/Admin/ContentApproval"));
 const ContentCalendar = lazy(() => import("./pages/Admin/ContentCalendar"));
 const CampaignManagement = lazy(() => import("./pages/Admin/CampaignManagement"));
 const AdminBlog = lazy(() => import("./pages/Admin/AdminBlog"));
-const JobMonitor = lazy(() => import("./pages/Admin/JobMonitor"));
-const Research = lazy(() => import("./pages/Admin/Research"));
 const ContentOrchestrator = lazy(() => import("./pages/Admin/ContentOrchestrator"));
-const UnifiedStudio = lazy(() => import("./pages/Admin/UnifiedStudio"));
-const LeadMagnetStudio = lazy(() => import("./pages/Admin/LeadMagnetStudio"));
-const AgentHealth = lazy(() => import("./pages/Admin/AgentHealth"));
 
-// Agent Chat Pages
-const BrandAnalyst = lazy(() => import("./pages/Admin/Agents/BrandAnalyst"));
-const Copywriter = lazy(() => import("./pages/Admin/Agents/Copywriter"));
-const Designer = lazy(() => import("./pages/Admin/Agents/Designer"));
 
 // Public Pages
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog"));
@@ -128,35 +117,20 @@ const App = () => (
                 </Suspense>
               }>
                 <Route index element={<DashboardOverview />} />
+                <Route path="orchestrator" element={<ContentOrchestrator />} />
                 <Route path="leads" element={<Leads />} />
                 <Route path="gallery" element={<Gallery />} />
-                <Route path="image-processor" element={<ProductImageProcessor />} />
-                <Route path="linkedin-carousel" element={<LinkedInCarousel />} />
-                <Route path="product-assets" element={<ProductAssets />} />
-                <Route path="environment-assets" element={<EnvironmentAssets />} />
-                <Route path="knowledge-base" element={<KnowledgeBase />} />
-                <Route path="rejection-analytics" element={<RejectionAnalytics />} />
-                <Route path="content-approval" element={<ContentApproval />} />
                 <Route path="content-calendar" element={<ContentCalendar />} />
                 <Route path="campaigns" element={<CampaignManagement />} />
                 <Route path="blog" element={<AdminBlog />} />
-                <Route path="jobs" element={<JobMonitor />} />
-                <Route path="agent-health" element={<AgentHealth />} />
-                <Route path="research" element={<Research />} />
-                <Route path="orchestrator" element={<ContentOrchestrator />} />
-                <Route path="studio" element={<UnifiedStudio />} />
-                <Route path="lead-magnets" element={<LeadMagnetStudio />} />
-                {/* Agent Chat Pages */}
-                <Route path="agents/brand-analyst" element={<BrandAnalyst />} />
-                <Route path="agents/copywriter" element={<Copywriter />} />
-                <Route path="agents/designer" element={<Designer />} />
               </Route>
-            </Routes>
-          </BrowserRouter>
-        </ImpersonationProvider>
-      </LanguageProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ImpersonationProvider>
+    </LanguageProvider>
+  </TooltipProvider>
+  </QueryClientProvider >
 );
 
 export default App;

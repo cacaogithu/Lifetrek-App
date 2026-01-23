@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const VERTEX_API_KEY = Deno.env.get("VERTEX_API_KEY");
-const GCP_PROJECT_ID = "cacao-ai"; // Hardcoded from known value or env
+const GCP_PROJECT_ID = Deno.env.get("GCP_PROJECT_ID") || "lifetrek-app";
 const GCP_REGION = "us-central1";
 
 if (!VERTEX_API_KEY) {

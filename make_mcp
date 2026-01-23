@@ -1,0 +1,149 @@
+
+Ahh got it — you’re asking about **MCP with Make**. Straight talk 👇
+
+---
+
+## What **MCP** means (in this context)
+
+**MCP = Model Context Protocol**
+
+It’s a **standard way for AI models (LLMs)** to:
+
+* Discover tools
+* Call actions
+* Read/write data
+  **without custom glue code every time**
+
+Think of MCP as:
+
+> *“OpenAPI, but for AI agents.”*
+
+---
+
+## Does **Make.com** support MCP **natively**?
+
+**No — not yet.**
+As of now, **Make** does **not** expose a native MCP server.
+
+But 👀 **you can absolutely integrate Make INTO an MCP setup.**
+
+---
+
+## The practical architecture (what actually works)
+
+### ✅ **Recommended setup**
+
+```
+LLM (ChatGPT / Claude / Agent)
+        ↓  MCP
+MCP Server (your backend)
+        ↓  HTTP / Webhooks
+Make.com Scenarios
+        ↓
+Apps, APIs, DBs, CRMs
+```
+
+---
+
+## How to connect **Make.com ↔ MCP**
+
+### Option 1 — **Make as a Tool via Webhooks (most common)**
+
+1. Create a **Custom Webhook** in Make
+2. Your **MCP server** exposes a tool like:
+
+   * `create_lead`
+   * `send_whatsapp`
+   * `update_crm`
+3. MCP tool → calls Make webhook
+4. Make handles logic + integrations
+
+👉 This is how most production AI agents do it today.
+
+---
+
+### Option 2 — **MCP Server wraps Make APIs**
+
+If you want more control:
+
+* MCP server calls **Make API**
+* Triggers / manages scenarios programmatically
+* Less visual, more infra-heavy
+
+Only worth it if you’re scaling hard.
+
+---
+
+## Example: MCP Tool → Make Webhook
+
+**MCP tool definition (conceptual):**
+
+```json
+{
+  "name": "create_whatsapp_lead",
+  "description": "Create a new WhatsApp lead in CRM",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "name": { "type": "string" },
+      "phone": { "type": "string" }
+    },
+    "required": ["name", "phone"]
+  }
+}
+```
+
+**Tool execution →**
+
+```
+POST https://hook.make.com/xxxxx
+{
+  "name": "João",
+  "phone": "+551199999999"
+}
+```
+
+---
+
+## When Make + MCP is a GREAT combo
+
+Perfect if you want:
+
+* 🧠 LLM reasoning
+* ⚙️ Visual automations
+* 🔌 3rd-party integrations fast
+* 🚀 No custom infra for every API
+
+This is **exactly** the pattern you’re already close to with:
+
+* AI agents
+* n8n / Make
+* CRM + WhatsApp + scheduling
+
+---
+
+## When NOT to use Make
+
+Avoid if:
+
+* You need **low latency**
+* You’re doing **10k+ actions/min**
+* You need **transaction guarantees**
+  → then go pure backend + queues.
+
+---
+
+## TL;DR
+
+* ❌ Make doesn’t support MCP natively
+* ✅ Make works **perfectly as an MCP tool backend**
+* ✅ MCP = brain, Make = hands
+* ✅ Best setup: **MCP server → Make Webhooks**
+
+If you want, I can:
+
+* Design an **MCP server spec** for your agents
+* Show **Make scenario patterns** for AI tools
+* Compare **Make vs n8n vs pure MCP**
+
+Just say the word.

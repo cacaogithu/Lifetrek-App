@@ -24,6 +24,22 @@ export function UnifiedChat({ onEdit }: { onEdit?: (content: any) => void }) {
     const [activeAgent, setActiveAgent] = useState<AgentRole>(AgentRole.ORCHESTRATOR);
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    const getFunctionErrorMessage = async (error: unknown) => {
+        if (error && typeof error === "object" && "context" in error) {
+            const context = (error as { context?: Response }).context;
+            if (context && typeof context.json === "function") {
+                try {
+                    const body = await context.json();
+                    if (body?.error) return body.error as string;
+                } catch (err) {
+                    console.warn("Failed to parse function error response", err);
+                }
+            }
+        }
+
+        return error instanceof Error ? error.message : "Unknown error";
+    };
+
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollIntoView({ behavior: "smooth" });
@@ -54,7 +70,10 @@ export function UnifiedChat({ onEdit }: { onEdit?: (content: any) => void }) {
                 },
             });
 
-            if (error) throw error;
+            if (error) {
+                const errorMessage = await getFunctionErrorMessage(error);
+                throw new Error(errorMessage);
+            }
 
             const assistantMsg: Message = {
                 id: crypto.randomUUID(),
@@ -67,7 +86,8 @@ export function UnifiedChat({ onEdit }: { onEdit?: (content: any) => void }) {
             setMessages((prev) => [...prev, assistantMsg]);
         } catch (err) {
             console.error("Agent Error:", err);
-            toast.error("Failed to contact agent. Check connection.");
+            const errorMessage = err instanceof Error ? err.message : "Failed to contact agent.";
+            toast.error(errorMessage);
             setMessages((prev) => [
                 ...prev,
                 {
