@@ -6,7 +6,6 @@ import {
   CarouselParams,
   CarouselStrategy,
   CarouselCopy,
-  SlideContent,
   GeneratedImage,
   QualityReview
 } from "./types.ts";
@@ -22,6 +21,7 @@ import {
 
 const OPENROUTER_API_KEY = "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";
 const TEXT_MODEL = "google/gemini-2.0-flash-001";
+const IMAGE_MODEL = "stabilityai/stable-diffusion-xl-base-1.0";
 
 async function callOpenRouter(
   messages: { role: string; content: string }[],
@@ -49,6 +49,38 @@ async function callOpenRouter(
 
   const data = await response.json();
   return data.choices?.[0]?.message?.content || "";
+}
+
+async function callOpenRouterImage(prompt: string): Promise<string | null> {
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "HTTP-Referer": "https://lifetrek.app",
+        "X-Title": "Lifetrek App",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: IMAGE_MODEL,
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024"
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn(`OpenRouter Image Error: ${response.status} - ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.data?.[0]?.url || null; // standard OpenAI format
+  } catch (error) {
+    console.warn("OpenRouter Image Call Failed:", error);
+    return null;
+  }
 }
 
 /**
@@ -210,7 +242,7 @@ ${strategy.slide_count}. **CTA Slide** (type: "cta"): Clear call to action
 /**
  * Agent 3: Designer
  * Searches for real assets first, generates AI images as fallback
- * MODIFIED: AI Image Generation disabled for cost control.
+ * MODIFIED: Uses OpenRouter (Stable Diffusion) for image generation.
  */
 export async function designerAgent(
   supabase: SupabaseClient,
@@ -218,7 +250,7 @@ export async function designerAgent(
   copy: CarouselCopy
 ): Promise<GeneratedImage[]> {
   const startTime = Date.now();
-  console.log("🎨 Designer Agent: Creating visual assets...");
+  console.log("🎨 Designer Agent: Creating visual assets via OpenRouter...");
 
   const images: GeneratedImage[] = [];
 
@@ -244,13 +276,27 @@ export async function designerAgent(
       console.warn("Asset search failed", e);
     }
 
-    // 2. Fallback: SKIP AI Generation (Cost Control)
-    console.warn(`⚠️ Designer: Skipping AI generation for slide ${i + 1} to control costs.`);
-    images.push({
-      slide_index: i,
-      image_url: "https://placehold.co/1080x1080/004F8F/FFFFFF?text=Image+Generation+Skipped",
-      asset_source: 'ai-generated' // Keeping this to pass checks, but it's a placeholder
-    });
+    // 2. Generate AI Image via OpenRouter
+    const imagePrompt = `Professional corporate illustration, medical device manufacturing context. ${slide.headline} - ${slide.body}. High quality, photorealistic, 4k.`;
+
+    console.log(`🎨 Designer: Generating image for slide ${i + 1} with OpenRouter...`);
+    const imageUrl = await callOpenRouterImage(imagePrompt);
+
+    if (imageUrl) {
+      images.push({
+        slide_index: i,
+        image_url: imageUrl,
+        asset_source: 'ai-generated'
+      });
+      console.log(`✅ Designer: Generated AI image for slide ${i + 1}`);
+    } else {
+      console.warn(`⚠️ Designer: Failed to generate image for slide ${i + 1}, using placeholder.`);
+      images.push({
+        slide_index: i,
+        image_url: "https://placehold.co/1080x1080/004F8F/FFFFFF?text=Image+Generation+Failed",
+        asset_source: 'ai-generated'
+      });
+    }
   }
 
   return images;
