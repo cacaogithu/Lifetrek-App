@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.1.0"
+import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai"
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -59,12 +59,30 @@ serve(async (req) => {
             endpoint: 'chat'
         })
 
-        const { messages } = await req.json()
-        const vertexKey = Deno.env.get('vertex_api_key')
+        const { messages, debug } = await req.json()
 
-        if (!vertexKey) throw new Error('Missing Vertex API Key')
+        // DEBUG: List models to verify access
+        if (debug) {
+            const apiKey = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('vertex_api_key')
+            if (!apiKey) throw new Error('Missing API Key')
 
-        const genAI = new GoogleGenerativeAI(vertexKey)
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                const data = await response.json();
+                return new Response(JSON.stringify(data), {
+                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                })
+            } catch (e) {
+                return new Response(JSON.stringify({ error: e.message }), { status: 500 })
+            }
+        }
+        // Use gemini_api_key_v2 as primary attempt since main key is leaked
+        const apiKey = Deno.env.get('gemini_api_key_v2') || Deno.env.get('GEMINI_API_KEY') || Deno.env.get('vertex_api_key')
+
+        if (!apiKey) throw new Error('Missing API Key')
+
+        const genAI = new GoogleGenerativeAI(apiKey)
+        // Use gemini-2.0-flash as it is available in the model list
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
 
         // Strict Timeout (30s)
@@ -100,7 +118,11 @@ REGRAS DE SEGURANÇA E CUSTO:
 
     } catch (error) {
         console.error('Error in chat function:', error)
-        return new Response(JSON.stringify({ error: error.message }), {
+        // Return full error details for debugging
+        return new Response(JSON.stringify({
+            error: error.message,
+            details: error.toString()
+        }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
