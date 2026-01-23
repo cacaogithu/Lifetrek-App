@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 20
-const OPENROUTER_API_KEY = "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"
+const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
 const DEFAULT_MODEL = "google/gemini-2.0-flash-001" // Cheap and fast
 
 serve(async (req) => {
