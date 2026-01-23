@@ -124,13 +124,12 @@ const App = () => (
                 <Route path="campaigns" element={<CampaignManagement />} />
                 <Route path="blog" element={<AdminBlog />} />
               </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </ImpersonationProvider>
-    </LanguageProvider>
-  </TooltipProvider>
-  </QueryClientProvider >
+            </Routes>
+          </BrowserRouter>
+        </ImpersonationProvider>
+      </LanguageProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 export default App;
