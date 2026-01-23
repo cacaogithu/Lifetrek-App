@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageSquare, Send, Bot, User, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAdminPermissions } from "@/hooks/useAdminPermissions";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 
 interface Message {
     role: "user" | "assistant";
@@ -19,6 +23,16 @@ export default function ContentOrchestrator() {
     const [isLoading, setIsLoading] = useState(false);
     const [lastRequestTime, setLastRequestTime] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    const { isAdmin, isLoading: isAuthLoading } = useAdminPermissions();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isAuthLoading && !isAdmin) {
+            toast.error("Acesso negado.");
+            navigate("/admin/login");
+        }
+    }, [isAuthLoading, isAdmin, navigate]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -51,6 +65,19 @@ export default function ContentOrchestrator() {
             });
 
             if (error) {
+                if (error instanceof FunctionsHttpError && error.context?.status === 401) {
+                    toast.error("Sessão expirada. Por favor, faça login novamente.");
+                    navigate("/admin/login");
+                    return;
+                }
+
+                // Also check specifically for the status in error object if FunctionsHttpError acts differently
+                if (error.status === 401) {
+                    toast.error("Sessão expirada ou não autorizada.");
+                    navigate("/admin/login");
+                    return;
+                }
+
                 if (error.status === 429) {
                     toast.error("Limite de solicitações atingido. Aguarde 1 minuto.");
                     return;
@@ -61,11 +88,29 @@ export default function ContentOrchestrator() {
             setMessages(prev => [...prev, { role: "assistant", content: data.text }]);
         } catch (error: any) {
             console.error("Chat error:", error);
-            toast.error("Erro ao processar sua solicitação.");
+            // Double check for 401 in catch block if invoke throws
+            if (error.status === 401 || error.code === 401 || error.message?.includes("401")) {
+                toast.error("Sessão expirada. Redirecionando...");
+                navigate("/admin/login");
+            } else {
+                toast.error("Erro ao processar sua solicitação.");
+            }
         } finally {
             setIsLoading(false);
         }
     };
+
+    if (isAuthLoading) {
+        return (
+            <AdminLayout>
+                <div className="flex h-screen items-center justify-center">
+                    <LoadingSpinner />
+                </div>
+            </AdminLayout>
+        );
+    }
+
+    if (!isAdmin) return null;
 
     return (
         <AdminLayout>

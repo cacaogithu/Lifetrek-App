@@ -92,7 +92,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@lifetrek.com"
+              placeholder="temp_admin@lifetrek.com"
               required
               className="h-12"
               aria-label="Admin email address"
