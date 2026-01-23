@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/layout/label"; // Check if this exists or use standard label
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, CheckCircle2, Linkedin, Users } from "lucide-react";
+import { CheckCircle2, Linkedin, Users } from "lucide-react";
 import { toast } from "sonner";
 
 interface DailyGoal {
@@ -69,7 +69,6 @@ export function MarketingGoals() {
                     <div className="flex justify-between items-start">
                         <div>
                             <CardTitle className="text-lg flex items-center gap-2">
-                                <CalendarDays className="h-5 w-5 text-primary" />
                                 Metas Semanais
                             </CardTitle>
                             <CardDescription>Progresso da semana atual</CardDescription>
