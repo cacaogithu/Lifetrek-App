@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai"
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -9,7 +8,8 @@ const corsHeaders = {
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 20
-const MAX_TOTAL_TOKENS = 1024 // Strict output cap
+const OPENROUTER_API_KEY = "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"
+const DEFAULT_MODEL = "google/gemini-2.0-flash-001" // Cheap and fast
 
 serve(async (req) => {
     if (req.method === 'OPTIONS') {
@@ -27,7 +27,7 @@ serve(async (req) => {
         const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader?.replace('Bearer ', ''))
 
         if (authError || !user) {
-            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            return new Response(JSON.stringify({ error: 'Unauthorized', status: 401 }), {
                 status: 401,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             })
@@ -61,69 +61,58 @@ serve(async (req) => {
 
         const { messages, debug } = await req.json()
 
-        // DEBUG: List models to verify access
-        if (debug) {
-            const apiKey = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('vertex_api_key')
-            if (!apiKey) throw new Error('Missing API Key')
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-                const data = await response.json();
-                return new Response(JSON.stringify(data), {
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                })
-            } catch (e) {
-                return new Response(JSON.stringify({ error: e.message }), { status: 500 })
-            }
-        }
-        // Use gemini_api_key_v2 as primary attempt since main key is leaked
-        const apiKey = Deno.env.get('gemini_api_key_v2') || Deno.env.get('GEMINI_API_KEY') || Deno.env.get('vertex_api_key')
-
-        if (!apiKey) throw new Error('Missing API Key')
-
-        const genAI = new GoogleGenerativeAI(apiKey)
-        // Use gemini-2.0-flash as it is available in the model list
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
-
-        // Strict Timeout (30s)
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 30000)
-
         const systemPrompt = `Você é o Lifetrek Content Orchestrator.
 REGRAS DE SEGURANÇA E CUSTO:
 1. NÃO dispare jobs ou gere mídias.
 2. Seja conciso para economizar tokens.
 3. Se detectado comportamento de loop, interrompa a resposta.`
 
-        const result = await model.generateContent({
-            contents: [
-                { role: 'user', parts: [{ text: systemPrompt }] },
-                ...messages.slice(-5).map((m: any) => ({ // Only send last 5 messages to save tokens
-                    role: m.role === 'assistant' ? 'model' : 'user',
-                    parts: [{ text: m.content }]
-                }))
-            ],
-            generationConfig: {
-                maxOutputTokens: MAX_TOTAL_TOKENS,
+        // OpenRouter Request
+        const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                "HTTP-Referer": "https://lifetrek.app", // Optional
+                "X-Title": "Lifetrek App", // Optional
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model: DEFAULT_MODEL,
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    ...messages.map((m: any) => ({
+                        role: m.role === 'assistant' ? 'assistant' : 'user',
+                        content: m.content
+                    }))
+                ],
                 temperature: 0.7,
-            }
-        })
+                max_tokens: 1024,
+            })
+        });
 
-        clearTimeout(timeoutId)
-        const response = result.response.text()
+        if (!openRouterResponse.ok) {
+            const errorText = await openRouterResponse.text()
+            console.error("OpenRouter API Error:", errorText)
+            throw new Error(`OpenRouter Error: ${openRouterResponse.status} - ${errorText}`)
+        }
 
-        return new Response(JSON.stringify({ text: response }), {
+        const data = await openRouterResponse.json()
+        const responseText = data.choices?.[0]?.message?.content || "Sem resposta do modelo."
+
+        return new Response(JSON.stringify({ text: responseText }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error in chat function:', error)
-        // Return full error details for debugging
+        // Check specifically for rate limits or auth errors from upstream to pass correct status
+        const status = error.message?.includes("429") ? 429 : 500;
+
         return new Response(JSON.stringify({
             error: error.message,
             details: error.toString()
         }), {
-            status: 500,
+            status: status,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
     }
