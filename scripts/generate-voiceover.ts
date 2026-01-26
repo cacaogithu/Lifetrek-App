@@ -8,7 +8,12 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import 'dotenv/config';
+
+// ESM compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
@@ -20,23 +25,23 @@ if (!ELEVENLABS_API_KEY) {
 // Portuguese Brazilian voice - professional male
 const VOICE_ID = 'pqHfZKP75CvOlQylNhV4'; // Bill - deep, professional
 
-// Script from videoStudioPlan - condensed for 47s video
+// Script condensed to fit 400 credits (~52s video)
 const SCRIPT = `
 Lifetrek Medical. Engenharia de precisão que protege vidas.
 
 Há mais de trinta anos, fabricamos componentes médicos para quem não pode errar.
 
-Nossas salas limpas ISO Classe 7 garantem rastreabilidade total em cada lote.
+Salas limpas ISO Classe 7. Rastreabilidade total.
 
-Com equipamentos CNC Swiss de última geração, alcançamos tolerâncias de mícron com repetibilidade real.
+CNC Swiss. Tolerâncias de mícron. Repetibilidade real.
 
-Metrologia Zeiss. Marcação a laser UDI. Eletropolimento médico.
+Metrologia Zeiss. Laser UDI. Eletropolimento.
 
-Instrumentais cirúrgicos. Implantes ortopédicos. Sistemas espinhais.
+Instrumentais. Implantes. Sistemas espinhais.
 
-ISO 13485. ANVISA. Certificações que garantem confiança.
+ISO 13485. ANVISA.
 
-Lifetrek Medical. Seu parceiro técnico em qualidade, velocidade e flexibilidade.
+Lifetrek. Seu parceiro técnico.
 `.trim();
 
 async function generateVoiceover() {
