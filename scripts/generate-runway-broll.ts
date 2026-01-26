@@ -8,8 +8,13 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import 'dotenv/config';
 import RunwayML from '@runwayml/sdk';
+
+// ESM compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
 
@@ -20,51 +25,75 @@ if (!RUNWAY_API_KEY) {
 
 const client = new RunwayML({ apiKey: RUNWAY_API_KEY });
 
-// B-roll prompts for medical manufacturing
+// B-roll prompts using existing images as input
 const BROLL_PROMPTS = [
   {
     id: 'broll-04-cnc',
-    prompt: 'Cinematic close-up of CNC Swiss lathe machining a titanium medical implant, metal shavings flying, oil coolant mist, precision manufacturing, shallow depth of field, 4K industrial footage, professional lighting',
+    imagePath: 'src/assets/equipment/citizen-l32.webp',
+    prompt: 'Cinematic camera movement around CNC Swiss lathe, metal shavings flying, oil coolant mist, precision manufacturing, shallow depth of field, professional lighting, smooth dolly motion',
     duration: 5,
   },
   {
     id: 'broll-05-metrology',
-    prompt: 'Professional metrology laboratory, Zeiss CMM machine measuring a surgical instrument, coordinate measuring, blue LED indicators, clean white environment, precision engineering, 4K quality',
+    imagePath: 'src/assets/metrology/zeiss-contura.webp',
+    prompt: 'Slow zoom into precision metrology machine, measuring probe moving, blue LED indicators glowing, clean white laboratory environment, smooth cinematic motion',
     duration: 5,
   },
   {
     id: 'broll-06-electropolish',
-    prompt: 'Medical-grade electropolishing process, stainless steel surgical instruments being polished in electrochemical bath, bubbles rising, mirror finish result, industrial manufacturing, cinematic lighting',
+    imagePath: 'src/assets/equipment/electropolish-line.webp',
+    prompt: 'Gentle camera pan across electropolishing equipment, bubbles rising in chemical bath, reflective metal surfaces, industrial manufacturing process, cinematic lighting',
     duration: 5,
   },
   {
     id: 'broll-07-laser',
-    prompt: 'Precision laser marking medical device with UDI code, bright laser beam engraving serial number on titanium implant, smoke wisps, close-up macro shot, high-tech manufacturing',
+    imagePath: 'src/assets/equipment/laser-marking.webp',
+    prompt: 'Close-up of laser marking in action, bright beam engraving, smoke wisps rising, precision high-tech manufacturing, shallow depth of field, dramatic lighting',
     duration: 5,
   },
 ];
 
+async function imageToBase64(imagePath: string): Promise<string> {
+  const fullPath = path.join(__dirname, '..', imagePath);
+  const imageBuffer = fs.readFileSync(fullPath);
+  const base64 = imageBuffer.toString('base64');
+  const ext = path.extname(imagePath).toLowerCase();
+  const mimeType = ext === '.webp' ? 'image/webp' : ext === '.png' ? 'image/png' : 'image/jpeg';
+  return `data:${mimeType};base64,${base64}`;
+}
+
 async function generateBroll(prompt: typeof BROLL_PROMPTS[0]) {
   console.log(`\n🎬 Generating: ${prompt.id}`);
-  console.log(`📝 Prompt: ${prompt.prompt.substring(0, 100)}...`);
+  console.log(`📷 Image: ${prompt.imagePath}`);
+  console.log(`📝 Prompt: ${prompt.prompt.substring(0, 80)}...`);
 
   try {
-    // Create image-to-video task
+    // Convert image to base64 data URI
+    const imageDataUri = await imageToBase64(prompt.imagePath);
+    console.log(`📦 Image loaded (${(imageDataUri.length / 1024).toFixed(0)} KB base64)`);
+
+    // Create image-to-video task with image input
+    // Note: Runway only supports 1280:768 (landscape) or 768:1280 (portrait)
     const task = await client.imageToVideo.create({
       model: 'gen3a_turbo',
+      promptImage: imageDataUri,
       promptText: prompt.prompt,
       duration: prompt.duration,
-      ratio: '16:9',
+      ratio: '1280:768',
     });
 
     console.log(`⏳ Task created: ${task.id}`);
 
     // Poll for completion
     let result = await client.tasks.retrieve(task.id);
-    while (result.status === 'PENDING' || result.status === 'RUNNING') {
-      console.log(`   Status: ${result.status}...`);
+    let attempts = 0;
+    const maxAttempts = 60; // 5 minutes max
+
+    while ((result.status === 'PENDING' || result.status === 'RUNNING') && attempts < maxAttempts) {
+      console.log(`   Status: ${result.status}... (${attempts * 5}s)`);
       await new Promise(resolve => setTimeout(resolve, 5000));
       result = await client.tasks.retrieve(task.id);
+      attempts++;
     }
 
     if (result.status === 'SUCCEEDED' && result.output) {
@@ -86,15 +115,15 @@ async function generateBroll(prompt: typeof BROLL_PROMPTS[0]) {
       if (result.failure) console.error(`   Reason: ${result.failure}`);
       return null;
     }
-  } catch (error) {
-    console.error(`❌ Error generating ${prompt.id}:`, error);
+  } catch (error: any) {
+    console.error(`❌ Error generating ${prompt.id}:`, error.message || error);
     return null;
   }
 }
 
 async function main() {
-  console.log('🎬 Runway Gen-3 B-roll Generator');
-  console.log('================================\n');
+  console.log('🎬 Runway Gen-3 B-roll Generator (Image-to-Video)');
+  console.log('=================================================\n');
 
   const results: string[] = [];
 
@@ -106,7 +135,7 @@ async function main() {
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  console.log('\n================================');
+  console.log('\n=================================================');
   console.log(`✅ Generated ${results.length}/${BROLL_PROMPTS.length} videos`);
   results.forEach(r => console.log(`   - ${r}`));
 }

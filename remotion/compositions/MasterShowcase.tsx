@@ -48,6 +48,10 @@ const VIDEO_FPS = 30;
 const droneRiseVideo = staticFile("remotion/broll/broll-01-drone-rise.mp4");
 const facadePushVideo = staticFile("remotion/broll/broll-02-facade-push.mp4");
 const cleanroomVideo = staticFile("remotion/broll/broll-03-cleanroom.mp4");
+const cncVideo = staticFile("remotion/broll/broll-04-cnc.mp4");
+const metrologyVideo = staticFile("remotion/broll/broll-05-metrology.mp4");
+const electropolishVideo = staticFile("remotion/broll/broll-06-electropolish.mp4");
+const laserVideo = staticFile("remotion/broll/broll-07-laser.mp4");
 
 // Audio paths
 const voiceoverAudio = staticFile("remotion/voiceover.mp3");
@@ -120,14 +124,14 @@ const createSlides = (useBroll: boolean): SlideItem[] => [
     subtitle: "Cada lote documentado e validado",
     durationInFrames: VIDEO_FPS * 2.5,
   },
-  // CNC Citizen (3s)
+  // CNC Citizen (4s) - AI generated b-roll
   {
     id: "cnc-citizen",
-    kind: "image",
-    src: citizenCnc,
+    kind: useBroll ? "video" : "image",
+    src: useBroll ? cncVideo : citizenCnc,
     title: "CNC Swiss de última geração",
     subtitle: "Tolerâncias de mícron com repetibilidade real",
-    durationInFrames: VIDEO_FPS * 3,
+    durationInFrames: VIDEO_FPS * 4,
   },
   // CNC Tornos (2.5s)
   {
@@ -147,32 +151,32 @@ const createSlides = (useBroll: boolean): SlideItem[] => [
     subtitle: "Velocidade e precisão integradas",
     durationInFrames: VIDEO_FPS * 2.5,
   },
-  // Metrology (3s)
+  // Metrology (4s) - AI generated b-roll
   {
     id: "metrology",
-    kind: "image",
-    src: zeissMetrology,
+    kind: useBroll ? "video" : "image",
+    src: useBroll ? metrologyVideo : zeissMetrology,
     title: "Metrologia Zeiss",
     subtitle: "Cada dimensão crítica validada",
-    durationInFrames: VIDEO_FPS * 3,
+    durationInFrames: VIDEO_FPS * 4,
   },
-  // Laser marking (2.5s)
+  // Laser marking (4s) - AI generated b-roll
   {
     id: "laser",
-    kind: "image",
-    src: laserMarking,
+    kind: useBroll ? "video" : "image",
+    src: useBroll ? laserVideo : laserMarking,
     title: "Marcação a laser UDI",
     subtitle: "Rastreabilidade permanente",
-    durationInFrames: VIDEO_FPS * 2.5,
+    durationInFrames: VIDEO_FPS * 4,
   },
-  // Electropolish (2.5s)
+  // Electropolish (4s) - AI generated b-roll
   {
     id: "electropolish",
-    kind: "image",
-    src: electropolish,
+    kind: useBroll ? "video" : "image",
+    src: useBroll ? electropolishVideo : electropolish,
     title: "Eletropolimento médico",
     subtitle: "Acabamento superior para implantes",
-    durationInFrames: VIDEO_FPS * 2.5,
+    durationInFrames: VIDEO_FPS * 4,
   },
   // Products - Surgical (3s)
   {
