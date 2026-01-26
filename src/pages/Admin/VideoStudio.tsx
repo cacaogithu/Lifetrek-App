@@ -151,6 +151,33 @@ export default function VideoStudio() {
         </p>
       </div>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Master Showcase Video</CardTitle>
+          <CardDescription>
+            Video institucional renderizado - 77 segundos, 1920x1080, 30fps
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="aspect-video w-full overflow-hidden rounded-lg bg-black">
+            <video
+              src="/remotion/master-showcase.mp4"
+              controls
+              className="h-full w-full"
+              poster="/remotion/broll/broll-01-drone-rise.mp4"
+            >
+              Seu navegador nao suporta o elemento de video.
+            </video>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Badge variant="secondary">Duracao: 77s</Badge>
+            <Badge variant="secondary">Resolucao: 1920x1080</Badge>
+            <Badge variant="secondary">Codec: H.264</Badge>
+            <Badge variant="secondary">Tamanho: 31 MB</Badge>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <Card>
           <CardHeader>
