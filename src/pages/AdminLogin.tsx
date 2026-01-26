@@ -27,14 +27,15 @@ export default function AdminLogin() {
       if (error) throw error;
 
       if (data.user) {
-        // Check if user is admin
-        const { data: adminData } = await supabase
-          .from("admin_users")
-          .select("*")
-          .eq("user_id", data.user.id)
-          .single();
+        // Check if user is admin - try both tables
+        const [adminUsersCheck, adminPermissionsCheck] = await Promise.all([
+          supabase.from("admin_users").select("*").eq("user_id", data.user.id).single(),
+          supabase.from("admin_permissions").select("*").eq("email", data.user.email).single()
+        ]);
 
-        if (!adminData) {
+        const isAdmin = adminUsersCheck.data || adminPermissionsCheck.data;
+
+        if (!isAdmin) {
           await supabase.auth.signOut();
           toast.error("Access denied. Not an admin user.");
           return;
@@ -55,13 +56,13 @@ export default function AdminLogin() {
       toast.error("Please enter your email address");
       return;
     }
-    
+
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/admin/login`,
       });
-      
+
       if (error) throw error;
       toast.success("Password reset email sent! Check your inbox.");
     } catch (error: any) {
@@ -113,9 +114,9 @@ export default function AdminLogin() {
             />
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full h-12 text-base" 
+          <Button
+            type="submit"
+            className="w-full h-12 text-base"
             disabled={loading}
             aria-label={loading ? "Logging in, please wait" : "Login to admin dashboard"}
           >
@@ -124,10 +125,10 @@ export default function AdminLogin() {
         </form>
 
         <div className="mt-4">
-          <Button 
-            type="button" 
-            variant="link" 
-            className="w-full text-base" 
+          <Button
+            type="button"
+            variant="link"
+            className="w-full text-base"
             onClick={handlePasswordReset}
             disabled={loading}
             aria-label="Reset password"

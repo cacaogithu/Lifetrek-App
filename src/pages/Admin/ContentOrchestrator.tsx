@@ -65,35 +65,44 @@ export default function ContentOrchestrator() {
             });
 
             if (error) {
+                // Check if it's a Supabase Auth error (invoking failed)
                 if (error instanceof FunctionsHttpError && error.context?.status === 401) {
                     toast.error("Sessão expirada. Por favor, faça login novamente.");
                     navigate("/admin/login");
                     return;
                 }
 
-                // Also check specifically for the status in error object if FunctionsHttpError acts differently
-                if (error.status === 401) {
-                    toast.error("Sessão expirada ou não autorizada.");
-                    navigate("/admin/login");
-                    return;
-                }
-
+                // Check for rate limit
                 if (error.status === 429) {
                     toast.error("Limite de solicitações atingido. Aguarde 1 minuto.");
                     return;
                 }
+
+                // Handle other functional errors (like 401 from OpenRouter, which we pass as 200/400 with a message)
+                // If the error came from our custom response in the Edge function, handle it here
                 throw error;
+            }
+
+            // The edge function might return an error in the data body even with 200 status
+            if (data?.error) {
+                toast.error(`Erro: ${data.error}`);
+                console.error("Edge Function error:", data.error);
+                return;
             }
 
             setMessages(prev => [...prev, { role: "assistant", content: data.text }]);
         } catch (error: any) {
-            console.error("Chat error:", error);
-            // Double check for 401 in catch block if invoke throws
-            if (error.status === 401 || error.code === 401 || error.message?.includes("401")) {
+            console.error("Chat error details:", error);
+
+            // Only redirect if it's clearly a Supabase Auth failure
+            const isAuthError = error.status === 401 && !error.message?.toLowerCase().includes("openrouter");
+
+            if (isAuthError) {
                 toast.error("Sessão expirada. Redirecionando...");
                 navigate("/admin/login");
             } else {
-                toast.error("Erro ao processar sua solicitação.");
+                const errorMessage = error.message || "Erro ao processar sua solicitação.";
+                toast.error(errorMessage);
             }
         } finally {
             setIsLoading(false);

@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 20
-const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+const OPEN_ROUTER_API = Deno.env.get("OPEN_ROUTER_API");
 const DEFAULT_MODEL = "google/gemini-2.0-flash-001" // Cheap and fast
 
 serve(async (req) => {
@@ -61,17 +61,24 @@ serve(async (req) => {
 
         const { messages, debug } = await req.json()
 
-        const systemPrompt = `Você é o Lifetrek Content Orchestrator.
+        const systemPrompt = `Você é o Lifetrek Content Orchestrator. 
+Você ajuda Rafael e Vanessa a planejar o marketing da Lifetrek (manufatura de produtos médicos).
+
+FOCO ATUAL (Janeiro 2026):
+- Destaque total para a SALA LIMPA (ISO 7) - montagem, kitting, segurança.
+- Público-alvo: PMEs (Pequenas e Médias Empresas) que buscam terceirização (outsourcing).
+- Lead Magnets aprovados: Checklist DFM, Auditoria ISO 13485, Guia de Metrologia e Guia de Sala Limpa.
+
 REGRAS DE SEGURANÇA E CUSTO:
-1. NÃO dispare jobs ou gere mídias.
-2. Seja conciso para economizar tokens.
+1. NÃO dispare jobs ou gere mídias diretamente.
+2. Seja conciso e use texto limpo (evite excesso de markdown se possível).
 3. Se detectado comportamento de loop, interrompa a resposta.`
 
         // OpenRouter Request
         const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                "Authorization": `Bearer ${OPEN_ROUTER_API}`,
                 "HTTP-Referer": "https://lifetrek.app", // Optional
                 "X-Title": "Lifetrek App", // Optional
                 "Content-Type": "application/json"
@@ -105,12 +112,23 @@ REGRAS DE SEGURANÇA E CUSTO:
 
     } catch (error: any) {
         console.error('Error in chat function:', error)
-        // Check specifically for rate limits or auth errors from upstream to pass correct status
-        const status = error.message?.includes("429") ? 429 : 500;
+
+        // Differentiate between rate limits, auth errors, and general errors
+        let status = 500;
+        let message = error.message || 'Erro interno no servidor.';
+
+        if (message.includes("429") || error.code === 'RATE_LIMIT_EXCEEDED') {
+            status = 429;
+        } else if (message.includes("OpenRouter Error")) {
+            status = 400; // Client-side error (likely config or quota)
+            message = `Erro na API de IA: ${message}`;
+        } else if (message.includes("Unauthorized") || status === 401) {
+            status = 401;
+        }
 
         return new Response(JSON.stringify({
-            error: error.message,
-            details: error.toString()
+            error: message,
+            status: status
         }), {
             status: status,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
