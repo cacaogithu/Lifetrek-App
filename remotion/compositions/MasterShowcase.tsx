@@ -1,6 +1,7 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   Img,
   Sequence,
   Video,
@@ -48,8 +49,14 @@ const droneRiseVideo = staticFile("remotion/broll/broll-01-drone-rise.mp4");
 const facadePushVideo = staticFile("remotion/broll/broll-02-facade-push.mp4");
 const cleanroomVideo = staticFile("remotion/broll/broll-03-cleanroom.mp4");
 
+// Audio paths
+const voiceoverAudio = staticFile("remotion/voiceover.mp3");
+const backgroundMusic = staticFile("remotion/background-music.mp3");
+
 type MasterShowcaseProps = {
   useBroll?: boolean;
+  useVoiceover?: boolean;
+  useMusic?: boolean;
   imageOverrides?: Record<string, string>;
 };
 
@@ -569,6 +576,8 @@ const Slide: React.FC<SlideItem> = ({
 
 export const MasterShowcase: React.FC<MasterShowcaseProps> = ({
   useBroll = true,
+  useVoiceover = false,
+  useMusic = false,
   imageOverrides,
 }) => {
   let startFrame = 0;
@@ -576,6 +585,14 @@ export const MasterShowcase: React.FC<MasterShowcaseProps> = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: BRAND.backgroundDark }}>
+      {/* Audio tracks */}
+      {useVoiceover && (
+        <Audio src={voiceoverAudio} volume={1} />
+      )}
+      {useMusic && (
+        <Audio src={backgroundMusic} volume={0.15} />
+      )}
+
       {slides.map((slide, index) => {
         const from = startFrame;
         startFrame += slide.durationInFrames;

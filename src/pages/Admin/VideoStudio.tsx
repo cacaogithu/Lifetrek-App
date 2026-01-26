@@ -236,11 +236,35 @@ export default function VideoStudio() {
             <Button onClick={handleExport} className="w-full">
               Exportar plano em JSON
             </Button>
-            <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+            <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground space-y-3">
               <p className="font-medium text-foreground">Render local (Remotion)</p>
-              <p className="mt-2">npm run remotion:studio</p>
-              <p>npm run remotion:render -- MasterShowcase out/master-showcase.mp4</p>
-              <p>npm run remotion:render -- MasterShowcaseStills out/master-showcase-stills.mp4</p>
+              <div className="space-y-1">
+                <p className="font-medium text-xs text-foreground/70">Studio interativo:</p>
+                <code className="block bg-muted px-2 py-1 rounded text-xs">npm run remotion:studio</code>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-xs text-foreground/70">Video silencioso:</p>
+                <code className="block bg-muted px-2 py-1 rounded text-xs">npm run remotion:render -- MasterShowcase out/video.mp4</code>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-xs text-foreground/70">Com voiceover:</p>
+                <code className="block bg-muted px-2 py-1 rounded text-xs">npm run remotion:render -- MasterShowcaseVoiceover out/video-vo.mp4</code>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-xs text-foreground/70">Producao completa (VO + musica):</p>
+                <code className="block bg-muted px-2 py-1 rounded text-xs">npm run remotion:render -- MasterShowcaseFull out/video-full.mp4</code>
+              </div>
+            </div>
+            <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground space-y-2">
+              <p className="font-medium text-foreground">Geracao de assets</p>
+              <div className="space-y-1">
+                <p className="font-medium text-xs text-foreground/70">Voiceover (ElevenLabs):</p>
+                <code className="block bg-muted px-2 py-1 rounded text-xs">npx ts-node scripts/generate-voiceover.ts</code>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-xs text-foreground/70">B-roll AI (Runway):</p>
+                <code className="block bg-muted px-2 py-1 rounded text-xs">npx ts-node scripts/generate-runway-broll.ts</code>
+              </div>
             </div>
             <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
               <p className="font-medium text-foreground">B-roll esperado (public/remotion/broll)</p>
