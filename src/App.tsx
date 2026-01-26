@@ -45,6 +45,7 @@ const ContentCalendar = lazy(() => import("./pages/Admin/ContentCalendar"));
 const CampaignManagement = lazy(() => import("./pages/Admin/CampaignManagement"));
 const AdminBlog = lazy(() => import("./pages/Admin/AdminBlog"));
 const ContentOrchestrator = lazy(() => import("./pages/Admin/ContentOrchestrator"));
+const VideoStudio = lazy(() => import("./pages/Admin/VideoStudio"));
 
 
 // Public Pages
@@ -122,6 +123,7 @@ const App = () => (
                 <Route path="gallery" element={<Gallery />} />
                 <Route path="content-calendar" element={<ContentCalendar />} />
                 <Route path="campaigns" element={<CampaignManagement />} />
+                <Route path="video-studio" element={<VideoStudio />} />
                 <Route path="blog" element={<AdminBlog />} />
               </Route>
             </Routes>

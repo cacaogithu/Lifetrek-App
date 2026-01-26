@@ -11,6 +11,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
+    "remotion:studio": "remotion studio",
+    "remotion:render": "remotion render",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:api": "playwright test playwright/tests/api"
@@ -47,6 +49,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
+    "@runwayml/sdk": "^3.11.0",
     "@supabase/supabase-js": "^2.75.0",
     "@tanstack/react-query": "^5.83.0",
     "class-variance-authority": "^0.7.1",
@@ -84,6 +87,7 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@playwright/test": "^1.57.0",
+    "@remotion/cli": "4.0.407",
     "@seontechnologies/playwright-utils": "^3.13.1",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.16.5",
@@ -98,6 +102,7 @@
     "globals": "^15.15.0",
     "lovable-tagger": "^1.1.10",
     "postcss": "^8.5.6",
+    "remotion": "4.0.407",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",

@@ -20,6 +20,7 @@ import {
     Briefcase,
     Search,
     MessageSquare,
+    Clapperboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -65,6 +66,7 @@ const navStructure: NavEntry[] = [
             { path: "/admin/orchestrator", label: "Orchestrator", icon: MessageSquare },
             { path: "/admin/content-approval", label: "Aprovação", icon: CheckCircle },
             { path: "/admin/content-calendar", label: "Calendário", icon: Target },
+            { path: "/admin/video-studio", label: "Video Studio", icon: Clapperboard },
         ]
     },
     {
