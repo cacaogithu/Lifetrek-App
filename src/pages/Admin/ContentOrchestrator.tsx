@@ -27,8 +27,13 @@ export default function ContentOrchestrator() {
     const { isAdmin, isLoading: isAuthLoading } = useAdminPermissions();
     const navigate = useNavigate();
 
+    // REMOVED: Redundant auth check that causes double login
+    // The AdminLayout already handles authentication via useAdminPermissions
+    // and the route protection is handled at the router level
+    
+    // Only redirect if explicitly not an admin after loading completes
     useEffect(() => {
-        if (!isAuthLoading && !isAdmin) {
+        if (!isAuthLoading && isAdmin === false) {
             toast.error("Acesso negado.");
             navigate("/admin/login");
         }
@@ -65,21 +70,22 @@ export default function ContentOrchestrator() {
             });
 
             if (error) {
-                // Check if it's a Supabase Auth error (invoking failed)
-                if (error instanceof FunctionsHttpError && error.context?.status === 401) {
-                    toast.error("Sessão expirada. Por favor, faça login novamente.");
-                    navigate("/admin/login");
-                    return;
+                // IMPROVED: Better error handling to avoid false redirects
+                // Only redirect on true auth failures, not on API errors
+                if (error instanceof FunctionsHttpError) {
+                    if (error.context?.status === 401) {
+                        toast.error("Sessão expirada. Por favor, faça login novamente.");
+                        await supabase.auth.signOut();
+                        navigate("/admin/login");
+                        return;
+                    }
+                    
+                    if (error.status === 429) {
+                        toast.error("Limite de solicitações atingido. Aguarde 1 minuto.");
+                        return;
+                    }
                 }
 
-                // Check for rate limit
-                if (error.status === 429) {
-                    toast.error("Limite de solicitações atingido. Aguarde 1 minuto.");
-                    return;
-                }
-
-                // Handle other functional errors (like 401 from OpenRouter, which we pass as 200/400 with a message)
-                // If the error came from our custom response in the Edge function, handle it here
                 throw error;
             }
 
@@ -94,11 +100,15 @@ export default function ContentOrchestrator() {
         } catch (error: any) {
             console.error("Chat error details:", error);
 
-            // Only redirect if it's clearly a Supabase Auth failure
-            const isAuthError = error.status === 401 && !error.message?.toLowerCase().includes("openrouter");
+            // IMPROVED: More precise error detection
+            // Only redirect on Supabase Auth errors, not on API/network errors
+            const isSupabaseAuthError = 
+                error instanceof FunctionsHttpError && 
+                error.context?.status === 401;
 
-            if (isAuthError) {
+            if (isSupabaseAuthError) {
                 toast.error("Sessão expirada. Redirecionando...");
+                await supabase.auth.signOut();
                 navigate("/admin/login");
             } else {
                 const errorMessage = error.message || "Erro ao processar sua solicitação.";
@@ -109,6 +119,7 @@ export default function ContentOrchestrator() {
         }
     };
 
+    // Show loading state while checking authentication
     if (isAuthLoading) {
         return (
             <AdminLayout>
@@ -119,6 +130,7 @@ export default function ContentOrchestrator() {
         );
     }
 
+    // Don't render anything if not admin (will redirect via useEffect)
     if (!isAdmin) return null;
 
     return (
