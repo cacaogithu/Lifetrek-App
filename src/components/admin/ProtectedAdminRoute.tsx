@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 const ALLOWED_EMAIL_DOMAINS = ["lifetrek-medical.com"];
+const ALLOWED_EMAILS = ["rafacrvg@icloud.com"]; // Super admin exceptions
 
 export function ProtectedAdminRoute() {
     const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +26,7 @@ export function ProtectedAdminRoute() {
 
                 const userEmail = session.user.email || "";
                 const emailDomain = userEmail.split("@")[1]?.toLowerCase();
-                const isDomainAllowed = ALLOWED_EMAIL_DOMAINS.includes(emailDomain);
+                const isDomainAllowed = ALLOWED_EMAIL_DOMAINS.includes(emailDomain) || ALLOWED_EMAILS.includes(userEmail.toLowerCase());
 
                 console.log(`[ProtectedAdminRoute] User: ${userEmail}, Domain allowed: ${isDomainAllowed}`);
 
@@ -56,7 +57,7 @@ export function ProtectedAdminRoute() {
             } else if (event === "SIGNED_IN" && session?.user) {
                 const userEmail = session.user.email || "";
                 const emailDomain = userEmail.split("@")[1]?.toLowerCase();
-                const isDomainAllowed = ALLOWED_EMAIL_DOMAINS.includes(emailDomain);
+                const isDomainAllowed = ALLOWED_EMAIL_DOMAINS.includes(emailDomain) || ALLOWED_EMAILS.includes(userEmail.toLowerCase());
 
                 if (isDomainAllowed) {
                     setIsAuthenticated(true);

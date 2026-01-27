@@ -20,9 +20,11 @@ export default function AdminLogin() {
 
     // Email domain validation
     const ALLOWED_DOMAINS = ["lifetrek-medical.com"];
+    const ALLOWED_EMAILS = ["rafacrvg@icloud.com"]; // Super admin exceptions
     const emailDomain = email.split("@")[1]?.toLowerCase();
+    const emailLower = email.toLowerCase();
 
-    if (!emailDomain || !ALLOWED_DOMAINS.includes(emailDomain)) {
+    if (!emailDomain || (!ALLOWED_DOMAINS.includes(emailDomain) && !ALLOWED_EMAILS.includes(emailLower))) {
       toast.error("Acesso restrito. Só emails @lifetrek-medical.com são permitidos.");
       setLoading(false);
       return;
