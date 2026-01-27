@@ -14,8 +14,12 @@ CREATE INDEX IF NOT EXISTS idx_api_usage_logs_user_id ON public.api_usage_logs(u
 -- Enable RLS
 ALTER TABLE public.api_usage_logs ENABLE ROW LEVEL SECURITY;
 
--- Only admins can view logs
+-- Only admins can view logs (fixed to use admin_permissions table)
 CREATE POLICY "Admins can view usage logs" ON public.api_usage_logs
-    FOR SELECT USING (auth.uid() IN (
-        SELECT id FROM public.profiles WHERE permission_level = 'super_admin'
-    ));
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM public.admin_permissions
+            WHERE email = (SELECT email FROM auth.users WHERE id = auth.uid())
+            AND permission_level IN ('admin', 'super_admin')
+        )
+    );
