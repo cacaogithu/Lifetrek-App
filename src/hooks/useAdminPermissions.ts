@@ -61,26 +61,35 @@ export function useAdminPermissions() {
                 // BUT to solve the login loop, basic access is the priority.
 
                 // Let's try to get details safely
-                const { data: permData } = await supabase
+                console.log("[DEBUG] Fetching from admin_permissions, email:", user.email);
+                const { data: permData, error: permError } = await supabase
                     .from("admin_permissions")
                     .select("permission_level, display_name")
                     .eq("email", user.email)
                     .maybeSingle();
 
+                console.log("[DEBUG] admin_permissions result:", { permData, permError });
+
                 if (permData) {
+                    console.log("[DEBUG] Found! Setting level:", permData.permission_level);
                     setPermissionLevel(permData.permission_level as PermissionLevel);
                     setDisplayName(permData.display_name);
                 } else {
                     // Check legacy
-                    const { data: legacyData } = await supabase
+                    console.log("[DEBUG] Not in admin_permissions, checking admin_users, user_id:", user.id);
+                    const { data: legacyData, error: legacyError } = await supabase
                         .from("admin_users")
                         .select("permission_level")
                         .eq("user_id", user.id)
                         .maybeSingle();
 
+                    console.log("[DEBUG] admin_users result:", { legacyData, legacyError });
+
                     if (legacyData) {
+                        console.log("[DEBUG] Found in legacy table, setting admin");
                         setPermissionLevel("admin"); // Legacy usually implies admin/super_admin
                     } else {
+                        console.log("[DEBUG] Not in either table but has_role=true, defaulting to admin");
                         setPermissionLevel("admin"); // Fallback if has_role said yes
                     }
                 }
