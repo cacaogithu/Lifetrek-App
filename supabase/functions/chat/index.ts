@@ -53,6 +53,7 @@ serve(async (req) => {
             })
         }
 
+
         // 2. Log usage immediately (pre-check)
         await supabase.from('api_usage_logs').insert({
             user_id: user.id,
@@ -60,9 +61,86 @@ serve(async (req) => {
         })
 
         const { messages, debug } = await req.json()
+        const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || "";
 
-        const systemPrompt = `Você é o Lifetrek Content Orchestrator. 
+        // --- RAG: Retrieval ---
+        let contextText = "";
+        try {
+            if (lastUserMessage.length > 5 && OPEN_ROUTER_API) {
+                // Generate Embedding (768d for google/text-embedding-004)
+                const embeddingResp = await fetch("https://openrouter.ai/api/v1/embeddings", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${OPEN_ROUTER_API}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://lifetrek.app",
+                        "X-Title": "Lifetrek App"
+                    },
+                    body: JSON.stringify({
+                        model: "google/text-embedding-004",
+                        input: lastUserMessage
+                    })
+                });
+
+                if (embeddingResp.ok) {
+                    const embedData = await embeddingResp.json();
+                    const embedding = embedData.data?.[0]?.embedding;
+
+                    if (embedding) {
+                        // 1. Search Knowledge Base
+                        const { data: kbData, error: kbError } = await supabase.rpc('match_knowledge_base', {
+                            query_embedding: embedding,
+                            match_threshold: 0.5,
+                            match_count: 2
+                        });
+
+                        // 2. Search Existing Carousels (for tone/style/examples)
+                        const { data: lcData, error: lcError } = await supabase.rpc('match_successful_carousels', {
+                            query_embedding: embedding,
+                            match_threshold: 0.5,
+                            match_count: 2
+                        });
+
+                        let contextChunks = [];
+
+                        if (kbData && kbData.length > 0) {
+                            kbData.forEach((d: any) =>
+                                contextChunks.push(`[CONHECIMENTO GERAL: ${d.source_type || 'Brand'}]\n${d.content}`)
+                            );
+                        }
+
+                        if (lcData && lcData.length > 0) {
+                            lcData.forEach((d: any) => {
+                                // Convert JSON slides to text summary (simplified)
+                                const slidesText = Array.isArray(d.slides)
+                                    ? d.slides.map((s: any) => s.content || s.text || '').join(' ')
+                                    : JSON.stringify(d.slides);
+                                contextChunks.push(`[EXEMPLO POST ANTERIOR: ${d.topic}]\n${slidesText.substring(0, 500)}...`);
+                            });
+                        }
+
+                        if (contextChunks.length > 0) {
+                            const combinedContext = contextChunks.join("\n\n");
+                            console.log(`RAG: Context injected (${combinedContext.length} chars). Preview: ${combinedContext.substring(0, 100)}...`);
+                            contextText = `\n\nCONTEXTO RECUPERADO (Use como base para estilo e fatos):\n${combinedContext}\n\n`;
+                        } else {
+                            console.log("RAG: No matches found in KB or Carousels.");
+                        }
+                    }
+                } else {
+                    console.error("RAG Embedding Error:", await embeddingResp.text());
+                }
+            }
+        } catch (ragErr) {
+            console.error("RAG Process Failed:", ragErr);
+            // Continue without context
+        }
+
+        const systemPrompt = `Você é o Content Orchestrator da Lifetrek. 
 Você ajuda Rafael e Vanessa a planejar o marketing da Lifetrek (manufatura de produtos médicos).
+
+CONTEXTO DE MARCA E CLIENTES:
+${contextText || "Nenhum contexto específico encontrado na base de dados. Use seu conhecimento geral, mas priorize a coerência com a marca Lifetrek se souber."}
 
 FOCO ATUAL (Janeiro 2026):
 - Destaque total para a SALA LIMPA (ISO 7) - montagem, kitting, segurança.
