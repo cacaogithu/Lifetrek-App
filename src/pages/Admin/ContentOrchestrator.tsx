@@ -56,14 +56,11 @@ export default function ContentOrchestrator() {
             });
 
             if (error) {
-                // IMPROVED: Better error handling to avoid false redirects
-                // Only redirect on true auth failures, not on API errors
+                // NEVER redirect - just handle errors
                 if (error instanceof FunctionsHttpError) {
                     if (error.context?.status === 401) {
-                        toast.error("Sessão expirada. Por favor, faça login novamente.");
-                        await supabase.auth.signOut();
-                        navigate("/admin/login");
-                        return;
+                        toast.error("Erro de autenticação. Verifique se está logado.");
+                        throw error;
                     }
 
                     if (error.status === 429) {
