@@ -30,12 +30,14 @@ export default function ContentOrchestrator() {
     // REMOVED: Redundant auth check that causes double login
     // The AdminLayout already handles authentication via useAdminPermissions
     // and the route protection is handled at the router level
-    
+
     // Only redirect if explicitly not an admin after loading completes
     useEffect(() => {
         if (!isAuthLoading && isAdmin === false) {
-            toast.error("Acesso negado.");
-            navigate("/admin/login");
+            // DEBUG MODE: Don't redirect, just warn
+            console.warn("DEBUG: isAdmin is false, but redirect disabled.");
+            toast.warning("DEBUG: Permissão de Admin não detectada (Redirect desativado).");
+            // navigate("/admin/login"); 
         }
     }, [isAuthLoading, isAdmin, navigate]);
 
@@ -79,7 +81,7 @@ export default function ContentOrchestrator() {
                         navigate("/admin/login");
                         return;
                     }
-                    
+
                     if (error.status === 429) {
                         toast.error("Limite de solicitações atingido. Aguarde 1 minuto.");
                         return;
@@ -102,8 +104,8 @@ export default function ContentOrchestrator() {
 
             // IMPROVED: More precise error detection
             // Only redirect on Supabase Auth errors, not on API/network errors
-            const isSupabaseAuthError = 
-                error instanceof FunctionsHttpError && 
+            const isSupabaseAuthError =
+                error instanceof FunctionsHttpError &&
                 error.context?.status === 401;
 
             if (isSupabaseAuthError) {
