@@ -8,7 +8,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageSquare, Send, Bot, User, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useAdminPermissions } from "@/hooks/useAdminPermissions";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 
@@ -24,22 +23,7 @@ export default function ContentOrchestrator() {
     const [lastRequestTime, setLastRequestTime] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    const { isAdmin, isLoading: isAuthLoading } = useAdminPermissions();
     const navigate = useNavigate();
-
-    // REMOVED: Redundant auth check that causes double login
-    // The AdminLayout already handles authentication via useAdminPermissions
-    // and the route protection is handled at the router level
-
-    // Only redirect if explicitly not an admin after loading completes
-    useEffect(() => {
-        if (!isAuthLoading && isAdmin === false) {
-            // DEBUG MODE: Don't redirect, just warn
-            console.warn("DEBUG: isAdmin is false, but redirect disabled.");
-            toast.warning("DEBUG: Permissão de Admin não detectada (Redirect desativado).");
-            // navigate("/admin/login"); 
-        }
-    }, [isAuthLoading, isAdmin, navigate]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -120,20 +104,6 @@ export default function ContentOrchestrator() {
             setIsLoading(false);
         }
     };
-
-    // Show loading state while checking authentication
-    if (isAuthLoading) {
-        return (
-            <AdminLayout>
-                <div className="flex h-screen items-center justify-center">
-                    <LoadingSpinner />
-                </div>
-            </AdminLayout>
-        );
-    }
-
-    // Don't render anything if not admin (will redirect via useEffect)
-    if (!isAdmin) return null;
 
     return (
         <AdminLayout>
