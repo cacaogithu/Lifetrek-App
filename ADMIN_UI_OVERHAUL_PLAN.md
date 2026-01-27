@@ -17,7 +17,39 @@ This plan describes the steps to refine the Lifetrek Admin UI into a polished, p
 
 *   (None yet)
 
+## Meeting Notes: Jan 23 (Rafael & Vanessa)
+
+**Focus Areas:**
+*   **Sala Limpa (Clean Room):** Shift marketing focus to emphasize this infrastructure. Targeting companies needing ISO 7 assembly/kitting (silicone, disposables, plastics).
+*   **Lead Magnets:** Implement the "Resources" section with gated content:
+    *   DFM Checklist for medical implants.
+    *   3D + CNC flow for fatigue testing (Ready).
+    *   ISO 13485 Audit Checklist.
+    *   Quality/Metrology content.
+*   **Sales Strategy:** Vanessa targeting PMEs (Small/Medium Enterprises) via Sales Navigator/LinkedIn Premium.
+*   **Content:** 
+    *   Rafael to create 1.5-min factory/cleanroom walkthrough video.
+    *   Vanessa to stick to 3 fixed IG posts + personnel engagement.
+    *   Improve Márcio's Sales Deck design.
+*   **Infrastructure:** Rafael moved system to cheaper/scalable server. Website "how-to" videos planned for Vmartin.
+
 ## Context and Orientation
+...
+## Milestone 5: Resources & Lead Magnets
+
+Implement the gated resource hub with the ideas approved in the Jan 23 meeting.
+
+**Goals:**
+*   Update `Resources.tsx` to handle lead capture for specific PDFs/Tools.
+*   Add "DFM Checklist" and "ISO Audit Checklist" as new resource types.
+*   Integrate "Fatigue Validation Guide" (3D+CNC).
+
+**Validation:**
+*   Download a resource after email submission.
+*   Verify lead is created in `contact_leads` with `source='resource_download'`.
+
+---
+*Last Updated: Jan 23, 2026*
 
 The current project is a React application (Vite) using Tailwind CSS and Shadcn UI. The core Admin structure relies on `AdminHeader.tsx` for navigation and `DashboardOverview.tsx` for the main view. There are various sub-pages like `Leads.tsx`, `KnowledgeBase.tsx`, etc. The current UI is functional but likely lacks visual cohesion (spacing consistency, color usage, typographic hierarchy). We will work within `src/` to refine components.
 

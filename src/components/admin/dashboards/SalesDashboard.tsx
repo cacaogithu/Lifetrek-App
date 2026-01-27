@@ -20,11 +20,11 @@ export function SalesDashboard({ userName }: { userName: string }) {
     const [tasks, setTasks] = useState<SalesTask[]>(() => {
         const saved = localStorage.getItem("sales_daily_tasks");
         return saved ? JSON.parse(saved) : [
-            { id: "1", text: "Triagem técnica de novos leads", completed: false },
-            { id: "2", text: "Follow-up DFM (desenhos pendentes)", completed: false },
-            { id: "3", text: "Confirmar recebimento de propostas (USD/BRL)", completed: false },
-            { id: "4", text: "Agendamento de Visitas Técnicas", completed: false },
-            { id: "5", text: "Atualizar pipeline (CRM Hub)", completed: false },
+            { id: "1", text: "Triagem técnica de novos leads (Foco: PME/Outsourcing)", completed: false },
+            { id: "2", text: "Postar os 3 posts fixos no Instagram", completed: false },
+            { id: "3", text: "Follow-up com leads do Sales Navigator", completed: false },
+            { id: "4", text: "Engajamento: Repostar/Curtir posts da Lifetrek", completed: false },
+            { id: "5", text: "Explorar novos serviços: Sala Limpa & Metrologia", completed: false },
         ];
     });
 

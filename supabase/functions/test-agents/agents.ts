@@ -21,7 +21,7 @@ import {
 
 const OPEN_ROUTER_API = Deno.env.get("OPEN_ROUTER_API");
 const TEXT_MODEL = "google/gemini-2.0-flash-001";
-const IMAGE_MODEL = "black-forest-labs/flux-schnell";
+const IMAGE_MODEL = "black-forest-labs/flux-1-schnell";
 
 async function callOpenRouter(
   messages: { role: string; content: string }[],
@@ -53,8 +53,7 @@ async function callOpenRouter(
 
 async function callOpenRouterImage(prompt: string): Promise<string | null> {
   try {
-    // OpenRouter uses the chat completions endpoint for image generation
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch("https://openrouter.ai/api/v1/images/generations", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${OPEN_ROUTER_API}`,
@@ -64,10 +63,9 @@ async function callOpenRouterImage(prompt: string): Promise<string | null> {
       },
       body: JSON.stringify({
         model: IMAGE_MODEL,
-        messages: [{
-          role: "user",
-          content: prompt
-        }]
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024"
       })
     });
 
@@ -82,27 +80,10 @@ async function callOpenRouterImage(prompt: string): Promise<string | null> {
     }
 
     const data = await response.json();
-
-    // OpenRouter returns images in message.images array
-    const images = data.choices?.[0]?.message?.images;
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      throw new Error(`OpenRouter Image Success but no images in response: ${JSON.stringify(data)}`);
+    if (!data.data?.[0]?.url) {
+      throw new Error(`OpenRouter Image Success but no URL: ${JSON.stringify(data)}`);
     }
-
-    // Images can be returned in various formats (URL string, or object with url property)
-    // The Gemini model via OpenRouter often returns { type: "image_url", image_url: { url: "..." } }
-    const firstImage = images[0];
-    const imageUrl =
-      (typeof firstImage === 'string' ? firstImage : null) ||
-      firstImage?.image_url?.url ||
-      firstImage?.imageUrl?.url ||
-      firstImage?.url;
-
-    if (!imageUrl) {
-      throw new Error(`OpenRouter Image Success but no URL in image object: ${JSON.stringify(firstImage)}`);
-    }
-
-    return imageUrl;
+    return data.data[0].url;
   } catch (error) {
     console.error("OpenRouter Image Call Failed:", error);
     throw error;
@@ -280,25 +261,7 @@ export async function designerAgent(
 
   const images: GeneratedImage[] = [];
 
-  const isSingleImage = params.format === 'single-image';
-  const middleSlideIndex = Math.floor(copy.slides.length / 2);
-  const lastSlideIndex = copy.slides.length - 1;
-
   const imagePromises = copy.slides.map(async (slide, i) => {
-    // Story 7.8: Selective Visualization for Cost Optimization
-    // Only generate visuals for Hook, Middle, and CTA slides in carousels
-    // Always generate for single-image format
-    const shouldHaveVisual = isSingleImage || i === 0 || i === middleSlideIndex || i === lastSlideIndex;
-
-    if (!shouldHaveVisual) {
-      console.log(`ℹ️ Designer: Skipping visual for non-critical slide ${i + 1} (Text-only background).`);
-      return {
-        slide_index: i,
-        image_url: "",
-        asset_source: 'text-only' as const
-      };
-    }
-
     // 1. Search for real assets
     try {
       const assetQuery = slide.headline.split(' ').slice(0, 3).join(' ');
@@ -318,9 +281,9 @@ export async function designerAgent(
     }
 
     // 2. Generate AI Image via OpenRouter
-    const imagePrompt = `Professional high-end corporate illustration, medical device manufacturing context. ${slide.headline} - ${slide.body}. High quality, clean modern B2B aesthetic, photorealistic, 4k.`;
+    const imagePrompt = `Professional corporate illustration, medical device manufacturing context. ${slide.headline} - ${slide.body}. High quality, photorealistic, 4k.`;
 
-    console.log(`🎨 Designer: Generating image for slide ${i + 1} with ${IMAGE_MODEL}...`);
+    console.log(`🎨 Designer: Generating image for slide ${i + 1} with OpenRouter...`);
     const imageUrl = await callOpenRouterImage(imagePrompt);
 
     if (imageUrl) {
@@ -331,11 +294,11 @@ export async function designerAgent(
         asset_source: 'ai-generated' as const
       };
     } else {
-      console.warn(`⚠️ Designer: Failed to generate image for slide ${i + 1}, fallback to text-only.`);
+      console.warn(`⚠️ Designer: Failed to generate image for slide ${i + 1}, using placeholder.`);
       return {
         slide_index: i,
-        image_url: "",
-        asset_source: 'text-only' as const
+        image_url: "https://placehold.co/1080x1080/004F8F/FFFFFF?text=Image+Generation+Failed",
+        asset_source: 'ai-generated' as const
       };
     }
   });

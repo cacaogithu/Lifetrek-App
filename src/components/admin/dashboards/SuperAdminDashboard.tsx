@@ -42,10 +42,12 @@ export function SuperAdminDashboard({ userName }: { userName: string }) {
     });
 
     const [tasks] = useState<string[]>([
-        "Revisar relatórios de conversão semanal",
-        "Aprovar novas variações de Lead Magnets",
-        "Auditoria de qualidade em leads 'High Priority'",
-        "Benchmark de performance vs. competidores"
+        "Finalizar vídeo da fábrica/sala limpa (1.5 min)",
+        "Preparar recursos de IG para Vanessa",
+        "Follow-up com Márcio (Logo, Fotos, Docs)",
+        "Melhorar Design do Sales Deck do Márcio",
+        "Compartilhar link do One-Pager com Vanessa",
+        "Criar vídeos 'how-to' do website para Vanessa"
     ]);
 
     useEffect(() => {
