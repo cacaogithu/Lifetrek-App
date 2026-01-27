@@ -14,6 +14,7 @@ import { AIChatbot } from "./components/AIChatbot";
 import { LoadingSpinner } from "./components/LoadingSpinner";
 import { ImpersonationProvider } from "./contexts/ImpersonationContext";
 import { AdminLayout } from "./components/admin/AdminLayout";
+import { ProtectedAdminRoute } from "./components/admin/ProtectedAdminRoute";
 
 // Lazy load route components for better code splitting
 const Home = lazy(() => import("./pages/Home"));
@@ -110,22 +111,24 @@ const App = () => (
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
 
-              <Route path="/admin" element={
-                <Suspense fallback={<LoadingSpinner />}>
-                  <AdminLayout>
-                    <Outlet />
-                  </AdminLayout>
-                </Suspense>
-              }>
-                <Route index element={<DashboardOverview />} />
-                <Route path="orchestrator" element={<ContentOrchestrator />} />
-                <Route path="content-approval" element={<ContentApproval />} />
-                <Route path="leads" element={<Leads />} />
-                <Route path="gallery" element={<Gallery />} />
-                <Route path="content-calendar" element={<ContentCalendar />} />
-                <Route path="campaigns" element={<CampaignManagement />} />
-                <Route path="video-studio" element={<VideoStudio />} />
-                <Route path="blog" element={<AdminBlog />} />
+              <Route element={<ProtectedAdminRoute />}>
+                <Route path="/admin" element={
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <AdminLayout>
+                      <Outlet />
+                    </AdminLayout>
+                  </Suspense>
+                }>
+                  <Route index element={<DashboardOverview />} />
+                  <Route path="orchestrator" element={<ContentOrchestrator />} />
+                  <Route path="content-approval" element={<ContentApproval />} />
+                  <Route path="leads" element={<Leads />} />
+                  <Route path="gallery" element={<Gallery />} />
+                  <Route path="content-calendar" element={<ContentCalendar />} />
+                  <Route path="campaigns" element={<CampaignManagement />} />
+                  <Route path="video-studio" element={<VideoStudio />} />
+                  <Route path="blog" element={<AdminBlog />} />
+                </Route>
               </Route>
             </Routes>
           </BrowserRouter>

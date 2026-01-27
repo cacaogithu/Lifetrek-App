@@ -18,6 +18,16 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
 
+    // Email domain validation
+    const ALLOWED_DOMAINS = ["lifetrek-medical.com"];
+    const emailDomain = email.split("@")[1]?.toLowerCase();
+
+    if (!emailDomain || !ALLOWED_DOMAINS.includes(emailDomain)) {
+      toast.error("Acesso restrito. Só emails @lifetrek-medical.com são permitidos.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -37,15 +47,15 @@ export default function AdminLogin() {
 
         if (!isAdmin) {
           await supabase.auth.signOut();
-          toast.error("Access denied. Not an admin user.");
+          toast.error("Acesso negado. Usuário não é admin.");
           return;
         }
 
-        toast.success("Login successful!");
+        toast.success("Login realizado com sucesso!");
         navigate("/admin");
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to login");
+      toast.error(error.message || "Falha no login");
     } finally {
       setLoading(false);
     }
