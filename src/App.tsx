@@ -119,6 +119,7 @@ const App = () => (
               }>
                 <Route index element={<DashboardOverview />} />
                 <Route path="orchestrator" element={<ContentOrchestrator />} />
+                <Route path="content-approval" element={<ContentApproval />} />
                 <Route path="leads" element={<Leads />} />
                 <Route path="gallery" element={<Gallery />} />
                 <Route path="content-calendar" element={<ContentCalendar />} />
