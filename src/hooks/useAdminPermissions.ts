@@ -23,7 +23,10 @@ export function useAdminPermissions() {
         try {
             const { data: { user } } = await supabase.auth.getUser();
 
+            console.log("[DEBUG useAdminPermissions] User from auth:", user);
+
             if (!user) {
+                console.warn("[DEBUG] No user, setting none");
                 setPermissionLevel("none");
                 setIsLoading(false);
                 return;
@@ -33,14 +36,17 @@ export function useAdminPermissions() {
 
             // Use the server-side security definer function to check roles
             // This is more robust as it bypasses RLS and checks both tables atomically
+            console.log("[DEBUG] Calling has_role RPC with:", { p_uid: user.id, p_role: 'admin' });
             const { data: hasAdminRole, error } = await supabase
                 .rpc('has_role', {
                     p_uid: user.id,
                     p_role: 'admin'
                 });
 
+            console.log("[DEBUG] has_role response:", { hasAdminRole, error });
+
             if (error) {
-                console.error("Error checking permissions (RPC):", error);
+                console.error("[DEBUG] RPC ERROR, setting none:", error);
                 setPermissionLevel("none");
             } else if (hasAdminRole) {
                 // Fetch display name separately if needed, or default to admin
@@ -79,6 +85,7 @@ export function useAdminPermissions() {
                     }
                 }
             } else {
+                console.warn("[DEBUG] has_role returned FALSE or NULL, setting none");
                 setPermissionLevel("none");
             }
         } catch (error) {
