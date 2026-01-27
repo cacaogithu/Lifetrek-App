@@ -86,20 +86,9 @@ export default function ContentOrchestrator() {
         } catch (error: any) {
             console.error("Chat error details:", error);
 
-            // IMPROVED: More precise error detection
-            // Only redirect on Supabase Auth errors, not on API/network errors
-            const isSupabaseAuthError =
-                error instanceof FunctionsHttpError &&
-                error.context?.status === 401;
-
-            if (isSupabaseAuthError) {
-                toast.error("Sessão expirada. Redirecionando...");
-                await supabase.auth.signOut();
-                navigate("/admin/login");
-            } else {
-                const errorMessage = error.message || "Erro ao processar sua solicitação.";
-                toast.error(errorMessage);
-            }
+            // NEVER redirect - just show error
+            const errorMessage = error.message || "Erro ao processar sua solicitação.";
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
