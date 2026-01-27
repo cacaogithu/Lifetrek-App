@@ -23,38 +23,63 @@ export function useAdminPermissions() {
         try {
             const { data: { user } } = await supabase.auth.getUser();
 
-            if (!user?.email) {
+            if (!user) {
                 setPermissionLevel("none");
                 setIsLoading(false);
                 return;
             }
 
-            setUserEmail(user.email);
+            setUserEmail(user.email ?? null);
 
-            // Query admin_permissions table
-            const { data, error } = await supabase
-                .from("admin_permissions")
-                .select("*")
-                .eq("email", user.email)
-                .single();
+            // Use the server-side security definer function to check roles
+            // This is more robust as it bypasses RLS and checks both tables atomically
+            const { data: hasAdminRole, error } = await supabase
+                .rpc('has_role', {
+                    p_uid: user.id,
+                    p_role: 'admin'
+                });
 
-            if (error || !data) {
-                // Fallback: check if they're in admin_users (legacy support)
-                const { data: adminData } = await supabase
-                    .from("admin_users")
-                    .select("*")
-                    .eq("user_id", user.id)
-                    .single();
+            if (error) {
+                console.error("Error checking permissions (RPC):", error);
+                setPermissionLevel("none");
+            } else if (hasAdminRole) {
+                // Fetch display name separately if needed, or default to admin
+                // For now, we assume 'admin' level if has_role is true
+                // To distinguish super_admin vs admin we might need to enhance has_role or keep a simple query
 
-                if (adminData) {
-                    // Default legacy admins to "admin" level
-                    setPermissionLevel("admin");
+                // Optimization: Just check if they are super admin specifically?
+                // For now, let's keep it simple: if has_role('admin') -> set as 'admin' 
+                // We can query details if we want to distinguish super_admin specific features
+
+                // If we strictly need super_admin for some features, we should query admin_permissions
+                // BUT to solve the login loop, basic access is the priority.
+
+                // Let's try to get details safely
+                const { data: permData } = await supabase
+                    .from("admin_permissions")
+                    .select("permission_level, display_name")
+                    .eq("email", user.email)
+                    .maybeSingle();
+
+                if (permData) {
+                    setPermissionLevel(permData.permission_level as PermissionLevel);
+                    setDisplayName(permData.display_name);
                 } else {
-                    setPermissionLevel("none");
+                    // Check legacy
+                    const { data: legacyData } = await supabase
+                        .from("admin_users")
+                        .select("permission_level")
+                        .eq("user_id", user.id)
+                        .maybeSingle();
+
+                    if (legacyData) {
+                        setPermissionLevel("admin"); // Legacy usually implies admin/super_admin
+                    } else {
+                        setPermissionLevel("admin"); // Fallback if has_role said yes
+                    }
                 }
             } else {
-                setPermissionLevel(data.permission_level as PermissionLevel);
-                setDisplayName(data.display_name);
+                setPermissionLevel("none");
             }
         } catch (error) {
             console.error("Error checking permissions:", error);
