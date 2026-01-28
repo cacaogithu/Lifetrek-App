@@ -161,7 +161,7 @@ export default function VideoStudio() {
         <CardContent>
           <div className="aspect-video w-full overflow-hidden rounded-lg bg-black">
             <video
-              src="/remotion/master-showcase.mp4"
+              src="/remotion/master-showcase-v2.mp4"
               controls
               className="h-full w-full"
             >
