@@ -25,23 +25,32 @@ if (!ELEVENLABS_API_KEY) {
 // Portuguese Brazilian voice - professional male
 const VOICE_ID = 'pqHfZKP75CvOlQylNhV4'; // Bill - deep, professional
 
-// Script condensed to fit 400 credits (~52s video)
+// Full storytelling script (~80-90s) - Patient risk → Safety with technical proof
+// Structure: Drone → Factory → Cleanroom → Machines → Impact
 const SCRIPT = `
-Lifetrek Medical. Engenharia de precisão que protege vidas.
+Do lado de fora, parece apenas mais uma fábrica.
+Mas aqui dentro, cada micrômetro importa.
+Um desvio mínimo pode significar uma cirurgia de revisão, uma dor a mais para alguém que já sofreu demais.
 
-Há mais de trinta anos, fabricamos componentes médicos para quem não pode errar.
+Há mais de 30 anos, a Lifetrek Medical transforma engenharia de precisão em segurança para implantes e instrumentais usados todos os dias em hospitais no Brasil e no mundo.
 
-Salas limpas ISO Classe 7. Rastreabilidade total.
+Somos certificados ISO 13485 e aprovados pela ANVISA.
+Isso não é só selo em parede: é rastreabilidade, controle e consistência em cada lote que entra e sai das nossas salas limpas.
 
-CNC Swiss. Tolerâncias de mícron. Repetibilidade real.
+Em células CNC de última geração, usinamos titânio, PEEK e ligas especiais em tolerâncias de mícron.
+Parafusos pediculares, cages, instrumentais… tudo pensado para resistir a milhões de ciclos de carga sem falhar.
 
-Metrologia Zeiss. Laser UDI. Eletropolimento.
+Nossa metrologia avançada não "confere" a peça.
+Ela documenta cada dimensão crítica, para que seus ensaios de fadiga, suas auditorias e registros regulatórios tenham base sólida.
 
-Instrumentais. Implantes. Sistemas espinhais.
+Da barra de material à embalagem em sala limpa ISO 7, cada etapa foi desenhada para reduzir seu risco, encurtar seu lead time e liberar capital preso em estoque importado.
 
-ISO 13485. ANVISA.
+Por isso, não nos vemos como simples fornecedores.
+Trabalhamos junto com seu P&D e sua Qualidade para otimizar desenhos, validar processos e acelerar lançamentos – sem comprometer a segurança do paciente.
 
-Lifetrek. Seu parceiro técnico.
+Lifetrek Medical.
+Precisão, qualidade e parceria para quem leva a sério o impacto de cada componente na vida real.
+Fale com nossa equipe e vamos desenhar o próximo avanço em saúde, juntos.
 `.trim();
 
 async function generateVoiceover() {
