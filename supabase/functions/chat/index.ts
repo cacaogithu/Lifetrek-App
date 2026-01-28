@@ -1,215 +1,190 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+// supabase/functions/chat/index.ts
+// LangGraph ReAct Agent for Content Orchestration
+
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { StateGraph, END, START } from "npm:@langchain/langgraph@^0.0.12";
+import { ChatOpenAI } from "npm:@langchain/openai@^0.0.14";
+import { HumanMessage, AIMessage, BaseMessage, ToolMessage } from "npm:@langchain/core@^0.1.30/messages";
+import { ToolNode } from "npm:@langchain/langgraph@^0.0.12/prebuilt";
+
+import {
+    createGenerateCarouselTool,
+    createSearchKnowledgeTool,
+    createConsultDesignerTool,
+    createConsultStrategistTool,
+} from "./tools.ts";
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_REQUESTS_PER_WINDOW = 20;
+
+interface AgentState {
+    messages: BaseMessage[];
 }
 
-const RATE_LIMIT_WINDOW_MS = 60 * 1000 // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 20
-const OPEN_ROUTER_API = Deno.env.get("OPEN_ROUTER_API");
-const DEFAULT_MODEL = "google/gemini-2.0-flash-001" // Cheap and fast
-
 serve(async (req) => {
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
+    if (req.method === "OPTIONS") {
+        return new Response("ok", { headers: corsHeaders });
     }
 
     try {
-        const supabase = createClient(
-            Deno.env.get('SUPABASE_URL') ?? '',
-            Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        )
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || supabaseServiceKey; // Fallback for internal calls
+        const openRouterKey = Deno.env.get("OPEN_ROUTER_API") || Deno.env.get("OPEN_ROUTER_API_KEY");
 
-        // Auth check
-        const authHeader = req.headers.get('Authorization')
-        const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader?.replace('Bearer ', ''))
+        if (!openRouterKey) {
+            throw new Error("OPEN_ROUTER_API key is missing");
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+        // --- AUTH CHECK ---
+        const authHeader = req.headers.get("Authorization");
+        const { data: { user }, error: authError } = await supabase.auth.getUser(
+            authHeader?.replace("Bearer ", "")
+        );
 
         if (authError || !user) {
-            return new Response(JSON.stringify({ error: 'Unauthorized', status: 401 }), {
-                status: 401,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            })
+            return new Response(
+                JSON.stringify({ error: "Unauthorized", status: 401 }),
+                { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
         }
 
-        // 1. GUARDRAIL: Rate Limiting
+        // --- RATE LIMITING ---
         const { count, error: countError } = await supabase
-            .from('api_usage_logs')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .gt('created_at', new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString())
+            .from("api_usage_logs")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", user.id)
+            .gt("created_at", new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString());
 
-        if (countError) throw countError
+        if (countError) throw countError;
 
         if (count !== null && count >= MAX_REQUESTS_PER_WINDOW) {
-            console.warn(`Rate limit exceeded for user ${user.id}`)
-            return new Response(JSON.stringify({
-                error: 'Muitas solicitações em pouco tempo. Por favor, aguarde um minuto.',
-                code: 'RATE_LIMIT_EXCEEDED'
-            }), {
-                status: 429,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            })
+            return new Response(
+                JSON.stringify({
+                    error: "Muitas solicitações. Aguarde um minuto.",
+                    code: "RATE_LIMIT_EXCEEDED",
+                }),
+                { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
         }
 
+        await supabase.from("api_usage_logs").insert({ user_id: user.id, endpoint: "chat" });
 
-        // 2. Log usage immediately (pre-check)
-        await supabase.from('api_usage_logs').insert({
-            user_id: user.id,
-            endpoint: 'chat'
-        })
+        // --- PARSE REQUEST ---
+        const { messages: rawMessages } = await req.json();
 
-        const { messages, debug } = await req.json()
-        const lastUserMessage = messages.filter((m: any) => m.role === 'user').pop()?.content || "";
-
-        // --- RAG: Retrieval ---
-        let contextText = "";
-        try {
-            if (lastUserMessage.length > 5 && OPEN_ROUTER_API) {
-                // Generate Embedding (768d for google/text-embedding-004)
-                const embeddingResp = await fetch("https://openrouter.ai/api/v1/embeddings", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${OPEN_ROUTER_API}`,
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": "https://lifetrek.app",
-                        "X-Title": "Lifetrek App"
-                    },
-                    body: JSON.stringify({
-                        model: "google/text-embedding-004",
-                        input: lastUserMessage
-                    })
-                });
-
-                if (embeddingResp.ok) {
-                    const embedData = await embeddingResp.json();
-                    const embedding = embedData.data?.[0]?.embedding;
-
-                    if (embedding) {
-                        // 1. Search Knowledge Base
-                        const { data: kbData, error: kbError } = await supabase.rpc('match_knowledge_base', {
-                            query_embedding: embedding,
-                            match_threshold: 0.5,
-                            match_count: 2
-                        });
-
-                        // 2. Search Existing Carousels (for tone/style/examples)
-                        const { data: lcData, error: lcError } = await supabase.rpc('match_successful_carousels', {
-                            query_embedding: embedding,
-                            match_threshold: 0.5,
-                            match_count: 2
-                        });
-
-                        let contextChunks = [];
-
-                        if (kbData && kbData.length > 0) {
-                            kbData.forEach((d: any) =>
-                                contextChunks.push(`[CONHECIMENTO GERAL: ${d.source_type || 'Brand'}]\n${d.content}`)
-                            );
-                        }
-
-                        if (lcData && lcData.length > 0) {
-                            lcData.forEach((d: any) => {
-                                // Convert JSON slides to text summary (simplified)
-                                const slidesText = Array.isArray(d.slides)
-                                    ? d.slides.map((s: any) => s.content || s.text || '').join(' ')
-                                    : JSON.stringify(d.slides);
-                                contextChunks.push(`[EXEMPLO POST ANTERIOR: ${d.topic}]\n${slidesText.substring(0, 500)}...`);
-                            });
-                        }
-
-                        if (contextChunks.length > 0) {
-                            const combinedContext = contextChunks.join("\n\n");
-                            console.log(`RAG: Context injected (${combinedContext.length} chars). Preview: ${combinedContext.substring(0, 100)}...`);
-                            contextText = `\n\nCONTEXTO RECUPERADO (Use como base para estilo e fatos):\n${combinedContext}\n\n`;
-                        } else {
-                            console.log("RAG: No matches found in KB or Carousels.");
-                        }
-                    }
-                } else {
-                    console.error("RAG Embedding Error:", await embeddingResp.text());
-                }
-            }
-        } catch (ragErr) {
-            console.error("RAG Process Failed:", ragErr);
-            // Continue without context
-        }
-
-        const systemPrompt = `Você é o Content Orchestrator da Lifetrek. 
-Você ajuda Rafael e Vanessa a planejar o marketing da Lifetrek (manufatura de produtos médicos).
-
-CONTEXTO DE MARCA E CLIENTES:
-${contextText || "Nenhum contexto específico encontrado na base de dados. Use seu conhecimento geral, mas priorize a coerência com a marca Lifetrek se souber."}
-
-FOCO ATUAL (Janeiro 2026):
-- Destaque total para a SALA LIMPA (ISO 7) - montagem, kitting, segurança.
-- Público-alvo: PMEs (Pequenas e Médias Empresas) que buscam terceirização (outsourcing).
-- Lead Magnets aprovados: Checklist DFM, Auditoria ISO 13485, Guia de Metrologia e Guia de Sala Limpa.
-
-REGRAS DE SEGURANÇA E CUSTO:
-1. NÃO dispare jobs ou gere mídias diretamente.
-2. Seja conciso e use texto limpo (evite excesso de markdown se possível).
-3. Se detectado comportamento de loop, interrompa a resposta.`
-
-        // OpenRouter Request
-        const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${OPEN_ROUTER_API}`,
-                "HTTP-Referer": "https://lifetrek.app", // Optional
-                "X-Title": "Lifetrek App", // Optional
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                model: DEFAULT_MODEL,
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    ...messages.map((m: any) => ({
-                        role: m.role === 'assistant' ? 'assistant' : 'user',
-                        content: m.content
-                    }))
-                ],
-                temperature: 0.7,
-                max_tokens: 1024,
-            })
+        // Convert raw messages to LangChain format
+        const langchainMessages: BaseMessage[] = rawMessages.map((m: any) => {
+            if (m.role === "user") return new HumanMessage(m.content);
+            if (m.role === "assistant") return new AIMessage(m.content);
+            return new HumanMessage(m.content); // Fallback
         });
 
-        if (!openRouterResponse.ok) {
-            const errorText = await openRouterResponse.text()
-            console.error("OpenRouter API Error:", errorText)
-            throw new Error(`OpenRouter Error: ${openRouterResponse.status} - ${errorText}`)
-        }
+        // --- INITIALIZE MODEL WITH TOOLS ---
+        const tools = [
+            createGenerateCarouselTool(supabaseUrl, supabaseAnonKey),
+            createSearchKnowledgeTool(supabase, openRouterKey),
+            createConsultDesignerTool(openRouterKey),
+            createConsultStrategistTool(openRouterKey),
+        ];
 
-        const data = await openRouterResponse.json()
-        const responseText = data.choices?.[0]?.message?.content || "Sem resposta do modelo."
+        const model = new ChatOpenAI({
+            modelName: "google/gemini-2.0-flash-001",
+            temperature: 0.7,
+            configuration: {
+                baseURL: "https://openrouter.ai/api/v1",
+                apiKey: openRouterKey,
+                defaultHeaders: {
+                    "HTTP-Referer": "https://lifetrek.app",
+                    "X-Title": "Lifetrek App",
+                },
+            },
+        }).bindTools(tools);
 
-        return new Response(JSON.stringify({ text: responseText }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+        // --- DEFINE GRAPH ---
+        const shouldContinue = (state: AgentState) => {
+            const lastMessage = state.messages[state.messages.length - 1];
+            // If the last message has tool_calls, route to "tools"
+            if (lastMessage instanceof AIMessage && lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
+                return "tools";
+            }
+            return END;
+        };
 
+        const callAgent = async (state: AgentState): Promise<Partial<AgentState>> => {
+            console.log("🤖 Agent Node: Processing...");
+
+            // Add system message with context
+            const systemMessage = new HumanMessage(`[SYSTEM] Você é o Content Orchestrator da Lifetrek Medical (B2B de dispositivos médicos).
+
+FERRAMENTAS DISPONÍVEIS:
+- generate_carousel: Use para CRIAR novo conteúdo de carrossel LinkedIn.
+- search_knowledge: Use para buscar informações na base de dados (marca, ISO, produtos).
+- consult_designer: Use para perguntas visuais/design.
+- consult_strategist: Use para perguntas de estratégia de conteúdo.
+
+REGRAS:
+1. Se o usuário pedir para CRIAR/GERAR um carrossel, USE a ferramenta 'generate_carousel'.
+2. Se precisar de informação factual sobre a Lifetrek, USE 'search_knowledge' ANTES de responder.
+3. Responda em português, de forma concisa e profissional.
+4. NUNCA invente informações sobre ISO ou certificações sem consultar a base.
+
+[END SYSTEM]`);
+
+            const messagesWithSystem = [systemMessage, ...state.messages];
+
+            const response = await model.invoke(messagesWithSystem);
+            return { messages: [response] };
+        };
+
+        const toolNode = new ToolNode(tools);
+
+        const workflow = new StateGraph<AgentState>({
+            channels: {
+                messages: {
+                    value: (x: BaseMessage[], y: BaseMessage[]) => x.concat(y),
+                    default: () => [],
+                },
+            },
+        });
+
+        workflow.addNode("agent", callAgent);
+        workflow.addNode("tools", toolNode);
+
+        workflow.setEntryPoint("agent");
+        workflow.addConditionalEdges("agent", shouldContinue, {
+            tools: "tools",
+            [END]: END,
+        });
+        workflow.addEdge("tools", "agent");
+
+        const app = workflow.compile();
+
+        // --- EXECUTE GRAPH ---
+        const result = await app.invoke({ messages: langchainMessages });
+
+        // Extract final AI message
+        const aiMessages = result.messages.filter((m: BaseMessage) => m instanceof AIMessage);
+        const lastAiMessage = aiMessages[aiMessages.length - 1];
+        const responseText = lastAiMessage?.content || "Sem resposta do agente.";
+
+        return new Response(
+            JSON.stringify({ text: responseText }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
     } catch (error: any) {
-        console.error('Error in chat function:', error)
-
-        // Differentiate between rate limits, auth errors, and general errors
-        let status = 500;
-        let message = error.message || 'Erro interno no servidor.';
-
-        if (message.includes("429") || error.code === 'RATE_LIMIT_EXCEEDED') {
-            status = 429;
-        } else if (message.includes("OpenRouter Error")) {
-            status = 400; // Client-side error (likely config or quota)
-            message = `Erro na API de IA: ${message}`;
-        } else if (message.includes("Unauthorized") || status === 401) {
-            status = 401;
-        }
-
-        return new Response(JSON.stringify({
-            error: message,
-            status: status
-        }), {
-            status: status,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+        console.error("Chat Agent Error:", error);
+        return new Response(
+            JSON.stringify({ error: error.message, status: 500 }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
     }
-})
+});

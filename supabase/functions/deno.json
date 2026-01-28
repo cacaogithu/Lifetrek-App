@@ -2,6 +2,10 @@
     "nodeModulesDir": "auto",
     "imports": {
         "satori": "npm:satori@0.10.11",
-        "@resvg/resvg-js": "npm:@resvg/resvg-js@2.6.2"
+        "@resvg/resvg-js": "npm:@resvg/resvg-js@2.6.2",
+        "@langchain/langgraph": "npm:@langchain/langgraph@^0.0.12",
+        "@langchain/core": "npm:@langchain/core@^0.1.30",
+        "@langchain/openai": "npm:@langchain/openai@^0.0.14",
+        "openai": "npm:openai@^4.28.0"
     }
 }

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -130,7 +131,19 @@ export default function ContentOrchestrator() {
                                     </div>
                                     <div className={`p-3 rounded-lg max-w-[80%] ${m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                                         }`}>
-                                        {m.content}
+                                        <ReactMarkdown
+                                            className={`prose ${m.role === "user" ? "prose-invert" : "dark:prose-invert"} max-w-none text-sm leading-relaxed whitespace-pre-wrap break-words`}
+                                            components={{
+                                                // Basic styling overrides to match UI
+                                                p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                                                ul: ({ node, ...props }) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                                                ol: ({ node, ...props }) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                                                li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                                                strong: ({ node, ...props }) => <span className="font-bold" {...props} />,
+                                            }}
+                                        >
+                                            {m.content}
+                                        </ReactMarkdown>
                                     </div>
                                 </div>
                             ))}

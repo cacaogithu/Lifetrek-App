@@ -1,7 +1,7 @@
 export type VideoScene = {
   id: string;
   label: string;
-  kind: "broll" | "image";
+  kind: "broll" | "image" | "solid";
   durationSeconds: number;
   asset: string;
   notes: string;
@@ -9,6 +9,9 @@ export type VideoScene = {
   optional?: boolean;
   altAssets?: string[];
   onScreen?: string;
+  // For solid background scenes (carousels, stats)
+  backgroundColor?: string;
+  overlayImages?: string[];
 };
 
 export type VideoPrompt = {
@@ -19,143 +22,256 @@ export type VideoPrompt = {
 };
 
 export const videoStudioPlan = {
-  title: "Master Showcase Lifetrek",
+  title: "Master Showcase Lifetrek - Storytelling Version",
   headline:
-    "Desenvolva componentes medicos de precisao com fabricacao certificada ISO 13485.",
+    "Cada micrômetro importa. Engenharia de precisão que protege vidas.",
   linkedinLine:
-    "Fabricamos produtos da area medica com qualidade, precisao e equipamentos de alta tecnologia.",
+    "Um desvio mínimo pode significar uma cirurgia de revisão. Por isso há mais de 30 anos transformamos precisão em segurança para implantes e instrumentais.",
   language: "pt-BR",
-  targetDurationSeconds: 83,
-  tone: "premium, tecnico, parceria",
+  targetDurationSeconds: 85,
+  tone: "storytelling, patient-focused, technical proof, professional",
   script:
-    "De fora, e uma fabrica.\n" +
-    "Por dentro, e onde cada micron protege uma vida.\n\n" +
-    "Ha mais de 30 anos, a Lifetrek Medical fabrica componentes medicos com precisao, qualidade e rastreabilidade para quem nao pode errar.\n\n" +
-    "ISO 13485 e ANVISA nao sao selos para mostrar:\n" +
-    "sao processos que controlam cada variavel, em cada lote.\n\n" +
-    "Com tecnologia CNC de ultima geracao, usinamos titanio, PEEK e ligas especiais em tolerancias de micron, com repetibilidade real.\n\n" +
-    "Metrologia avancada garante o que importa:\n" +
-    "dimensao critica validada, documentacao solida, auditorias seguras.\n\n" +
-    "Do instrumental cirurgico ao implante ortopedico, cada peca sai pronta para performance clinica, com menos risco e mais previsibilidade para voce.\n\n" +
-    "Nao somos apenas fornecedores.\n" +
-    "Somos parceiros tecnicos para acelerar lancamentos, reduzir lead time e elevar a confiabilidade do seu produto.\n" +
-    "Lifetrek Medical. Precisao e parceria para a inovacao em saude.",
+    "Do lado de fora, parece apenas mais uma fábrica.\n" +
+    "Mas aqui dentro, cada micrômetro importa.\n" +
+    "Um desvio mínimo pode significar uma cirurgia de revisão, uma dor a mais para alguém que já sofreu demais.\n\n" +
+    "Há mais de 30 anos, a Lifetrek Medical transforma engenharia de precisão em segurança para implantes e instrumentais usados todos os dias em hospitais no Brasil e no mundo.\n\n" +
+    "Somos certificados ISO 13485 e aprovados pela ANVISA.\n" +
+    "Isso não é só selo em parede: é rastreabilidade, controle e consistência em cada lote que entra e sai das nossas salas limpas.\n\n" +
+    "Em células CNC de última geração, usinamos titânio, PEEK e ligas especiais em tolerâncias de mícron.\n" +
+    "Parafusos pediculares, cages, instrumentais… tudo pensado para resistir a milhões de ciclos de carga sem falhar.\n\n" +
+    "Nossa metrologia avançada não 'confere' a peça.\n" +
+    "Ela documenta cada dimensão crítica, para que seus ensaios de fadiga, suas auditorias e registros regulatórios tenham base sólida.\n\n" +
+    "Da barra de material à embalagem em sala limpa ISO 7, cada etapa foi desenhada para reduzir seu risco, encurtar seu lead time e liberar capital preso em estoque importado.\n\n" +
+    "Por isso, não nos vemos como simples fornecedores.\n" +
+    "Trabalhamos junto com seu P&D e sua Qualidade para otimizar desenhos, validar processos e acelerar lançamentos – sem comprometer a segurança do paciente.\n\n" +
+    "Lifetrek Medical.\n" +
+    "Precisão, qualidade e parceria para quem leva a sério o impacto de cada componente na vida real.\n" +
+    "Fale com nossa equipe e vamos desenhar o próximo avanço em saúde, juntos.",
+
+  // Scenes aligned with storytelling voiceover (~85 seconds total)
   scenes: [
+    // CENA 1 - Drone / Vista aérea (8s)
+    // VO: "Do lado de fora, parece apenas mais uma fábrica..."
     {
-      id: "broll-drone",
-      label: "Drone panoramico",
+      id: "scene-1a-drone",
+      label: "Vista aérea - Abertura",
       kind: "broll",
       durationSeconds: 5,
       asset: "/remotion/broll/broll-01-drone-rise.mp4",
-      notes: "Abertura com subida vertical suave.",
+      notes: "Abertura com drone subindo, estabelece escala. Texto: risco do desvio.",
+      onScreen: "Cada micrômetro importa",
     },
     {
-      id: "broll-facade",
-      label: "Aproximacao da fachada",
+      id: "scene-1b-facade",
+      label: "Aproximação fachada",
       kind: "broll",
-      durationSeconds: 5,
+      durationSeconds: 3,
       asset: "/remotion/broll/broll-02-facade-push.mp4",
-      notes: "Push-in suave para transicao.",
+      notes: "Push-in na fachada. Transição de 'fábrica comum' para interior.",
     },
+
+    // CENA 2 - Recepção / Logo (6s)
+    // VO: "Há mais de 30 anos, a Lifetrek Medical transforma..."
     {
-      id: "facility-reception",
-      label: "Recepcao e marca",
+      id: "scene-2-reception",
+      label: "Recepção e marca",
       kind: "image",
-      durationSeconds: 8,
+      durationSeconds: 4,
       asset: "/src/assets/facility/reception-hero.webp",
-      notes: "Headline + prova de certificacao.",
-      onScreen:
-        "Desenvolva componentes medicos de precisao com fabricacao certificada ISO 13485.",
+      notes: "Interior premium, logo visível. Prova de permanência.",
+      onScreen: "30+ anos transformando precisão em segurança",
     },
     {
-      id: "facility-cleanroom",
-      label: "Salas limpas",
-      kind: "broll",
-      durationSeconds: 8,
-      asset: "/remotion/broll/broll-03-cleanroom.mp4",
-      notes: "Porta abrindo, EPI, controle de processo.",
-      fallbackAsset: "/src/assets/facility/cleanroom.webp",
-      altAssets: ["/src/assets/facility/cleanroom-hero.webp"],
-      onScreen: "Tecnologia CNC | Salas limpas | Metrologia avancada",
+      id: "scene-2b-stats",
+      label: "Stats - Prova social",
+      kind: "solid",
+      durationSeconds: 3,
+      asset: "",
+      backgroundColor: "#004F8F",
+      notes: "Fundo sólido azul corporativo com stats animados.",
+      onScreen: "30+ anos • 30+ clientes • 100% comprometimento",
+    },
+
+    // CENA 3 - Salas limpas (8s) - Premium cleanroom carousel
+    // VO: "Somos certificados ISO 13485 e aprovados pela ANVISA..."
+    {
+      id: "scene-3a-cleanroom-carousel",
+      label: "Salas limpas - Carrossel",
+      kind: "solid",
+      durationSeconds: 5,
+      asset: "",
+      backgroundColor: "#0a0d12",
+      notes: "Carrossel de 3 imagens de sala limpa premium com Ken Burns suave.",
+      overlayImages: [
+        "/src/assets/facility/cleanroom-wide.png",
+        "/src/assets/facility/cleanroom-corridor.png",
+        "/src/assets/facility/cleanroom-entrance.png",
+      ],
+      onScreen: "ISO 13485 • ANVISA",
     },
     {
-      id: "equipment-cnc",
-      label: "CNC de precisao",
+      id: "scene-3b-cleanroom-detail",
+      label: "Sala limpa - Corredor",
+      kind: "image",
+      durationSeconds: 3,
+      asset: "/src/assets/facility/cleanroom-corridor.png",
+      notes: "Vista do corredor com mesas de inox e janelas de inspeção.",
+      onScreen: "Rastreabilidade • Controle • Consistência",
+    },
+
+    // CENA 4 - CNC / Máquinas (10s)
+    // VO: "Em células CNC de última geração, usinamos titânio..."
+    {
+      id: "scene-4a-cnc-action",
+      label: "CNC em operação",
       kind: "broll",
-      durationSeconds: 8,
+      durationSeconds: 4,
       asset: "/remotion/broll/broll-04-cnc.mp4",
-      notes: "Macro de usinagem, movimentacao precisa.",
+      notes: "Macro de usinagem, coolant, precisão em ação.",
       fallbackAsset: "/src/assets/equipment/citizen-l32.webp",
-      altAssets: [
+    },
+    {
+      id: "scene-4b-machines-carousel",
+      label: "Carrossel de máquinas",
+      kind: "solid",
+      durationSeconds: 6,
+      asset: "",
+      backgroundColor: "#0a1628",
+      notes: "Fundo escuro premium. Carrossel rápido: Citizen, Tornos, Doosan, Robodrill, Walter, Zeiss. 1s cada.",
+      overlayImages: [
+        "/src/assets/equipment/citizen-new.png",
+        "/src/assets/equipment/citizen-l20-new.png",
         "/src/assets/equipment/tornos-gt26.webp",
+        "/src/assets/equipment/doosan-new.png",
         "/src/assets/equipment/robodrill.webp",
+        "/src/assets/equipment/walter.webp",
       ],
+      onScreen: "Tecnologia CNC de última geração",
     },
+
+    // CENA 5 - Metrologia (8s)
+    // VO: "Nossa metrologia avançada não 'confere' a peça..."
     {
-      id: "metrology",
-      label: "Metrologia avancada",
+      id: "scene-5a-metrology-action",
+      label: "Metrologia em ação",
       kind: "broll",
-      durationSeconds: 7,
+      durationSeconds: 4,
       asset: "/remotion/broll/broll-05-metrology.mp4",
-      notes: "CMM/microscopio, laboratorio clean.",
-      fallbackAsset: "/src/assets/metrology/zeiss-contura.webp",
-      altAssets: [
-        "/src/assets/metrology/olympus-microscope.webp",
-        "/src/assets/metrology/lab-overview.webp",
-      ],
+      notes: "CMM escaneando, precisão documentada.",
+      fallbackAsset: "/src/assets/metrology/zeiss-contura-new.png",
     },
     {
-      id: "packaging",
-      label: "Embalagem esteril",
+      id: "scene-5b-metrology-detail",
+      label: "Lab de metrologia",
+      kind: "image",
+      durationSeconds: 2,
+      asset: "/src/assets/metrology/lab-overview.webp",
+      notes: "Visão geral do laboratório.",
+      onScreen: "Cada dimensão crítica documentada",
+    },
+    {
+      id: "scene-5c-laser",
+      label: "Marcação laser UDI",
       kind: "broll",
-      durationSeconds: 6,
-      asset: "/remotion/broll/broll-06-packaging.mp4",
-      notes: "Opcional: fechamento e seguranca regulatoria.",
-      optional: true,
-      fallbackAsset: "/src/assets/products/surgical-instruments-new.webp",
+      durationSeconds: 3,
+      asset: "/remotion/broll/broll-07-laser.mp4",
+      notes: "Laser marking para rastreabilidade permanente.",
+      fallbackAsset: "/src/assets/equipment/laser-marking.webp",
     },
+
+    // CENA 6 - Produtos (10s)
+    // VO: "Da barra de material à embalagem em sala limpa ISO 7..."
     {
-      id: "product-surgical",
-      label: "Instrumentais cirurgicos",
+      id: "scene-6a-surgical",
+      label: "Instrumentais cirúrgicos",
       kind: "image",
-      durationSeconds: 8,
+      durationSeconds: 3,
       asset: "/src/assets/products/surgical-instruments-new.webp",
-      notes: "Performance clinica.",
+      notes: "Instrumentais premium, qualidade clínica.",
     },
     {
-      id: "product-orthopedic",
-      label: "Implantes ortopedicos",
+      id: "scene-6b-orthopedic",
+      label: "Implantes ortopédicos",
       kind: "image",
-      durationSeconds: 7,
+      durationSeconds: 2.5,
       asset: "/src/assets/products/orthopedic-screws-optimized.webp",
-      notes: "Precisao e confiabilidade.",
+      notes: "Parafusos pediculares, precisão visível.",
+      onScreen: "Milhões de ciclos de carga",
     },
     {
-      id: "product-spinal",
-      label: "Implantes avancados",
+      id: "scene-6c-spinal",
+      label: "Sistemas espinhais",
       kind: "image",
-      durationSeconds: 7,
+      durationSeconds: 2.5,
       asset: "/src/assets/products/spinal-implants-optimized.webp",
-      notes: "Consistencia em escala.",
+      notes: "Cages e sistemas espinhais.",
     },
     {
-      id: "certifications",
-      label: "Certificacoes",
+      id: "scene-6d-electropolish",
+      label: "Eletropolimento",
+      kind: "broll",
+      durationSeconds: 3,
+      asset: "/remotion/broll/broll-06-electropolish.mp4",
+      notes: "Linha de eletropolimento, acabamento médico.",
+      fallbackAsset: "/src/assets/equipment/electropolish-line-new.png",
+      onScreen: "Acabamento para implantes",
+    },
+
+    // CENA 7 - Parceria / Clientes (6s)
+    // VO: "Por isso, não nos vemos como simples fornecedores..."
+    {
+      id: "scene-7a-partnership",
+      label: "Parceria técnica",
       kind: "image",
-      durationSeconds: 6,
-      asset: "/src/assets/certifications/iso.jpg",
-      notes: "ISO 13485 + ANVISA em destaque.",
+      durationSeconds: 3,
+      asset: "/src/assets/facility/reception-hero.webp",
+      notes: "Ambiente profissional, parceria visual.",
+      onScreen: "Junto com seu P&D e Qualidade",
     },
     {
-      id: "facility-exterior",
-      label: "Fechamento",
+      id: "scene-7b-clients",
+      label: "Clientes - Logo parade",
+      kind: "solid",
+      durationSeconds: 4,
+      asset: "",
+      backgroundColor: "#ffffff",
+      notes: "Fundo branco clean. Logos dos clientes em grid ou scroll.",
+      onScreen: "Parceiros que confiam",
+    },
+
+    // CENA 8 - Fechamento (9s)
+    // VO: "Lifetrek Medical. Precisão, qualidade e parceria..."
+    {
+      id: "scene-8a-certifications",
+      label: "Certificações",
       kind: "image",
-      durationSeconds: 8,
+      durationSeconds: 3,
+      asset: "/src/assets/facility/cleanroom-hero.webp",
+      notes: "Background cleanroom com badges ISO + ANVISA overlay.",
+      onScreen: "ISO 13485 • ANVISA",
+    },
+    {
+      id: "scene-8b-exterior-closing",
+      label: "Fechamento - Fachada",
+      kind: "image",
+      durationSeconds: 4,
       asset: "/src/assets/facility/exterior-hero.webp",
-      notes: "CTA com parceria e confiabilidade.",
-      onScreen: "Mais flexibilidade | Mais velocidade | Mais qualidade",
+      notes: "Vista exterior, CTA final.",
+      onScreen: "Vamos desenhar o próximo avanço juntos",
+    },
+    {
+      id: "scene-8c-logo-final",
+      label: "Logo final",
+      kind: "solid",
+      durationSeconds: 3,
+      asset: "",
+      backgroundColor: "#004F8F",
+      notes: "Fundo azul corporativo, logo grande, tagline.",
+      onScreen: "Lifetrek Medical • Precisão que protege vidas",
     },
   ],
+
+  // VEO/Runway prompts for B-roll generation
   veoPrompts: [
     {
       id: "veo-drone",
@@ -193,11 +309,11 @@ export const videoStudioPlan = {
         "Close-up of a coordinate measuring machine (CMM) scanning a metal component in a metrology lab, blue indicator lights, precise robotic motion, clinical, clean.",
     },
     {
-      id: "veo-packaging",
-      label: "Embalagem esteril",
+      id: "veo-electropolish",
+      label: "Eletropolimento",
       durationSeconds: 6,
       prompt:
-        "Gloved hands sealing a sterile medical pouch in a cleanroom packaging station, slow motion, soft highlights, medical-grade cleanliness, no visible brand text.",
+        "Medical-grade electropolishing line with stainless steel tanks, parts being lowered into solution, soft highlights reflecting on polished surfaces, cleanroom adjacent, no visible brand text.",
     },
   ],
 };
