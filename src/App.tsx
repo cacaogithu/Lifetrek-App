@@ -47,6 +47,7 @@ const CampaignManagement = lazy(() => import("./pages/CampaignManagement"));
 const AdminLeads = lazy(() => import("./pages/AdminLeads"));
 const AdminGallery = lazy(() => import("./pages/admin/Gallery"));
 const ContentCalendar = lazy(() => import("./pages/ContentCalendar"));
+const OnePager = lazy(() => import("./pages/OnePager"));
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,7 @@ function AppContent() {
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/product-catalog" element={<ProductCatalog />} />
                 <Route path="/pitch-deck" element={<PitchDeck />} />
+                <Route path="/one-pager" element={<OnePager />} />
                 <Route path="/ev" element={<SalesEngineerDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
