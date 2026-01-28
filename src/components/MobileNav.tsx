@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Building2, Package, Phone } from "lucide-react";
+import { Home, Building2, Package, Phone, BookOpen } from "lucide-react";
 
 export const MobileNav = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -19,6 +19,7 @@ export const MobileNav = () => {
     { path: "/#top", icon: Home, label: "Home" },
     { path: "/capabilities#top", icon: Building2, label: "Capabilities" },
     { path: "/products#top", icon: Package, label: "Products" },
+    { path: "/resources#top", icon: BookOpen, label: "Resources" },
     { path: "/contact#top", icon: Phone, label: "Contact" },
   ];
 

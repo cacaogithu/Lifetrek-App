@@ -1,137 +1,190 @@
+// supabase/functions/chat/index.ts
+// LangGraph ReAct Agent for Content Orchestration
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { StateGraph, END, START } from "npm:@langchain/langgraph@^0.0.12";
+import { ChatOpenAI } from "npm:@langchain/openai@^0.0.14";
+import { HumanMessage, AIMessage, BaseMessage, ToolMessage } from "npm:@langchain/core@^0.1.30/messages";
+import { ToolNode } from "npm:@langchain/langgraph@^0.0.12/prebuilt";
+
+import {
+    createGenerateCarouselTool,
+    createSearchKnowledgeTool,
+    createConsultDesignerTool,
+    createConsultStrategistTool,
+} from "./tools.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_REQUESTS_PER_WINDOW = 20;
+
+interface AgentState {
+    messages: BaseMessage[];
+}
+
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const { messages } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    if (req.method === "OPTIONS") {
+        return new Response("ok", { headers: corsHeaders });
     }
 
-    const systemPrompt = `You are an expert AI assistant for Lifetrek Medical. Your goal is to help users navigate the platform and use its features effectively.
-    
-    Here is the OFFICIAL USER GUIDE for the platform. Use this to answer user questions:
-    
-    # 📘 Lifetrek Platform Guide
-    
-    > [!IMPORTANT]
-    > **Essential URL**: Access your [Sales Dashboard](/admin) to start managing leads.
-    
-    Welcome to the **Lifetrek Medical** intelligent platform.
-    
-    ## 🚀 Quick Start Flows
-    
-    ### For Sales Engineers: The Daily Loop
-    1. **New Lead Arrives** -> Notification -> Check **Dashboard**.
-    2. **Check Priority**:
-       - **High**: Use Safe Agent Chat.
-       - **Normal**: Standard Follow-up.
-    3. **Sales Agent**: Ask for email drafts.
-    4. **Update Status**: Mark as contacted/quoted.
-    
-    ### For Admins: Content Creation Loop
-    1. **Raw Product Photo** -> **Product Image Processor**.
-    2. **Gemini AI** transforms it to Studio Quality.
-    3. Save to **Asset Library**.
-    4. Create **LinkedIn Carousel**.
-    5. **Publish**.
-    
-    ## 👷‍♂️ Sales Engineer Guide
-    
-    Your command center is the **Dashboard EV**.
-    
-    ### 1. Analyzing a Lead
-    -   **⭐ AI Score (1-5)**: Trust this. '5' = Ideal Customer (Medical OEM + High Volume).
-    -   **🚨 Priority Badges**:
-        -   **High (Red)**: Drop everything. Hot lead.
-        -   **Medium (Yellow)**: Follow up < 4 hours.
-        -   **Low (Green)**: Nurture.
-    
-    ### 2. Utilizing the Sales Agent (AI) 🤖
-    The **"Assistente IA"** tab is your pair programmer.
-    - **Drafting Emails**: "Draft a reply to Dr. Silva regarding Titanium Screws..."
-    - **Technical Checks**: "Max dimensions for Citizen lathe?"
-    - **Objection Handling**: "Give me 3 points on quality assurance."
-    
-    ## 🎨 Admin & Marketing Guide
-    
-    ### 1. Studio-Quality Product Photos 📸
-    1.  Navigate to **Product Image Processor**.
-    2.  **Drag & Drop** raw image.
-    3.  AI removes background, adds lighting, auto-tags.
-    4.  **Save** to Library.
-    > WARNING: Ensure raw photo is in focus.
-    
-    ### 2. Instant LinkedIn Carousels 📱
-    1.  Open **LinkedIn Carousel Generator**.
-    2.  **Input Topic**: e.g., "Why Surface Finish Matters".
-    3.  **Set Audience**: e.g., "Medical Device Engineers".
-    4.  **Generate** & **Export**.
-    
-    ### 3. Pitch Decks 📊
-    1.  Go to **Pitch Deck**.
-    2.  Select modules (History, Certifications, etc.).
-    3.  Export brand-compliant PDF.
-    
-    ## ⚙️ Advanced Settings
-    -   Access \`/admin\` for User Access, Enrichment Rules, Logs.
-    
-    ALWAYS refer to this guide when answering "how-to" questions. If the user asks about something not in the guide, use your general knowledge of Lifetrek (precision manufacturing, swiss machining, ISO 13485) but prioritize the guide for platform usage.`;
+    try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || supabaseServiceKey; // Fallback for internal calls
+        const openRouterKey = Deno.env.get("OPEN_ROUTER_API") || Deno.env.get("OPEN_ROUTER_API_KEY");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [{ role: "system", content: systemPrompt }, ...messages],
-      }),
-    });
+        if (!openRouterKey) {
+            throw new Error("OPEN_ROUTER_API key is missing");
+        }
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("AI Gateway error:", response.status, errorText);
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        // --- AUTH CHECK ---
+        const authHeader = req.headers.get("Authorization");
+        const { data: { user }, error: authError } = await supabase.auth.getUser(
+            authHeader?.replace("Bearer ", "")
+        );
+
+        if (authError || !user) {
+            return new Response(
+                JSON.stringify({ error: "Unauthorized", status: 401 }),
+                { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+        }
+
+        // --- RATE LIMITING ---
+        const { count, error: countError } = await supabase
+            .from("api_usage_logs")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", user.id)
+            .gt("created_at", new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString());
+
+        if (countError) throw countError;
+
+        if (count !== null && count >= MAX_REQUESTS_PER_WINDOW) {
+            return new Response(
+                JSON.stringify({
+                    error: "Muitas solicitações. Aguarde um minuto.",
+                    code: "RATE_LIMIT_EXCEEDED",
+                }),
+                { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+        }
+
+        await supabase.from("api_usage_logs").insert({ user_id: user.id, endpoint: "chat" });
+
+        // --- PARSE REQUEST ---
+        const { messages: rawMessages } = await req.json();
+
+        // Convert raw messages to LangChain format
+        const langchainMessages: BaseMessage[] = rawMessages.map((m: any) => {
+            if (m.role === "user") return new HumanMessage(m.content);
+            if (m.role === "assistant") return new AIMessage(m.content);
+            return new HumanMessage(m.content); // Fallback
         });
-      }
 
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Payment required" }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        // --- INITIALIZE MODEL WITH TOOLS ---
+        const tools = [
+            createGenerateCarouselTool(supabaseUrl, supabaseAnonKey),
+            createSearchKnowledgeTool(supabase, openRouterKey),
+            createConsultDesignerTool(openRouterKey),
+            createConsultStrategistTool(openRouterKey),
+        ];
+
+        const model = new ChatOpenAI({
+            modelName: "google/gemini-2.0-flash-001",
+            temperature: 0.7,
+            configuration: {
+                baseURL: "https://openrouter.ai/api/v1",
+                apiKey: openRouterKey,
+                defaultHeaders: {
+                    "HTTP-Referer": "https://lifetrek.app",
+                    "X-Title": "Lifetrek App",
+                },
+            },
+        }).bindTools(tools);
+
+        // --- DEFINE GRAPH ---
+        const shouldContinue = (state: AgentState) => {
+            const lastMessage = state.messages[state.messages.length - 1];
+            // If the last message has tool_calls, route to "tools"
+            if (lastMessage instanceof AIMessage && lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
+                return "tools";
+            }
+            return END;
+        };
+
+        const callAgent = async (state: AgentState): Promise<Partial<AgentState>> => {
+            console.log("🤖 Agent Node: Processing...");
+
+            // Add system message with context
+            const systemMessage = new HumanMessage(`[SYSTEM] Você é o Content Orchestrator da Lifetrek Medical (B2B de dispositivos médicos).
+
+FERRAMENTAS DISPONÍVEIS:
+- generate_carousel: Use para CRIAR novo conteúdo de carrossel LinkedIn.
+- search_knowledge: Use para buscar informações na base de dados (marca, ISO, produtos).
+- consult_designer: Use para perguntas visuais/design.
+- consult_strategist: Use para perguntas de estratégia de conteúdo.
+
+REGRAS:
+1. Se o usuário pedir para CRIAR/GERAR um carrossel, USE a ferramenta 'generate_carousel'.
+2. Se precisar de informação factual sobre a Lifetrek, USE 'search_knowledge' ANTES de responder.
+3. Responda em português, de forma concisa e profissional.
+4. NUNCA invente informações sobre ISO ou certificações sem consultar a base.
+
+[END SYSTEM]`);
+
+            const messagesWithSystem = [systemMessage, ...state.messages];
+
+            const response = await model.invoke(messagesWithSystem);
+            return { messages: [response] };
+        };
+
+        const toolNode = new ToolNode(tools);
+
+        const workflow = new StateGraph<AgentState>({
+            channels: {
+                messages: {
+                    value: (x: BaseMessage[], y: BaseMessage[]) => x.concat(y),
+                    default: () => [],
+                },
+            },
         });
-      }
 
-      throw new Error(`AI Gateway error: ${response.status}`);
+        workflow.addNode("agent", callAgent);
+        workflow.addNode("tools", toolNode);
+
+        workflow.setEntryPoint("agent");
+        workflow.addConditionalEdges("agent", shouldContinue, {
+            tools: "tools",
+            [END]: END,
+        });
+        workflow.addEdge("tools", "agent");
+
+        const app = workflow.compile();
+
+        // --- EXECUTE GRAPH ---
+        const result = await app.invoke({ messages: langchainMessages });
+
+        // Extract final AI message
+        const aiMessages = result.messages.filter((m: BaseMessage) => m instanceof AIMessage);
+        const lastAiMessage = aiMessages[aiMessages.length - 1];
+        const responseText = lastAiMessage?.content || "Sem resposta do agente.";
+
+        return new Response(
+            JSON.stringify({ text: responseText }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+    } catch (error: any) {
+        console.error("Chat Agent Error:", error);
+        return new Response(
+            JSON.stringify({ error: error.message, status: 500 }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
     }
-
-    const data = await response.json();
-    const assistantMessage = data.choices[0]?.message?.content;
-
-    return new Response(JSON.stringify({ response: assistantMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("Error in chat function:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
 });

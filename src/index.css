@@ -8,50 +8,52 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 215 30% 20%;
+    --background: 210 20% 98%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 30% 20%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 30% 20%;
+    --popover-foreground: 222.2 84% 4.9%;
 
     --primary: 210 100% 28%;
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 210 40% 98%;
     --primary-hover: 210 100% 24%;
 
-    --secondary: 210 25% 97%;
+    --secondary: 210 20% 96%;
     --secondary-foreground: 215 30% 20%;
 
     --muted: 210 20% 96%;
-    --muted-foreground: 215 25% 40%;
+    --muted-foreground: 215 20% 45%;
 
     --accent: 142 70% 35%;
     --accent-foreground: 0 0% 100%;
+
+    --innovation-green: 142 70% 35%;
 
     --accent-orange: 25 90% 52%;
     --accent-orange-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 214 25% 90%;
-    --input: 214 25% 90%;
-    --ring: 210 100% 28%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 215 100% 45%;
 
     --radius: 0.75rem;
-    
+
     --gradient-hero: linear-gradient(135deg, hsl(210 100% 28%) 0%, hsl(210 100% 35%) 50%, hsl(210 100% 28%) 100%);
     --gradient-premium: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
     --gradient-subtle: linear-gradient(to bottom, transparent, hsl(210 20% 98% / 0.5));
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.1) 0%, hsl(0 0% 100% / 0.05) 100%);
-    
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.4) 0%, hsl(0 0% 100% / 0.1) 100%);
+
     --shadow-premium: 0 20px 60px -20px hsl(210 100% 28% / 0.15);
     --shadow-elevated: 0 8px 30px -8px hsl(210 100% 28% / 0.12);
     --shadow-soft: 0 4px 20px -4px hsl(210 50% 50% / 0.08);
     --shadow-glass: 0 8px 32px 0 hsl(210 100% 28% / 0.08);
-    
+
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -67,43 +69,43 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 215 30% 8%;
-    --foreground: 0 0% 98%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 215 25% 10%;
-    --card-foreground: 0 0% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 215 25% 10%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 210 100% 48%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 210 100% 55%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-hover: 210 40% 90%;
 
-    --secondary: 215 20% 18%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 215 20% 18%;
-    --muted-foreground: 215 15% 65%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 142 70% 38%;
+    --accent: 143 70% 40%;
     --accent-foreground: 0 0% 100%;
 
     --accent-orange: 25 90% 54%;
     --accent-orange-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 215 20% 18%;
-    --input: 215 20% 18%;
-    --ring: 210 100% 48%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(210 100% 30%) 0%, hsl(210 100% 38%) 50%, hsl(210 100% 30%) 100%);
-    --gradient-premium: linear-gradient(180deg, hsl(215 30% 8%) 0%, hsl(215 25% 12%) 100%);
-    --gradient-subtle: linear-gradient(to bottom, transparent, hsl(215 25% 10% / 0.5));
-    --gradient-glass: linear-gradient(135deg, hsl(215 25% 15% / 0.1) 0%, hsl(215 25% 15% / 0.05) 100%);
-    
+    --gradient-hero: linear-gradient(135deg, hsl(215 100% 30%) 0%, hsl(215 100% 38%) 50%, hsl(215 100% 30%) 100%);
+    --gradient-premium: linear-gradient(180deg, hsl(222.2 84% 4.9%) 0%, hsl(222.2 84% 8%) 100%);
+    --gradient-subtle: linear-gradient(to bottom, transparent, hsl(217.2 32.6% 17.5% / 0.5));
+    --gradient-glass: linear-gradient(135deg, hsl(217.2 32.6% 17.5% / 0.1) 0%, hsl(217.2 32.6% 17.5% / 0.05) 100%);
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -124,16 +126,17 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-optical-sizing: auto;
+    font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     scroll-behavior: smooth;
   }
-  
+
   * {
     box-sizing: border-box;
   }
-  
+
   img {
     max-width: 100%;
     height: auto;
@@ -146,11 +149,18 @@ All colors MUST be HSL.
 
   /* Hide scrollbar for IE, Edge and Firefox */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 700;
     letter-spacing: -0.025em;
@@ -158,19 +168,21 @@ All colors MUST be HSL.
     text-rendering: optimizeLegibility;
   }
 
-  h1 { 
+  h1 {
     @apply text-4xl md:text-5xl lg:text-6xl;
     letter-spacing: -0.03em;
     font-weight: 800;
     line-height: 1.1;
   }
-  h2 { 
+
+  h2 {
     @apply text-3xl md:text-4xl lg:text-5xl;
     letter-spacing: -0.025em;
     font-weight: 700;
     line-height: 1.15;
   }
-  h3 { 
+
+  h3 {
     @apply text-2xl md:text-3xl;
     letter-spacing: -0.02em;
     line-height: 1.25;
@@ -181,13 +193,13 @@ All colors MUST be HSL.
     letter-spacing: 0.01em;
     font-weight: 400;
   }
-  
+
   @media (max-width: 768px) {
     h1 {
       line-height: 1.2;
       letter-spacing: -0.02em;
     }
-    
+
     p {
       line-height: 1.65;
     }
@@ -195,15 +207,16 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+
   /* Animation Performance Optimizations */
   .animate-fade-in {
     will-change: opacity, transform;
   }
-  
+
   .animate-pulse-glow {
     will-change: opacity;
   }
-  
+
   .animate-float {
     will-change: transform;
   }
@@ -212,15 +225,15 @@ All colors MUST be HSL.
   .animate-delay-100 {
     animation-delay: 0.1s;
   }
-  
+
   .animate-delay-200 {
     animation-delay: 0.2s;
   }
-  
+
   .animate-delay-300 {
     animation-delay: 0.3s;
   }
-  
+
   .animate-delay-400 {
     animation-delay: 0.4s;
   }
@@ -256,7 +269,7 @@ All colors MUST be HSL.
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity, transform;
   }
 
@@ -270,7 +283,7 @@ All colors MUST be HSL.
     opacity: 0;
     transform: translateX(-30px);
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .scroll-reveal-left.visible {
@@ -282,7 +295,7 @@ All colors MUST be HSL.
     opacity: 0;
     transform: translateX(30px);
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .scroll-reveal-right.visible {
@@ -294,7 +307,7 @@ All colors MUST be HSL.
     opacity: 0;
     transform: scale(0.9);
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .scroll-reveal-scale.visible {
@@ -306,47 +319,46 @@ All colors MUST be HSL.
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .stagger-item.visible {
     opacity: 1;
     transform: translateY(0);
   }
-  
+
   .touch-manipulation {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   .page-enter {
     opacity: 0;
     transform: translateY(20px);
   }
-  
+
   .page-enter-active {
     opacity: 1;
     transform: translateY(0);
     transition: opacity 0.4s, transform 0.4s;
   }
-  
+
   /* Ensure proper spacing for mobile bottom nav */
   @media (max-width: 768px) {
     main {
       padding-bottom: 5rem;
     }
   }
-  
+
   /* Performance optimizations */
   .carousel-item {
     content-visibility: auto;
     contain: layout style paint;
   }
-  
+
   img[loading="lazy"] {
     content-visibility: auto;
   }
-  
 
   /* Optimize animations for mobile */
   @media (prefers-reduced-motion: reduce) {
@@ -354,41 +366,6 @@ All colors MUST be HSL.
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
-    }
-  }
-
-  @media print {
-    @page {
-      size: 1920px 1080px landscape;
-      margin: 0;
-    }
-
-    body {
-      background: none;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    /* Hide UI elements during print */
-    .no-print, 
-    button, 
-    [role="button"],
-    .fixed {
-      display: none !important;
-    }
-
-    /* Ensure specific elements are visible */
-    .print-only {
-      display: block !important;
-      position: static !important;
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    /* Ensure backgrounds and images are printed */
-    * {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
     }
   }
 }

@@ -94,7 +94,7 @@ async function scrapeWebsite(domain: string): Promise<string | null> {
 
     const data = await response.json();
     const content = data.data?.markdown || data.markdown;
-    
+
     // Limit to first 3000 characters for summary
     return content ? content.substring(0, 3000) : null;
   } catch (error) {
@@ -164,7 +164,7 @@ function analyzeWebsiteContent(content: string | null): {
 
   let detectedIndustry: string | null = null;
   const lowerContent = content.toLowerCase();
-  
+
   for (const [industry, keywords] of Object.entries(industryKeywords)) {
     if (keywords.some(kw => lowerContent.includes(kw))) {
       detectedIndustry = industry;
@@ -267,7 +267,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Perform new research
     console.log('Performing new research for:', domain);
-    
+
     const websiteContent = await scrapeWebsite(domain);
     const companyName = company || domain;
     const linkedinInfo = await researchLinkedIn(companyName);
@@ -281,6 +281,7 @@ const handler = async (req: Request): Promise<Response> => {
       industry: analysis.industry,
       key_products: analysis.key_products,
       recent_news: null,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Cache for 30 days
     };
 
     // Cache the research

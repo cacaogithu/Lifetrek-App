@@ -25,7 +25,8 @@ interface Lead {
   email: string;
   company: string | null;
   phone: string;
-  project_types: string[];
+  project_type?: string | null;
+  project_types: string[] | null;
   annual_volume: string | null;
   technical_requirements: string;
   message: string | null;
@@ -37,6 +38,7 @@ interface Lead {
   updated_at: string;
   lead_score: number | null;
   score_breakdown: any | null;
+  source?: 'website' | 'unipile' | string | null;
 }
 
 interface LeadsTableProps {
@@ -46,6 +48,16 @@ interface LeadsTableProps {
 }
 
 export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) => {
+  const getProjectTypes = (lead: Lead) => {
+    if (lead.project_types && lead.project_types.length > 0) {
+      return lead.project_types;
+    }
+    if (lead.project_type) {
+      return [lead.project_type];
+    }
+    return [];
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -59,6 +71,7 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
             <TableHead>Telefone</TableHead>
             <TableHead>Tipos de Projeto</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Origem</TableHead>
             <TableHead>Data</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
@@ -66,7 +79,7 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
         <TableBody>
           {leads.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} className="text-center text-muted-foreground">
+              <TableCell colSpan={11} className="text-center text-muted-foreground">
                 Nenhum lead encontrado
               </TableCell>
             </TableRow>
@@ -104,18 +117,32 @@ export const LeadsTable = ({ leads, onViewDetails, onDelete }: LeadsTableProps) 
                 <TableCell>{lead.phone}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1 max-w-xs">
-                    {lead.project_types?.map((type) => (
-                      <Badge key={type} variant="outline" className="text-xs">
-                        {PROJECT_TYPE_LABELS[type] || type}
-                      </Badge>
-                    )) || <span className="text-muted-foreground">-</span>}
+                    {getProjectTypes(lead).length > 0 ? (
+                      getProjectTypes(lead).map((type) => (
+                        <Badge key={type} variant="outline" className="text-xs">
+                          {PROJECT_TYPE_LABELS[type] || type}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell>
                   <LeadStatusBadge status={lead.status} />
                 </TableCell>
                 <TableCell>
-                  {format(new Date(lead.created_at), "dd/MM/yyyy HH:mm")}
+                  <Badge variant="outline" className="text-xs capitalize">
+                    {lead.source === "unipile" ? "Unipile" : "Website"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="text-sm">
+                    {format(new Date(lead.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Atualizado {format(new Date(lead.updated_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                  </div>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">

@@ -19,25 +19,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-linkedin-carousel]
-verify_jwt = false
-
-[functions.populate-knowledge-base]
-verify_jwt = false
-
-[functions.calculate-lead-score]
 verify_jwt = true
 
-[functions.send-weekly-report]
-verify_jwt = false
-
-[functions.generate-blog-post]
-verify_jwt = true
-
-[functions.sales-engineer-agent]
-verify_jwt = true
-
-[functions.migrate-assets]
-verify_jwt = false
-
-[functions.regenerate-carousel-images]
+[functions.agent-orchestrator]
 verify_jwt = false

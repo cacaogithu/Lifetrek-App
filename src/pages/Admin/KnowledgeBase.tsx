@@ -1,300 +1,376 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
-import { 
-  Database, 
-  RefreshCw, 
-  Trash2, 
-  Search, 
-  FileText, 
-  BookOpen, 
-  TrendingUp, 
-  Target, 
-  Swords,
-  Loader2,
-  CheckCircle2
-} from "lucide-react";
+import { Search, Plus, Trash2, Edit2, Link as LinkIcon, Save, X, BookOpen } from "lucide-react";
 
-interface KnowledgeDocument {
-  id: string;
-  source_type: string;
-  source_id: string;
-  content: string;
-  metadata: {
+interface KnowledgeItem {
+    id: string;
     category?: string;
-    priority?: string;
-    keywords?: string[];
-  };
-  created_at: string;
+    question?: string;
+    answer?: string;
+    content?: string;
+    metadata?: any;
+    source_type?: string;
+    tags?: string[];
+    created_at: string;
 }
 
-const SOURCE_TYPE_ICONS: Record<string, typeof FileText> = {
-  brand_book: BookOpen,
-  hormozi_framework: Target,
-  industry_research: TrendingUp,
-  market_pain_points: Target,
-  competitive_intelligence: Swords,
-};
-
-const SOURCE_TYPE_COLORS: Record<string, string> = {
-  brand_book: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  hormozi_framework: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  industry_research: "bg-green-500/10 text-green-500 border-green-500/20",
-  market_pain_points: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  competitive_intelligence: "bg-red-500/10 text-red-500 border-red-500/20",
-};
+const CATEGORIES = [
+    "General",
+    "Technical",
+    "Pricing",
+    "Competitors",
+    "Company History",
+    "Objection Handling"
+];
 
 export default function KnowledgeBase() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isEditing, setIsEditing] = useState<string | null>(null);
+    const [isAdding, setIsAdding] = useState(false);
 
-  // Fetch documents
-  const { data: documents, isLoading, refetch } = useQuery({
-    queryKey: ["knowledge-documents"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("knowledge_embeddings")
-        .select("*")
-        .order("source_type");
-      
-      if (error) throw error;
-      return data as KnowledgeDocument[];
-    },
-  });
+    // New Item State
+    const [newItem, setNewItem] = useState({
+        category: "General",
+        question: "",
+        answer: "",
+        tags: ""
+    });
 
-  // Populate mutation
-  const populateMutation = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke("populate-knowledge-base", {
-        body: { mode: "populate", skipEmbeddings: true },
-      });
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: (data) => {
-      toast.success(`Knowledge Base atualizada: ${data.message}`);
-      queryClient.invalidateQueries({ queryKey: ["knowledge-documents"] });
-    },
-    onError: (error: any) => {
-      toast.error(`Erro ao popular: ${error.message}`);
-    },
-  });
+    // Edit State
+    const [editForm, setEditForm] = useState({
+        category: "",
+        question: "",
+        answer: "",
+        tags: ""
+    });
 
-  // Clear mutation
-  const clearMutation = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke("populate-knowledge-base", {
-        body: { mode: "clear" },
-      });
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      toast.success("Knowledge Base limpa");
-      queryClient.invalidateQueries({ queryKey: ["knowledge-documents"] });
-    },
-    onError: (error: any) => {
-      toast.error(`Erro ao limpar: ${error.message}`);
-    },
-  });
+    // Fetch KB items
+    const { data: kbItems, isLoading } = useQuery({
+        queryKey: ["knowledge-base"],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from("knowledge_base")
+                .select("*")
+                .order("category", { ascending: true });
 
-  // Filter documents
-  const filteredDocs = documents?.filter((doc) => {
-    const matchesSearch = !searchQuery || 
-      doc.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.source_id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesType = !selectedType || doc.source_type === selectedType;
-    
-    return matchesSearch && matchesType;
-  });
+            if (error) throw error;
+            return data as KnowledgeItem[];
+        },
+    });
 
-  // Group by source_type
-  const groupedDocs = filteredDocs?.reduce((acc, doc) => {
-    if (!acc[doc.source_type]) acc[doc.source_type] = [];
-    acc[doc.source_type].push(doc);
-    return acc;
-  }, {} as Record<string, KnowledgeDocument[]>);
+    // Filter items
+    const filteredItems = kbItems?.filter(item => {
+        const searchStr = searchTerm.toLowerCase();
+        return (
+            (item.question?.toLowerCase().includes(searchStr)) ||
+            (item.answer?.toLowerCase().includes(searchStr)) ||
+            (item.content?.toLowerCase().includes(searchStr)) ||
+            (item.category?.toLowerCase().includes(searchStr)) ||
+            (item.source_type?.toLowerCase().includes(searchStr)) ||
+            (item.tags?.some(tag => tag.toLowerCase().includes(searchStr)))
+        );
+    });
 
-  // Get unique source types
-  const sourceTypes = documents 
-    ? [...new Set(documents.map(d => d.source_type))]
-    : [];
+    // Group by category (fallback to source_type then "General")
+    const groupedItems = filteredItems?.reduce((acc, item) => {
+        const cat = item.category || item.source_type || "General";
+        if (!acc[cat]) acc[cat] = [];
+        acc[cat].push(item);
+        return acc;
+    }, {} as Record<string, KnowledgeItem[]>) || {};
 
-  return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Database className="h-6 w-6" />
-            Knowledge Base
-          </h1>
-          <p className="text-muted-foreground">
-            Documentos de RAG para os agentes de LinkedIn
-          </p>
-        </div>
-        
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
-            Atualizar
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => clearMutation.mutate()}
-            disabled={clearMutation.isPending}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Limpar
-          </Button>
-          <Button
-            onClick={() => populateMutation.mutate()}
-            disabled={populateMutation.isPending}
-          >
-            {populateMutation.isPending ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <CheckCircle2 className="h-4 w-4 mr-2" />
-            )}
-            Popular KB
-          </Button>
-        </div>
-      </div>
+    // Add Mutation
+    const addMutation = useMutation({
+        mutationFn: async () => {
+            const tagsArray = newItem.tags.split(",").map(t => t.trim()).filter(Boolean);
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {Object.entries(SOURCE_TYPE_COLORS).map(([type, color]) => {
-          const count = documents?.filter(d => d.source_type === type).length || 0;
-          const Icon = SOURCE_TYPE_ICONS[type] || FileText;
-          
-          return (
-            <Card 
-              key={type}
-              className={`cursor-pointer transition-all ${selectedType === type ? "ring-2 ring-primary" : ""}`}
-              onClick={() => setSelectedType(selectedType === type ? null : type)}
-            >
-              <CardContent className="pt-4">
-                <div className="flex items-center justify-between">
-                  <div className={`p-2 rounded-lg ${color}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <span className="text-2xl font-bold">{count}</span>
+            const { error } = await supabase
+                .from("knowledge_base")
+                .insert({
+                    category: newItem.category,
+                    question: newItem.question,
+                    answer: newItem.answer,
+                    tags: tagsArray
+                });
+
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            toast.success("Item adicionado com sucesso!");
+            setIsAdding(false);
+            setNewItem({ category: "General", question: "", answer: "", tags: "" });
+            queryClient.invalidateQueries({ queryKey: ["knowledge-base"] });
+        },
+        onError: (error: any) => {
+            toast.error(`Erro ao adicionar: ${error.message}`);
+        }
+    });
+
+    // Delete Mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            const { error } = await supabase
+                .from("knowledge_base")
+                .delete()
+                .eq("id", id);
+
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            toast.success("Item removido!");
+            queryClient.invalidateQueries({ queryKey: ["knowledge-base"] });
+        },
+        onError: (error: any) => {
+            toast.error(`Erro ao remover: ${error.message}`);
+        }
+    });
+
+    // Update Mutation
+    const updateMutation = useMutation({
+        mutationFn: async (id: string) => {
+            const tagsArray = editForm.tags.split(",").map(t => t.trim()).filter(Boolean);
+
+            const { error } = await supabase
+                .from("knowledge_base")
+                .update({
+                    category: editForm.category,
+                    question: editForm.question,
+                    answer: editForm.answer,
+                    tags: tagsArray
+                })
+                .eq("id", id);
+
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            toast.success("Item atualizado!");
+            setIsEditing(null);
+            queryClient.invalidateQueries({ queryKey: ["knowledge-base"] });
+        },
+        onError: (error: any) => {
+            toast.error(`Erro ao atualizar: ${error.message}`);
+        }
+    });
+
+    const startEdit = (item: KnowledgeItem) => {
+        setEditForm({
+            category: item.category,
+            question: item.question,
+            answer: item.answer,
+            tags: item.tags?.join(", ") || ""
+        });
+        setIsEditing(item.id);
+    };
+
+    return (
+        <div className="container max-w-5xl py-8 space-y-8 animate-fade-in">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold flex items-center gap-2">
+                        <BookOpen className="h-8 w-8 text-primary" />
+                        Knowledge Base
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                        Base de conhecimento para treinamento dos agentes de IA
+                    </p>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2 capitalize">
-                  {type.replace(/_/g, " ")}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar documentos..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
-      </div>
-
-      {/* Documents */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Documentos ({filteredDocs?.length || 0})</CardTitle>
-          <CardDescription>
-            Clique em um documento para expandir o conteúdo
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Button onClick={() => setIsAdding(!isAdding)} variant={isAdding ? "secondary" : "default"}>
+                    {isAdding ? <X className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
+                    {isAdding ? "Cancelar" : "Novo Item"}
+                </Button>
             </div>
-          ) : !filteredDocs?.length ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Database className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Nenhum documento encontrado</p>
-              <p className="text-sm">Clique em "Popular KB" para adicionar documentos</p>
+
+            <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                    placeholder="Pesquisar perguntas, respostas ou tags..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 h-10"
+                />
             </div>
-          ) : (
-            <ScrollArea className="h-[600px] pr-4">
-              <Accordion type="multiple" className="space-y-2">
-                {Object.entries(groupedDocs || {}).map(([sourceType, docs]) => (
-                  <div key={sourceType} className="space-y-2">
-                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-2">
-                      {(() => {
-                        const Icon = SOURCE_TYPE_ICONS[sourceType] || FileText;
-                        return <Icon className="h-4 w-4" />;
-                      })()}
-                      {sourceType.replace(/_/g, " ")}
-                    </h3>
-                    
-                    {docs.map((doc) => (
-                      <AccordionItem key={doc.id} value={doc.id} className="border rounded-lg px-4">
-                        <AccordionTrigger className="hover:no-underline">
-                          <div className="flex items-center gap-3 text-left">
-                            <Badge 
-                              variant="outline" 
-                              className={SOURCE_TYPE_COLORS[doc.source_type]}
-                            >
-                              {doc.source_id}
-                            </Badge>
-                            {doc.metadata?.priority === "high" && (
-                              <Badge variant="destructive" className="text-xs">
-                                High Priority
-                              </Badge>
-                            )}
-                            <span className="text-xs text-muted-foreground">
-                              {doc.content.length} chars
-                            </span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-3 pt-2">
-                            {/* Keywords */}
-                            {doc.metadata?.keywords && (
-                              <div className="flex flex-wrap gap-1">
-                                {doc.metadata.keywords.map((kw) => (
-                                  <Badge key={kw} variant="secondary" className="text-xs">
-                                    {kw}
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
-                            
-                            {/* Content preview */}
-                            <pre className="text-xs bg-muted p-4 rounded-lg overflow-x-auto whitespace-pre-wrap font-mono">
-                              {doc.content}
-                            </pre>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+
+            {isAdding && (
+                <Card className="border-primary/50 shadow-md animate-in slide-in-from-top-4">
+                    <CardHeader>
+                        <CardTitle>Adicionar Novo Conhecimento</CardTitle>
+                        <CardDescription>
+                            Adicione informações que os agentes usarão para responder perguntas.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Categoria</label>
+                                <select
+                                    className="w-full p-2 border rounded-md"
+                                    value={newItem.category}
+                                    onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
+                                >
+                                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Tags (separadas por vírgula)</label>
+                                <Input
+                                    placeholder="ex: vendas, técnico, urgente"
+                                    value={newItem.tags}
+                                    onChange={(e) => setNewItem({ ...newItem, tags: e.target.value })}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Pergunta / Tópico</label>
+                            <Input
+                                placeholder="Ex: Qual o prazo de entrega padrão?"
+                                value={newItem.question}
+                                onChange={(e) => setNewItem({ ...newItem, question: e.target.value })}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Resposta / Conteúdo</label>
+                            <Textarea
+                                placeholder="A resposta detalhada que o agente deve usar..."
+                                rows={4}
+                                value={newItem.answer}
+                                onChange={(e) => setNewItem({ ...newItem, answer: e.target.value })}
+                            />
+                        </div>
+                        <Button onClick={() => addMutation.mutate()} disabled={!newItem.question || !newItem.answer}>
+                            <Save className="mr-2 h-4 w-4" />
+                            Salvar Item
+                        </Button>
+                    </CardContent>
+                </Card>
+            )}
+
+            {isLoading ? (
+                <div className="text-center py-12">Carregando base de conhecimento...</div>
+            ) : Object.keys(groupedItems).length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground bg-muted/30 rounded-lg border border-dashed">
+                    Nenhum item encontrado para sua busca.
+                </div>
+            ) : (
+                <div className="space-y-6">
+                    {Object.entries(groupedItems).map(([category, items]) => (
+                        <Card key={category}>
+                            <CardHeader className="py-4 bg-muted/30">
+                                <CardTitle className="text-lg font-medium text-primary">{category}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <Accordion type="single" collapsible className="w-full">
+                                    {items.map((item) => (
+                                        <AccordionItem key={item.id} value={item.id} className="px-4">
+                                            <AccordionTrigger className="hover:no-underline py-4">
+                                                <div className="text-left">
+                                                    <p className="font-medium text-base">
+                                                        {item.question || (item.metadata?.title) || "Documento"}
+                                                    </p>
+                                                    <div className="flex gap-2 mt-1 items-center">
+                                                        {item.source_type && (
+                                                            <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-normal uppercase tracking-wider">
+                                                                {item.source_type}
+                                                            </Badge>
+                                                        )}
+                                                        {item.tags && item.tags.length > 0 && item.tags.map(tag => (
+                                                            <Badge key={tag} variant="secondary" className="text-[10px] h-5 px-1.5 font-normal">
+                                                                {tag}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="pb-4">
+                                                {isEditing === item.id ? (
+                                                    <div className="space-y-4 p-4 bg-muted/50 rounded-md border">
+                                                        <div className="grid md:grid-cols-2 gap-4">
+                                                            <div className="space-y-2">
+                                                                <label className="text-xs font-medium">Categoria</label>
+                                                                <select
+                                                                    className="w-full p-2 text-sm border rounded-md"
+                                                                    value={editForm.category}
+                                                                    onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                                                                >
+                                                                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                                                </select>
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <label className="text-xs font-medium">Tags</label>
+                                                                <Input
+                                                                    className="h-8 text-sm"
+                                                                    value={editForm.tags}
+                                                                    onChange={(e) => setEditForm({ ...editForm, tags: e.target.value })}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <Input
+                                                            value={editForm.question || ""}
+                                                            onChange={(e) => setEditForm({ ...editForm, question: e.target.value })}
+                                                            className="font-medium"
+                                                            placeholder="Pergunta ou Tópico"
+                                                        />
+                                                        <Textarea
+                                                            value={editForm.answer || editForm.content || ""}
+                                                            onChange={(e) => setEditForm({ ...editForm, answer: e.target.value })}
+                                                            rows={5}
+                                                            placeholder="Resposta ou Conteúdo"
+                                                        />
+                                                        <div className="flex justify-end gap-2">
+                                                            <Button size="sm" variant="ghost" onClick={() => setIsEditing(null)}>Cancelar</Button>
+                                                            <Button size="sm" onClick={() => updateMutation.mutate(item.id)}>Salvar</Button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-4">
+                                                        <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap">
+                                                            {item.answer || item.content}
+                                                        </div>
+                                                        {item.metadata && Object.keys(item.metadata).length > 0 && (
+                                                            <div className="bg-muted/30 p-2 rounded text-[10px] font-mono text-muted-foreground">
+                                                                Metadata: {JSON.stringify(item.metadata)}
+                                                            </div>
+                                                        )}
+                                                        <div className="flex justify-end gap-2 pt-2 border-t mt-2">
+
+                                                            <Button
+                                                                size="sm"
+                                                                variant="ghost"
+                                                                className="h-8 px-2"
+                                                                onClick={() => startEdit(item)}
+                                                            >
+                                                                <Edit2 className="h-3.5 w-3.5 mr-1" /> Editar
+                                                            </Button>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="ghost"
+                                                                className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                                onClick={() => {
+                                                                    if (confirm("Tem certeza que deseja excluir?")) deleteMutation.mutate(item.id);
+                                                                }}
+                                                            >
+                                                                <Trash2 className="h-3.5 w-3.5 mr-1" /> Remover
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            </CardContent>
+                        </Card>
                     ))}
-                  </div>
-                ))}
-              </Accordion>
-            </ScrollArea>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
+                </div>
+            )}
+        </div>
+    );
 }

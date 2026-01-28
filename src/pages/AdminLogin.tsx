@@ -84,11 +84,17 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
 
-    console.log("========================================");
-    console.log("[AdminLogin] 🚀 Iniciando tentativa de login");
-    console.log("[AdminLogin] 📧 Email:", email);
-    console.log("[AdminLogin] 🔑 Senha fornecida:", password ? `${password.length} caracteres` : "VAZIA");
-    console.log("========================================");
+    // Email domain validation
+    const ALLOWED_DOMAINS = ["lifetrek-medical.com"];
+    const ALLOWED_EMAILS = ["rafacrvg@icloud.com"]; // Super admin exceptions
+    const emailDomain = email.split("@")[1]?.toLowerCase();
+    const emailLower = email.toLowerCase();
+
+    if (!emailDomain || (!ALLOWED_DOMAINS.includes(emailDomain) && !ALLOWED_EMAILS.includes(emailLower))) {
+      toast.error("Acesso restrito. Só emails @lifetrek-medical.com são permitidos.");
+      setLoading(false);
+      return;
+    }
 
     try {
       console.log("[AdminLogin] ⏳ Chamando supabase.auth.signInWithPassword...");
@@ -135,35 +141,24 @@ export default function AdminLogin() {
       console.log("[AdminLogin] 🎫 Session:", data.session ? "PRESENTE" : "AUSENTE");
 
       if (data.user) {
-        console.log("[AdminLogin] ⏳ Verificando se usuário é admin...");
-        
-        const { data: adminData, error: adminError } = await supabase
-          .from("admin_users")
-          .select("*")
-          .eq("user_id", data.user.id)
-          .single();
+        // Check if user is admin - try both tables
+        const [adminUsersCheck, adminPermissionsCheck] = await Promise.all([
+          supabase.from("admin_users").select("*").eq("user_id", data.user.id).single(),
+          supabase.from("admin_permissions").select("*").eq("email", data.user.email).single()
+        ]);
 
-        console.log("[AdminLogin] 🔍 Resultado da verificação admin:");
-        console.log("[AdminLogin] - adminData:", adminData ? JSON.stringify(adminData) : "null");
-        console.log("[AdminLogin] - adminError:", adminError ? JSON.stringify(adminError) : "null");
+        const isAdmin = adminUsersCheck.data || adminPermissionsCheck.data;
 
-        if (!adminData) {
-          console.error("[AdminLogin] 🚫 ACESSO NEGADO - Usuário não é admin");
+        if (!isAdmin) {
           await supabase.auth.signOut();
-          toast.error("Acesso negado. Usuário não é administrador.");
+          toast.error("Acesso negado. Usuário não é admin.");
           return;
         }
 
-        console.log("[AdminLogin] 🎉 Login completo! Redirecionando para /admin...");
         toast.success("Login realizado com sucesso!");
         navigate("/admin");
       }
     } catch (error: any) {
-      console.error("========================================");
-      console.error("[AdminLogin] 💥 ERRO NÃO TRATADO");
-      console.error("[AdminLogin] - Mensagem:", error.message);
-      console.error("[AdminLogin] - Stack:", error.stack);
-      console.error("========================================");
       toast.error(error.message || "Falha no login");
     } finally {
       console.log("[AdminLogin] 🏁 Processo de login finalizado");
@@ -176,7 +171,7 @@ export default function AdminLogin() {
       toast.error("Por favor, digite seu email");
       return;
     }
-    
+
     setLoading(true);
     console.log("[AdminLogin] 📧 Enviando email de reset para:", email);
     
@@ -184,14 +179,9 @@ export default function AdminLogin() {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/admin/login`,
       });
-      
-      if (error) {
-        console.error("[AdminLogin] ❌ Erro no reset:", error.message);
-        throw error;
-      }
-      
-      console.log("[AdminLogin] ✅ Email de reset enviado!");
-      toast.success("Email de recuperação enviado! Verifique sua caixa de entrada.");
+
+      if (error) throw error;
+      toast.success("Password reset email sent! Check your inbox.");
     } catch (error: any) {
       toast.error(error.message || "Erro ao enviar email de reset");
     } finally {
@@ -264,7 +254,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@lifetrek.com"
+              placeholder="temp_admin@lifetrek.com"
               required
               className="h-12"
               aria-label="Admin email address"
@@ -285,9 +275,9 @@ export default function AdminLogin() {
             />
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full h-12 text-base" 
+          <Button
+            type="submit"
+            className="w-full h-12 text-base"
             disabled={loading}
             aria-label={loading ? "Logging in, please wait" : "Login to admin dashboard"}
           >
@@ -296,10 +286,10 @@ export default function AdminLogin() {
         </form>
 
         <div className="mt-4">
-          <Button 
-            type="button" 
-            variant="link" 
-            className="w-full text-base" 
+          <Button
+            type="button"
+            variant="link"
+            className="w-full text-base"
             onClick={handlePasswordReset}
             disabled={loading}
             aria-label="Reset password"
