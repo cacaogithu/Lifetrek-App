@@ -39,9 +39,9 @@ import electropolishNew from "../../src/assets/equipment/electropolish-line-new.
 import receptionHero from "../../src/assets/facility/reception-hero.webp";
 import cleanroomHero from "../../src/assets/facility/cleanroom.webp";
 import cleanroomHeroAlt from "../../src/assets/facility/cleanroom-hero.webp";
-import cleanroomCorridor from "../../src/assets/facility/cleanroom-corridor.png";
-import cleanroomWide from "../../src/assets/facility/cleanroom-wide.png";
-import cleanroomEntrance from "../../src/assets/facility/cleanroom-entrance.png";
+import cleanroomCorridor from "../../src/assets/facility/cleanroom.webp";
+import cleanroomWide from "../../src/assets/facility/cleanroom-hero.webp";
+import cleanroomEntrance from "../../src/assets/facility/reception-hero.webp";
 import exteriorHero from "../../src/assets/facility/exterior-hero.webp";
 import labOverview from "../../src/assets/metrology/lab-overview.webp";
 import zeissContura from "../../src/assets/metrology/zeiss-contura-new.png";
