@@ -13,134 +13,83 @@ import {
     createSearchKnowledgeTool,
     createConsultDesignerTool,
     createConsultStrategistTool,
+    createSaveLeadTool,
 } from "./tools.ts";
 
-const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = 20;
-
-interface AgentState {
-    messages: BaseMessage[];
-}
-
-serve(async (req) => {
-    if (req.method === "OPTIONS") {
-        return new Response("ok", { headers: corsHeaders });
-    }
-
-    try {
-        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-        const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-        const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") || supabaseServiceKey; // Fallback for internal calls
-        const openRouterKey = Deno.env.get("OPEN_ROUTER_API") || Deno.env.get("OPEN_ROUTER_API_KEY");
-
-        if (!openRouterKey) {
-            throw new Error("OPEN_ROUTER_API key is missing");
-        }
-
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// ... (imports remain)
 
         // --- AUTH CHECK ---
         const authHeader = req.headers.get("Authorization");
-        const { data: { user }, error: authError } = await supabase.auth.getUser(
-            authHeader?.replace("Bearer ", "")
-        );
-
-        if (authError || !user) {
+        let user: any = null;
+        
+        if (authHeader) {
+            const { data, error } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+            if (!error && data?.user) {
+                user = data.user;
+            }
+        }
+        
+        // STRICT AUTH: Orchestrator is for internal use only.
+        if (!user) {
+            console.warn("🚫 Unauthorized access attempt to Orchestrator.");
             return new Response(
-                JSON.stringify({ error: "Unauthorized", status: 401 }),
+                JSON.stringify({ error: "Unauthorized. Orchestrator requires login.", status: 401 }),
                 { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
             );
         }
 
-        // --- RATE LIMITING ---
-        const { count, error: countError } = await supabase
-            .from("api_usage_logs")
-            .select("*", { count: "exact", head: true })
-            .eq("user_id", user.id)
-            .gt("created_at", new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString());
+        const userId = user.id;
 
-        if (countError) throw countError;
-
-        if (count !== null && count >= MAX_REQUESTS_PER_WINDOW) {
-            return new Response(
-                JSON.stringify({
-                    error: "Muitas solicitações. Aguarde um minuto.",
-                    code: "RATE_LIMIT_EXCEEDED",
-                }),
-                { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
+        // --- RATE LIMITING (Skip for now or use IP based in future) ---
+        // If user is logged in, use table. If anon, skip table check to avoid error if RLS blocks 'anon' inserts.
+        if (user) {
+            const { count, error: countError } = await supabase
+                .from("api_usage_logs")
+                .select("*", { count: "exact", head: true })
+                .eq("user_id", user.id)
+                .gt("created_at", new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString());
+    
+            if (!countError && count !== null && count >= MAX_REQUESTS_PER_WINDOW) {
+                return new Response(
+                    JSON.stringify({ error: "Rate limit exceeded", code: "RATE_LIMIT_EXCEEDED" }),
+                    { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+                );
+            }
+             await supabase.from("api_usage_logs").insert({ user_id: user.id, endpoint: "chat" });
         }
 
-        await supabase.from("api_usage_logs").insert({ user_id: user.id, endpoint: "chat" });
-
-        // --- PARSE REQUEST ---
-        const { messages: rawMessages } = await req.json();
-
-        // Convert raw messages to LangChain format
-        const langchainMessages: BaseMessage[] = rawMessages.map((m: any) => {
-            if (m.role === "user") return new HumanMessage(m.content);
-            if (m.role === "assistant") return new AIMessage(m.content);
-            return new HumanMessage(m.content); // Fallback
-        });
+        // ... (Parse Request)
 
         // --- INITIALIZE MODEL WITH TOOLS ---
         const tools = [
+            createSaveLeadTool(supabase), // LEAD GEN TOOL ADDED
             createGenerateCarouselTool(supabaseUrl, supabaseAnonKey),
             createSearchKnowledgeTool(supabase, openRouterKey),
-            createConsultDesignerTool(openRouterKey),
-            createConsultStrategistTool(openRouterKey),
+            // createConsultDesignerTool(openRouterKey), // Reduced tools for public chat to save tokens/latency
+            // createConsultStrategistTool(openRouterKey),
         ];
 
-        const model = new ChatOpenAI({
-            modelName: "google/gemini-2.0-flash-001",
-            temperature: 0.7,
-            configuration: {
-                baseURL: "https://openrouter.ai/api/v1",
-                apiKey: openRouterKey,
-                defaultHeaders: {
-                    "HTTP-Referer": "https://lifetrek.app",
-                    "X-Title": "Lifetrek App",
-                },
-            },
-        }).bindTools(tools);
-
-        // --- DEFINE GRAPH ---
-        const shouldContinue = (state: AgentState) => {
-            const lastMessage = state.messages[state.messages.length - 1];
-            // If the last message has tool_calls, route to "tools"
-            if (lastMessage instanceof AIMessage && lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
-                return "tools";
-            }
-            return END;
-        };
+        // ... (Model Init)
 
         const callAgent = async (state: AgentState): Promise<Partial<AgentState>> => {
             console.log("🤖 Agent Node: Processing...");
 
             // Add system message with context
-            const systemMessage = new HumanMessage(`[SYSTEM] Você é o Content Orchestrator da Lifetrek Medical (B2B de dispositivos médicos).
+            const systemMessage = new HumanMessage(`[SYSTEM] Você é o Assistente Virtual da Lifetrek Medical.
+Seu objetivo é ajudar visitantes do site com dúvidas sobre fabricação de dispositivos médicos (Implantes, Instrumentais, Caixas Gráficas) e capturar leads.
 
-FERRAMENTAS DISPONÍVEIS:
-- generate_carousel: Use para CRIAR novo conteúdo de carrossel LinkedIn.
-- search_knowledge: Use para buscar informações na base de dados (marca, ISO, produtos).
-- consult_designer: Use para perguntas visuais/design.
-- consult_strategist: Use para perguntas de estratégia de conteúdo.
+FERRAMENTAS:
+- save_lead: USE IMEDIATAMENTE se o usuário demonstrar interesse comercial, pedir cotação, ou fornecer contato (email/telefone). Peça o contato se eles mostrarem interesse.
+- search_knowledge: Use para responder perguntas técnicas sobre ISO 13485, Capacidade de Fábrica, Metrologia, etc.
 
-REGRAS:
-1. Se o usuário pedir para CRIAR/GERAR um carrossel, USE a ferramenta 'generate_carousel'.
-2. Se precisar de informação factual sobre a Lifetrek, USE 'search_knowledge' ANTES de responder.
-3. Responda em português, de forma concisa e profissional.
-4. NUNCA invente informações sobre ISO ou certificações sem consultar a base.
+DIRETRIZES:
+1. Seja educado, breve e profissional.
+2. Se não souber a resposta, peça o e-mail para que um especialista entre em contato.
+3. Se o usuário falar "Oi" ou "Ola", apresente-se brevemente e pergunte como pode ajudar na jornada de dispositivos médicos.
 
 [END SYSTEM]`);
 
             const messagesWithSystem = [systemMessage, ...state.messages];
-
             const response = await model.invoke(messagesWithSystem);
             return { messages: [response] };
         };

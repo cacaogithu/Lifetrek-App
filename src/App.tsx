@@ -13,8 +13,8 @@ import { MobileNav } from "./components/MobileNav";
 import { PageTransition } from "./components/PageTransition";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { LoadingSpinner } from "./components/LoadingSpinner";
-import { ImpersonationProvider } from "./contexts/ImpersonationContext";
 import { AdminLayout } from "./components/admin/AdminLayout";
+import { AIChatbot } from "@/components/AIChatbot";
 import { ProtectedAdminRoute } from "./components/admin/ProtectedAdminRoute";
 
 // Lazy load route components for better code splitting
@@ -48,6 +48,7 @@ const CampaignManagement = lazy(() => import("./pages/Admin/CampaignManagement")
 const AdminBlog = lazy(() => import("./pages/Admin/AdminBlog"));
 const ContentOrchestrator = lazy(() => import("./pages/Admin/ContentOrchestrator"));
 const VideoStudio = lazy(() => import("./pages/Admin/VideoStudio"));
+const RoiSimulation = lazy(() => import("./pages/admin/RoiSimulation"));
 
 
 // Public Pages
@@ -73,7 +74,7 @@ const MainLayout = () => (
     <Footer />
     <MobileNav />
     <ScrollToTop />
-    {/* <AIChatbot /> */}
+    <AIChatbot />
   </div>
 );
 
@@ -128,6 +129,7 @@ const App = () => (
                   <Route path="content-calendar" element={<ContentCalendar />} />
                   <Route path="campaigns" element={<CampaignManagement />} />
                   <Route path="video-studio" element={<VideoStudio />} />
+                  <Route path="roi-simulation" element={<RoiSimulation />} />
                   <Route path="blog" element={<AdminBlog />} />
                 </Route>
               </Route>

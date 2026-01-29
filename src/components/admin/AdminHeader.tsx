@@ -21,8 +21,10 @@ import {
     Search,
     MessageSquare,
     Clapperboard,
+    Clapperboard,
     Eye,
     X,
+    Zap,
     type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -44,6 +46,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+interface UserType {
+    id: string;
+    email?: string;
+    display_name?: string;
+    permission_level?: string;
+}
 
 interface NavItem {
     path: string;
@@ -88,6 +97,7 @@ const navStructure: NavEntry[] = [
         items: [
             { path: "/admin/campaigns", label: "Campanhas", icon: Target, requiresSuperAdmin: true },
             { path: "/admin/rejection-analytics", label: "Rejeições", icon: BarChart3, requiresSuperAdmin: true },
+            { path: "/admin/roi-simulation", label: "Simulação ROI (Owner)", icon: Zap, requiresSuperAdmin: true },
         ]
     },
     { path: "/admin/leads", label: "Leads", icon: Database },
@@ -137,7 +147,7 @@ export function AdminHeader() {
             return;
         }
 
-        const user = availableUsers.find(u => u.id === value);
+        const user = availableUsers.find((u: UserType) => u.id === value);
         if (user) {
             startImpersonation(user);
             toast.info(`Visualizando como: ${user.display_name || user.email}`);
@@ -271,7 +281,7 @@ export function AdminHeader() {
                                         ← Voltar à minha visão
                                     </SelectItem>
                                 )}
-                                {availableUsers.map((user) => (
+                                {availableUsers.map((user: UserType) => (
                                     <SelectItem key={user.id} value={user.id}>
                                         <div className="flex items-center gap-2">
                                             <span>{user.display_name || user.email?.split('@')[0]}</span>

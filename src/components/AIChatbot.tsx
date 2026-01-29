@@ -17,7 +17,7 @@ export const AIChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I'm here to help answer questions about Lifetrek's precision manufacturing capabilities, equipment, certifications, and processes. How can I assist you today?",
+      content: "Olá! Sou a Julia, assistente virtual da Lifetrek. Estou aqui para ajudar sobre nossa fábrica, capacidade técnica e produtos. Como posso ajudar?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -31,19 +31,27 @@ export const AIChatbot = () => {
     }
   }, [messages]);
 
+  const [hasAutoOpened, setHasAutoOpened] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollDepth = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
       const isMobile = window.innerWidth < 768;
       
-      if (isMobile) {
-        setShowButton(scrollDepth >= 75);
-      } else {
+      // Show button earlier (e.g. 20%)
+      if (scrollDepth > 20) {
         setShowButton(true);
+      }
+
+      // Auto-open at 35% if haven't opened yet
+      if (scrollDepth > 35 && !hasAutoOpened && !isOpen) {
+        setHasAutoOpened(true);
+        setIsOpen(true);
+        // Optional: Play sound or vibrate
+        if (navigator.vibrate) navigator.vibrate(200);
       }
     };
 
-    handleScroll();
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", handleScroll);
     
@@ -51,7 +59,7 @@ export const AIChatbot = () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, []);
+  }, [hasAutoOpened, isOpen]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -72,17 +80,16 @@ export const AIChatbot = () => {
     });
 
     try {
-      const { data, error } = await supabase.functions.invoke("chat", {
+      // Use the NEW dedicated 'website-bot' function
+      const { data, error } = await supabase.functions.invoke("website-bot", {
         body: { messages: [...messages, userMessage] },
       });
 
       if (error) {
         if (error.message?.includes("429") || error.message?.includes("rate limit")) {
-          toast.error("We're experiencing high demand. Please try again in a moment.");
-        } else if (error.message?.includes("402") || error.message?.includes("payment")) {
-          toast.error("Service temporarily unavailable. Please try again later.");
+          toast.error("Muitas mensagens. Tente novamente em breve.");
         } else {
-          toast.error("Failed to get response. Please try again.");
+          toast.error("Erro ao conectar. Tente novamente.");
         }
         console.error("Chat error:", error);
         return;
@@ -93,7 +100,7 @@ export const AIChatbot = () => {
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Failed to send message. Please try again.");
+      toast.error("Falha a enviar mensagem.");
     } finally {
       setIsLoading(false);
     }
@@ -114,7 +121,7 @@ export const AIChatbot = () => {
           onClick={() => setIsOpen(true)}
           size="lg"
           className="fixed bottom-28 left-6 h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 bg-primary"
-          aria-label="Open AI assistant chat"
+          aria-label="Abrir chat do Assistente Trek"
         >
           <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
@@ -126,17 +133,33 @@ export const AIChatbot = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-primary text-primary-foreground rounded-t-2xl">
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              <h3 className="font-bold">Lifetrek Assistant</h3>
+              <div className="w-10 h-10 rounded-full bg-cover bg-center border-2 border-white/20" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80')" }}>
+              </div>
+              <div>
+                  <h3 className="font-bold">Julia</h3>
+                  <p className="text-xs opacity-80">Assistente Virtual Lifetrek</p>
+              </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(false)}
-              className="hover:bg-white/20"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex gap-1">
+                 {/* Human Handoff Quick Action */}
+                 <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-white/20 scale-90"
+                  title="Falar com Humano (Vanessa)"
+                  onClick={() => window.open("https://wa.me/5511945336226", "_blank")}
+                >
+                  <span className="text-xs">👩‍💼</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsOpen(false)}
+                  className="hover:bg-white/20"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+            </div>
           </div>
 
           {/* Messages */}
@@ -179,7 +202,7 @@ export const AIChatbot = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask about our capabilities..."
+                placeholder: "Digite sua dúvida...",
                 disabled={isLoading}
                 className="flex-1"
               />

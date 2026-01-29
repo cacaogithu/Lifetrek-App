@@ -12,7 +12,6 @@ import impol from "@/assets/clients/impol-new.png";
 import implanfix from "@/assets/clients/implanfix-new.png";
 import iol from "@/assets/clients/iol-new.png";
 import plenum from "@/assets/clients/plenum-new.png";
-import medens from "@/assets/clients/medens-new.png";
 import neoortho from "@/assets/clients/neoortho-new.jpg";
 import oblDental from "@/assets/clients/obl-dental-new.jpg";
 import orthometric from "@/assets/clients/orthometric-new.png";
@@ -40,7 +39,6 @@ export default function Clients() {
     { src: implanfix, alt: "Implanfix - Surgical materials provider" },
     { src: iol, alt: "IOL Implantes Ortopédicos - Orthopedic implant manufacturer" },
     { src: plenum, alt: "Plenum - Medical device technology" },
-    { src: medens, alt: "Medens - Medical device manufacturer" },
     { src: neoortho, alt: "Neoortho - Orthopedic solutions" },
     { src: oblDental, alt: "OBL Dental - Dental device manufacturer" },
     { src: orthometric, alt: "Orthometric - Medical orthopedic systems" },

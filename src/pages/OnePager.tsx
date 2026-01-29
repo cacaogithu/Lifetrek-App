@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Linkedin, Facebook } from "lucide-react";
 import logo from "@/assets/logo-optimized.webp";
 import isoLogo from "@/assets/certifications/iso.webp";
 import factoryExterior from "@/assets/facility/exterior-hero.webp";
@@ -239,10 +239,20 @@ const OnePager = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-          <p className="text-sm text-primary font-semibold">
+        <div className="mt-8 pt-6 border-t border-gray-200 flex justify-between items-center text-sm text-primary font-semibold">
+          <p>
             Lifetrek Medical • Indaiatuba, SP • www.lifetrekmedical.com.br
           </p>
+          <div className="flex gap-4">
+             <div className="flex items-center gap-1">
+                <Linkedin className="w-4 h-4" />
+                <span>/lifetrekmedical</span>
+             </div>
+             <div className="flex items-center gap-1">
+                <Facebook className="w-4 h-4" />
+                <span>/lifetrek</span>
+             </div>
+          </div>
         </div>
       </div>
     </div>

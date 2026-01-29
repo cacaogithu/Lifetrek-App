@@ -126,7 +126,7 @@ const slidesData: SlideData[] = [
     subtitle: "Parceiros que confiam em nossa qualidade",
     content: [
       "CPMH", "Evolve", "FGM", "GMI", "HCS", "Impol", "Implanfix", "IOL",
-      "Plenum", "Medens", "Neoortho", "OBL Dental", "Orthometric", "Óssea",
+      "Plenum", "Neoortho", "OBL Dental", "Orthometric", "Óssea",
       "Traumec", "Razek", "React", "Russer", "TechImport", "Toride", "Ultradent", "Vincula"
     ]
   },

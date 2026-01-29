@@ -42,7 +42,6 @@ import impol from "@/assets/clients/impol-new.png";
 import implanfix from "@/assets/clients/implanfix-new.png";
 import iol from "@/assets/clients/iol-new.png";
 import plenum from "@/assets/clients/plenum-new.png";
-import medens from "@/assets/clients/medens-new.png";
 import neoortho from "@/assets/clients/neoortho-new.jpg";
 import oblDental from "@/assets/clients/obl-dental-new.jpg";
 import orthometric from "@/assets/clients/orthometric-new.png";
@@ -110,11 +109,6 @@ export default function Home() {
   }, {
     src: plenum,
     alt: "Plenum - Medical device technology",
-    width: 128,
-    height: 64
-  }, {
-    src: medens,
-    alt: "Medens - Medical device manufacturer",
     width: 128,
     height: 64
   }, {

@@ -71,7 +71,6 @@ import impolNew from "@/assets/clients/impol-new.png";
 import implanfixNew from "@/assets/clients/implanfix-new.png";
 import iolNew from "@/assets/clients/iol-new.png";
 import plenumNew from "@/assets/clients/plenum-new.png";
-import medensNew from "@/assets/clients/medens-new.png";
 import neoorthoNew from "@/assets/clients/neoortho-new.jpg";
 import oblDentalNew from "@/assets/clients/obl-dental-new.jpg";
 import orthometricNew from "@/assets/clients/orthometric-new.png";
@@ -132,7 +131,6 @@ const PitchDeck = () => {
     { src: implanfixNew, name: "Implanfix" },
     { src: iolNew, name: "IOL" },
     { src: plenumNew, name: "Plenum" },
-    { src: medensNew, name: "Medens" },
     { src: neoorthoNew, name: "Neoortho" },
     { src: oblDentalNew, name: "OBL Dental" },
     { src: orthometricNew, name: "Orthometric" },
